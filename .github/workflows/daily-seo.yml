@@ -1,0 +1,34 @@
+name: Daily SEO Content Engine
+
+on:
+  schedule:
+    - cron: '0 12 * * *' # Runs at 12 PM UTC (8 AM EST) every single day
+  workflow_dispatch: # Allows you to click "Run workflow" manually on GitHub
+
+jobs:
+  write-article:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Allows the bot to commit the new files to your repo
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run AI SEO Agent
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: node seo-agent.js
+
+      - name: Commit and Push New Article
+        run: |
+          git config --global user.name "Freeley Auto-SEO Bot"
+          git config --global user.email "bot@freeley.com"
+          git add content/blog/*.md content/seo-keywords.txt
+          git commit -m "Generated new SEO article & updated queue" || echo "No changes"
+          git push
