@@ -1,0 +1,1612 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Start Your Visit — Freeley</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    body {
+      background: #050f0a;
+    }
+
+    .quiz-wrap {
+      min-height: 100vh;
+      display: flex;
+      align-items: stretch;
+    }
+
+    /* Sidebar */
+    .quiz-sidebar {
+      width: 380px;
+      flex-shrink: 0;
+      background-image: url("assets/brand/freeley_pattern_dark.jpg"); background-size: cover; background-position: center;
+      padding: 100px 48px 48px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      border-right: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .quiz-sidebar::before {
+      content: '';
+      position: absolute;
+      top: -120px;
+      right: -80px;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(61, 140, 94, 0.2), transparent 65%);
+    }
+
+    .quiz-sidebar::after {
+      content: '';
+      position: absolute;
+      bottom: -80px;
+      left: -60px;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(61, 140, 94, 0.1), transparent 65%);
+    }
+
+    .sidebar-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px;
+      color: #fff;
+      font-weight: 600;
+      margin-bottom: 48px;
+      position: relative;
+      z-index: 2;
+      text-decoration: none;
+      display: block;
+    }
+
+    .sidebar-logo span {
+      color: var(--green-light);
+    }
+
+    .sidebar-heading {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 38px;
+      font-weight: 300;
+      color: #fff;
+      line-height: 1.15;
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .sidebar-heading em {
+      font-style: italic;
+      color: #7dba96;
+    }
+
+    .sidebar-sub {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.45);
+      line-height: 1.7;
+      font-weight: 300;
+      margin-bottom: 48px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Progress list */
+    .progress-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      position: relative;
+      z-index: 2;
+      flex: 1;
+    }
+
+    .progress-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 14px 0;
+      position: relative;
+    }
+
+    .progress-item:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 15px;
+      top: 44px;
+      width: 1px;
+      height: calc(100% - 16px);
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .progress-dot {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.3s;
+      border: 1.5px solid rgba(255, 255, 255, 0.2);
+      color: rgba(255, 255, 255, 0.35);
+      background: transparent;
+      margin-top: 2px;
+    }
+
+    .progress-item.done .progress-dot {
+      background: var(--green-light);
+      border-color: var(--green-light);
+      color: #fff;
+    }
+
+    .progress-item.active .progress-dot {
+      background: rgba(61, 140, 94, 0.2);
+      border-color: var(--green-light);
+      color: var(--green-light);
+      box-shadow: 0 0 0 4px rgba(61, 140, 94, 0.1);
+    }
+
+    .progress-text-title {
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.3s;
+      color: rgba(255, 255, 255, 0.35);
+    }
+
+    .progress-item.active .progress-text-title {
+      color: #fff;
+    }
+
+    .progress-item.done .progress-text-title {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .progress-text-sub {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.25);
+      margin-top: 2px;
+    }
+
+    .sidebar-trust {
+      position: relative;
+      z-index: 2;
+      margin-top: 32px;
+      padding-top: 28px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .sidebar-trust-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .sidebar-trust-icon {
+      color: var(--green-light);
+      font-size: 14px;
+    }
+
+    /* Main quiz area */
+    .quiz-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 80px 72px;
+      background: var(--cream);
+      overflow-y: auto;
+    }
+
+    /* Progress bar top */
+    .quiz-progress-bar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 56px;
+    }
+
+    .quiz-progress-track {
+      flex: 1;
+      height: 4px;
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .quiz-progress-fill {
+      height: 100%;
+      background: var(--green-light);
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+
+    .quiz-progress-label {
+      font-size: 12px;
+      color: var(--text-faint);
+      white-space: nowrap;
+    }
+
+    /* Step container */
+    .quiz-steps {
+      flex: 1;
+    }
+
+    .quiz-step {
+      display: none;
+      animation: fadeUp 0.4s ease both;
+    }
+
+    .quiz-step.active {
+      display: block;
+    }
+
+    .step-badge {
+      display: inline-block;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--green-light);
+      font-weight: 500;
+      margin-bottom: 12px;
+    }
+
+    .step-question {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 300;
+      color: var(--text);
+      margin-bottom: 10px;
+      line-height: 1.2;
+    }
+
+    .step-question em {
+      font-style: italic;
+      color: var(--green-mid);
+    }
+
+    .step-sub {
+      font-size: 15px;
+      color: var(--text-muted);
+      margin-bottom: 44px;
+      font-weight: 300;
+      line-height: 1.6;
+    }
+
+    /* Option grids */
+    .options-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .options-2 {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .options-3 {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .options-1 {
+      grid-template-columns: 1fr;
+      max-width: 540px;
+    }
+
+    .option-card {
+      background: #fff;
+      border: 2px solid var(--border);
+      border-radius: 18px;
+      padding: 24px 28px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      text-align: left;
+      position: relative;
+      overflow: hidden;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .option-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(61, 140, 94, 0.04) 0%, transparent 100%);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .option-card:hover {
+      border-color: rgba(61, 140, 94, 0.4);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .option-card:hover::before {
+      opacity: 1;
+    }
+
+    .option-card.selected {
+      border-color: var(--green-light);
+      background: rgba(61, 140, 94, 0.04);
+    }
+
+    .option-card.selected::after {
+      content: '✓';
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--green-light);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .option-icon {
+      font-size: 28px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .option-label {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .option-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      font-weight: 300;
+    }
+
+    /* Age / text inputs */
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    .input-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 16px 20px;
+      border-radius: 14px;
+      border: 2px solid var(--border);
+      background: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      color: var(--text);
+      transition: border-color 0.2s;
+      outline: none;
+    }
+
+    .input-field:focus {
+      border-color: var(--green-light);
+    }
+
+    .input-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    /* Slider */
+    .slider-wrap {
+      max-width: 480px;
+    }
+
+    .slider-val {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 56px;
+      font-weight: 300;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .slider-val span {
+      font-size: 24px;
+      color: var(--text-muted);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 6px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: linear-gradient(to right, var(--green-light) 0%, var(--green-light) 50%, rgba(0, 0, 0, 0.12) 50%, rgba(0, 0, 0, 0.12) 100%);
+      border-radius: 6px;
+      outline: none;
+      cursor: pointer;
+      margin: 16px 0;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #fff;
+      border: 3px solid var(--green-light);
+      box-shadow: 0 2px 12px rgba(61, 140, 94, 0.3);
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+    }
+
+    .slider-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-faint);
+    }
+
+    /* Multi select */
+    .multi-note {
+      font-size: 12px;
+      color: var(--text-faint);
+      margin-bottom: 20px;
+      font-style: italic;
+    }
+
+    /* Nav buttons */
+    .quiz-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 48px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border-light);
+    }
+
+    .quiz-back {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 0;
+      transition: color 0.2s;
+    }
+
+    .quiz-back:hover {
+      color: var(--text);
+    }
+
+    .quiz-next {
+      background: var(--green-light);
+      color: #fff;
+      border: none;
+      padding: 16px 44px;
+      border-radius: 50px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.25s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 6px 24px rgba(61, 140, 94, 0.3);
+    }
+
+    .quiz-next:hover {
+      background: var(--green-bright);
+      transform: translateY(-2px);
+    }
+
+    .quiz-next:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Results screen */
+    .results-screen {
+      display: none;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    .results-screen.active {
+      display: block;
+    }
+
+    .results-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .results-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      background: rgba(61, 140, 94, 0.1);
+      border: 1px solid rgba(61, 140, 94, 0.3);
+      padding: 8px 20px;
+      border-radius: 40px;
+      color: var(--green-light);
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    .results-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(32px, 4.5vw, 52px);
+      font-weight: 300;
+      margin-bottom: 14px;
+    }
+
+    .results-title em {
+      font-style: italic;
+      color: var(--green-mid);
+    }
+
+    .results-sub {
+      font-size: 16px;
+      color: var(--text-muted);
+      font-weight: 300;
+      line-height: 1.65;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    .results-plans {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .plan-card {
+      background: #fff;
+      border: 2px solid var(--border);
+      border-radius: 24px;
+      padding: 36px 28px;
+      transition: all 0.3s;
+      position: relative;
+    }
+
+    .plan-card.recommended {
+      border-color: var(--green-light);
+      box-shadow: 0 8px 40px rgba(61, 140, 94, 0.15);
+    }
+
+    .plan-recommended-tag {
+      display: none;
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--green-light);
+      color: #fff;
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 4px 16px;
+      border-radius: 20px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .plan-card.recommended .plan-recommended-tag {
+      display: block;
+    }
+
+    .plan-card.recommended .plan-cta {
+      background: var(--green-light);
+      border-color: var(--green-light);
+      color: #fff;
+    }
+    
+    .plan-card.recommended .plan-cta:hover {
+      background: var(--green-bright);
+    }
+
+    .plan-icon {
+      font-size: 36px;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .plan-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24px;
+      font-weight: 400;
+      margin-bottom: 6px;
+    }
+
+    .plan-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 20px;
+      font-weight: 300;
+    }
+
+    .plan-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 40px;
+      font-weight: 300;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .plan-price-sub {
+      font-size: 12px;
+      color: var(--text-faint);
+      margin-bottom: 24px;
+    }
+
+    .plan-features {
+      list-style: none;
+      margin-bottom: 28px;
+    }
+
+    .plan-features li {
+      font-size: 13px;
+      color: var(--text-muted);
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .plan-features li::before {
+      content: '✓';
+      color: var(--green-light);
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .plan-features li:last-child {
+      border-bottom: none;
+    }
+
+    .plan-cta {
+      width: 100%;
+      padding: 14px;
+      border-radius: 50px;
+      border: 2px solid var(--border);
+      background: transparent;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.25s;
+      color: var(--text);
+    }
+
+    .plan-card.recommended .plan-cta {
+      background: var(--green-light);
+      border-color: var(--green-light);
+      color: #fff;
+    }
+
+    .plan-cta:hover {
+      border-color: var(--green-light);
+      color: var(--green-light);
+    }
+
+    .plan-card.recommended .plan-cta:hover {
+      background: var(--green-bright);
+    }
+
+    .results-next-steps {
+      background: var(--green-mist);
+      border-radius: 20px;
+      padding: 32px 36px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .results-next-icon {
+      font-size: 36px;
+      flex-shrink: 0;
+    }
+
+    .results-next-text h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .results-next-text p {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      font-weight: 300;
+    }
+
+    .results-next-cta {
+      margin-left: auto;
+      background: var(--green-light);
+      color: #fff;
+      padding: 14px 32px;
+      border-radius: 50px;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-block;
+      white-space: nowrap;
+    }
+
+    .results-next-cta:hover {
+      background: var(--green-bright);
+    }
+
+    @media (max-width: 1024px) {
+      .quiz-sidebar {
+        display: none;
+      }
+
+      .quiz-main {
+        padding: 96px 32px 48px;
+      }
+
+      .results-plans {
+        grid-template-columns: 1fr;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .quiz-main {
+        padding: 88px 20px 40px;
+      }
+
+      .options-2,
+      .options-3 {
+        grid-template-columns: 1fr;
+      }
+
+      .input-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <link rel="icon" type="image/png" href="favicon.png">
+</head>
+
+<body>
+
+
+  <div class="quiz-wrap">
+    <!-- SIDEBAR -->
+    <div class="quiz-sidebar">
+      <a href="index.html" class="sidebar-logo">Freeley<span>.</span></a>
+      <div class="sidebar-heading">Find your <em>treatment</em> match</div>
+      <div class="sidebar-sub">Answer a few questions and our physicians will review your profile within 24 hours — for
+        free.</div>
+      <div class="progress-list" id="sidebarProgress">
+        <div class="progress-item active" data-step="1">
+          <div class="progress-dot">1</div>
+          <div>
+            <div class="progress-text-title">Treatment Goal</div>
+            <div class="progress-text-sub">What you want to achieve</div>
+          </div>
+        </div>
+        <div class="progress-item" data-step="2">
+          <div class="progress-dot">2</div>
+          <div>
+            <div class="progress-text-title">Health Profile</div>
+            <div class="progress-text-sub">Basic health information</div>
+          </div>
+        </div>
+        <div class="progress-item" data-step="3">
+          <div class="progress-dot">3</div>
+          <div>
+            <div class="progress-text-title">Current Symptoms</div>
+            <div class="progress-text-sub">What you're experiencing</div>
+          </div>
+        </div>
+        <div class="progress-item" data-step="4">
+          <div class="progress-dot">4</div>
+          <div>
+            <div class="progress-text-title">Medical History</div>
+            <div class="progress-text-sub">Conditions & medications</div>
+          </div>
+        </div>
+        <div class="progress-item" data-step="5">
+          <div class="progress-dot">5</div>
+          <div>
+            <div class="progress-text-title">Lifestyle</div>
+            <div class="progress-text-sub">Habits & preferences</div>
+          </div>
+        </div>
+        <div class="progress-item" data-step="6">
+          <div class="progress-dot">6</div>
+          <div>
+            <div class="progress-text-title">Contact Info</div>
+            <div class="progress-text-sub">Where to send your plan</div>
+          </div>
+        </div>
+        <div class="progress-item" data-step="results">
+          <div class="progress-dot">✦</div>
+          <div>
+            <div class="progress-text-title">Your Results</div>
+            <div class="progress-text-sub">Personalized recommendations</div>
+          </div>
+        </div>
+      </div>
+      <div class="sidebar-trust">
+        <div class="sidebar-trust-item"><span class="sidebar-trust-icon"><i class="ri-lock-fill"></i></span>Your data is
+          HIPAA-protected</div>
+        <div class="sidebar-trust-item"><span class="sidebar-trust-icon"><i
+              data-lucide="stethoscope"></i></span>Reviewed by a real physician</div>
+        <div class="sidebar-trust-item"><span class="sidebar-trust-icon"><i class="ri-bank-card-fill"></i></span>Free
+          consultation, no credit card</div>
+      </div>
+    </div>
+
+    <!-- MAIN QUIZ -->
+    <div class="quiz-main">
+      <div class="quiz-progress-bar">
+        <div class="quiz-progress-track">
+          <div class="quiz-progress-fill" id="progressFill" style="width:0%"></div>
+        </div>
+        <div class="quiz-progress-label" id="progressLabel">Step 1 of 5</div>
+      </div>
+      <div class="quiz-steps">
+
+        <!-- STEP 1: Goal -->
+        <div class="quiz-step active" id="step-1">
+          <span class="step-badge">Step 1 of 5</span>
+          <div class="step-question">What's your primary <em>health goal?</em></div>
+          <div class="step-sub">Select all that apply — we'll recommend the best treatment path for your situation.
+          </div>
+          <div class="multi-note">Select one or more</div>
+          <div class="options-grid options-2">
+            <div class="option-card" data-multi onclick="toggleOption(this)">
+              <span class="option-icon"><i class="ri-scales-3-fill"></i></span>
+              <div>
+                <div class="option-label">Lose Weight</div>
+                <div class="option-desc">GLP-1 medications like semaglutide or tirzepatide</div>
+              </div>
+            </div>
+            <div class="option-card" data-multi onclick="toggleOption(this)">
+              <span class="option-icon"><i class="ri-flashlight-fill"></i></span>
+              <div>
+                <div class="option-label">Sexual Wellness & ED</div>
+                <div class="option-desc">Enhance performance, stamina, and confidence</div>
+              </div>
+            </div>
+            <div class="option-card" data-multi onclick="toggleOption(this)">
+              <span class="option-icon"><i class="ri-node-tree"></i></span>
+              <div>
+                <div class="option-label">Longevity & Performance</div>
+                <div class="option-desc">Peptides, NAD+, anti-aging protocols</div>
+              </div>
+            </div>
+            <div class="option-card" data-multi onclick="toggleOption(this)">
+              <span class="option-icon"><i class="ri-seedling-fill"></i></span>
+              <div>
+                <div class="option-label">Hair Loss</div>
+                <div class="option-desc">Prevent thinning and stimulate regrowth</div>
+              </div>
+            </div>
+            <div class="option-card" data-multi onclick="toggleOption(this)">
+              <span class="option-icon"><i class="ri-brain-line"></i></span>
+              <div>
+                <div class="option-label">Mental Clarity & Mood</div>
+                <div class="option-desc">Focus, cognitive performance, mood stability</div>
+              </div>
+            </div>
+            <div class="option-card" data-multi onclick="toggleOption(this)">
+              <span class="option-icon"><i class="ri-run-line"></i></span>
+              <div>
+                <div class="option-label">Body Composition</div>
+                <div class="option-desc">Build muscle, reduce body fat, improve physique</div>
+              </div>
+            </div>
+          </div>
+          <div class="quiz-nav">
+            <div></div>
+            <button class="quiz-next" onclick="nextStep(2)">Continue <svg width="16" height="16" viewBox="0 0 16 16"
+                fill="none">
+                <path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.8" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg></button>
+          </div>
+        </div>
+
+        <!-- STEP 2: Health Profile -->
+        <div class="quiz-step" id="step-2">
+          <span class="step-badge">Step 2 of 5</span>
+          <div class="step-question">Tell us about <em>yourself</em></div>
+          <div class="step-sub">This helps our physicians understand your baseline health and ensure treatment is
+            appropriate.</div>
+          <div class="input-row" style="margin-bottom:20px;">
+            <div class="input-group">
+              <label class="input-label">Age</label>
+              <input class="input-field" type="number" placeholder="e.g. 38" min="18" max="85">
+            </div>
+            <div class="input-group">
+              <label class="input-label">Biological Sex</label>
+              <select class="input-field">
+                <option value="">Select...</option>
+                <option>Male</option>
+                <option>Female</option>
+                <option>Prefer not to say</option>
+              </select>
+            </div>
+          </div>
+          <div class="input-row" style="margin-bottom:20px;">
+            <div class="input-group">
+              <label class="input-label">Height</label>
+              <div style="display: flex; gap: 12px;">
+                <div style="flex: 1;">
+                  <input class="input-field" type="number" placeholder="Ft" min="3" max="8">
+                </div>
+                <div style="flex: 1;">
+                  <input class="input-field" type="number" placeholder="In" min="0" max="11">
+                </div>
+              </div>
+            </div>
+            <div class="input-group">
+              <label class="input-label">Current Weight (lbs)</label>
+              <input class="input-field" type="number" placeholder="e.g. 185">
+            </div>
+          </div>
+          <div class="input-group" style="max-width:400px;margin-bottom:20px;">
+            <label class="input-label">State of Residence</label>
+            <select class="input-field">
+              <option value="">Select your state...</option>
+              <option>Alabama</option>
+              <option>Alaska</option>
+              <option>Arizona</option>
+              <option>Arkansas</option>
+              <option>California</option>
+              <option>Colorado</option>
+              <option>Connecticut</option>
+              <option>Delaware</option>
+              <option>Florida</option>
+              <option>Georgia</option>
+              <option>Hawaii</option>
+              <option>Idaho</option>
+              <option>Illinois</option>
+              <option>Indiana</option>
+              <option>Iowa</option>
+              <option>Kansas</option>
+              <option>Kentucky</option>
+              <option>Louisiana</option>
+              <option>Maine</option>
+              <option>Maryland</option>
+              <option>Massachusetts</option>
+              <option>Michigan</option>
+              <option>Minnesota</option>
+              <option>Mississippi</option>
+              <option>Missouri</option>
+              <option>Montana</option>
+              <option>Nebraska</option>
+              <option>Nevada</option>
+              <option>New Hampshire</option>
+              <option>New Jersey</option>
+              <option>New Mexico</option>
+              <option>New York</option>
+              <option>North Carolina</option>
+              <option>North Dakota</option>
+              <option>Ohio</option>
+              <option>Oklahoma</option>
+              <option>Oregon</option>
+              <option>Pennsylvania</option>
+              <option>Rhode Island</option>
+              <option>South Carolina</option>
+              <option>South Dakota</option>
+              <option>Tennessee</option>
+              <option>Texas</option>
+              <option>Utah</option>
+              <option>Vermont</option>
+              <option>Virginia</option>
+              <option>Washington</option>
+              <option>West Virginia</option>
+              <option>Wisconsin</option>
+              <option>Wyoming</option>
+            </select>
+          </div>
+          <div class="quiz-nav">
+            <button class="quiz-back" onclick="nextStep(1)"><svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M13 8H3M7 12l-4-4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg> Back</button>
+            <button class="quiz-next" onclick="nextStep(3)">Continue <svg width="16" height="16" viewBox="0 0 16 16"
+                fill="none">
+                <path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.8" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg></button>
+          </div>
+        </div>
+
+        <!-- STEP 3: Symptoms -->
+        <div class="quiz-step" id="step-3">
+          <span class="step-badge">Step 3 of 5</span>
+          <div class="step-question">What are you <em>currently experiencing?</em></div>
+          <div class="step-sub">Select everything that's been affecting your quality of life. Your physician will review
+            all of this.</div>
+          <div class="multi-note">Select all that apply</div>
+          <div class="options-grid options-2">
+            <div class="option-card" data-multi onclick="toggleOption(this)">
+              <span class="option-icon"><i class="ri-moon-fill"></i></span>
+              <div>
+                <div class="option-label">Fatigue & Low Energy</div>
+                <div class="option-desc">Tired despite adequate sleep</div>
+              </div>
+            </div>
+            <div class="option-card" data-multi onclick="toggleOption(this)">
+              <span class="option-icon"><i class="ri-line-chart-fill"></i></span>
+              <div>
+                <div class="option-label">Weight Gain</div>
+                <div class="option-desc">Difficulty losing or maintaining weight</div>
+              </div>
+            </div>
+            <div class="option-card" data-multi onclick="toggleOption(this)">
+              <span class="option-icon"><i class="ri-temp-hot-fill"></i></span>
+              <div>
+                <div class="option-label">Hot Flashes / Night Sweats</div>
+                <div class="option-desc">Temperature dysregulation</div>
+              </div>
+            </div>
+            <div class="option-card" data-multi onclick="toggleOption(this)">
+              <span class="option-icon"><i class="ri-emotion-sad-fill"></i></span>
+              <div>
+                <div class="option-label">Low Mood / Irritability</div>
+                <div class="option-desc">Mood changes, anxiety, or depression</div>
+              </div>
+            </div>
+            <div class="option-card" data-multi onclick="toggleOption(this)">
+              <span class="option-icon"><i class="ri-brain-line"></i></span>
+              <div>
+                <div class="option-label">Brain Fog</div>
+                <div class="option-desc">Difficulty concentrating or remembering</div>
+              </div>
+            </div>
+            <div class="option-card" data-multi onclick="toggleOption(this)">
+              <span class="option-icon"><i class="ri-moon-fill"></i></span>
+              <div>
+                <div class="option-label">Poor Sleep Quality</div>
+                <div class="option-desc">Trouble falling or staying asleep</div>
+              </div>
+            </div>
+            <div class="option-card" data-multi onclick="toggleOption(this)">
+              <span class="option-icon"><i class="ri-heart-pulse-fill"></i></span>
+              <div>
+                <div class="option-label">Low Libido</div>
+                <div class="option-desc">Decreased sex drive or function</div>
+              </div>
+            </div>
+            <div class="option-card" data-multi onclick="toggleOption(this)">
+              <span class="option-icon"><i class="ri-bone-fill"></i></span>
+              <div>
+                <div class="option-label">Joint Pain / Recovery</div>
+                <div class="option-desc">Slow recovery or chronic aches</div>
+              </div>
+            </div>
+          </div>
+          <div class="quiz-nav">
+            <button class="quiz-back" onclick="nextStep(2)"><svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M13 8H3M7 12l-4-4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg> Back</button>
+            <button class="quiz-next" onclick="nextStep(4)">Continue <svg width="16" height="16" viewBox="0 0 16 16"
+                fill="none">
+                <path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.8" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg></button>
+          </div>
+        </div>
+
+        <!-- STEP 4: Medical History -->
+        <div class="quiz-step" id="step-4">
+          <span class="step-badge">Step 4 of 5</span>
+          <div class="step-question">Any relevant <em>medical history?</em></div>
+          <div class="step-sub">This is strictly confidential and helps us ensure your safety. Our physicians review
+            everything.</div>
+          <div class="options-grid options-1">
+            <div class="option-card" onclick="selectSingle(this,'q4', 5)" data-group="q4">
+              <span class="option-icon"><i class="ri-thumb-up-fill"></i></span>
+              <div>
+                <div class="option-label">No known conditions</div>
+                <div class="option-desc">Healthy with no major diagnoses</div>
+              </div>
+            </div>
+            <div class="option-card" onclick="selectSingle(this,'q4', 5)" data-group="q4">
+              <span class="option-icon"><i class="ri-capsule-fill"></i></span>
+              <div>
+                <div class="option-label">Taking medication(s)</div>
+                <div class="option-desc">Prescription or OTC medications daily</div>
+              </div>
+            </div>
+            <div class="option-card" onclick="selectSingle(this,'q4', 5)" data-group="q4">
+              <span class="option-icon"><i class="ri-stethoscope-fill"></i></span>
+              <div>
+                <div class="option-label">Managed condition(s)</div>
+                <div class="option-desc">e.g. diabetes, hypertension, thyroid issues</div>
+              </div>
+            </div>
+            <div class="option-card" onclick="selectSingle(this,'q4', 5)" data-group="q4">
+              <span class="option-icon"><i class="ri-forbid-2-fill"></i></span>
+              <div>
+                <div class="option-label">Prior ED / Heart Meds</div>
+                <div class="option-desc">Previously prescribed similar treatments or nitrates</div>
+              </div>
+            </div>
+          </div>
+          <div class="quiz-nav">
+            <button class="quiz-back" onclick="nextStep(3)"><svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M13 8H3M7 12l-4-4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg> Back</button>
+            <button class="quiz-next" onclick="nextStep(5)">Continue <svg width="16" height="16" viewBox="0 0 16 16"
+                fill="none">
+                <path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.8" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg></button>
+          </div>
+        </div>
+
+        <!-- STEP 5: Lifestyle -->
+        <div class="quiz-step" id="step-5">
+          <span class="step-badge">Step 5 of 5</span>
+          <div class="step-question">How would you describe your <em>lifestyle?</em></div>
+          <div class="step-sub">Helps us tailor dosing schedules and delivery formats to fit your routine.</div>
+          <div style="margin-bottom:36px;">
+            <div class="input-label" style="font-size:15px;margin-bottom:16px;">How active are you?</div>
+            <div class="options-grid options-3">
+              <div class="option-card" onclick="selectSingle(this,'activity')" data-group="activity"
+                style="flex-direction:column;text-align:center;align-items:center;padding:20px 16px;">
+                <span class="option-icon"><i class="ri-armchair-fill"></i></span>
+                <div class="option-label" style="font-size:14px;">Sedentary</div>
+              </div>
+              <div class="option-card" onclick="selectSingle(this,'activity')" data-group="activity"
+                style="flex-direction:column;text-align:center;align-items:center;padding:20px 16px;">
+                <span class="option-icon"><i class="ri-user-fill"></i></span>
+                <div class="option-label" style="font-size:14px;">Moderately Active</div>
+              </div>
+              <div class="option-card" onclick="selectSingle(this,'activity')" data-group="activity"
+                style="flex-direction:column;text-align:center;align-items:center;padding:20px 16px;">
+                <span class="option-icon"><i class="ri-run-line"></i></span>
+                <div class="option-label" style="font-size:14px;">Very Active</div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-bottom:36px;">
+            <div class="input-label" style="font-size:15px;margin-bottom:16px;">Preferred treatment format</div>
+            <div class="options-grid options-2">
+              <div class="option-card" data-multi onclick="toggleOption(this)">
+                <span class="option-icon"><i class="ri-syringe-fill"></i></span>
+                <div>
+                  <div class="option-label">Injectable</div>
+                  <div class="option-desc">Weekly or daily subcutaneous injections</div>
+                </div>
+              </div>
+              <div class="option-card" data-multi onclick="toggleOption(this)">
+                <span class="option-icon"><i class="ri-capsule-fill"></i></span>
+                <div>
+                  <div class="option-label">Oral / Sublingual</div>
+                  <div class="option-desc">Pills, dissolving tablets, troches</div>
+                </div>
+              </div>
+              <div class="option-card" data-multi onclick="toggleOption(this)">
+                <span class="option-icon"><i class="ri-flask-fill"></i></span>
+                <div>
+                  <div class="option-label">Topical Cream / Spray</div>
+                  <div class="option-desc">Applied to skin daily</div>
+                </div>
+              </div>
+              <div class="option-card" data-multi onclick="toggleOption(this)">
+                <span class="option-icon"><i class="ri-question-fill"></i></span>
+                <div>
+                  <div class="option-label">No Preference</div>
+                  <div class="option-desc">Let the physician recommend</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="quiz-nav">
+            <button class="quiz-back" onclick="nextStep(4)"><svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M13 8H3M7 12l-4-4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg> Back</button>
+            <button class="quiz-next" onclick="nextStep(6)">Continue <svg width="16" height="16" viewBox="0 0 16 16"
+                fill="none">
+                <path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.8" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg></button>
+          </div>
+        </div>
+
+        <!-- STEP 6: Contact -->
+        <div class="quiz-step" id="step-6">
+          <span class="step-badge">Step 6 of 6</span>
+          <div class="step-question">Where should we send your <em>results?</em></div>
+          <div class="step-sub">We'll build your secure profile and instantly reveal your treatment matches and pricing.</div>
+
+          <div style="background: rgba(61, 140, 94, 0.08); border: 1px solid rgba(61, 140, 94, 0.2); border-radius: 12px; padding: 16px; margin-bottom: 28px; display: flex; gap: 14px; align-items: flex-start; max-width: 440px;">
+            <i class="ri-shield-check-fill" style="color: var(--green-light); font-size: 20px; line-height: 1;"></i>
+            <div style="font-size: 13px; color: var(--text-muted); line-height: 1.45;"><strong>HIPAA Secure.</strong> Your information is encrypted and strictly confidential. We will never sell your personal data.</div>
+          </div>
+
+          <div class="input-group" style="max-width: 440px;">
+            <label class="input-label">Email Address</label>
+            <input class="input-field" type="email" id="contact-email" placeholder="you@example.com">
+          </div>
+          <div class="input-group" style="max-width: 440px; margin-bottom: 32px;">
+            <label class="input-label">Phone Number</label>
+            <input class="input-field" type="tel" id="contact-phone" placeholder="(555) 555-5555">
+          </div>
+
+          <div class="input-group"
+            style="max-width: 440px; margin-bottom: 40px; display: flex; gap: 12px; align-items: flex-start;">
+            <input type="checkbox" id="contact-consent"
+              style="margin-top: 4px; width: 18px; height: 18px; flex-shrink: 0; accent-color: var(--green-light);">
+            <label for="contact-consent"
+              style="font-size: 13px; color: var(--text-muted); line-height: 1.5; font-weight: 300; cursor: pointer;">
+              I agree to the Terms of Service and Privacy Policy. I consent to be contacted by Freeley regarding my
+              treatment match and health profile via email and SMS.
+            </label>
+          </div>
+
+          <div class="quiz-nav">
+            <button class="quiz-back" onclick="nextStep(5)"><svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M13 8H3M7 12l-4-4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg> Back</button>
+            <button class="quiz-next" onclick="showResults()" style="width: 100%; justify-content: center; padding: 18px;">View My Matches & Pricing ✦</button>
+          </div>
+        </div>
+
+      </div><!-- end quiz-steps -->
+
+      <!-- RESULTS -->
+      <div class="results-screen" id="results-screen">
+
+        <!-- Gamified Discount Countdown Banner -->
+        <div style="background: var(--green-dark); color: #fff; border-radius: 16px; padding: 24px; text-align: center; margin-bottom: 40px; border: 2px solid var(--green); position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(61, 140, 94, 0.2);">
+          <div style="font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--green-light); margin-bottom: 8px;">Limited Time Offer Unlocked</div>
+          <h3 style="font-family: 'Cormorant Garamond', serif; font-size: clamp(24px, 3vw, 32px); font-weight: 400; margin-bottom: 12px; line-height: 1.2;">Free Physician Consultation & Fast-Track Shipping</h3>
+          <p style="font-size: 15px; color: rgba(255,255,255,0.8); margin-bottom: 24px; max-width: 600px; margin-left: auto; margin-right: auto;">Complete your checkout now to waive the $150 medical consultation fee and instantly unlock bonus access to our personalized diet portal.</p>
+          
+          <div style="display: inline-flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.3); padding: 12px 24px; border-radius: 50px;">
+            <i class="ri-timer-flash-fill" style="color: #ecc94b; font-size: 20px;"></i>
+            <span style="font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;">Offer expires in:</span>
+            <span id="checkout-countdown" style="font-family: 'DM Sans', sans-serif; font-size: 20px; font-weight: 700; color: #fff; letter-spacing: 1px;">10:00</span>
+          </div>
+        </div>
+
+        <div class="results-header">
+          <div class="results-badge">✦ Analysis Complete</div>
+          <div class="results-title">Your personalized<br><em>treatment plan</em></div>
+          <p class="results-sub">Based on your responses, our system has identified the best matches for you. A licensed
+            physician will review and approve your plan within 24 hours.</p>
+        </div>
+        <div class="results-plans">
+          <div class="plan-card" id="plan-wl">
+            <div class="plan-recommended-tag">Best Match</div>
+            <span class="plan-icon"><i class="ri-scales-3-fill"></i></span>
+            <div class="plan-name">GLP-1 Weight Loss</div>
+            <div class="plan-desc">Semaglutide compounded with B12. Ideal for metabolic support and sustained weight
+              loss.</div>
+            <div class="plan-price">$134<span style="font-size:18px;color:var(--text-muted)">/mo</span></div>
+            <div class="plan-price-sub">All dosages · same price</div>
+            <ul class="plan-features">
+              <li>Physician-supervised titration</li>
+              <li>Free monthly check-ins</li>
+              <li>Nutrition coaching</li>
+              <li>Discreet doorstep delivery</li>
+            </ul>
+            <button class="plan-cta" onclick="window.location.href='/checkout?treatment=weight-loss'">Get Started</button>
+          </div>
+          <div class="plan-card" id="plan-ed">
+            <div class="plan-recommended-tag">Best Match</div>
+            <span class="plan-icon"><i class="ri-flashlight-fill"></i></span>
+            <div class="plan-name">Sexual Wellness</div>
+            <div class="plan-desc">3-in-1 ED sublingual troches. Sildenafil, Tadalafil, and Apomorphine compounded.
+            </div>
+            <div class="plan-price">$89<span style="font-size:18px;color:rgba(255,255,255,0.4)">/mo</span></div>
+            <div class="plan-price-sub">All medications included</div>
+            <ul class="plan-features">
+              <li>Free physician consultation</li>
+              <li>Fast-dissolving sublingual troche</li>
+              <li>Works in as little as 15 minutes</li>
+              <li>Cancel anytime</li>
+            </ul>
+            <button class="plan-cta" onclick="window.location.href='/checkout?treatment=ed'">Get Started</button>
+          </div>
+          <div class="plan-card" id="plan-long">
+            <div class="plan-recommended-tag">Best Match</div>
+            <span class="plan-icon"><i class="ri-node-tree"></i></span>
+            <div class="plan-name">Longevity Stack</div>
+            <div class="plan-desc">Sermorelin + NAD+. Targeted for energy, recovery, and anti-aging at the cellular
+              level.</div>
+            <div class="plan-price">$149<span style="font-size:18px;color:var(--text-muted)">/mo</span></div>
+            <div class="plan-price-sub">Custom stack</div>
+            <ul class="plan-features">
+              <li>Peptide protocol design</li>
+              <li>Biomarker tracking</li>
+              <li>Expert oversight</li>
+              <li>Quarterly lab review</li>
+            </ul>
+            <button class="plan-cta" onclick="window.location.href='/checkout?treatment=longevity'">Get Started</button>
+          </div>
+          <div class="plan-card" id="plan-hair">
+            <div class="plan-recommended-tag">Best Match</div>
+            <span class="plan-icon"><i class="ri-seedling-fill"></i></span>
+            <div class="plan-name">Hair Loss Treatments</div>
+            <div class="plan-desc">Finasteride, Minoxidil, or Dutasteride. Block DHT and stimulate regrowth effectively.</div>
+            <div class="plan-price">$49<span style="font-size:18px;color:var(--text-muted)">/mo</span></div>
+            <div class="plan-price-sub">Starting price</div>
+            <ul class="plan-features">
+              <li>FDA-registered ingredients</li>
+              <li>Customized protocol options</li>
+              <li>Unbranded discreet packaging</li>
+              <li>MD protocol adjustments</li>
+            </ul>
+            <button class="plan-cta" onclick="window.location.href='/checkout?treatment=hair-loss'">Get Started</button>
+          </div>
+        </div>
+        <div class="results-next-steps">
+          <div class="results-next-icon"><i class="ri-stethoscope-fill"></i></div>
+          <div class="results-next-text">
+            <h3>Ready to meet your physician?</h3>
+            <p>Create your free account to unlock your physician review. Takes 2 minutes — no credit card required.</p>
+          </div>
+          <a href="#" class="results-next-cta">Create Free Account →</a>
+        </div>
+      </div>
+
+    </div><!-- end quiz-main -->
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDsNMEVdt5pc67o5xBBEgPvyukoUVGYE88",
+      authDomain: "freeley-e7848.firebaseapp.com",
+      projectId: "freeley-e7848",
+      storageBucket: "freeley-e7848.firebasestorage.app",
+      messagingSenderId: "1073740993306",
+      appId: "1:1073740993306:web:caf7ff68bae0117c5b12a3",
+      measurementId: "G-YE9R925LJP"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getFirestore(app);
+
+    window.submitQuizToFirebase = async function (quizData) {
+      try {
+        const docRef = await addDoc(collection(db, "quiz_submissions"), {
+          ...quizData,
+          timestamp: serverTimestamp()
+        });
+        console.log("Document written with ID: ", docRef.id);
+      } catch (e) {
+        console.error("Error adding document: ", e);
+      }
+    };
+  </script>
+  <script src="shared.js"></script>
+  <script>
+    const TOTAL = 6;
+    let current = 1;
+
+    function updateProgress(step) {
+      const pct = step === 'results' ? 100 : Math.round(((step - 1) / TOTAL) * 100);
+      document.getElementById('progressFill').style.width = pct + '%';
+      document.getElementById('progressLabel').textContent = step === 'results' ? 'Complete!' : `Step ${step} of ${TOTAL}`;
+
+      // Sidebar progress
+      document.querySelectorAll('.progress-item').forEach(el => {
+        el.classList.remove('active', 'done');
+        const s = el.dataset.step;
+        if (s === 'results') {
+          if (step === 'results') el.classList.add('active');
+        } else {
+          const sNum = parseInt(s);
+          if (step === 'results') { el.classList.add('done'); }
+          else if (sNum < step) { el.classList.add('done'); }
+          else if (sNum === step) { el.classList.add('active'); }
+        }
+      });
+    }
+
+    function nextStep(n) {
+      // Hide current step
+      document.querySelectorAll('.quiz-step').forEach(s => s.classList.remove('active'));
+      const target = document.getElementById('step-' + n);
+      if (target) {
+        target.classList.add('active');
+        current = n;
+        updateProgress(n);
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showResults(isRestoring = false) {
+      let quizData;
+      if (isRestoring && sessionStorage.getItem('freeley_quiz_data')) {
+        quizData = JSON.parse(sessionStorage.getItem('freeley_quiz_data'));
+      } else {
+        quizData = {
+          goals: Array.from(document.querySelectorAll('#step-1 .option-card.selected .option-label')).map(el => el.textContent),
+          age: document.querySelectorAll('#step-2 input[type="number"]')[0]?.value || '',
+          sex: document.querySelectorAll('#step-2 select')[0]?.value || '',
+          height: `${document.querySelectorAll('#step-2 input[type="number"]')[1]?.value || 0}'${document.querySelectorAll('#step-2 input[type="number"]')[2]?.value || 0}"`,
+          weight: document.querySelectorAll('#step-2 input[type="number"]')[3]?.value || '',
+          state: document.querySelectorAll('#step-2 select')[1]?.value || '',
+          symptoms: Array.from(document.querySelectorAll('#step-3 .option-card.selected .option-label')).map(el => el.textContent),
+          medicalHistory: Array.from(document.querySelectorAll('#step-4 .option-card.selected .option-label')).map(el => el.textContent),
+          activityLevel: document.querySelector('#step-5 [data-group="activity"].selected .option-label')?.textContent || '',
+          formatPreference: Array.from(document.querySelectorAll('#step-5 .options-2 .option-card.selected .option-label')).map(el => el.textContent),
+          email: document.getElementById('contact-email')?.value || '',
+          phone: document.getElementById('contact-phone')?.value || '',
+          consent: document.getElementById('contact-consent')?.checked || false
+        };
+        sessionStorage.setItem('freeley_quiz_data', JSON.stringify(quizData));
+        history.pushState(null, '', '#results');
+      }
+
+      if (window.submitQuizToFirebase && !isRestoring) {
+        window.submitQuizToFirebase(quizData);
+      }
+
+      // Determine dynamic recommendations based on goals
+      const plans = {
+        'wl': document.getElementById('plan-wl'),
+        'ed': document.getElementById('plan-ed'),
+        'long': document.getElementById('plan-long'),
+        'hair': document.getElementById('plan-hair')
+      };
+      
+      // Reset all cards
+      Object.values(plans).forEach(p => p && p.classList.remove('recommended'));
+      
+      let recommendedCount = 0;
+      
+      if (quizData.goals.includes('Lose Weight') || quizData.goals.includes('Body Composition')) {
+        plans.wl && plans.wl.classList.add('recommended');
+        recommendedCount++;
+      }
+      if (quizData.goals.includes('Sexual Wellness & ED')) {
+        plans.ed && plans.ed.classList.add('recommended');
+        recommendedCount++;
+      }
+      if (quizData.goals.includes('Longevity & Performance') || quizData.goals.includes('Mental Clarity & Mood')) {
+        plans.long && plans.long.classList.add('recommended');
+        recommendedCount++;
+      }
+      if (quizData.goals.includes('Hair Loss')) {
+        plans.hair && plans.hair.classList.add('recommended');
+        recommendedCount++;
+      }
+      
+      // Fallback: If no recognized goals somehow, highlight them all
+      if (recommendedCount === 0) {
+        Object.values(plans).forEach(p => p && p.classList.add('recommended'));
+      }
+
+      document.querySelectorAll('.quiz-step').forEach(s => s.classList.remove('active'));
+      document.getElementById('results-screen').classList.add('active');
+      updateProgress('results');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      startCheckoutTimer();
+    }
+
+    function startCheckoutTimer() {
+      let timeLeft = 600; // 10 minutes
+      const display = document.getElementById('checkout-countdown');
+      if(!display) return;
+      
+      const timer = setInterval(() => {
+        timeLeft--;
+        let minutes = Math.floor(timeLeft / 60);
+        let seconds = timeLeft % 60;
+        
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        seconds = seconds < 10 ? '0' + seconds : seconds;
+        
+        display.textContent = minutes + ':' + seconds;
+        
+        if(timeLeft <= 0) {
+          clearInterval(timer);
+          display.textContent = '00:00';
+        }
+      }, 1000);
+    }
+
+    function toggleOption(el) {
+      el.classList.toggle('selected');
+    }
+
+    function selectSingle(el, group, autoNextStep = null) {
+      document.querySelectorAll(`[data-group="${group}"]`).forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      if (autoNextStep) {
+        setTimeout(() => nextStep(autoNextStep), 350);
+      }
+    }
+
+    // Range slider gradient update
+    document.querySelectorAll('input[type="range"]').forEach(slider => {
+      slider.addEventListener('input', function () {
+        const pct = (this.value - this.min) / (this.max - this.min) * 100;
+        this.style.background = `linear-gradient(to right, var(--green-light) 0%, var(--green-light) ${pct}%, rgba(0,0,0,0.12) ${pct}%, rgba(0,0,0,0.12) 100%)`;
+      });
+    });
+
+    // Handle back button returning from checkout
+    window.addEventListener('popstate', () => {
+      if (window.location.hash === '#results') {
+        showResults(true);
+      } else {
+        document.getElementById('results-screen').classList.remove('active');
+        document.querySelectorAll('.quiz-step').forEach(s => s.classList.remove('active'));
+        document.getElementById('step-5').classList.add('active'); // fallback to the review step
+        current = 5;
+        updateProgress(5);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    });
+
+    // Load results directly if entered via hash
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.location.hash === '#results') {
+        showResults(true);
+      }
+    });
+
+    updateProgress(1);
+    initPage('');
+  </script>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+</body>
+
+</html>

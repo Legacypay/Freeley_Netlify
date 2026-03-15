@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Freeley - Secure Checkout</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="shared.css">
+  
+  <style>
+    /* Checkout specific aesthetic */
+    :root {
+      --forest: #1a4a2e; /* Update to match var(--green) */
+      --cream: #faf8f4;
+      --gold: #c9a96e;
+      --gold-light: rgba(201, 169, 110, 0.15);
+      --forest-light: #e8f0eb; /* var(--green-pale) */
+      --white: #ffffff;
+      --charcoal: #1c1c1c;
+      --gray-light: #f8f5f0; /* var(--off-white) */
+      --border: rgba(0,0,0,0.08); /* Update to shared border opacity */
+      
+      --playfair: 'Cormorant Garamond', serif; /* Use main heading font */
+      --poppins: 'DM Sans', sans-serif; /* Use main body font */
+    }
+
+    body {
+      background-image: url("assets/brand/freeley_pattern_light.jpg"); background-size: cover; background-attachment: fixed; background-color: var(--cream);
+      font-family: var(--poppins);
+      color: var(--charcoal);
+      margin: 0;
+      padding: 0;
+    }
+
+    h1, h2, h3, h4, .price-display {
+      font-family: var(--playfair);
+      color: var(--forest);
+    }
+
+    /* Minimal Nav */
+    .checkout-nav {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .checkout-nav img {
+      height: 32px;
+    }
+
+    .step-indicator {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #999;
+    }
+
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .step.active {
+      color: var(--forest);
+      font-weight: 600;
+    }
+
+    .step-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+    }
+
+    .step.active .step-icon {
+      background: var(--forest);
+      color: var(--white);
+    }
+
+    .step i {
+      font-size: 14px;
+    }
+
+    /* Main Grid */
+    .checkout-container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 60px;
+      align-items: start;
+    }
+
+    @media (max-width: 991px) {
+      .checkout-container {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+    }
+
+    /* Left Column */
+    .page-title {
+      font-size: 38px;
+      font-weight: 700;
+      margin: 0 0 24px 0;
+      line-height: 1.2;
+    }
+
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+
+    .benefit-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .benefit-item i {
+      font-size: 20px;
+      color: var(--forest);
+    }
+
+    .section-label {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: var(--charcoal);
+    }
+
+    .trust-bubble {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
+      padding: 16px 20px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      margin-bottom: 32px;
+    }
+
+    .plan-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 48px;
+    }
+
+    .plan-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s ease;
+    }
+
+    .plan-card:hover {
+      border-color: var(--gold);
+    }
+
+    .plan-card.active {
+      background: linear-gradient(var(--gold-light), var(--gold-light)), rgba(255, 255, 255, 0.85);
+      border-color: var(--gold);
+      box-shadow: 0 4px 15px rgba(184, 155, 98, 0.1);
+    }
+
+    .plan-left {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .radio-circle {
+      width: 20px;
+      height: 20px;
+      border: 2px solid #ccc;
+      border-radius: 50%;
+      position: relative;
+    }
+
+    .plan-card.active .radio-circle {
+      border-color: var(--gold);
+    }
+
+    .plan-card.active .radio-circle::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 10px;
+      height: 10px;
+      background: var(--gold);
+      border-radius: 50%;
+    }
+
+    .plan-name {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .plan-desc {
+      font-size: 13px;
+      color: #777;
+    }
+
+    .plan-savings {
+      font-size: 13px;
+      color: var(--forest);
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+    .plan-right {
+      text-align: right;
+    }
+
+    .plan-price-large {
+      font-family: var(--playfair);
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--forest);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .plan-price-small {
+      font-size: 12px;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Payment Form */
+    .payment-box {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 30px;
+    }
+
+    .payment-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .payment-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .card-logos img {
+      height: 20px;
+      margin-left: 6px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-family: var(--poppins);
+      font-size: 14px;
+      box-sizing: border-box;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-control:focus {
+      border-color: var(--forest);
+    }
+
+    .form-row {
+      display: flex;
+      gap: 16px;
+    }
+
+    .form-row > div {
+      flex: 1;
+    }
+
+    /* Right Column - Summary */
+    .summary-card {
+      background: rgba(255, 255, 255, 0.85); /* Semi-transparent to let pattern through */
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 32px;
+      border: 1px solid var(--border);
+      position: sticky;
+      top: 100px;
+    }
+
+    .summary-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+
+    .line-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .line-item-left {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .product-img {
+      width: 50px;
+      height: 50px;
+      border-radius: 8px;
+      background: #f5f5f5;
+      object-fit: cover;
+    }
+
+    .icon-box {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: var(--forest-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--forest);
+      font-size: 18px;
+    }
+
+    .item-name {
+      font-weight: 600;
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+
+    .item-desc {
+      font-size: 12px;
+      color: #777;
+    }
+
+    .item-price {
+      font-family: var(--playfair);
+      font-weight: 700;
+      font-size: 18px;
+      text-align: right;
+      color: var(--forest);
+    }
+
+    .item-price-sub {
+      font-size: 11px;
+      color: #999;
+    }
+
+    .disclaimer {
+      font-size: 10.5px;
+      color: #888;
+      line-height: 1.5;
+      margin: 24px 0;
+    }
+
+    .disclaimer a {
+      color: var(--forest);
+      text-decoration: underline;
+    }
+
+    .promo-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .promo-row input {
+      flex: 1;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-family: var(--poppins);
+      font-size: 14px;
+    }
+
+    .promo-row button {
+      background: var(--white);
+      border: 1px solid var(--forest);
+      color: var(--forest);
+      font-weight: 600;
+      padding: 0 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: var(--poppins);
+      transition: all 0.2s;
+    }
+
+    .promo-row button:hover {
+      background: var(--forest-light);
+    }
+
+    .totals {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 24px;
+      font-size: 14px;
+    }
+    
+    .totals-row {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .grand-total {
+      font-size: 20px;
+      font-weight: 700;
+      font-family: var(--playfair);
+      color: var(--forest);
+      padding-top: 16px;
+      border-top: 1px solid var(--charcoal);
+    }
+
+    .btn-checkout {
+      display: block;
+      width: 100%;
+      padding: 20px;
+      background: var(--gold);
+      color: var(--white);
+      border: none;
+      border-radius: 12px;
+      font-family: var(--poppins);
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 15px rgba(184, 155, 98, 0.3);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .btn-checkout:hover {
+      background: #a38855;
+      transform: translateY(-2px);
+    }
+
+    .fsa-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 16px;
+      font-size: 12px;
+      color: #666;
+    }
+    .fsa-badge img {
+      height: 20px;
+      opacity: 0.8;
+    }
+
+    /* Hide un-selected items via compound selector logic */
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Minimal Nav -->
+  <nav class="checkout-nav">
+    <a href="/"><img src="/assets/freeley_wordmark_dark.png" alt="Freeley" onerror="this.src='/assets/freeley_logo_primary.png'"></a>
+    <div class="step-indicator">
+      <div class="step"><div class="step-icon"><i class="ri-check-line"></i></div> Assessment</div>
+      <i class="ri-arrow-right-s-line" style="color: #ccc;"></i>
+      <div class="step"><div class="step-icon"><i class="ri-check-line"></i></div> Doctor Review</div>
+      <i class="ri-arrow-right-s-line" style="color: #ccc;"></i>
+      <div class="step active"><div class="step-icon">3</div> Checkout</div>
+    </div>
+  </nav>
+
+  <!-- Checkout Content -->
+  <div class="checkout-container">
+    
+    <!-- Left Column -->
+    <div>
+      <h1 class="page-title">Review & Checkout</h1>
+      
+      <div class="benefits-grid">
+        <div class="benefit-item"><i class="ri-money-dollar-circle-line"></i> All Dosages Same Price</div>
+        <div class="benefit-item"><i class="ri-medicine-bottle-line"></i> Everything Included</div>
+        <div class="benefit-item"><i class="ri-shield-check-line"></i> No Price Increases</div>
+        <div class="benefit-item"><i class="ri-user-heart-line"></i> No Membership Fees</div>
+      </div>
+
+      <div id="compoundSelector" style="display: none; margin-bottom: 32px; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); padding: 24px; border-radius: 16px; border: 1px solid var(--border);">
+        <div class="section-label" style="margin-top: 0; margin-bottom: 16px;">Select your GLP-1 Medication:</div>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+          <button id="cmp-sema" onclick="setCheckoutCompound('sema')" style="flex:1; padding: 16px; border-radius: 12px; border: 2px solid var(--forest); background: rgba(27, 73, 45, 0.05); color: var(--forest); font-family:var(--poppins); font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s;">Semaglutide</button>
+          <button id="cmp-tirz" onclick="setCheckoutCompound('tirz')" style="flex:1; padding: 16px; border-radius: 12px; border: 2px solid var(--border); background: rgba(255, 255, 255, 0.5); color: var(--text-muted); font-family:var(--poppins); font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s;">Tirzepatide</button>
+        </div>
+      </div>
+
+      <div class="section-label">Choose your payment plan:</div>
+      
+      <div class="plan-grid" id="planGrid">
+        <!-- Injected via JS based on selected treatment -->
+      </div>
+
+      <div class="section-label">Enter Payment Details</div>
+      
+      <div class="payment-box">
+        <div class="payment-header">
+          <div class="payment-title">Credit card</div>
+          <div class="card-logos">
+            <!-- Simulated card icons -->
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1200px-Mastercard-logo.svg.png" alt="Mastercard" style="object-fit: contain;">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/1000px-Visa_Inc._logo.svg.png" alt="Visa" style="object-fit: contain;">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/American_Express_logo_%282018%29.svg/1200px-American_Express_logo_%282018%29.svg.png" alt="Amex" style="object-fit: contain;">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="Card Number" value="4111 1111 1111 1111">
+        </div>
+        <div class="form-row">
+          <div>
+            <input type="text" class="form-control" placeholder="MM / YY" value="12 / 28">
+          </div>
+          <div>
+            <input type="text" class="form-control" placeholder="CVC" value="123">
+          </div>
+        </div>
+        <div class="form-group" style="margin-top: 16px;">
+          <input type="text" class="form-control" placeholder="Name on card" value="John Doe">
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column (Order Summary) -->
+    <div>
+      <div class="summary-card">
+        <div class="summary-title">Order summary</div>
+        
+        <!-- Treatment Line Item -->
+        <div class="line-item">
+          <div class="line-item-left">
+            <img src="assets/vial_demo.webp" id="checkout-img" class="product-img" alt="Medication" style="border: 1px solid var(--border);">
+            <div>
+              <div class="item-name" id="summary-treatment-name">Semaglutide</div>
+              <div class="item-desc" id="summary-treatment-desc">Compounded w/ B12 (Cyanocobalamin)</div>
+              <div class="item-desc" id="summary-timeline-desc" style="color: var(--forest); margin-top:2px;">6 month supply</div>
+            </div>
+          </div>
+          <div>
+            <div class="item-price" id="summary-total-price">$594.00</div>
+            <div class="item-price-sub" id="summary-sub-desc">Total for 6 months</div>
+          </div>
+        </div>
+
+        <!-- Consult Line Item -->
+        <div class="line-item">
+          <div class="line-item-left">
+            <div class="icon-box"><i class="ri-nurse-fill"></i></div>
+            <div>
+              <div class="item-name">Physician Consultation</div>
+              <div class="item-desc">Consult with Board-certified experts</div>
+            </div>
+          </div>
+          <div class="item-price" style="font-size: 15px; font-family:var(--poppins);">Included</div>
+        </div>
+
+        <!-- Plan Line Item -->
+        <div class="line-item">
+          <div class="line-item-left">
+            <div class="icon-box"><i class="ri-macbook-line"></i></div>
+            <div>
+              <div class="item-name" id="summary-plan-name">Personalized Weight Loss Plan</div>
+              <div class="item-desc">Tailored recommendations</div>
+            </div>
+          </div>
+          <div class="item-price" style="font-size: 15px; font-family:var(--poppins);">Included</div>
+        </div>
+
+        <div class="disclaimer">
+          *The clinician consultation fee is included in the program cost and is paid directly to our independent doctor network partners. This fee is processed regardless of whether you qualify for treatment or receive a prescription. If your consultation results in a denial, you will not be responsible for this payment. By completing this purchase you agree to the <a href="/terms">Terms of Service</a> and <a href="/privacy">Privacy Policy</a>.
+        </div>
+
+        <div class="promo-row">
+          <input type="text" placeholder="Promo Code">
+          <button type="button">APPLY</button>
+        </div>
+
+        <div class="totals">
+          <div class="totals-row">
+            <span>Shipping</span>
+            <span style="font-weight: 600; color: var(--forest);">FREE</span>
+          </div>
+          <div class="totals-row">
+            <span>Subtotal</span>
+            <span id="totals-subtotal">$594.00</span>
+          </div>
+          <div class="totals-row grand-total">
+            <span>Total</span>
+            <span id="totals-total">$594.00</span>
+          </div>
+        </div>
+
+        <button class="btn-checkout">Complete Order</button>
+        
+        <div class="fsa-badge">
+          Eligible for FSA / HSA <i class="ri-secure-payment-line" style="font-size: 18px; color: var(--forest);"></i>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Configuration for different treatments
+    const pricingData = {
+      'weight-loss': {
+        name: 'Semaglutide', // Default, can be overridden by compound
+        desc: 'Compounded w/ B12 (Cyanocobalamin)',
+        planName: 'Personalized Weight Loss Plan',
+        image: 'assets/brand/semag_transparent.png', // Premium sema vial
+        plans: [
+          { months: 1, base: 194.97, overridePrice: 194.97, recommended: false },
+          { months: 3, base: 194.97, overridePrice: 149.97, recommended: false },
+          { months: 6, base: 194.97, overridePrice: 124.97, recommended: true },
+          { months: 12, base: 194.97, overridePrice: 99.97, recommended: false }
+        ]
+      },
+      'ed': {
+        name: 'Sildenafil',
+        desc: 'Custom compounded daily treatment',
+        planName: 'Sexual Wellness Protocol',
+        image: 'assets/ed_pills_new.webp', 
+        plans: [
+          { months: 1, base: 89, overridePrice: 89, recommended: false },
+          { months: 3, base: 89, overridePrice: 79, recommended: false },
+          { months: 6, base: 89, overridePrice: 69, recommended: true },
+          { months: 12, base: 89, overridePrice: 59, recommended: false }
+        ]
+      },
+      'longevity': {
+        name: 'Longevity Stack',
+        desc: 'B12-MIC + Premium recovery peptides',
+        planName: 'Longevity Optimization Plan',
+        image: 'assets/b12_mic_new.webp',
+        plans: [
+          { months: 1, base: 149, overridePrice: 149, recommended: false },
+          { months: 3, base: 149, overridePrice: 129, recommended: false },
+          { months: 6, base: 149, overridePrice: 109, recommended: true },
+          { months: 12, base: 149, overridePrice: 99, recommended: false }
+        ]
+      }
+    };
+
+    // Parse URL Params
+    const urlParams = new URLSearchParams(window.location.search);
+    let treatmentType = urlParams.get('treatment') || 'weight-loss';
+    let compoundOverride = urlParams.get('compound');
+
+    // Default fallback if unknown
+    if (!pricingData[treatmentType]) {
+      treatmentType = 'weight-loss';
+    }
+
+    const currentConfig = pricingData[treatmentType];
+
+    function applyCompoundParams() {
+      if (treatmentType === 'weight-loss') {
+        document.getElementById('compoundSelector').style.display = 'block';
+        if (compoundOverride === 'tirzepatide' || compoundOverride === 'tirz') {
+          currentConfig.name = 'Tirzepatide';
+          currentConfig.desc = 'Compounded w/ B6 (Pyridoxine)';
+          currentConfig.image = 'assets/brand/tirzz_transparent.png'; // Premium tirz vial
+          document.getElementById('cmp-tirz').style.borderColor = 'var(--forest)';
+          document.getElementById('cmp-tirz').style.background = 'rgba(27, 73, 45, 0.05)';
+          document.getElementById('cmp-tirz').style.color = 'var(--forest)';
+          document.getElementById('cmp-tirz').style.fontWeight = '600';
+          
+          document.getElementById('cmp-sema').style.borderColor = 'var(--border)';
+          document.getElementById('cmp-sema').style.background = 'rgba(255, 255, 255, 0.5)';
+          document.getElementById('cmp-sema').style.color = 'var(--text-muted)';
+          document.getElementById('cmp-sema').style.fontWeight = '500';
+        } else {
+          currentConfig.name = 'Semaglutide';
+          currentConfig.desc = 'Compounded w/ B12 (Cyanocobalamin)';
+          currentConfig.image = 'assets/brand/semag_transparent.png'; // Premium sema vial
+          
+          document.getElementById('cmp-sema').style.borderColor = 'var(--forest)';
+          document.getElementById('cmp-sema').style.background = 'rgba(27, 73, 45, 0.05)';
+          document.getElementById('cmp-sema').style.color = 'var(--forest)';
+          document.getElementById('cmp-sema').style.fontWeight = '600';
+          
+          document.getElementById('cmp-tirz').style.borderColor = 'var(--border)';
+          document.getElementById('cmp-tirz').style.background = 'rgba(255, 255, 255, 0.5)';
+          document.getElementById('cmp-tirz').style.color = 'var(--text-muted)';
+          document.getElementById('cmp-tirz').style.fontWeight = '500';
+        }
+      }
+      
+      document.getElementById('summary-treatment-name').innerText = currentConfig.name;
+      document.getElementById('summary-treatment-desc').innerText = currentConfig.desc;
+      document.getElementById('summary-plan-name').innerText = currentConfig.planName;
+      document.getElementById('checkout-img').src = currentConfig.image;
+    }
+    
+    function setCheckoutCompound(type) {
+      compoundOverride = type;
+      applyCompoundParams();
+    }
+
+    applyCompoundParams();
+
+    let selectedPlanIndex = -1;
+
+    function renderPlans() {
+      const grid = document.getElementById('planGrid');
+      grid.innerHTML = '';
+
+      currentConfig.plans.forEach((plan, index) => {
+        // Find default
+        if (selectedPlanIndex === -1 && plan.recommended) {
+          selectedPlanIndex = index;
+        }
+
+        const isSelected = selectedPlanIndex === index;
+        const total = plan.overridePrice * plan.months;
+        const totalBase = plan.base * plan.months;
+        const savings = totalBase - total;
+
+        let timelineText = '';
+        let subtitleText = '';
+        if (plan.months === 1) {
+          timelineText = 'Pay Monthly';
+          subtitleText = 'Supply paid monthly with no interest.';
+        } else {
+          timelineText = `Pay For ${plan.months} Months`;
+          subtitleText = `$${total.toFixed(2)} Total for ${plan.months} Months`;
+        }
+
+        const savingsHtml = savings > 0 ? `<div class="plan-savings">$${savings.toFixed(0)} Total Savings</div>` : '';
+
+        const card = document.createElement('div');
+        card.className = `plan-card ${isSelected ? 'active' : ''}`;
+        card.onclick = () => selectPlan(index);
+
+        card.innerHTML = `
+          <div class="plan-left">
+            <div class="radio-circle"></div>
+            <div>
+              <div class="plan-name">${timelineText} ${plan.recommended ? '<span style="background:var(--forest); color:#fff; font-size:10px; padding:2px 6px; border-radius:4px; margin-left:6px; letter-spacing:0.5px; text-transform:uppercase;">Most Popular</span>' : ''}</div>
+              <div class="plan-desc">${subtitleText}</div>
+              ${savingsHtml}
+            </div>
+          </div>
+          <div class="plan-right">
+            <div class="plan-price-large">$${Math.floor(plan.overridePrice)}<sup>.${(plan.overridePrice % 1).toFixed(2).substring(2)}</sup></div>
+            <div class="plan-price-small">A Month</div>
+          </div>
+        `;
+        
+        grid.appendChild(card);
+      });
+
+      updateSummary();
+    }
+
+    function selectPlan(index) {
+      selectedPlanIndex = index;
+      renderPlans();
+    }
+
+    function updateSummary() {
+      const plan = currentConfig.plans[selectedPlanIndex];
+      const total = (plan.overridePrice * plan.months).toFixed(2);
+      
+      const timelineDesc = plan.months === 1 ? '1 month supply' : `${plan.months} month supply`;
+      
+      document.getElementById('summary-timeline-desc').innerText = timelineDesc;
+      document.getElementById('summary-total-price').innerText = `$${total}`;
+      document.getElementById('summary-sub-desc').innerText = `Total for ${plan.months} ${plan.months === 1 ? 'month' : 'months'}`;
+      
+      document.getElementById('totals-subtotal').innerText = `$${total}`;
+      document.getElementById('totals-total').innerText = `$${total}`;
+    }
+
+    // Initialize
+    renderPlans();
+  </script>
+</body>
+</html>

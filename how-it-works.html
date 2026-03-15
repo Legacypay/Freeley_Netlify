@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How It Works — Freeley</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+.hiw-hero {
+  padding: 140px 0 100px;
+  background-image: url("assets/brand/freeley_pattern_dark.jpg"); background-size: cover; background-position: center;
+  text-align: center; position: relative; overflow: hidden;
+}
+.hiw-hero::before {
+  content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  width: 800px; height: 800px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(61,140,94,0.1), transparent 60%);
+}
+.hiw-hero h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(44px, 6vw, 76px); font-weight: 300; color: #fff; margin-bottom: 16px; letter-spacing: -1px; position: relative; z-index: 2; }
+.hiw-hero h1 em { font-style: italic; color: #7dba96; }
+.hiw-hero p { color: rgba(255,255,255,0.5); font-size: 17px; max-width: 520px; margin: 0 auto 40px; font-weight: 300; line-height: 1.65; position: relative; z-index: 2; }
+
+/* Giant step timeline */
+.timeline-section { padding: 100px 0; background: var(--cream); }
+.timeline { position: relative; max-width: 860px; margin: 72px auto 0; }
+.timeline::before {
+  content: ''; position: absolute; left: 60px; top: 0; bottom: 0; width: 2px;
+  background: linear-gradient(to bottom, var(--green-light), rgba(61,140,94,0.1));
+}
+.timeline-item { display: flex; gap: 48px; margin-bottom: 64px; position: relative; }
+.timeline-item:last-child { margin-bottom: 0; }
+.timeline-left { flex-shrink: 0; width: 120px; display: flex; flex-direction: column; align-items: center; }
+.timeline-num {
+  width: 44px; height: 44px; border-radius: 50%; background: #fff;
+  border: 2px solid var(--green-light); display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; color: var(--green-light); flex-shrink: 0;
+  box-shadow: 0 0 0 6px rgba(61,140,94,0.08);
+}
+.timeline-time { font-size: 11px; color: var(--text-faint); margin-top: 10px; text-align: center; letter-spacing: 0.5px; }
+.timeline-content { flex: 1; background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 36px; padding-bottom: 32px; }
+.timeline-icon { font-size: 32px; margin-bottom: 14px; display: block; }
+.timeline-title { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+.timeline-desc { font-size: 14px; color: var(--text-muted); line-height: 1.7; font-weight: 300; }
+.timeline-detail {
+  margin-top: 20px; padding: 16px 20px; background: var(--green-mist); border-radius: 12px;
+  font-size: 13px; color: var(--green-mid); display: flex; gap: 10px; align-items: center;
+}
+.timeline-detail strong { font-weight: 600; }
+
+/* Platform features */
+.platform-section { padding: 100px 0; background-image: url("assets/brand/freeley_pattern_dark.jpg"); background-size: cover; background-position: center; color: white; }
+.features-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; margin-top: 56px; }
+.feature-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07); border-radius: 22px; padding: 36px 28px; transition: all 0.3s; }
+.feature-card:hover { background: rgba(255,255,255,0.07); border-color: rgba(61,140,94,0.3); }
+.feature-icon { font-size: 32px; margin-bottom: 16px; display: block; }
+.feature-title { font-size: 17px; font-weight: 600; color: #fff; margin-bottom: 10px; }
+.feature-desc { font-size: 14px; color: rgba(255,255,255,0.45); line-height: 1.7; font-weight: 300; }
+
+/* Pharmacy section */
+.pharmacy-section { padding: 100px 0; }
+.pharmacy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+.pharmacy-badges { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; }
+.pharmacy-badge {
+  background: var(--green-mist); border: 1px solid rgba(61,140,94,0.2);
+  border-radius: 12px; padding: 14px 20px;
+  display: flex; align-items: center; gap: 10px;
+}
+.pb-icon { font-size: 20px; }
+.pb-label { font-size: 13px; font-weight: 500; color: var(--green-mid); }
+.pharmacy-visual {
+  background-image: url("assets/brand/freeley_pattern_dark.jpg"); background-size: cover; background-position: center;
+  border-radius: 28px; padding: 52px 44px; position: relative; overflow: hidden;
+}
+.pharmacy-visual::before {
+  content: ''; position: absolute; top: -80px; right: -80px; width: 280px; height: 280px;
+  border-radius: 50%; background: radial-gradient(circle, rgba(61,140,94,0.2), transparent);
+}
+.pv-title { font-family: 'Cormorant Garamond', serif; font-size: 32px; color: #fff; font-weight: 300; margin-bottom: 28px; position: relative; z-index: 2; }
+.pv-title em { font-style: italic; color: #7dba96; }
+.pv-specs { display: flex; flex-direction: column; gap: 0; position: relative; z-index: 2; }
+.pv-spec { display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.07); }
+.pv-spec:last-child { border-bottom: none; }
+.pv-spec-label { font-size: 13px; color: rgba(255,255,255,0.45); }
+.pv-spec-val { font-size: 13px; color: #7dba96; font-weight: 500; }
+
+/* Safety section */
+.safety-section { padding: 100px 0; background: var(--off-white); }
+.safety-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 24px; margin-top: 56px; }
+.safety-card { background: #fff; border: 1px solid var(--border); border-radius: 22px; padding: 36px; }
+.safety-icon { font-size: 36px; margin-bottom: 16px; display: block; }
+.safety-title { font-size: 18px; font-weight: 600; margin-bottom: 10px; }
+.safety-desc { font-size: 14px; color: var(--text-muted); line-height: 1.7; font-weight: 300; }
+
+.hiw-cta { background-image: url("assets/brand/freeley_pattern_dark.jpg"); background-size: cover; background-position: center; padding: 100px 0; text-align: center; }
+.hiw-cta h2 { font-family: 'Cormorant Garamond', serif; font-size: clamp(38px,5vw,64px); font-weight: 300; color: #fff; margin-bottom: 16px; }
+.hiw-cta h2 em { font-style: italic; color: #7dba96; }
+.hiw-cta p { color: rgba(255,255,255,0.5); font-size: 16px; margin-bottom: 40px; }
+
+@media(max-width:1024px){
+  .pharmacy-grid{grid-template-columns:1fr;}
+  .features-grid{grid-template-columns:1fr 1fr;}
+  .safety-grid{grid-template-columns:1fr;}
+}
+@media(max-width:768px){
+  .timeline::before{left:20px;}
+  .timeline-left{width:44px;}
+  .timeline-time{display:none;}
+  .timeline-item{gap:24px;}
+  .features-grid{grid-template-columns:1fr;}
+}
+</style>
+<link rel="icon" type="image/png" href="favicon.png">
+</head>
+<body>
+
+
+<!-- HERO -->
+<section class="hiw-hero">
+  <div class="reveal">
+    <span class="eyebrow" style="color:#7dba96">How It Works</span>
+    <h1>From your couch<br>to your <em>doorstep</em></h1>
+    <p>The entire Freeley experience — from your first visit to your first refill — is designed to be effortless, fast, and fully remote.</p>
+    <a href="quiz.html" class="btn btn-primary">Start My Free Visit →</a>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section class="timeline-section">
+  <div class="container">
+    <div class="reveal" style="text-align:center;">
+      <span class="eyebrow">The Journey</span>
+      <h2 class="display" style="font-size:clamp(34px,4.5vw,52px);">Everything in<br><em>one seamless flow</em></h2>
+    </div>
+    <div class="timeline">
+
+      <div class="timeline-item reveal">
+        <div class="timeline-left">
+          <div class="timeline-num">1</div>
+          <div class="timeline-time">~5 min</div>
+        </div>
+        <div class="timeline-content">
+          <span class="timeline-icon"><i class="ri-clipboard-line"></i></span>
+          <div class="timeline-title">Complete Your Health Intake</div>
+          <div class="timeline-desc">Answer a brief, HIPAA-secure health questionnaire on any device. We ask about your goals, symptoms, medical history, current medications, and lifestyle preferences. No appointment. No waiting room.</div>
+          <div class="timeline-detail"><i data-lucide="lightbulb"></i> <strong>Tip:</strong> Have your current medication list handy if applicable — it speeds up physician review.</div>
+        </div>
+      </div>
+
+      <div class="timeline-item reveal">
+        <div class="timeline-left">
+          <div class="timeline-num">2</div>
+          <div class="timeline-time">~24 hrs</div>
+        </div>
+        <div class="timeline-content">
+          <span class="timeline-icon"><i class="ri-stethoscope-fill"></i></span>
+          <div class="timeline-title">Physician Reviews Your Profile</div>
+          <div class="timeline-desc">A board-certified physician licensed in your state reviews your intake, evaluates your eligibility, and designs your personalized treatment protocol. They may request additional information or labs before finalizing your plan.</div>
+          <div class="timeline-detail"><i class="ri-stethoscope-fill"></i> <strong>Note:</strong> All decisions are made by licensed physicians — never an algorithm or AI replacement.</div>
+        </div>
+      </div>
+
+      <div class="timeline-item reveal">
+        <div class="timeline-left">
+          <div class="timeline-num">3</div>
+          <div class="timeline-time">Same day</div>
+        </div>
+        <div class="timeline-content">
+          <span class="timeline-icon"><i data-lucide="smartphone"></i></span>
+          <div class="timeline-title">You Receive Your Treatment Plan</div>
+          <div class="timeline-desc">Once approved, your physician's treatment plan is sent to your Freeley account. This includes your diagnosis, prescribed medication, dosage, titration schedule, and care instructions. You can message your physician with any questions before agreeing.</div>
+          <div class="timeline-detail"><i data-lucide="check-circle"></i> <strong>Your plan includes:</strong> Medication name, dose, delivery format, titration schedule, and refill cadence.</div>
+        </div>
+      </div>
+
+      <div class="timeline-item reveal">
+        <div class="timeline-left">
+          <div class="timeline-num">4</div>
+          <div class="timeline-time">1–3 days</div>
+        </div>
+        <div class="timeline-content">
+          <span class="timeline-icon"><i class="ri-microscope-fill"></i></span>
+          <div class="timeline-title">Pharmacy Compounds Your Medication</div>
+          <div class="timeline-desc">Your prescription is routed to one of our 503A-licensed compounding pharmacy partners. Your medication is compounded fresh from pharmaceutical-grade ingredients to exact specifications. Quality tested and verified before shipment.</div>
+          <div class="timeline-detail"><i class="ri-flask-fill"></i> <strong>Quality standard:</strong> USP 797 compliant. Tested for potency, sterility, and purity.</div>
+        </div>
+      </div>
+
+      <div class="timeline-item reveal">
+        <div class="timeline-left">
+          <div class="timeline-num">5</div>
+          <div class="timeline-time">2–5 days</div>
+        </div>
+        <div class="timeline-content">
+          <span class="timeline-icon"><i class="ri-box-3-fill"></i></span>
+          <div class="timeline-title">Delivered to Your Door</div>
+          <div class="timeline-desc">Your medication ships in discreet, climate-controlled packaging with detailed instructions, supplies (if applicable), and your physician's contact for follow-up. Track your shipment in real time through your Freeley account.</div>
+          <div class="timeline-detail"><i data-lucide="mail"></i> <strong>Packaging:</strong> Unmarked exterior. No indication of pharmaceutical contents on outside of package.</div>
+        </div>
+      </div>
+
+      <div class="timeline-item reveal">
+        <div class="timeline-left">
+          <div class="timeline-num">6</div>
+          <div class="timeline-time">Ongoing</div>
+        </div>
+        <div class="timeline-content">
+          <span class="timeline-icon"><i data-lucide="refresh-cw"></i></span>
+          <div class="timeline-title">Ongoing Care & Automatic Refills</div>
+          <div class="timeline-desc">Your physician monitors your progress, adjusts your dosage as needed, and refills automatically so you never run out. Monthly check-ins keep your treatment optimized. Quarterly labs ensure you're always in a safe and effective range.</div>
+          <div class="timeline-detail"><i data-lucide="bar-chart-2"></i> <strong>Included:</strong> Monthly check-in, dosage adjustments, lab monitoring, and unlimited physician messaging.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PLATFORM FEATURES -->
+<section class="platform-section">
+  <div class="container">
+    <div class="reveal">
+      <span class="eyebrow" style="color:#7dba96">The Platform</span>
+      <h2 class="display display-white" style="font-size:clamp(34px,4.5vw,52px);color:#fff;">Everything managed<br><em>in one place</em></h2>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card reveal reveal-delay-1">
+        <span class="feature-icon"><i data-lucide="message-circle"></i></span>
+        <div class="feature-title">Physician Messaging</div>
+        <div class="feature-desc">Direct, asynchronous messaging with your physician. Ask questions, report side effects, or request dosage adjustments — without scheduling a call.</div>
+      </div>
+      <div class="feature-card reveal reveal-delay-2">
+        <span class="feature-icon"><i data-lucide="bar-chart-2"></i></span>
+        <div class="feature-title">Progress Dashboard</div>
+        <div class="feature-desc">Track your weight, lab values, and treatment history over time. Visual charts make it easy to see your progress and share with your physician.</div>
+      </div>
+      <div class="feature-card reveal reveal-delay-3">
+        <span class="feature-icon"><i data-lucide="bell"></i></span>
+        <div class="feature-title">Smart Reminders</div>
+        <div class="feature-desc">Dosing reminders, refill notifications, and lab scheduling alerts — all configurable to your preferences. Never miss a dose or a check-in.</div>
+      </div>
+      <div class="feature-card reveal reveal-delay-4">
+        <span class="feature-icon"><i class="ri-clipboard-line"></i></span>
+        <div class="feature-title">Document Vault</div>
+        <div class="feature-desc">All your prescriptions, lab results, and physician notes are securely stored and accessible anytime. Export and share with your PCP as needed.</div>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-icon"><i class="ri-bank-card-fill"></i></span>
+        <div class="feature-title">FSA / HSA Payments</div>
+        <div class="feature-desc">Your FSA and HSA cards are accepted at checkout. Receipts are automatically formatted for reimbursement claims if needed.</div>
+      </div>
+      <div class="feature-card reveal reveal-delay-1">
+        <span class="feature-icon"><i data-lucide="truck"></i></span>
+        <div class="feature-title">Shipment Tracking</div>
+        <div class="feature-desc">Real-time tracking from pharmacy to doorstep. Temperature monitoring ensures your medication arrives in perfect condition.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHARMACY STANDARDS -->
+<section class="pharmacy-section">
+  <div class="container">
+    <div class="pharmacy-grid">
+      <div class="reveal">
+        <span class="eyebrow">Pharmacy Standards</span>
+        <h2 class="display" style="font-size:clamp(34px,4.5vw,52px);margin-bottom:16px;">Only the best<br><em>pharmacy partners</em></h2>
+        <p style="color:var(--text-muted);font-size:15px;line-height:1.7;font-weight:300;max-width:460px;">We only partner with 503A-licensed compounding pharmacies that meet the highest standards of quality, safety, and compliance.</p>
+        <div class="pharmacy-badges">
+          <div class="pharmacy-badge"><span class="pb-icon"><i data-lucide="check-circle"></i></span><span class="pb-label">503A Licensed</span></div>
+          <div class="pharmacy-badge"><span class="pb-icon"><i class="ri-microscope-fill"></i></span><span class="pb-label">USP 797 Compliant</span></div>
+          <div class="pharmacy-badge"><span class="pb-icon"><i class="ri-hospital-fill"></i></span><span class="pb-label">State Board Approved</span></div>
+          <div class="pharmacy-badge"><span class="pb-icon"><i data-lucide="test-tube"></i></span><span class="pb-label">Third-Party Tested</span></div>
+          <div class="pharmacy-badge"><span class="pb-icon"><i class="ri-clipboard-line"></i></span><span class="pb-label">PCAB Accredited</span></div>
+          <div class="pharmacy-badge"><span class="pb-icon"><i class="ri-temp-hot-fill"></i></span><span class="pb-label">Cold Chain Verified</span></div>
+        </div>
+      </div>
+      <div class="reveal">
+        <div class="pharmacy-visual">
+          <div class="pv-title">Medication <em>specifications</em></div>
+          <div class="pv-specs">
+            <div class="pv-spec"><span class="pv-spec-label">Active Ingredient</span><span class="pv-spec-val">Pharmaceutical-grade USP</span></div>
+            <div class="pv-spec"><span class="pv-spec-label">Potency Testing</span><span class="pv-spec-val">98–102% verified</span></div>
+            <div class="pv-spec"><span class="pv-spec-label">Sterility Testing</span><span class="pv-spec-val">Passed before shipment</span></div>
+            <div class="pv-spec"><span class="pv-spec-label">Endotoxin Testing</span><span class="pv-spec-val">USP threshold compliant</span></div>
+            <div class="pv-spec"><span class="pv-spec-label">Storage temp</span><span class="pv-spec-val">2–8°C cold chain</span></div>
+            <div class="pv-spec"><span class="pv-spec-label">Expiry</span><span class="pv-spec-val">Per batch CoA documentation</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SAFETY -->
+<section class="safety-section">
+  <div class="container">
+    <div class="reveal" style="text-align:center;">
+      <span class="eyebrow">Safety First</span>
+      <h2 class="display" style="font-size:clamp(34px,4.5vw,52px);">Your safety is<br><em>non-negotiable</em></h2>
+    </div>
+    <div class="safety-grid">
+      <div class="safety-card reveal reveal-delay-1">
+        <span class="safety-icon"><i class="ri-stethoscope-fill"></i></span>
+        <div class="safety-title">Physician Gating</div>
+        <div class="safety-desc">No medication ships without an active prescription from a licensed physician. Eligibility is determined by clinical criteria, not self-selection. If a treatment isn't right for you, your physician will explain why.</div>
+      </div>
+      <div class="safety-card reveal reveal-delay-2">
+        <span class="safety-icon"><i class="ri-lock-fill"></i></span>
+        <div class="safety-title">HIPAA-Compliant Infrastructure</div>
+        <div class="safety-desc">All data is encrypted at rest and in transit. Our platform is HIPAA-compliant and our technology partners undergo annual security audits. Your health data is never sold or shared with third parties.</div>
+      </div>
+      <div class="safety-card reveal reveal-delay-3">
+        <span class="safety-icon"><i data-lucide="alert-triangle"></i></span>
+        <div class="safety-title">Adverse Event Monitoring</div>
+        <div class="safety-desc">Patients are monitored for adverse events throughout their treatment. Your physician is notified immediately of any reported side effects and can adjust or discontinue treatment at any time.</div>
+      </div>
+      <div class="safety-card reveal reveal-delay-4">
+        <span class="safety-icon"><i data-lucide="phone"></i></span>
+        <div class="safety-title">Emergency Escalation</div>
+        <div class="safety-desc">If you experience a serious adverse event, our clinical team has a 24-hour escalation protocol and will coordinate referral to emergency care when appropriate. You are never alone in your treatment journey.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="hiw-cta">
+  <div class="container">
+    <div class="reveal">
+      <h2>Ready to get <em>started?</em></h2>
+      <p>Free consultation · No commitment · Results in days, not months</p>
+      <a href="quiz.html" class="btn btn-primary btn-lg">Start My Free Visit →</a>
+    </div>
+  </div>
+</section>
+
+<script src="shared.js"></script>
+<script>initPage('how');</script>
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+</body>
+</html>

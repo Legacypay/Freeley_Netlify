@@ -1,0 +1,18 @@
+[build]
+  command = "npm install && node build_blog.js"
+  publish = "."
+
+# ── Cache-Control Headers ──────────────────────────────────
+# Ensures browsers always revalidate with Netlify instead of
+# serving stale cached content after deployments.
+
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"

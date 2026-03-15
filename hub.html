@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Freeley Health Hub — Patient Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap"
+    rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    /* Add base page structure adjustments for fixed header layout if needed */
+    body {
+      background: var(--off-white);
+      color: var(--text);
+    }
+
+    /* AUTH SCREEN */
+    #auth-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--forest);
+      background-image: url("assets/brand/freeley_pattern_dark.jpg");
+      background-size: cover;
+      background-position: center;
+      padding: 20px;
+    }
+
+    .auth-card {
+      background: #fff;
+      width: 100%;
+      max-width: 440px;
+      border-radius: 24px;
+      padding: 48px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+
+    .auth-logo {
+      height: 72px;
+      margin-bottom: 24px;
+    }
+
+    .auth-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px;
+      color: var(--charcoal);
+      margin-bottom: 8px;
+    }
+
+    .auth-subtitle {
+      font-size: 15px;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+    }
+
+    .auth-input {
+      width: 100%;
+      padding: 16px 20px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      margin-bottom: 16px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .auth-input:focus {
+      border-color: var(--green);
+    }
+
+    .auth-btn {
+      width: 100%;
+      padding: 16px;
+      background: var(--green);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-bottom: 24px;
+    }
+    .auth-btn:hover {
+      background: var(--forest);
+    }
+
+    .auth-links {
+      font-size: 13px;
+      color: var(--text-faint);
+    }
+    .auth-links a {
+      color: var(--green);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    /* DASHBOARD SCREEN */
+    #dashboard-screen {
+      display: none;
+      padding-top: 100px;
+      min-height: calc(100vh - 80px); /* nav offset */
+    }
+
+    .dash-header {
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      padding: 40px 0;
+      margin-bottom: 40px;
+    }
+
+    .dash-title-wrap {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .dash-welcome {
+      font-size: 14px;
+      color: var(--text-faint);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .dash-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 42px;
+      color: var(--charcoal);
+      line-height: 1;
+    }
+
+    .profile-pill {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--off-white);
+      padding: 8px 16px 8px 8px;
+      border-radius: 50px;
+      border: 1px solid var(--border);
+    }
+
+    .profile-avatar {
+      width: 36px;
+      height: 36px;
+      background: var(--green-mist);
+      color: var(--green);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    /* Dashboard Grid Layout */
+    .dash-grid {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 40px;
+      margin-bottom: 80px;
+    }
+
+    /* Sidebar Navigation */
+    .dash-nav {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      position: sticky;
+      top: 100px;
+    }
+
+    .dash-nav-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 24px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 15px;
+      border-bottom: 1px solid var(--border-light);
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    
+    .dash-nav-link:last-child {
+      border-bottom: none;
+    }
+
+    .dash-nav-link:hover {
+      background: var(--off-white);
+      color: var(--text);
+    }
+
+    .dash-nav-link.active {
+      background: var(--green-mist);
+      color: var(--green);
+      font-weight: 600;
+      border-left: 4px solid var(--green);
+    }
+
+    /* Dashboard Panels */
+    .dash-panel {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+    .dash-panel.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .panel-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px;
+      margin-bottom: 24px;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .panel-header h3 {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 20px;
+      color: var(--charcoal);
+      margin: 0;
+    }
+
+    /* Orders / Subscriptions */
+    .req-btn {
+      padding: 8px 16px;
+      background: var(--green-light);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .req-btn:hover { background: var(--green); }
+
+    .req-btn-outline {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .req-btn-outline:hover {
+      background: var(--off-white);
+      color: var(--text);
+    }
+
+    .sub-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 16px;
+      background: var(--off-white);
+    }
+
+    .sub-info {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .sub-img {
+      width: 72px;
+      height: 72px;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid var(--border);
+      padding: 8px;
+      object-fit: contain;
+    }
+
+    .sub-name {
+      font-size: 18px;
+      color: var(--charcoal);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .sub-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .sub-status {
+      display: inline-block;
+      padding: 4px 10px;
+      background: #e8f5e9;
+      color: #2e7d32;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 8px;
+    }
+
+    /* Dr Notes / Messages */
+    .doc-msg {
+      padding: 24px;
+      border-radius: 12px;
+      background: var(--off-white);
+      margin-bottom: 16px;
+      border-left: 4px solid var(--green);
+    }
+
+    .doc-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .doc-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .doc-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    
+    .doc-date {
+      font-size: 12px;
+      color: var(--text-faint);
+    }
+
+    .doc-body {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .file-attachment {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--text-muted);
+      text-decoration: none;
+      margin-top: 16px;
+      transition: all 0.2s;
+    }
+    .file-attachment:hover {
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    @media (max-width: 900px) {
+      .dash-grid {
+        grid-template-columns: 1fr;
+      }
+      .dash-nav {
+        position: static;
+        display: flex;
+        overflow-x: auto;
+        white-space: nowrap;
+        border-radius: 8px;
+        -webkit-overflow-scrolling: touch;
+      }
+      .dash-nav-link {
+        border-bottom: none;
+        border-right: 1px solid var(--border-light);
+      }
+      .dash-nav-link.active {
+        border-left: none;
+        border-bottom: 3px solid var(--green);
+      }
+      .sub-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+      }
+      .dash-title-wrap {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Auth Screen (Visible by default) -->
+  <div id="auth-screen">
+    <div class="auth-card">
+      <img src="assets/brand/freeley_icon_forest.png" alt="Freeley" class="auth-logo">
+      <h1 class="auth-title">Welcome back.</h1>
+      <p class="auth-subtitle">Sign in to the Freeley Health Hub to view your medical records, active treatments, and messages.</p>
+      
+      <form onsubmit="handleLogin(event)">
+        <input type="email" class="auth-input" placeholder="Email address" id="loginEmail" required>
+        <input type="password" class="auth-input" placeholder="Password" required>
+        <button type="submit" class="auth-btn">Sign In to Hub</button>
+      </form>
+
+      <div class="auth-links">
+        Forgot password? <a href="#">Reset it here</a><br><br>
+        Don't have an account? <a href="quiz.html">Start a Free Visit</a>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Dashboard Screen (Hidden until mocked login) -->
+  <div id="dashboard-screen">
+    
+    <div class="dash-header">
+      <div class="container dash-title-wrap">
+        <div>
+          <div class="dash-welcome">Freeley Health Hub</div>
+          <div class="dash-title">Hello, <span id="dashUserName">Patient</span></div>
+        </div>
+        <div class="profile-pill">
+          <div class="profile-avatar" id="dashUserInitial">P</div>
+          <div style="font-size: 14px; font-weight: 500; color: var(--charcoal);">
+            <div id="dashUserEmail">user@example.com</div>
+            <div style="font-size: 11px; color: var(--text-faint); margin-top:2px; font-weight:400;">Patient ID: #FL-88291</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="dash-grid">
+        
+        <!-- Sidebar Navigation -->
+        <div class="dash-nav">
+          <div class="dash-nav-link active" onclick="switchPanel('overview')">
+            <i class="ri-dashboard-line"></i> Hub Overview
+          </div>
+          <div class="dash-nav-link" onclick="switchPanel('treatments')">
+            <i class="ri-medicine-bottle-line"></i> Active Treatments & Refills
+          </div>
+          <div class="dash-nav-link" onclick="switchPanel('records')">
+            <i class="ri-folder-open-line"></i> Medical Records & Notes
+          </div>
+          <div class="dash-nav-link" onclick="switchPanel('billing')">
+            <i class="ri-bank-card-line"></i> Billing & Receipts
+          </div>
+          <div class="dash-nav-link" onclick="logout()" style="color: #d32f2f;">
+            <i class="ri-logout-box-r-line"></i> Sign Out
+          </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div>
+          
+          <!-- OVERVIEW MOCK -->
+          <div id="panel-overview" class="dash-panel active">
+            <div class="panel-card">
+              <div class="panel-header">
+                <h3>Current Treatment Plan</h3>
+                <span class="sub-status">Active</span>
+              </div>
+              <div class="sub-info" style="margin-bottom: 24px;">
+                <img src="assets/media__1773444504280.png" alt="Tirzepatide" class="sub-img">
+                <div>
+                  <div class="sub-name">Tirzepatide + B6 Compound</div>
+                  <div class="sub-desc">10mg weekly injection. 3-month supply.</div>
+                  <div style="font-size:12px; font-weight:500; color:var(--text); margin-top:8px;">Next shipment processing: Sept 14, 2026</div>
+                </div>
+              </div>
+              <div style="display:flex; gap:12px;">
+                <button class="req-btn"><i class="ri-focus-3-line"></i> Request Refill / Dosage Change</button>
+                <button class="req-btn req-btn-outline"><i class="ri-customer-service-2-line"></i> Message Care Team</button>
+              </div>
+            </div>
+
+            <div class="panel-card">
+              <div class="panel-header">
+                <h3>Latest Provider Message</h3>
+              </div>
+              <div class="doc-msg" style="margin:0;">
+                <div class="doc-meta">
+                  <img src="assets/sarah.webp" alt="Dr. Lewis" class="doc-avatar">
+                  <div>
+                    <div class="doc-name">Dr. Sarah Lewis, MD</div>
+                    <div class="doc-date">August 28, 2026 at 10:14 AM</div>
+                  </div>
+                </div>
+                <div class="doc-body">
+                  "Hi there! I've reviewed your latest check-in form. Since you are tolerating the 7.5mg dosage well with minimal side effects and your weight loss has momentarily plateaued, I have approved stepping you up to the 10mg dosage for your next refill. I've attached your updated prescription and protocol instructions below. Please reach out if you experience any unexpected nausea with the dose increase."
+                </div>
+                <a href="#" class="file-attachment"><i class="ri-file-pdf-line"></i> Titration_Protocol_10mg.pdf</a>
+              </div>
+            </div>
+          </div>
+
+
+          <!-- TREATMENTS MOCK -->
+          <div id="panel-treatments" class="dash-panel">
+            <div class="panel-card">
+              <div class="panel-header">
+                <h3>Active Subscriptions</h3>
+                <a href="quiz.html" class="req-btn"><i class="ri-add-line"></i> Start New Treatment</a>
+              </div>
+              
+              <div class="sub-item">
+                <div class="sub-info">
+                  <img src="assets/media__1773444504280.png" alt="Tirzepatide" class="sub-img">
+                  <div>
+                    <div class="sub-name">Tirzepatide Weight Management</div>
+                    <div class="sub-desc">Prescribed by Dr. Sarah Lewis • Auto-renews Quarterly</div>
+                    <div style="font-size: 13px; margin-top:6px; color:var(--text);"><strong>Status:</strong> Awaiting next refill date (Sept 14)</div>
+                  </div>
+                </div>
+                <div style="text-align: right;">
+                  <button class="req-btn req-btn-outline" style="margin-bottom:8px; width:100%; justify-content:center;">Change Dosage</button><br>
+                  <button class="req-btn req-btn-outline" style="width:100%; justify-content:center; border-color:#ffcdd2; color:#d32f2f;">Cancel Subsription</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <!-- RECORDS MOCK -->
+          <div id="panel-records" class="dash-panel">
+            <div class="panel-card">
+              <div class="panel-header">
+                <h3>Clinical Notes & Files</h3>
+              </div>
+              
+              <div class="doc-msg">
+                <div class="doc-meta">
+                  <img src="assets/sarah.webp" alt="Dr. Lewis" class="doc-avatar">
+                  <div>
+                    <div class="doc-name">Initial Consultation Transcript</div>
+                    <div class="doc-date">June 12, 2026</div>
+                  </div>
+                </div>
+                <div class="doc-body">
+                  <strong>Chief Complaint:</strong> Patient seeking medical weight management for obesity and metabolic regulation.<br>
+                  <strong>Assessment:</strong> Patient meets BMI criteria for GLP-1 therapy. No contraindications (no history of medullary thyroid carcinoma or MEN2). Bloodwork indicates pre-diabetes.<br>
+                  <strong>Plan:</strong> Start Tirzepatide induction at 2.5mg weekly. Diet and exercise counseling provided. Follow up in 4 weeks.
+                </div>
+              </div>
+
+               <div class="doc-msg" style="border-left-color: var(--border);">
+                <div class="doc-meta">
+                  <div class="doc-avatar" style="background:var(--border-light); color:var(--text-muted); display:flex; align-items:center; justify-content:center;"><i class="ri-flask-fill"></i></div>
+                  <div>
+                    <div class="doc-name">Lab Results — Quest Diagnostics</div>
+                    <div class="doc-date">June 10, 2026</div>
+                  </div>
+                </div>
+                <a href="#" class="file-attachment"><i class="ri-file-text-line"></i> Comprehensive_Metabolic_Panel.pdf</a>
+              </div>
+            </div>
+          </div>
+
+
+          <!-- BILLING MOCK -->
+          <div id="panel-billing" class="dash-panel">
+            <div class="panel-card">
+              <div class="panel-header">
+                <h3>Payment Methods</h3>
+                <button class="req-btn req-btn-outline">Add Card</button>
+              </div>
+              <div style="display:flex; align-items:center; gap:16px; padding: 20px; border: 1px solid var(--border); border-radius: 12px;">
+                <i class="ri-visa-line" style="font-size: 32px; color: #1a1f71;"></i>
+                <div style="flex:1;">
+                  <div style="font-weight: 600; font-size: 15px;">Visa ending in 4242</div>
+                  <div style="font-size:13px; color:var(--text-faint);">Expires 12/28 • Default Payment</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel-card">
+              <div class="panel-header">
+                <h3>Invoice History</h3>
+              </div>
+              <table style="width:100%; font-size: 14px; text-align: left; border-collapse: collapse;">
+                <tr style="border-bottom: 2px solid var(--border-light);">
+                  <th style="padding: 12px 0;">Date</th>
+                  <th style="padding: 12px 0;">Description</th>
+                  <th style="padding: 12px 0;">Amount</th>
+                  <th style="padding: 12px 0;">Receipt</th>
+                </tr>
+                <tr style="border-bottom: 1px solid var(--border-light);">
+                  <td style="padding: 16px 0; color:var(--text-muted);">Aug 14, 2026</td>
+                  <td style="padding: 16px 0; font-weight:500;">Tirzepatide Qtr Supply</td>
+                  <td style="padding: 16px 0;">$297.00</td>
+                  <td style="padding: 16px 0;"><a href="#" style="color:var(--green);"><i class="ri-download-2-line"></i> PDF</a></td>
+                </tr>
+                <tr style="border-bottom: 1px solid var(--border-light);">
+                  <td style="padding: 16px 0; color:var(--text-muted);">May 14, 2026</td>
+                  <td style="padding: 16px 0; font-weight:500;">Tirzepatide Monthly (Month 2)</td>
+                  <td style="padding: 16px 0;">$119.00</td>
+                  <td style="padding: 16px 0;"><a href="#" style="color:var(--green);"><i class="ri-download-2-line"></i> PDF</a></td>
+                </tr>
+                <tr>
+                  <td style="padding: 16px 0; color:var(--text-muted);">Apr 12, 2026</td>
+                  <td style="padding: 16px 0; font-weight:500;">Initial Consult & Month 1</td>
+                  <td style="padding: 16px 0;">$119.00</td>
+                  <td style="padding: 16px 0;"><a href="#" style="color:var(--green);"><i class="ri-download-2-line"></i> PDF</a></td>
+                </tr>
+              </table>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="shared.js"></script>
+  <script>
+    // Initialize common layout
+    document.addEventListener('DOMContentLoaded', () => {
+      initPage('hub');
+      
+      // If user holds a valid session (mock checks cookie)
+      if (sessionStorage.getItem('freeley_logged_in') === 'true') {
+        showDashboard(sessionStorage.getItem('freeley_user_email'));
+      }
+    });
+
+    // Mock Login handling
+    function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value;
+      
+      // Mock saving session state
+      sessionStorage.setItem('freeley_logged_in', 'true');
+      sessionStorage.setItem('freeley_user_email', email);
+      
+      showDashboard(email);
+    }
+
+    // Logout handling
+    function logout() {
+      sessionStorage.removeItem('freeley_logged_in');
+      sessionStorage.removeItem('freeley_user_email');
+      
+      document.getElementById('dashboard-screen').style.display = 'none';
+      document.getElementById('auth-screen').style.display = 'flex';
+      
+      // Reset input
+      document.getElementById('loginEmail').value = '';
+    }
+
+    // Toggle Screen views
+    function showDashboard(email) {
+      document.getElementById('auth-screen').style.display = 'none';
+      document.getElementById('dashboard-screen').style.display = 'block';
+      
+      // Populate name mock logic
+      const namePart = email.split('@')[0];
+      const formattedName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
+      
+      document.getElementById('dashUserName').innerText = formattedName;
+      document.getElementById('dashUserInitial').innerText = formattedName.charAt(0);
+      document.getElementById('dashUserEmail').innerText = email;
+    }
+
+    // Panel switching logic
+    function switchPanel(panelId) {
+      // Update nav links
+      document.querySelectorAll('.dash-nav-link').forEach(el => {
+        el.classList.remove('active');
+      });
+      event.currentTarget.classList.add('active');
+      
+      // Hide all panels
+      document.querySelectorAll('.dash-panel').forEach(el => {
+        el.classList.remove('active');
+      });
+      
+      // Show targeted panel
+      document.getElementById('panel-' + panelId).classList.add('active');
+      
+      // Scroll to top of panels on mobile
+      if(window.innerWidth < 900) {
+        window.scrollTo({ top: 300, behavior: 'smooth' });
+      }
+    }
+  </script>
+
+</body>
+
+</html>

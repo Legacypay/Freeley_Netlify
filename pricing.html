@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pricing — Freeley</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    .pricing-hero {
+      padding: 140px 0 80px;
+      background-image: url("assets/brand/freeley_pattern_dark.jpg"); background-size: cover; background-position: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pricing-hero::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 700px;
+      height: 700px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(61, 140, 94, 0.12), transparent 65%);
+    }
+
+    .pricing-hero-inner {
+      position: relative;
+      z-index: 2;
+    }
+
+    .pricing-hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(44px, 6vw, 76px);
+      font-weight: 300;
+      color: #fff;
+      margin-bottom: 16px;
+      letter-spacing: -1px;
+    }
+
+    .pricing-hero h1 em {
+      font-style: italic;
+      color: #7dba96;
+    }
+
+    .pricing-hero p {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 17px;
+      max-width: 520px;
+      margin: 0 auto 48px;
+      font-weight: 300;
+      line-height: 1.65;
+    }
+
+    /* Billing toggle */
+    .billing-toggle {
+      display: inline-flex;
+      gap: 0;
+      background: rgba(255, 255, 255, 0.07);
+      border-radius: 50px;
+      padding: 4px;
+      margin-bottom: 64px;
+    }
+
+    .billing-btn {
+      padding: 10px 28px;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.5);
+      background: transparent;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .billing-btn.active {
+      background: rgba(255, 255, 255, 0.14);
+      color: #fff;
+    }
+
+    .save-badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: var(--green-light);
+      color: #fff;
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    /* Pricing cards */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 60px;
+    }
+
+    .pricing-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 28px;
+      padding: 44px 36px;
+      position: relative;
+      text-align: left;
+      transition: all 0.3s;
+    }
+
+    .pricing-card:hover {
+      border-color: rgba(61, 140, 94, 0.4);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .pricing-card.popular {
+      border-color: rgba(61, 140, 94, 0.6);
+      background: rgba(61, 140, 94, 0.07);
+    }
+
+    .popular-tag {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--green-light);
+      color: #fff;
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 5px 20px;
+      border-radius: 20px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .pc-icon {
+      font-size: 40px;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .pc-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      color: #fff;
+      font-weight: 400;
+      margin-bottom: 6px;
+    }
+
+    .pc-desc {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.45);
+      margin-bottom: 28px;
+      line-height: 1.6;
+      font-weight: 300;
+    }
+
+    .pc-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 60px;
+      color: #fff;
+      font-weight: 300;
+      line-height: 1;
+    }
+
+    .pc-price sup {
+      font-size: 26px;
+      vertical-align: super;
+    }
+
+    .pc-period {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.4);
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .pc-was {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.3);
+      text-decoration: line-through;
+      margin-top: 4px;
+      display: block;
+    }
+
+    .pc-divider {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.07);
+      margin: 24px 0;
+    }
+
+    .pc-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .pc-features li {
+      font-size: 13.5px;
+      color: rgba(255, 255, 255, 0.6);
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      font-weight: 300;
+    }
+
+    .pc-features li::before {
+      content: '✓';
+      color: var(--green-light);
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .pc-features li:last-child {
+      border-bottom: none;
+    }
+
+    .pc-features li.dim {
+      color: rgba(255, 255, 255, 0.25);
+    }
+
+    .pc-features li.dim::before {
+      color: rgba(255, 255, 255, 0.15);
+      content: '–';
+    }
+
+    .pc-cta {
+      width: 100%;
+      margin-top: 28px;
+      padding: 16px;
+      border-radius: 50px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: transparent;
+      color: rgba(255, 255, 255, 0.8);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.25s;
+      text-align: center;
+      text-decoration: none;
+      display: block;
+    }
+
+    .pc-cta:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+    }
+
+    .pricing-card.popular .pc-cta {
+      background: var(--green-light);
+      border-color: var(--green-light);
+      color: #fff;
+    }
+
+    .pricing-card.popular .pc-cta:hover {
+      background: var(--green-bright);
+    }
+
+    /* Comparison table */
+    .compare-section {
+      padding: 100px 0;
+      background: var(--cream);
+    }
+
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 56px;
+    }
+
+    .compare-table th,
+    .compare-table td {
+      padding: 18px 24px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .compare-table th {
+      font-size: 12px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      font-weight: 500;
+      background: var(--green-mist);
+    }
+
+    .compare-table th:first-child {
+      border-radius: 12px 0 0 0;
+    }
+
+    .compare-table th:last-child {
+      border-radius: 0 12px 0 0;
+    }
+
+    .compare-table td {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .compare-table td:first-child {
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .compare-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .compare-table tr:hover td {
+      background: var(--green-mist);
+    }
+
+    .check-green {
+      color: var(--green-light);
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .check-red {
+      color: #e25;
+      font-size: 18px;
+    }
+
+    .compare-header-col {
+      background: rgba(61, 140, 94, 0.08) !important;
+      font-weight: 700 !important;
+      color: var(--text) !important;
+    }
+
+    /* Savings calculator */
+    .savings-section {
+      padding: 100px 0;
+      background-image: url("assets/brand/freeley_pattern_dark.jpg"); background-size: cover; background-position: center; color: white;
+    }
+
+    .savings-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+      margin-top: 56px;
+    }
+
+    .savings-inputs {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .savings-label {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.65);
+      margin-bottom: 10px;
+      font-weight: 500;
+    }
+
+    .savings-select {
+      width: 100%;
+      padding: 14px 20px;
+      border-radius: 14px;
+      border: 1.5px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.06);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: #fff;
+      outline: none;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+    }
+
+    .savings-select:focus {
+      border-color: var(--green-light);
+    }
+
+    .savings-result {
+      background: rgba(61, 140, 94, 0.1);
+      border: 1px solid rgba(61, 140, 94, 0.3);
+      border-radius: 24px;
+      padding: 44px;
+      text-align: center;
+    }
+
+    .savings-label-sm {
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.4);
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .savings-amount {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 88px;
+      font-weight: 300;
+      color: #7dba96;
+      line-height: 1;
+    }
+
+    .savings-period {
+      font-size: 15px;
+      color: rgba(255, 255, 255, 0.5);
+      margin-top: 8px;
+    }
+
+    .savings-breakdown {
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .savings-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+    }
+
+    .savings-row .label {
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .savings-row .val {
+      color: rgba(255, 255, 255, 0.75);
+      font-weight: 500;
+    }
+
+    .savings-row.highlight .val {
+      color: #7dba96;
+    }
+
+    /* FAQ */
+    .faq-section {
+      padding: 100px 0;
+    }
+
+    .faq-list {
+      max-width: 720px;
+      margin: 56px auto 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .faq-item {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .faq-question {
+      width: 100%;
+      padding: 22px 28px;
+      background: none;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text);
+      cursor: pointer;
+      text-align: left;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .faq-chevron {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      transition: transform 0.3s;
+      color: var(--text-faint);
+    }
+
+    .faq-item.open .faq-chevron {
+      transform: rotate(180deg);
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+    }
+
+    .faq-answer-inner {
+      padding: 0 28px 22px;
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    .faq-item.open .faq-answer {
+      max-height: 160px;
+    }
+
+    .pricing-cta {
+      background-image: url("assets/brand/freeley_pattern_dark.jpg"); background-size: cover; background-position: center;
+      padding: 100px 0;
+      text-align: center;
+    }
+
+    .pricing-cta h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(38px, 5vw, 64px);
+      font-weight: 300;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+
+    .pricing-cta h2 em {
+      font-style: italic;
+      color: #7dba96;
+    }
+
+    .pricing-cta p {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 16px;
+      margin-bottom: 40px;
+    }
+
+    @media(max-width:1024px) {
+      .pricing-grid {
+        grid-template-columns: 1fr;
+        max-width: 480px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .savings-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .compare-table {
+        font-size: 12px;
+      }
+    }
+
+    @media(max-width:640px) {
+
+      .compare-table td,
+      .compare-table th {
+        padding: 12px 14px;
+      }
+    }
+  </style>
+  <link rel="icon" type="image/png" href="favicon.png">
+</head>
+
+<body>
+
+
+  <!-- HERO -->
+  <section class="pricing-hero">
+    <div class="pricing-hero-inner reveal">
+      <span class="eyebrow" style="color:#7dba96">Pricing</span>
+      <h1>Simple, <em>transparent</em><br>pricing</h1>
+      <p>No hidden fees. No insurance required. FSA/HSA accepted. One flat monthly rate that covers your physician,
+        pharmacy, and delivery.</p>
+      <div class="billing-toggle">
+        <button class="billing-btn active" onclick="setBilling(this,'monthly')">Monthly</button>
+        <button class="billing-btn" onclick="setBilling(this,'quarterly')">Quarterly <span class="save-badge">Save
+            15%</span></button>
+      </div>
+      <div class="container">
+        <div class="pricing-grid">
+          <div class="pricing-card reveal reveal-delay-1">
+            <img src="assets/brand/semag_transparent.png" alt="GLP-1 Weight Loss" style="height: 180px; width: 100%; object-fit: contain; border-radius: 12px; margin-bottom: 24px;">
+            <div class="pc-name">GLP-1 Weight Loss</div>
+            <div class="pc-desc">Semaglutide or tirzepatide. All dosages included. No upcharge for higher doses.</div>
+            <div class="pc-price"><sup>$</sup><span class="price-val" data-monthly="134" data-quarterly="114">134</span>
+            </div>
+            <div class="pc-period">per month <span class="pc-was" style="display:none">$134/mo</span></div>
+            <div class="pc-divider"></div>
+            <ul class="pc-features">
+              <li>Free physician consultation</li>
+              <li>All dosage tiers — same price</li>
+              <li>Compounded at licensed 503A pharmacy</li>
+              <li>Monthly physician check-in</li>
+              <li>Nutrition guidance included</li>
+              <li>Discreet climate-controlled shipping</li>
+              <li>Cancel anytime, no penalties</li>
+            </ul>
+            <a href="quiz.html" class="pc-cta">Get Started →</a>
+          </div>
+          <div class="pricing-card popular reveal reveal-delay-2">
+            <div class="popular-tag">Most Popular</div>
+            <img src="assets/ed_pills_new.webp" alt="Sexual Wellness" style="height: 180px; width: 100%; object-fit: cover; border-radius: 12px; margin-bottom: 24px;">
+            <div class="pc-name">Sexual Wellness</div>
+            <div class="pc-desc">3-in-1 ED sublingual troches. Sildenafil, Tadalafil, and Apomorphine compounded.</div>
+            <div class="pc-price"><sup>$</sup><span class="price-val" data-monthly="89" data-quarterly="75">89</span>
+            </div>
+            <div class="pc-period">per month <span class="pc-was" style="display:none">$89/mo</span></div>
+            <div class="pc-divider"></div>
+            <ul class="pc-features">
+              <li>Free physician consultation</li>
+              <li>No waiting rooms or awkward visits</li>
+              <li>Fast-dissolving sublingual troche</li>
+              <li>Works in as little as 15 minutes</li>
+              <li>Lasts up to 36 hours</li>
+              <li>Discreet doorstep delivery</li>
+              <li>Cancel anytime, no penalties</li>
+            </ul>
+            <a href="quiz.html" class="pc-cta">Get Started →</a>
+          </div>
+          <div class="pricing-card reveal reveal-delay-3">
+            <img src="assets/peptides_new.webp?v=2" alt="Longevity Stack" style="height: 180px; width: 100%; object-fit: cover; border-radius: 12px; margin-bottom: 24px;">
+            <div class="pc-name">Longevity Stack</div>
+            <div class="pc-desc">Peptides, NAD+, and anti-aging protocols. Custom-designed by your physician.</div>
+            <div class="pc-price"><sup>$</sup><span class="price-val" data-monthly="149" data-quarterly="127">149</span>
+            </div>
+            <div class="pc-period">per month <span class="pc-was" style="display:none">$149/mo</span></div>
+            <div class="pc-divider"></div>
+            <ul class="pc-features">
+              <li>Free physician consultation</li>
+              <li>Personalized peptide stack</li>
+              <li>Biomarker panel included</li>
+              <li>Performance tracking dashboard</li>
+              <li>Quarterly protocol reviews</li>
+              <li>Priority physician access</li>
+              <li>Cancel anytime, no penalties</li>
+            </ul>
+            <a href="quiz.html" class="pc-cta">Get Started →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPARISON TABLE -->
+  <section class="compare-section">
+    <div class="container">
+      <div class="reveal">
+        <span class="eyebrow">How We Compare</span>
+        <h2 class="display" style="font-size:clamp(34px,4.5vw,52px);">Same medication.<br><em>A fraction of the
+            price.</em></h2>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="compare-table reveal">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th class="compare-header-col">Freeley</th>
+              <th>Hims / Hers</th>
+              <th>Nuvation / Max Muscle</th>
+              <th>Brand-name Rx</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Monthly Cost (Semaglutide)</td>
+              <td class="compare-header-col" style="font-weight:700;color:var(--green-mid)">$134</td>
+              <td>$299–$349</td>
+              <td>$199–$249</td>
+              <td>$900–$1,400</td>
+            </tr>
+            <tr>
+              <td>Physician consultation included</td>
+              <td class="compare-header-col"><span class="check-green">✓</span></td>
+              <td><span class="check-green">✓</span></td>
+              <td><span class="check-green">✓</span></td>
+              <td>Extra cost</td>
+            </tr>
+            <tr>
+              <td>All dosages, same price</td>
+              <td class="compare-header-col"><span class="check-green">✓</span></td>
+              <td><span class="check-red">✗</span></td>
+              <td><span class="check-red">✗</span></td>
+              <td><span class="check-red">✗</span></td>
+            </tr>
+            <tr>
+              <td>Lab work included</td>
+              <td class="compare-header-col"><span class="check-green">✓</span></td>
+              <td>Some plans</td>
+              <td><span class="check-red">✗</span></td>
+              <td><span class="check-red">✗</span></td>
+            </tr>
+            <tr>
+              <td>Licensed compounding pharmacy</td>
+              <td class="compare-header-col"><span class="check-green">✓</span></td>
+              <td><span class="check-green">✓</span></td>
+              <td>Varies</td>
+              <td>N/A</td>
+            </tr>
+            <tr>
+              <td>FSA / HSA accepted</td>
+              <td class="compare-header-col"><span class="check-green">✓</span></td>
+              <td><span class="check-green">✓</span></td>
+              <td><span class="check-red">✗</span></td>
+              <td><span class="check-green">✓</span></td>
+            </tr>
+            <tr>
+              <td>Cancel anytime, no fees</td>
+              <td class="compare-header-col"><span class="check-green">✓</span></td>
+              <td><span class="check-green">✓</span></td>
+              <td>Varies</td>
+              <td>N/A</td>
+            </tr>
+            <tr>
+              <td>Multiple treatment categories</td>
+              <td class="compare-header-col"><span class="check-green">✓ Weight + ED + Longevity</span></td>
+              <td>Limited</td>
+              <td>Limited</td>
+              <td>Single Rx</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- SAVINGS CALCULATOR -->
+  <section class="savings-section">
+    <div class="container">
+      <div class="reveal">
+        <span class="eyebrow" style="color:#7dba96">Savings Calculator</span>
+        <h2 class="display display-white" style="font-size:clamp(34px,4.5vw,52px);color:#fff;">See how
+          much<br><em>you'll save</em></h2>
+      </div>
+      <div class="savings-grid">
+        <div class="savings-inputs reveal reveal-delay-1">
+          <div>
+            <div class="savings-label">Treatment</div>
+            <select class="savings-select" id="savingsTreatment" onchange="calcSavings()">
+              <option value="sema">GLP-1 Semaglutide</option>
+              <option value="tirz">GLP-1 Tirzepatide</option>
+              <option value="sexual">Sexual Wellness</option>
+              <option value="longevity">Longevity Stack</option>
+            </select>
+          </div>
+          <div>
+            <div class="savings-label">Compared to</div>
+            <select class="savings-select" id="savingsCompare" onchange="calcSavings()">
+              <option value="brand">Brand-name Rx (Ozempic®)</option>
+              <option value="hims">Hims / Hers / Roman</option>
+              <option value="clinic">Traditional Clinic</option>
+            </select>
+          </div>
+          <div>
+            <div class="savings-label">Duration</div>
+            <select class="savings-select" id="savingsDuration" onchange="calcSavings()">
+              <option value="3">3 months</option>
+              <option value="6" selected>6 months</option>
+              <option value="12">12 months</option>
+            </select>
+          </div>
+        </div>
+        <div class="savings-result reveal reveal-delay-2">
+          <span class="savings-label-sm">Your estimated savings</span>
+          <div class="savings-amount" id="savingsAmount">$4,596</div>
+          <div class="savings-period" id="savingsPeriod">over 6 months</div>
+          <div class="savings-breakdown">
+            <div class="savings-row"><span class="label">Their price</span><span class="val"
+                id="theirPrice">$900/mo</span></div>
+            <div class="savings-row"><span class="label">Freeley price</span><span class="val"
+                id="ourPrice">$134/mo</span></div>
+            <div class="savings-row highlight"><span class="label">Monthly savings</span><span class="val"
+                id="monthlySavings">$766/mo</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq-section">
+    <div class="container">
+      <div class="reveal" style="text-align:center;">
+        <span class="eyebrow">Pricing FAQ</span>
+        <h2 class="display" style="font-size:clamp(34px,4.5vw,52px);">Common <em>questions</em></h2>
+      </div>
+      <div class="faq-list reveal">
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">What's included in the monthly price? <svg
+              class="faq-chevron" viewBox="0 0 20 20" fill="none">
+              <path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg></button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">Your monthly fee covers your physician consultation, treatment plan,
+              prescription processing, compounding pharmacy coordination, and doorstep delivery. There are no hidden
+              fees or surprise add-ons.</div>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">Are there any signup or cancellation fees? <svg
+              class="faq-chevron" viewBox="0 0 20 20" fill="none">
+              <path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg></button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">None. Your initial consultation is always free. You can cancel before your
+              next billing cycle with no penalty. Quarterly plans are pre-paid but can be paused after the first period.
+            </div>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">Is insurance accepted? <svg class="faq-chevron"
+              viewBox="0 0 20 20" fill="none">
+              <path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg></button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">We do not bill insurance directly — compounded medications are rarely covered
+              anyway. However, FSA and HSA cards are accepted for eligible treatments, which can reduce your
+              out-of-pocket cost significantly.</div>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">Why is the price the same across all dosages? <svg
+              class="faq-chevron" viewBox="0 0 20 20" fill="none">
+              <path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg></button>
+          <div class="faq-answer">
+            <div class="faq-answer-inner">We believe patients shouldn't be penalized for needing a higher therapeutic
+              dose. Our flat pricing model means your cost doesn't increase as your physician titrates your dose upward
+              — unlike most competitors who charge more per dose.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="pricing-cta">
+    <div class="container">
+      <div class="reveal">
+        <h2>Invest in yourself<br><em>starting today</em></h2>
+        <p>Free consultation · No commitment · FSA/HSA eligible</p>
+        <a href="quiz.html" class="btn btn-primary btn-lg">Start My Free Visit →</a>
+      </div>
+    </div>
+  </section>
+
+  <script src="shared.js"></script>
+  <script>
+    const PRICES = {
+      freeley: { sema: 134, tirz: 134, sexual: 89, longevity: 149 },
+      brand: { sema: 900, tirz: 1000, sexual: 350, longevity: 400 },
+      hims: { sema: 299, tirz: 349, sexual: 149, longevity: 250 },
+      clinic: { sema: 450, tirz: 500, sexual: 250, longevity: 350 }
+    };
+    function calcSavings() {
+      const t = document.getElementById('savingsTreatment').value;
+      const c = document.getElementById('savingsCompare').value;
+      const d = parseInt(document.getElementById('savingsDuration').value);
+      const ourPrice = PRICES.freeley[t];
+      const theirPrice = PRICES[c][t];
+      const monthlySave = theirPrice - ourPrice;
+      const totalSave = monthlySave * d;
+      document.getElementById('savingsAmount').textContent = '$' + totalSave.toLocaleString();
+      document.getElementById('savingsPeriod').textContent = 'over ' + d + ' months';
+      document.getElementById('theirPrice').textContent = '$' + theirPrice + '/mo';
+      document.getElementById('ourPrice').textContent = '$' + ourPrice + '/mo';
+      document.getElementById('monthlySavings').textContent = '$' + monthlySave + '/mo';
+    }
+    function setBilling(btn, type) {
+      document.querySelectorAll('.billing-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.price-val').forEach(el => {
+        el.textContent = el.dataset[type];
+      });
+      document.querySelectorAll('.pc-was').forEach(el => {
+        if (type === 'quarterly') {
+          const monthly = el.closest('.pricing-card').querySelector('.price-val').dataset.monthly;
+          el.textContent = '$' + monthly + '/mo billed monthly';
+          el.style.display = 'block';
+        } else {
+          el.style.display = 'none';
+        }
+      });
+    }
+    function toggleFaq(btn) { btn.closest('.faq-item').classList.toggle('open'); }
+    calcSavings();
+    initPage('pricing');
+  </script>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+</body>
+
+</html>

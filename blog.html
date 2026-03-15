@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Health & Wellness Blog — Freeley</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared.css">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <style>
+    .hub-hero {
+      padding: 160px 0 80px;
+      text-align: center;
+      background-image: url("assets/brand/freeley_pattern_light.jpg");
+      background-size: cover;
+      background-attachment: fixed;
+      background-color: var(--cream);
+    }
+    .hub-hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(48px, 6vw, 72px);
+      font-weight: 300;
+      color: var(--charcoal);
+      margin-bottom: 24px;
+    }
+    .blog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 40px;
+      padding: 100px 0;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .article-card {
+      display: block;
+      text-decoration: none;
+      color: var(--charcoal);
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px;
+      transition: all 0.3s;
+    }
+    .article-card:hover {
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+      transform: translateY(-4px);
+      border-color: rgba(61,140,94,0.3);
+    }
+    .ac-tag {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--green-light);
+      font-weight: 600;
+      margin-bottom: 16px;
+      display: block;
+    }
+    .ac-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px;
+      line-height: 1.2;
+      margin-bottom: 16px;
+      color: var(--charcoal);
+    }
+    .ac-excerpt {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <section class="hub-hero">
+    <div class="container reveal">
+      <h1>Medical <em>Insights</em></h1>
+      <p style="color:var(--text-muted); font-size:18px;">Expert guidance on weight management, longevity, and men's health.</p>
+    </div>
+  </section>
+  <div class="container">
+    <div class="blog-grid">
+      
+      <a href="seo-test-article.html" class="article-card reveal reveal-delay-1">
+        <span class="ac-tag">Men's Health</span>
+        <h2 class="ac-title">The Ultimate Guide to Men's Health Telemedicine</h2>
+        <p class="ac-excerpt">Why the modern man is skipping the waiting room and what you need to know about getting safe, clinical-grade ED and hair loss treatments online.</p>
+      </a>
+    </div>
+  </div>
+  <script src="shared.js"></script>
+  <script>initPage('');</script>
+</body>
+</html>

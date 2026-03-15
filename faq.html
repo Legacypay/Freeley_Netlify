@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQ — Freeley</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    .page-hero {
+      padding: 160px 0 100px;
+      background-image: url("assets/brand/freeley_pattern_dark.jpg"); background-size: cover; background-position: center; color: white;
+      color: #fff;
+    }
+
+    .page-hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(48px, 6vw, 72px);
+      font-weight: 300;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .page-hero h1 em {
+      font-style: italic;
+      color: var(--green-light);
+    }
+
+    .faq-content {
+      padding: 100px 0;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+      padding: 24px 0;
+    }
+
+    .faq-question {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 12px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .faq-question:hover {
+      color: var(--green-light);
+    }
+
+    .faq-answer {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--text-muted);
+      font-weight: 300;
+    }
+
+  </style>
+  <link rel="icon" type="image/png" href="favicon.png">
+</head>
+
+<body>
+  <section class="page-hero">
+    <div class="container reveal">
+      <h1>Frequently Asked <em>Questions</em></h1>
+    </div>
+  </section>
+
+  <section class="faq-content">
+    <div class="container reveal">
+      <div class="faq-item">
+        <div class="faq-question">What is Freeley?</div>
+        <div class="faq-answer">Freeley is a healthcare technology platform designed to streamline access to premium compounded medications. We connect you with independent telemedicine providers and 503A licensed compounding pharmacies to get personalized treatments delivered discreetly to your door.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">Do you take insurance?</div>
+        <div class="faq-answer">By cutting out insurance middlemen, we're able to offer faster care, greater transparent pricing, and specialized customized medication you couldn't otherwise get. We accept HSA and FSA cards.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">Are the physicians real doctors?</div>
+        <div class="faq-answer">Yes, our network exclusively consists of independent, board-certified medical providers licensed in your specific state. They review your medical intake to determine if the prescribed treatment is safe and appropriate for you.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">How does shipping work?</div>
+        <div class="faq-answer">Once your prescription is approved and compounded, it's sent via expedited shipping straight to your address in discreet, climate-controlled packaging. Free standard shipping is included in all memberships.</div>
+      </div>
+    </div>
+  </section>
+
+  <script src="shared.js"></script>
+  <script>
+    initPage('');
+  </script>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+</body>
+
+</html>
