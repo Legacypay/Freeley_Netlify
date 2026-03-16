@@ -664,10 +664,10 @@
         planName: 'Personalized Weight Loss Plan',
         image: 'assets/brand/semag_transparent.png', // Premium sema vial
         plans: [
-          { months: 1, base: 194.97, overridePrice: 194.97, recommended: false },
-          { months: 3, base: 194.97, overridePrice: 149.97, recommended: false },
-          { months: 6, base: 194.97, overridePrice: 124.97, recommended: true },
-          { months: 12, base: 194.97, overridePrice: 99.97, recommended: false }
+          { months: 1, base: 194.29, overridePrice: 194.29, recommended: false },
+          { months: 3, base: 194.29, overridePrice: 149.29, recommended: false },
+          { months: 6, base: 194.29, overridePrice: 124.29, recommended: true },
+          { months: 12, base: 194.29, overridePrice: 99.29, recommended: false }
         ]
       },
       'ed': {
@@ -715,6 +715,12 @@
           currentConfig.name = 'Tirzepatide';
           currentConfig.desc = 'Compounded w/ B6 (Pyridoxine)';
           currentConfig.image = 'assets/brand/tirzz_transparent.png'; // Premium tirz vial
+          currentConfig.plans = [
+            { months: 1, base: 274.29, overridePrice: 274.29, recommended: false },
+            { months: 3, base: 274.29, overridePrice: 214.29, recommended: false },
+            { months: 6, base: 274.29, overridePrice: 194.29, recommended: true },
+            { months: 12, base: 274.29, overridePrice: 174.29, recommended: false }
+          ];
           document.getElementById('cmp-tirz').style.borderColor = 'var(--forest)';
           document.getElementById('cmp-tirz').style.background = 'rgba(27, 73, 45, 0.05)';
           document.getElementById('cmp-tirz').style.color = 'var(--forest)';
@@ -728,6 +734,12 @@
           currentConfig.name = 'Semaglutide';
           currentConfig.desc = 'Compounded w/ B12 (Cyanocobalamin)';
           currentConfig.image = 'assets/brand/semag_transparent.png'; // Premium sema vial
+          currentConfig.plans = [
+            { months: 1, base: 194.29, overridePrice: 194.29, recommended: false },
+            { months: 3, base: 194.29, overridePrice: 149.29, recommended: false },
+            { months: 6, base: 194.29, overridePrice: 124.29, recommended: true },
+            { months: 12, base: 194.29, overridePrice: 99.29, recommended: false }
+          ];
           
           document.getElementById('cmp-sema').style.borderColor = 'var(--forest)';
           document.getElementById('cmp-sema').style.background = 'rgba(27, 73, 45, 0.05)';
@@ -745,6 +757,12 @@
       document.getElementById('summary-treatment-desc').innerText = currentConfig.desc;
       document.getElementById('summary-plan-name').innerText = currentConfig.planName;
       document.getElementById('checkout-img').src = currentConfig.image;
+
+      // Render plans because prices may have changed
+      renderPlans();
+      
+      // Also reset selection to best match (6 months, index 2) when switching compounds
+      selectPlan(2);
     }
     
     function setCheckoutCompound(type) {
