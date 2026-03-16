@@ -20,15 +20,22 @@ jobs:
         with:
           node-version: 22
 
+      - name: Install Dependencies
+        run: npm install
+
       - name: Run AI SEO Agent
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: node seo-agent.js
+
+      - name: Build Blog HTML Pages
+        run: node build_blog.js
 
       - name: Commit and Push New Article
         run: |
           git config --global user.name "Freeley Auto-SEO Bot"
           git config --global user.email "bot@freeley.com"
           git add content/blog/*.md content/seo-keywords.txt
-          git commit -m "Generated new SEO article & updated queue" || echo "No changes"
+          git add *.html sitemap.xml
+          git commit -m "🤖 Auto-SEO: new article + rebuilt blog pages" || echo "No changes"
           git push
