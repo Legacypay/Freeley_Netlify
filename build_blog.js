@@ -274,6 +274,42 @@ function processBlogs() {
   const finalHub = HUB_TEMPLATE.replace('{{BLOG_LIST_HTML}}', listHTML);
   fs.writeFileSync(path.join(OUTPUT_DIR, 'blog.html'), finalHub);
   console.log(`✅ Built blog.html index with ${blogPosts.length} posts.`);
+
+  // Generate sitemap.xml
+  const BASE_URL = 'https://freeley.com';
+  const staticPages = [
+    '',
+    '/how-it-works',
+    '/weight-loss',
+    '/sexual-wellness',
+    '/longevity',
+    '/hair-loss',
+    '/pricing',
+    '/quiz',
+    '/about',
+    '/contact',
+    '/physicians',
+    '/faq',
+    '/blog'
+  ];
+
+  let sitemapXML = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+  
+  // Add static pages
+  const today = new Date().toISOString().split('T')[0];
+  staticPages.forEach(page => {
+    sitemapXML += `  <url>\n    <loc>${BASE_URL}${page}</loc>\n    <lastmod>${today}</lastmod>\n  </url>\n`;
+  });
+
+  // Add blog posts
+  blogPosts.forEach(post => {
+    const postDate = post.date.toISOString().split('T')[0];
+    sitemapXML += `  <url>\n    <loc>${BASE_URL}/${post.slug}</loc>\n    <lastmod>${postDate}</lastmod>\n  </url>\n`;
+  });
+
+  sitemapXML += `</urlset>`;
+  fs.writeFileSync(path.join(OUTPUT_DIR, 'sitemap.xml'), sitemapXML);
+  console.log(`✅ Built sitemap.xml`);
 }
 
 processBlogs();
