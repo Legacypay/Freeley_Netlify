@@ -23,6 +23,11 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
+      - name: Auto-Refill Keyword Queue
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: node refill-keywords.js
+
       - name: Run AI SEO Agent
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

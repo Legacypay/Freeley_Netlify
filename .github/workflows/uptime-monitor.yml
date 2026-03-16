@@ -1,0 +1,20 @@
+name: "Uptime Monitor"
+
+on:
+  schedule:
+    - cron: '*/30 * * * *' # Every 30 minutes
+  workflow_dispatch:
+
+jobs:
+  uptime:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Freeley.com
+        run: |
+          STATUSCODE=$(curl -o /dev/null -s -w "%{http_code}\n" https://freeley.com)
+          if [ "$STATUSCODE" -ne 200 ]; then
+            echo "URL returned $STATUSCODE"
+            exit 1
+          else
+            echo "freeley.com is up and returning 200 OK!"
+          fi
