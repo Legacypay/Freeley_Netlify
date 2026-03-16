@@ -1235,6 +1235,7 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
   var startWeight=400,heightIn=70,mode='med',chart;
@@ -1257,9 +1258,8 @@
 
   function setMode(m){
     mode=m;
-    var bm=document.getElementById('btn-med'),bb=document.getElementById('btn-both');
-    bm.className='mode-btn '+(m==='med'?'active-med':'inactive');
-    bb.className='mode-btn '+(m==='both'?'active-both':'inactive');
+    document.getElementById('btn-med').className='mode-btn '+(m==='med'?'active-med':'inactive');
+    document.getElementById('btn-both').className='mode-btn '+(m==='both'?'active-both':'inactive');
     updateAll();updateChartStyle();
   }
 
@@ -1269,8 +1269,12 @@
     updateAll();
   }
 
-  /* ===== THREE.JS 3D BODY VISUALIZER ===== */
-  var scene3d,camera3d,renderer3d,controls3d,bodyGroup;
+  /* ===== THREE.JS 3D BODY - REAL OBJ MODELS ===== */
+  var scene3d,camera3d,renderer3d,controls3d;
+  var bodyMeshFemale=null,bodyMeshMale=null;
+  var baseFemalePositions=null,baseMalePositions=null;
+  var bodyCenter={x:0,y:0,z:0};
+  var currentBodyMesh=null;
 
   function initScene(){
     var container=document.getElementById('body3d');
@@ -1278,9 +1282,9 @@
     var w=container.clientWidth,h=container.clientHeight;
 
     scene3d=new THREE.Scene();
-    camera3d=new THREE.PerspectiveCamera(28,w/h,0.1,100);
-    camera3d.position.set(0,0.85,3.8);
-    camera3d.lookAt(0,0.72,0);
+    camera3d=new THREE.PerspectiveCamera(35,w/h,0.1,100);
+    camera3d.position.set(0,0.83,2.2);
+    camera3d.lookAt(0,0.83,0);
 
     renderer3d=new THREE.WebGLRenderer({antialias:true,alpha:true});
     renderer3d.setSize(w,h);
@@ -1288,37 +1292,68 @@
     renderer3d.setClearColor(0x000000,0);
     container.appendChild(renderer3d.domElement);
 
-    scene3d.add(new THREE.AmbientLight(0xF3EAE1,0.3));
-    var keyL=new THREE.DirectionalLight(0xF3EAE1,0.95);
-    keyL.position.set(4,6,5);scene3d.add(keyL);
-    var fillL=new THREE.DirectionalLight(0x6A9984,0.3);
-    fillL.position.set(-5,3,2);scene3d.add(fillL);
-    var rimL=new THREE.DirectionalLight(0xB89B62,0.5);
-    rimL.position.set(0,4,-6);scene3d.add(rimL);
-    var botL=new THREE.DirectionalLight(0x1B492D,0.15);
-    botL.position.set(0,-3,2);scene3d.add(botL);
+    // Cinematic lighting
+    scene3d.add(new THREE.AmbientLight(0xF3EAE1,0.35));
+    var kL=new THREE.DirectionalLight(0xF3EAE1,0.95);kL.position.set(3,5,5);scene3d.add(kL);
+    var fL=new THREE.DirectionalLight(0x6A9984,0.3);fL.position.set(-4,3,2);scene3d.add(fL);
+    var rL=new THREE.DirectionalLight(0xB89B62,0.5);rL.position.set(0,4,-5);scene3d.add(rL);
+    var bL=new THREE.DirectionalLight(0x1B492D,0.2);bL.position.set(0,-2,3);scene3d.add(bL);
 
+    // OrbitControls for 360° rotation
     controls3d=new THREE.OrbitControls(camera3d,renderer3d.domElement);
     controls3d.enableZoom=false;
     controls3d.enablePan=false;
     controls3d.autoRotate=true;
-    controls3d.autoRotateSpeed=1.2;
-    controls3d.minPolarAngle=Math.PI*0.1;
-    controls3d.maxPolarAngle=Math.PI*0.9;
-    controls3d.target.set(0,0.72,0);
+    controls3d.autoRotateSpeed=1.0;
+    controls3d.minPolarAngle=Math.PI*0.05;
+    controls3d.maxPolarAngle=Math.PI*0.95;
+    controls3d.target.set(0,0.83,0);
     controls3d.update();
 
-    bodyGroup=new THREE.Group();
-    scene3d.add(bodyGroup);
-
     window.addEventListener('resize',function(){
-      var c=document.getElementById('body3d');
-      if(!c)return;
+      var c=document.getElementById('body3d');if(!c)return;
       var nw=c.clientWidth,nh=c.clientHeight;
-      camera3d.aspect=nw/nh;
-      camera3d.updateProjectionMatrix();
+      camera3d.aspect=nw/nh;camera3d.updateProjectionMatrix();
       renderer3d.setSize(nw,nh);
     });
+
+    // Load OBJ models
+    var loader=new THREE.OBJLoader();
+    var mat=new THREE.MeshPhongMaterial({
+      color:0x1B492D,specular:0x5a9a7a,shininess:20,flatShading:false,side:THREE.DoubleSide
+    });
+
+    // Load female model
+    loader.load('models/mean_female.obj',function(obj){
+      obj.traverse(function(child){
+        if(child.isMesh){
+          child.material=mat;
+          child.geometry.computeVertexNormals();
+          bodyMeshFemale=child;
+          baseFemalePositions=new Float32Array(child.geometry.attributes.position.array);
+        }
+      });
+      scene3d.add(obj);
+      currentBodyMesh=bodyMeshFemale;
+      applyBMIMorph(getBMI(startWeight,heightIn));
+      console.log('Female model loaded, vertices:', baseFemalePositions?baseFemalePositions.length/3:'none');
+    },undefined,function(err){console.error('Female OBJ load error:',err);});
+
+    // Load male model (hidden initially)
+    loader.load('models/mean_male.obj',function(obj){
+      obj.traverse(function(child){
+        if(child.isMesh){
+          child.material=mat.clone();
+          child.material.side=THREE.DoubleSide;
+          child.geometry.computeVertexNormals();
+          bodyMeshMale=child;
+          baseMalePositions=new Float32Array(child.geometry.attributes.position.array);
+        }
+      });
+      obj.visible=false;
+      scene3d.add(obj);
+      console.log('Male model loaded, vertices:', baseMalePositions?baseMalePositions.length/3:'none');
+    },undefined,function(err){console.error('Male OBJ load error:',err);});
 
     animate3d();
   }
@@ -1329,158 +1364,111 @@
     if(renderer3d&&scene3d&&camera3d)renderer3d.render(scene3d,camera3d);
   }
 
-  function bodyMat(){
-    return new THREE.MeshPhongMaterial({
-      color:0x1B492D,specular:0x4a7a64,shininess:25,flatShading:false
-    });
-  }
+  /* BMI-based vertex morphing */
+  function applyBMIMorph(bmi){
+    var mesh=currentBodyMesh;
+    if(!mesh)return;
 
-  function buildTube(profile,seg,offX,offZ){
-    var pos=[],idx=[],ring=seg+1;
-    for(var i=0;i<profile.length;i++){
-      var p=profile[i],ox=(p.ox||0)+(offX||0),oz=(p.oz||0)+(offZ||0);
-      for(var j=0;j<=seg;j++){
-        var th=(j/seg)*Math.PI*2;
-        pos.push(ox+Math.cos(th)*p.rx,p.y,oz+Math.sin(th)*p.rz);
+    var basePos=(currentGender==='female')?baseFemalePositions:baseMalePositions;
+    if(!basePos)return;
+
+    var positions=mesh.geometry.attributes.position.array;
+    var count=positions.length/3;
+
+    // Compute body bounding box from base positions
+    var minY=Infinity,maxY=-Infinity;
+    for(var i=0;i<count;i++){
+      var y=basePos[i*3+1];
+      if(y<minY)minY=y;
+      if(y>maxY)maxY=y;
+    }
+    var bodyH=maxY-minY;
+
+    // BMI factor: how much to scale
+    var bmiNorm=Math.max(0,Math.min(1,(bmi-18)/40)); // 0 at BMI 18, 1 at BMI 58
+    var t=bmiNorm*bmiNorm*(3-2*bmiNorm); // smoothstep
+
+    for(var i=0;i<count;i++){
+      var bx=basePos[i*3];
+      var by=basePos[i*3+1];
+      var bz=basePos[i*3+2];
+
+      // Normalized height: 0=feet, 1=head
+      var hNorm=(by-minY)/bodyH;
+
+      // Scale factor varies by body region
+      var scaleFactor=1.0;
+
+      if(hNorm<0.05){
+        // Feet - minimal scaling
+        scaleFactor=1+t*0.15;
+      } else if(hNorm<0.15){
+        // Ankles/calves
+        scaleFactor=1+t*0.3;
+      } else if(hNorm<0.25){
+        // Knees
+        scaleFactor=1+t*0.25;
+      } else if(hNorm<0.45){
+        // Thighs - significant scaling
+        scaleFactor=1+t*0.55;
+      } else if(hNorm<0.55){
+        // Hips/pelvis - heavy scaling
+        scaleFactor=1+t*0.7;
+      } else if(hNorm<0.62){
+        // Belly - maximum scaling
+        scaleFactor=1+t*0.85;
+        // Extra forward protrusion for belly
+        if(bz>0){
+          bz+=t*0.04*bodyH*(1-Math.abs(hNorm-0.58)/0.04);
+        }
+      } else if(hNorm<0.70){
+        // Waist - heavy scaling
+        scaleFactor=1+t*0.7;
+      } else if(hNorm<0.78){
+        // Chest/ribs
+        scaleFactor=1+t*0.5;
+      } else if(hNorm<0.82){
+        // Shoulders
+        scaleFactor=1+t*0.35;
+      } else if(hNorm<0.85){
+        // Neck
+        scaleFactor=1+t*0.25;
+      } else if(hNorm<0.88){
+        // Lower face/jaw
+        scaleFactor=1+t*0.2;
+      } else {
+        // Head/skull - minimal scaling
+        scaleFactor=1+t*0.08;
       }
-    }
-    for(var i=0;i<profile.length-1;i++){
-      for(var j=0;j<seg;j++){
-        var a=i*ring+j,b=(i+1)*ring+j;
-        idx.push(a,b,a+1,a+1,b,b+1);
+
+      // Arms scale less (check if x is far from center)
+      var distFromCenter=Math.abs(bx)/bodyH;
+      if(distFromCenter>0.12&&hNorm>0.45&&hNorm<0.85){
+        // Arm region - scale x and z more, don't scale y
+        scaleFactor=1+t*0.4;
       }
+
+      // Apply: scale x and z (width), keep y (height) mostly unchanged
+      positions[i*3]=bx*scaleFactor;
+      positions[i*3+1]=by; // Height stays same
+      positions[i*3+2]=bz*scaleFactor;
     }
-    var geo=new THREE.BufferGeometry();
-    geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
-    geo.setIndex(idx);
-    geo.computeVertexNormals();
-    return geo;
-  }
 
-  function Lp(a,b,t){return a+(b-a)*t}
-  function smoothstep(t){return t*t*(3-2*t)}
-
-  function buildBody(weight,hIn,gender){
-    var bmi=getBMI(weight,hIn);
-    var f=smoothstep(Math.max(0,Math.min(1,(bmi-18)/37)));
-    var male=gender==='male';
-    var hS=hIn/70;
-    var S=20,mat=bodyMat(),group=new THREE.Group();
-
-    // TORSO
-    var torso=[
-      {y:0.47*hS,rx:Lp(0.072,0.14,f)*(male?0.92:1.08),rz:Lp(0.062,0.13,f)},
-      {y:0.50*hS,rx:Lp(male?0.078:0.092,male?0.15:0.18,f),rz:Lp(0.068,0.14,f)},
-      {y:0.53*hS,rx:Lp(male?0.073:0.085,male?0.16:0.17,f),rz:Lp(0.064,0.15,f)},
-      {y:0.57*hS,rx:Lp(male?0.068:0.063,male?0.16:0.15,f),rz:Lp(0.052,0.14,f)},
-      {y:0.61*hS,rx:Lp(0.070,0.14,f),rz:Lp(0.052,0.12,f)},
-      {y:0.66*hS,rx:Lp(male?0.078:0.072,0.13,f),rz:Lp(0.055,0.11,f)},
-      {y:0.71*hS,rx:Lp(male?0.082:0.073,0.12,f),rz:Lp(0.053,0.10,f)},
-      {y:0.76*hS,rx:Lp(male?0.095:0.080,male?0.14:0.12,f),rz:Lp(0.048,0.08,f)},
-      {y:0.78*hS,rx:Lp(male?0.098:0.082,male?0.14:0.12,f),rz:Lp(0.046,0.075,f)}
-    ];
-    group.add(new THREE.Mesh(buildTube(torso,S,0,0),mat));
-
-    // NECK
-    var nW=Lp(0.028,0.04,f)*(male?1.15:0.9);
-    var nk=[
-      {y:0.78*hS,rx:nW*1.2,rz:nW*1.1},
-      {y:0.80*hS,rx:nW,rz:nW*0.9},
-      {y:0.83*hS,rx:nW*0.95,rz:nW*0.85}
-    ];
-    group.add(new THREE.Mesh(buildTube(nk,S,0,0),mat));
-
-    // HEAD
-    var hRx=Lp(0.055,0.065,f)*(male?1.05:0.95);
-    var hRy=Lp(0.065,0.072,f);
-    var hRz=Lp(0.055,0.06,f);
-    var headGeo=new THREE.SphereGeometry(1,24,20);
-    var headM=new THREE.Mesh(headGeo,mat);
-    headM.scale.set(hRx,hRy,hRz);
-    headM.position.set(0,0.87*hS,0);
-    group.add(headM);
-
-    // LEGS
-    var legGap=Lp(0.038,0.018,f);
-    function makeLeg(side){
-      var ox=side*legGap;
-      var leg=[
-        {y:0.02*hS,rx:Lp(0.025,0.04,f),rz:Lp(0.018,0.03,f),ox:ox},
-        {y:0.05*hS,rx:Lp(0.028,0.042,f),rz:Lp(0.022,0.035,f),ox:ox},
-        {y:0.10*hS,rx:Lp(0.035,0.055,f),rz:Lp(0.030,0.048,f),ox:ox},
-        {y:0.14*hS,rx:Lp(0.038,0.058,f),rz:Lp(0.032,0.050,f),ox:ox},
-        {y:0.20*hS,rx:Lp(0.030,0.050,f),rz:Lp(0.028,0.045,f),ox:ox},
-        {y:0.26*hS,rx:Lp(0.042,0.068,f),rz:Lp(0.038,0.060,f),ox:ox},
-        {y:0.34*hS,rx:Lp(0.052,0.082,f),rz:Lp(0.048,0.075,f),ox:ox*0.95},
-        {y:0.40*hS,rx:Lp(0.058,0.090,f),rz:Lp(0.053,0.082,f),ox:ox*0.9},
-        {y:0.45*hS,rx:Lp(0.062,0.095,f)*(male?0.9:1.05),rz:Lp(0.058,0.088,f),ox:ox*0.8},
-        {y:0.47*hS,rx:Lp(0.065,0.10,f)*(male?0.88:1.08),rz:Lp(0.060,0.090,f),ox:ox*0.5}
-      ];
-      group.add(new THREE.Mesh(buildTube(leg,S,0,0),mat));
-    }
-    makeLeg(1);makeLeg(-1);
-
-    // FEET
-    function makeFoot(side){
-      var fx=side*legGap;
-      var footGeo=new THREE.SphereGeometry(1,12,8);
-      var foot=new THREE.Mesh(footGeo,mat);
-      foot.scale.set(Lp(0.028,0.042,f),Lp(0.012,0.016,f),Lp(0.04,0.05,f));
-      foot.position.set(fx,0.012*hS,Lp(0.01,0.015,f));
-      group.add(foot);
-    }
-    makeFoot(1);makeFoot(-1);
-
-    // ARMS
-    var shX=Lp(male?0.098:0.082,male?0.14:0.12,f);
-    var shY=0.76*hS;
-    function makeArm(side){
-      var sx=side*(shX+Lp(0.015,0.01,f));
-      var aA=Lp(0.08,0.14,f);
-      var arm=[
-        {y:shY,rx:Lp(0.028,0.048,f),rz:Lp(0.025,0.042,f),ox:sx},
-        {y:0.72*hS,rx:Lp(0.030,0.050,f),rz:Lp(0.026,0.044,f),ox:sx+side*aA*0.3},
-        {y:0.66*hS,rx:Lp(0.032,0.052,f),rz:Lp(0.028,0.046,f),ox:sx+side*aA*0.6},
-        {y:0.58*hS,rx:Lp(0.026,0.042,f),rz:Lp(0.024,0.038,f),ox:sx+side*aA*0.85},
-        {y:0.52*hS,rx:Lp(0.024,0.038,f),rz:Lp(0.022,0.034,f),ox:sx+side*aA},
-        {y:0.46*hS,rx:Lp(0.022,0.035,f),rz:Lp(0.020,0.030,f),ox:sx+side*aA*1.05},
-        {y:0.40*hS,rx:Lp(0.018,0.028,f),rz:Lp(0.016,0.025,f),ox:sx+side*aA*1.08},
-        {y:0.36*hS,rx:Lp(0.016,0.024,f),rz:Lp(0.014,0.022,f),ox:sx+side*aA*1.1}
-      ];
-      group.add(new THREE.Mesh(buildTube(arm,S,0,0),mat));
-      var handGeo=new THREE.SphereGeometry(1,10,8);
-      var hand=new THREE.Mesh(handGeo,mat);
-      hand.scale.set(Lp(0.016,0.024,f),Lp(0.022,0.030,f),Lp(0.010,0.016,f));
-      hand.position.set(sx+side*aA*1.1,0.34*hS,0);
-      group.add(hand);
-    }
-    makeArm(1);makeArm(-1);
-
-    return group;
-  }
-
-  function updateBody3D(weight,hIn,gender){
-    if(!bodyGroup)return;
-    while(bodyGroup.children.length>0){
-      var child=bodyGroup.children[0];
-      if(child.geometry)child.geometry.dispose();
-      if(child.material)child.material.dispose();
-      bodyGroup.remove(child);
-    }
-    var newBody=buildBody(weight,hIn,gender);
-    while(newBody.children.length>0){
-      bodyGroup.add(newBody.children[0]);
-    }
+    mesh.geometry.attributes.position.needsUpdate=true;
+    mesh.geometry.computeVertexNormals();
+    mesh.geometry.computeBoundingBox();
   }
 
   function setGender3D(g){
     currentGender=g;
-    var bf=document.getElementById('btn-female');
-    var bm=document.getElementById('btn-male');
-    if(bf){
-      bf.className='mode-btn '+(g==='female'?'active-med':'inactive');
-      bm.className='mode-btn '+(g==='male'?'active-med':'inactive');
-    }
+    document.getElementById('btn-female').className='mode-btn '+(g==='female'?'active-med':'inactive');
+    document.getElementById('btn-male').className='mode-btn '+(g==='male'?'active-med':'inactive');
+
+    // Toggle visibility
+    if(bodyMeshFemale&&bodyMeshFemale.parent)bodyMeshFemale.parent.visible=(g==='female');
+    if(bodyMeshMale&&bodyMeshMale.parent)bodyMeshMale.parent.visible=(g==='male');
+
+    currentBodyMesh=(g==='female')?bodyMeshFemale:bodyMeshMale;
     updateAll();
   }
 
@@ -1495,7 +1483,7 @@
     document.getElementById('bmi-display').textContent=bmi.toFixed(1);
     document.getElementById('total-lost').textContent=Math.round(lost)+' lbs';
     document.getElementById('pct-lost').textContent=pct.toFixed(1)+'%';
-    updateBody3D(w,heightIn,currentGender);
+    applyBMIMorph(bmi);
     updateChartData();
   }
 
@@ -1533,12 +1521,9 @@
           legend:{display:false},
           tooltip:{
             backgroundColor:'rgba(8,20,16,0.9)',
-            titleColor:'#F3EAE1',
-            bodyColor:'#F3EAE1',
+            titleColor:'#F3EAE1',bodyColor:'#F3EAE1',
             borderColor:'rgba(106,153,132,0.2)',
-            borderWidth:1,
-            cornerRadius:8,
-            padding:12,
+            borderWidth:1,cornerRadius:8,padding:12,
             callbacks:{
               title:function(i){return'Month '+i[0].label},
               label:function(i){return i.dataset.label+': '+Math.round(i.raw)+' lbs'}
@@ -1553,11 +1538,11 @@
     });
   }
 
-  // Initialize everything
   initScene();
   initChart();
-  updateAll();
   </script>
+
+
 
   <!-- WHAT TO EXPECT / EDUCATION -->
   <section class="education-section" style="padding: 100px 0; background: var(--cream);">
