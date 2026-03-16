@@ -1117,6 +1117,12 @@
     box-shadow: 0 12px 36px rgba(106,153,132,0.25);
   }
 
+  .widget .gender-toggle {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
   /* Responsive */
   @media (max-width: 480px) {
     .widget .widget-header h2 { font-size: 26px; }
@@ -1124,7 +1130,6 @@
     .widget .input-row .spacer { display: none; }
     .widget .weight-num { font-size: 36px; }
     .widget .body-display { height: 380px; }
-    .widget .body-display canvas { width: 280px; height: 360px; }
   }
 </style>
 
@@ -1139,6 +1144,12 @@
   <div class="mode-toggle">
     <button id="btn-med" class="mode-btn active-med" onclick="setMode('med')">Semaglutide only</button>
     <button id="btn-both" class="mode-btn inactive" onclick="setMode('both')">Semaglutide + exercise</button>
+  </div>
+
+  <!-- Gender Toggle -->
+  <div class="gender-toggle">
+    <button id="btn-female" class="mode-btn active-med" onclick="setGender3D('female')">Female</button>
+    <button id="btn-male" class="mode-btn inactive" onclick="setGender3D('male')">Male</button>
   </div>
 
   <!-- Inputs -->
@@ -1160,7 +1171,7 @@
 
   <!-- Body Display -->
   <div class="body-display">
-    <canvas id="bodyCanvas" width="320" height="400"></canvas>
+    <div id="body3d" style="width:100%;height:100%;cursor:grab;"></div>
 
     <div class="stat-overlay stat-tr">
       <div class="weight-num" id="weight-display">400</div>
@@ -1222,9 +1233,12 @@
     </div>
   </section>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-  <script>
+<script>
   var startWeight=400,heightIn=70,mode='med',chart;
+  var currentGender='female';
 
   var MED_PCT=[
     0,.018,.038,.060,.080,.098,.113,.125,.135,.143,.148,.153,.155,
@@ -1235,16 +1249,11 @@
     .238,.245,.251,.256,.261,.265,.269,.272,.275,.277,.279,.280
   ];
 
-  var VISUAL_BOOST=1.25;
-
   function gw(p){return p.map(function(v){return Math.round(startWeight*(1-v))})}
   function getMed(){return gw(MED_PCT)}
   function getBoth(){return gw(BOTH_PCT)}
   function getData(){return mode==='med'?getMed():getBoth()}
-  function getVisualWeight(realWeight){
-    var lost=startWeight-realWeight;
-    return Math.max(startWeight*0.45,startWeight-lost*VISUAL_BOOST);
-  }
+  function getBMI(w,h){return(w/(h*h))*703}
 
   function setMode(m){
     mode=m;
@@ -1260,101 +1269,222 @@
     updateAll();
   }
 
-  function lerp(a,b,t){return a+(b-a)*t}
-  function ss(t){return t*t*(3-2*t)}
-  function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v))}
-  function getBMI(w,h){return(w/(h*h))*703}
+  /* ===== THREE.JS 3D BODY VISUALIZER ===== */
+  var scene3d,camera3d,renderer3d,controls3d,bodyGroup;
 
-  function drawBody(ctx,W,H,visualWeight){
-    var bmi=getBMI(visualWeight,heightIn);
-    var t=ss(clamp((bmi-18)/(55-18),0,1));
-    var hN=clamp((heightIn-60)/(76-60),0,1);
-    var vS=lerp(0.88,1.12,hN),hSc=lerp(1.08,0.92,hN);
-    var cx=W/2,bs=H/400;
-    ctx.clearRect(0,0,W,H);
+  function initScene(){
+    var container=document.getElementById('body3d');
+    if(!container)return;
+    var w=container.clientWidth,h=container.clientHeight;
 
-    var grd=ctx.createLinearGradient(cx,20*bs,cx,370*bs);
-    grd.addColorStop(0,'rgba(106,153,132,0.92)');
-    grd.addColorStop(0.35,'rgba(27,73,45,0.95)');
-    grd.addColorStop(1,'rgba(13,46,26,0.97)');
+    scene3d=new THREE.Scene();
+    camera3d=new THREE.PerspectiveCamera(28,w/h,0.1,100);
+    camera3d.position.set(0,0.85,3.8);
+    camera3d.lookAt(0,0.72,0);
 
-    var vO=(1-vS)*40*bs;
-    function sy(v){return(v*vS+vO/bs)*bs}
-    function sx(v){return v*hSc*bs}
+    renderer3d=new THREE.WebGLRenderer({antialias:true,alpha:true});
+    renderer3d.setSize(w,h);
+    renderer3d.setPixelRatio(Math.min(window.devicePixelRatio,2));
+    renderer3d.setClearColor(0x000000,0);
+    container.appendChild(renderer3d.domElement);
 
-    var headRx=sx(lerp(15,17,t)),headRy=lerp(16,19,t)*bs,headCy=sy(28);
-    var neckW=sx(lerp(8,13,t)),neckTop=sy(46),neckBot=sy(60);
-    var shoulderW=sx(lerp(38,58,t)),chestW=sx(lerp(34,58,t));
-    var waistW=sx(lerp(27,60,t)),bellyW=sx(lerp(29,66,t));
-    var hipW=sx(lerp(34,58,t)),upperThighW=sx(lerp(20,32,t));
-    var shoulderY=sy(70),chestY=sy(108),waistY=sy(152);
-    var bellyY=sy(175),hipY=sy(198),crotchY=sy(222);
-    var legGap=sx(lerp(4,1.5,t)),thighW=sx(lerp(18,30,t));
-    var kneeW=sx(lerp(13,22,t)),calfW=sx(lerp(11,19,t));
-    var ankleW=sx(lerp(7,12,t)),footW=sx(lerp(11,15,t));
-    var kneeY=sy(278),calfY=sy(308),ankleY=sy(338),footY=sy(354);
-    var armGap=sx(lerp(7,3,t)),armTopW=sx(lerp(10,18,t));
-    var armMidW=sx(lerp(8,15,t)),forearmW=sx(lerp(7,12,t));
-    var wristW=sx(lerp(5,8,t)),handW=sx(lerp(7,11,t));
-    var armStartY=shoulderY-2*bs,armPitY=shoulderY+18*bs*vS;
-    var elbowY=sy(168),wristY=sy(228),handY=sy(244);
-    var s=bs;
+    scene3d.add(new THREE.AmbientLight(0xF3EAE1,0.3));
+    var keyL=new THREE.DirectionalLight(0xF3EAE1,0.95);
+    keyL.position.set(4,6,5);scene3d.add(keyL);
+    var fillL=new THREE.DirectionalLight(0x6A9984,0.3);
+    fillL.position.set(-5,3,2);scene3d.add(fillL);
+    var rimL=new THREE.DirectionalLight(0xB89B62,0.5);
+    rimL.position.set(0,4,-6);scene3d.add(rimL);
+    var botL=new THREE.DirectionalLight(0x1B492D,0.15);
+    botL.position.set(0,-3,2);scene3d.add(botL);
 
-    function drawArm(side){
-      var ax=cx+side*(shoulderW+armGap);
-      ctx.beginPath();
-      ctx.moveTo(ax,armStartY);
-      ctx.bezierCurveTo(ax+side*armTopW*0.8,armStartY+5*s,ax+side*armTopW,armPitY-5*s,ax+side*armTopW*0.9,armPitY+10*s);
-      ctx.bezierCurveTo(ax+side*armMidW*0.95,elbowY-20*s,ax+side*armMidW,elbowY-5*s,ax+side*armMidW*0.85,elbowY);
-      ctx.bezierCurveTo(ax+side*forearmW*0.9,elbowY+15*s,ax+side*forearmW,wristY-20*s,ax+side*wristW,wristY);
-      ctx.bezierCurveTo(ax+side*handW*0.6,wristY+4*s,ax+side*handW*0.8,handY-3*s,ax+side*handW*0.5,handY);
-      ctx.bezierCurveTo(ax+side*handW*0.1,handY+3*s,ax-side*wristW*0.3,handY-2*s,ax-side*wristW*0.5,wristY+2*s);
-      ctx.bezierCurveTo(ax-side*forearmW*0.3,wristY-15*s,ax-side*forearmW*0.2,elbowY+18*s,ax-side*armMidW*0.1,elbowY+2*s);
-      ctx.bezierCurveTo(ax-side*armMidW*0.05,elbowY-8*s,ax-side*armTopW*0.15,armPitY+15*s,ax-side*armTopW*0.1,armPitY);
-      ctx.bezierCurveTo(ax-side*armTopW*0.05,armPitY-10*s,ax-side*2*s,armStartY+8*s,ax,armStartY);
-      ctx.closePath();ctx.fill();
-    }
+    controls3d=new THREE.OrbitControls(camera3d,renderer3d.domElement);
+    controls3d.enableZoom=false;
+    controls3d.enablePan=false;
+    controls3d.autoRotate=true;
+    controls3d.autoRotateSpeed=1.2;
+    controls3d.minPolarAngle=Math.PI*0.1;
+    controls3d.maxPolarAngle=Math.PI*0.9;
+    controls3d.target.set(0,0.72,0);
+    controls3d.update();
 
-    ctx.fillStyle=grd;
-    drawArm(-1);drawArm(1);
+    bodyGroup=new THREE.Group();
+    scene3d.add(bodyGroup);
 
-    ctx.fillStyle=grd;
-    ctx.beginPath();
-    ctx.moveTo(cx-neckW,neckTop);
-    ctx.bezierCurveTo(cx-shoulderW*0.5,neckTop+4*s,cx-shoulderW,shoulderY-10*s,cx-shoulderW,shoulderY);
-    ctx.bezierCurveTo(cx-shoulderW-1*s,(shoulderY+chestY)/2,cx-chestW-1*s,chestY-8*s,cx-chestW,chestY);
-    ctx.bezierCurveTo(cx-chestW+1*s,(chestY+waistY)/2,cx-waistW-1*s,waistY-6*s,cx-waistW,waistY);
-    ctx.bezierCurveTo(cx-waistW-2*s,(waistY+bellyY)/2,cx-bellyW,bellyY-3*s,cx-bellyW,bellyY);
-    ctx.bezierCurveTo(cx-bellyW+1*s,(bellyY+hipY)/2,cx-hipW-1*s,hipY-4*s,cx-hipW,hipY);
-    ctx.bezierCurveTo(cx-hipW+1*s,hipY+8*s,cx-upperThighW-4*s,crotchY-8*s,cx-upperThighW-2*s,crotchY);
-    ctx.bezierCurveTo(cx-thighW-legGap,crotchY+16*s,cx-thighW-legGap+1*s,kneeY-22*s,cx-kneeW-legGap,kneeY);
-    ctx.bezierCurveTo(cx-kneeW-legGap+2*s,kneeY+8*s,cx-calfW-legGap-1*s,kneeY+18*s,cx-calfW-legGap,calfY-10*s);
-    ctx.bezierCurveTo(cx-calfW-legGap+1*s,calfY+6*s,cx-ankleW-legGap-2*s,calfY+14*s,cx-ankleW-legGap,ankleY);
-    ctx.lineTo(cx-footW-legGap,footY);ctx.lineTo(cx-legGap+1*s,footY);
-    ctx.lineTo(cx-legGap+1*s,crotchY+6*s);ctx.lineTo(cx+legGap-1*s,crotchY+6*s);
-    ctx.lineTo(cx+legGap-1*s,footY);ctx.lineTo(cx+footW+legGap,footY);
-    ctx.lineTo(cx+ankleW+legGap,ankleY);
-    ctx.bezierCurveTo(cx+ankleW+legGap+2*s,calfY+14*s,cx+calfW+legGap-1*s,calfY+6*s,cx+calfW+legGap,calfY-10*s);
-    ctx.bezierCurveTo(cx+calfW+legGap+1*s,kneeY+18*s,cx+kneeW+legGap-2*s,kneeY+8*s,cx+kneeW+legGap,kneeY);
-    ctx.bezierCurveTo(cx+thighW+legGap-1*s,kneeY-22*s,cx+thighW+legGap,crotchY+16*s,cx+upperThighW+2*s,crotchY);
-    ctx.bezierCurveTo(cx+upperThighW+4*s,crotchY-8*s,cx+hipW-1*s,hipY+8*s,cx+hipW,hipY);
-    ctx.bezierCurveTo(cx+hipW+1*s,hipY-4*s,cx+bellyW-1*s,(bellyY+hipY)/2,cx+bellyW,bellyY);
-    ctx.bezierCurveTo(cx+bellyW,bellyY-3*s,cx+waistW+2*s,(waistY+bellyY)/2,cx+waistW,waistY);
-    ctx.bezierCurveTo(cx+waistW+1*s,waistY-6*s,cx+chestW-1*s,(chestY+waistY)/2,cx+chestW,chestY);
-    ctx.bezierCurveTo(cx+chestW+1*s,chestY-8*s,cx+shoulderW+1*s,(shoulderY+chestY)/2,cx+shoulderW,shoulderY);
-    ctx.bezierCurveTo(cx+shoulderW,shoulderY-10*s,cx+shoulderW*0.5,neckTop+4*s,cx+neckW,neckTop);
-    ctx.closePath();ctx.fill();
+    window.addEventListener('resize',function(){
+      var c=document.getElementById('body3d');
+      if(!c)return;
+      var nw=c.clientWidth,nh=c.clientHeight;
+      camera3d.aspect=nw/nh;
+      camera3d.updateProjectionMatrix();
+      renderer3d.setSize(nw,nh);
+    });
 
-    ctx.beginPath();
-    ctx.moveTo(cx-neckW,neckTop);
-    ctx.bezierCurveTo(cx-neckW+1*s,neckTop-4*s,cx-neckW-1*s,neckBot+2*s,cx-neckW,neckBot-2*s);
-    ctx.lineTo(cx+neckW,neckBot-2*s);
-    ctx.bezierCurveTo(cx+neckW+1*s,neckBot+2*s,cx+neckW-1*s,neckTop-4*s,cx+neckW,neckTop);
-    ctx.closePath();ctx.fill();
-
-    ctx.beginPath();ctx.ellipse(cx,headCy,headRx,headRy,0,0,Math.PI*2);ctx.fill();
+    animate3d();
   }
 
+  function animate3d(){
+    requestAnimationFrame(animate3d);
+    if(controls3d)controls3d.update();
+    if(renderer3d&&scene3d&&camera3d)renderer3d.render(scene3d,camera3d);
+  }
+
+  function bodyMat(){
+    return new THREE.MeshPhongMaterial({
+      color:0x1B492D,specular:0x4a7a64,shininess:25,flatShading:false
+    });
+  }
+
+  function buildTube(profile,seg,offX,offZ){
+    var pos=[],idx=[],ring=seg+1;
+    for(var i=0;i<profile.length;i++){
+      var p=profile[i],ox=(p.ox||0)+(offX||0),oz=(p.oz||0)+(offZ||0);
+      for(var j=0;j<=seg;j++){
+        var th=(j/seg)*Math.PI*2;
+        pos.push(ox+Math.cos(th)*p.rx,p.y,oz+Math.sin(th)*p.rz);
+      }
+    }
+    for(var i=0;i<profile.length-1;i++){
+      for(var j=0;j<seg;j++){
+        var a=i*ring+j,b=(i+1)*ring+j;
+        idx.push(a,b,a+1,a+1,b,b+1);
+      }
+    }
+    var geo=new THREE.BufferGeometry();
+    geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
+    geo.setIndex(idx);
+    geo.computeVertexNormals();
+    return geo;
+  }
+
+  function Lp(a,b,t){return a+(b-a)*t}
+  function smoothstep(t){return t*t*(3-2*t)}
+
+  function buildBody(weight,hIn,gender){
+    var bmi=getBMI(weight,hIn);
+    var f=smoothstep(Math.max(0,Math.min(1,(bmi-18)/37)));
+    var male=gender==='male';
+    var hS=hIn/70;
+    var S=20,mat=bodyMat(),group=new THREE.Group();
+
+    // TORSO
+    var torso=[
+      {y:0.47*hS,rx:Lp(0.072,0.14,f)*(male?0.92:1.08),rz:Lp(0.062,0.13,f)},
+      {y:0.50*hS,rx:Lp(male?0.078:0.092,male?0.15:0.18,f),rz:Lp(0.068,0.14,f)},
+      {y:0.53*hS,rx:Lp(male?0.073:0.085,male?0.16:0.17,f),rz:Lp(0.064,0.15,f)},
+      {y:0.57*hS,rx:Lp(male?0.068:0.063,male?0.16:0.15,f),rz:Lp(0.052,0.14,f)},
+      {y:0.61*hS,rx:Lp(0.070,0.14,f),rz:Lp(0.052,0.12,f)},
+      {y:0.66*hS,rx:Lp(male?0.078:0.072,0.13,f),rz:Lp(0.055,0.11,f)},
+      {y:0.71*hS,rx:Lp(male?0.082:0.073,0.12,f),rz:Lp(0.053,0.10,f)},
+      {y:0.76*hS,rx:Lp(male?0.095:0.080,male?0.14:0.12,f),rz:Lp(0.048,0.08,f)},
+      {y:0.78*hS,rx:Lp(male?0.098:0.082,male?0.14:0.12,f),rz:Lp(0.046,0.075,f)}
+    ];
+    group.add(new THREE.Mesh(buildTube(torso,S,0,0),mat));
+
+    // NECK
+    var nW=Lp(0.028,0.04,f)*(male?1.15:0.9);
+    var nk=[
+      {y:0.78*hS,rx:nW*1.2,rz:nW*1.1},
+      {y:0.80*hS,rx:nW,rz:nW*0.9},
+      {y:0.83*hS,rx:nW*0.95,rz:nW*0.85}
+    ];
+    group.add(new THREE.Mesh(buildTube(nk,S,0,0),mat));
+
+    // HEAD
+    var hRx=Lp(0.055,0.065,f)*(male?1.05:0.95);
+    var hRy=Lp(0.065,0.072,f);
+    var hRz=Lp(0.055,0.06,f);
+    var headGeo=new THREE.SphereGeometry(1,24,20);
+    var headM=new THREE.Mesh(headGeo,mat);
+    headM.scale.set(hRx,hRy,hRz);
+    headM.position.set(0,0.87*hS,0);
+    group.add(headM);
+
+    // LEGS
+    var legGap=Lp(0.038,0.018,f);
+    function makeLeg(side){
+      var ox=side*legGap;
+      var leg=[
+        {y:0.02*hS,rx:Lp(0.025,0.04,f),rz:Lp(0.018,0.03,f),ox:ox},
+        {y:0.05*hS,rx:Lp(0.028,0.042,f),rz:Lp(0.022,0.035,f),ox:ox},
+        {y:0.10*hS,rx:Lp(0.035,0.055,f),rz:Lp(0.030,0.048,f),ox:ox},
+        {y:0.14*hS,rx:Lp(0.038,0.058,f),rz:Lp(0.032,0.050,f),ox:ox},
+        {y:0.20*hS,rx:Lp(0.030,0.050,f),rz:Lp(0.028,0.045,f),ox:ox},
+        {y:0.26*hS,rx:Lp(0.042,0.068,f),rz:Lp(0.038,0.060,f),ox:ox},
+        {y:0.34*hS,rx:Lp(0.052,0.082,f),rz:Lp(0.048,0.075,f),ox:ox*0.95},
+        {y:0.40*hS,rx:Lp(0.058,0.090,f),rz:Lp(0.053,0.082,f),ox:ox*0.9},
+        {y:0.45*hS,rx:Lp(0.062,0.095,f)*(male?0.9:1.05),rz:Lp(0.058,0.088,f),ox:ox*0.8},
+        {y:0.47*hS,rx:Lp(0.065,0.10,f)*(male?0.88:1.08),rz:Lp(0.060,0.090,f),ox:ox*0.5}
+      ];
+      group.add(new THREE.Mesh(buildTube(leg,S,0,0),mat));
+    }
+    makeLeg(1);makeLeg(-1);
+
+    // FEET
+    function makeFoot(side){
+      var fx=side*legGap;
+      var footGeo=new THREE.SphereGeometry(1,12,8);
+      var foot=new THREE.Mesh(footGeo,mat);
+      foot.scale.set(Lp(0.028,0.042,f),Lp(0.012,0.016,f),Lp(0.04,0.05,f));
+      foot.position.set(fx,0.012*hS,Lp(0.01,0.015,f));
+      group.add(foot);
+    }
+    makeFoot(1);makeFoot(-1);
+
+    // ARMS
+    var shX=Lp(male?0.098:0.082,male?0.14:0.12,f);
+    var shY=0.76*hS;
+    function makeArm(side){
+      var sx=side*(shX+Lp(0.015,0.01,f));
+      var aA=Lp(0.08,0.14,f);
+      var arm=[
+        {y:shY,rx:Lp(0.028,0.048,f),rz:Lp(0.025,0.042,f),ox:sx},
+        {y:0.72*hS,rx:Lp(0.030,0.050,f),rz:Lp(0.026,0.044,f),ox:sx+side*aA*0.3},
+        {y:0.66*hS,rx:Lp(0.032,0.052,f),rz:Lp(0.028,0.046,f),ox:sx+side*aA*0.6},
+        {y:0.58*hS,rx:Lp(0.026,0.042,f),rz:Lp(0.024,0.038,f),ox:sx+side*aA*0.85},
+        {y:0.52*hS,rx:Lp(0.024,0.038,f),rz:Lp(0.022,0.034,f),ox:sx+side*aA},
+        {y:0.46*hS,rx:Lp(0.022,0.035,f),rz:Lp(0.020,0.030,f),ox:sx+side*aA*1.05},
+        {y:0.40*hS,rx:Lp(0.018,0.028,f),rz:Lp(0.016,0.025,f),ox:sx+side*aA*1.08},
+        {y:0.36*hS,rx:Lp(0.016,0.024,f),rz:Lp(0.014,0.022,f),ox:sx+side*aA*1.1}
+      ];
+      group.add(new THREE.Mesh(buildTube(arm,S,0,0),mat));
+      var handGeo=new THREE.SphereGeometry(1,10,8);
+      var hand=new THREE.Mesh(handGeo,mat);
+      hand.scale.set(Lp(0.016,0.024,f),Lp(0.022,0.030,f),Lp(0.010,0.016,f));
+      hand.position.set(sx+side*aA*1.1,0.34*hS,0);
+      group.add(hand);
+    }
+    makeArm(1);makeArm(-1);
+
+    return group;
+  }
+
+  function updateBody3D(weight,hIn,gender){
+    if(!bodyGroup)return;
+    while(bodyGroup.children.length>0){
+      var child=bodyGroup.children[0];
+      if(child.geometry)child.geometry.dispose();
+      if(child.material)child.material.dispose();
+      bodyGroup.remove(child);
+    }
+    var newBody=buildBody(weight,hIn,gender);
+    while(newBody.children.length>0){
+      bodyGroup.add(newBody.children[0]);
+    }
+  }
+
+  function setGender3D(g){
+    currentGender=g;
+    var bf=document.getElementById('btn-female');
+    var bm=document.getElementById('btn-male');
+    if(bf){
+      bf.className='mode-btn '+(g==='female'?'active-med':'inactive');
+      bm.className='mode-btn '+(g==='male'?'active-med':'inactive');
+    }
+    updateAll();
+  }
+
+  /* ===== UPDATE & CHART ===== */
   function updateAll(){
     var mo=parseInt(document.getElementById('month-slider').value);
     var d=getData(),w=d[mo],lost=startWeight-w;
@@ -1365,8 +1495,7 @@
     document.getElementById('bmi-display').textContent=bmi.toFixed(1);
     document.getElementById('total-lost').textContent=Math.round(lost)+' lbs';
     document.getElementById('pct-lost').textContent=pct.toFixed(1)+'%';
-    var c=document.getElementById('bodyCanvas');
-    drawBody(c.getContext('2d'),c.width,c.height,getVisualWeight(w));
+    updateBody3D(w,heightIn,currentGender);
     updateChartData();
   }
 
@@ -1424,6 +1553,8 @@
     });
   }
 
+  // Initialize everything
+  initScene();
   initChart();
   updateAll();
   </script>
