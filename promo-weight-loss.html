@@ -136,6 +136,53 @@
     }
     .trust-badge i { color: var(--green-light); font-size: 18px; }
 
+    /* Floating Bottles */
+    .floating-bottle-left,
+    .floating-bottle-right {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 320px;
+      height: auto;
+      z-index: 1;
+      pointer-events: none;
+      filter: drop-shadow(0 20px 30px rgba(0,0,0,0.5));
+      animation: float-bottle 6s ease-in-out infinite;
+    }
+    .floating-bottle-left {
+      left: 2%;
+      animation-name: float-left;
+    }
+    .floating-bottle-right {
+      right: 2%;
+      animation-name: float-right;
+      animation-delay: -3s;
+    }
+
+    @keyframes float-left {
+      0%, 100% { transform: translateY(-50%) rotate(-5deg); }
+      50% { transform: translateY(-55%) rotate(-2deg); }
+    }
+    @keyframes float-right {
+      0%, 100% { transform: translateY(-50%) rotate(5deg); }
+      50% { transform: translateY(-45%) rotate(2deg); }
+    }
+
+    @media(max-width: 1100px) {
+      .floating-bottle-left,
+      .floating-bottle-right {
+        width: 220px;
+        opacity: 0.4;
+      }
+    }
+
+    @media(max-width: 768px) {
+      .floating-bottle-left,
+      .floating-bottle-right {
+        display: none;
+      }
+    }
+
     /* Features */
     .promo-features {
       padding: 80px 24px;
@@ -229,6 +276,9 @@
   </header>
 
   <section class="promo-hero">
+    <img src="assets/brand/tirzz_transparent.png" alt="Tirzepatide Medication" class="floating-bottle-left">
+    <img src="assets/brand/semag_transparent.png" alt="Semaglutide Medication" class="floating-bottle-right">
+    
     <div class="promo-container">
       <span class="promo-eyebrow">Medical Weight Loss</span>
       <h1>Weight loss medication<br>that <em>actually</em> works.</h1>
