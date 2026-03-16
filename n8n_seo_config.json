@@ -1,0 +1,143 @@
+{
+  "name": "Freeley Auto-SEO Content Machine",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "days"
+            }
+          ]
+        }
+      },
+      "name": "Daily Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        100,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Sh0XvKF6DVjQLom4BFzsEWOBzU6mQCwPvu2FuyGFZc0",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Sheet1",
+          "mode": "list",
+          "cachedResultName": "Sheet1"
+        },
+        "options": {}
+      },
+      "name": "Google Sheets (Keywords)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 3,
+      "position": [
+        300,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "messages": {
+          "messageValues": [
+            {
+              "content": "You are the Chief Medical Officer at Freeley Health. Write an engaging, highly-researched, SEO-optimized medical article about {{ $json.Keyword }}. Use bolding, H2s, H3s, and format the output STRICTLY in Markdown so it can be deployed directly to our Netlify CMS infrastructure. Include frontmatter at the top with title, tag, and excerpt. Conclude with a call to action leading readers to our free medical assessment at freeley.com/quiz.html."
+            }
+          ]
+        }
+      },
+      "name": "OpenAI (Write Article)",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [
+        500,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.github.com/repos/Legacypay/Freeley_Netlify/contents/content/blog/{{ $json.Keyword.replace(/\\s+/g, '-').toLowerCase() }}.md",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "githubApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github.v3+json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "message",
+              "value": "Automated SEO Blog Post via n8n"
+            },
+            {
+              "name": "content",
+              "value": "={{ $json.message.content.toBase64() }}"
+            }
+          ]
+        }
+      },
+      "name": "GitHub (Deploy to Netlify)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        700,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Daily Trigger": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets (Keywords)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets (Keywords)": {
+      "main": [
+        [
+          {
+            "node": "OpenAI (Write Article)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI (Write Article)": {
+      "main": [
+        [
+          {
+            "node": "GitHub (Deploy to Netlify)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f948f219-fcbb-4a57-bcaf-df6459fa4219"
+}
