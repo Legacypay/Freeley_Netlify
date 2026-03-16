@@ -1455,8 +1455,8 @@
     document.getElementById('btn-male').className='mode-btn '+(g==='male'?'active-med':'inactive');
 
     // Toggle visibility
-    if(bodyMeshFemale&&bodyMeshFemale.parent)bodyMeshFemale.parent.visible=(g==='female');
-    if(bodyMeshMale&&bodyMeshMale.parent)bodyMeshMale.parent.visible=(g==='male');
+    if(bodyMeshFemale)bodyMeshFemale.visible=(g==='female');
+    if(bodyMeshMale)bodyMeshMale.visible=(g==='male');
 
     currentBodyMesh=(g==='female')?bodyMeshFemale:bodyMeshMale;
     updateAll();
