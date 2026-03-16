@@ -781,302 +781,651 @@
   </section>
 
   <!-- INTERACTIVE PROJECTION TOOL -->
-  <section class="results-section" style="padding: 100px 0; background: var(--off-white);">
-    <div class="container">
-      <div class="reveal" style="text-align: center; margin-bottom: 60px;">
-        <span class="eyebrow">Interactive Projection</span>
-        <h2 class="display" style="font-size:clamp(34px,4.5vw,52px); margin-top:12px;">See your potential <em>results</em></h2>
-        <p style="color:var(--text-muted); font-size:16px; max-width:600px; margin:16px auto 0; line-height:1.6;">Adjust the timeline and parameters below to see the average expected weight loss based on clinical trial data.</p>
+  <section class="results-section" style="padding: 100px 0; background: #081410;">
+    <div class="container" style="display: flex; justify-content: center;">
+
+<div class="widget" style="width:100%;max-width:620px;">
+<style>
+  .widget {
+    font-family: 'DM Sans', sans-serif;
+    color: #F3EAE1;
+  }
+
+  /* Section header */
+  .widget .widget-header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .widget .widget-header .eyebrow-w {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #B89B62;
+    margin-bottom: 12px;
+  }
+  .widget .widget-header h2 {
+    font-family: 'Playfair Display', 'Cormorant Garamond', serif;
+    font-weight: 700;
+    font-size: 32px;
+    color: #F3EAE1;
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+  .widget .widget-header h2 em {
+    font-style: italic;
+    color: #6A9984;
+  }
+  .widget .widget-header p {
+    font-size: 15px;
+    color: rgba(243,234,225,0.5);
+    font-weight: 300;
+    max-width: 480px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* Toggle buttons */
+  .widget .mode-toggle {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .widget .mode-btn {
+    flex: 1;
+    padding: 12px 16px;
+    border-radius: 100px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    outline: none;
+  }
+  .widget .mode-btn.active-med {
+    background: #1B492D;
+    color: #F3EAE1;
+    border: 1.5px solid #1B492D;
+  }
+  .widget .mode-btn.active-both {
+    background: #B89B62;
+    color: #081410;
+    border: 1.5px solid #B89B62;
+  }
+  .widget .mode-btn.inactive {
+    background: transparent;
+    color: rgba(243,234,225,0.5);
+    border: 1.5px solid rgba(243,234,225,0.15);
+  }
+  .widget .mode-btn:hover {
+    border-color: #6A9984;
+  }
+
+  /* Input row */
+  .widget .input-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 20px;
+    background: rgba(243,234,225,0.04);
+    border: 1px solid rgba(243,234,225,0.08);
+    border-radius: 12px;
+    padding: 14px 18px;
+  }
+  .widget .input-row label {
+    font-size: 13px;
+    color: rgba(243,234,225,0.5);
+    white-space: nowrap;
+  }
+  .widget .input-row input[type="number"] {
+    width: 80px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    background: rgba(243,234,225,0.06);
+    border: 1px solid rgba(243,234,225,0.12);
+    border-radius: 8px;
+    color: #F3EAE1;
+    padding: 8px;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+  .widget .input-row input[type="number"]:focus {
+    border-color: #6A9984;
+  }
+  .widget .input-row .spacer { flex: 1; }
+  .widget .input-row select {
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    padding: 8px 12px;
+    background: rgba(243,234,225,0.06);
+    border: 1px solid rgba(243,234,225,0.12);
+    border-radius: 8px;
+    color: #F3EAE1;
+    outline: none;
+    cursor: pointer;
+  }
+  .widget .input-row select option {
+    background: #081410;
+    color: #F3EAE1;
+  }
+  .widget .input-row .unit {
+    font-size: 13px;
+    color: rgba(243,234,225,0.4);
+  }
+
+  /* Body display area */
+  .widget .body-display {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    height: 420px;
+    margin-bottom: 16px;
+    background: rgba(243,234,225,0.02);
+    border: 1px solid rgba(243,234,225,0.06);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .widget .body-display canvas {
+    width: 320px;
+    height: 400px;
+  }
+  .widget .stat-overlay {
+    position: absolute;
+    padding: 8px 14px;
+    border-radius: 10px;
+  }
+  .widget .stat-tl {
+    top: 16px;
+    left: 16px;
+    text-align: left;
+  }
+  .widget .stat-tr {
+    top: 16px;
+    right: 16px;
+    text-align: right;
+  }
+  .widget .stat-bottom {
+    bottom: 12px;
+    left: 16px;
+    right: 16px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .widget .weight-num {
+    font-family: 'Playfair Display', 'Cormorant Garamond', serif;
+    font-size: 44px;
+    font-weight: 700;
+    color: #F3EAE1;
+    line-height: 1;
+  }
+  .widget .weight-unit {
+    font-size: 13px;
+    color: rgba(243,234,225,0.45);
+    margin-top: 2px;
+  }
+  .widget .month-label {
+    font-size: 15px;
+    font-weight: 500;
+    color: #F3EAE1;
+  }
+  .widget .lost-label {
+    font-size: 12px;
+    color: #6A9984;
+    margin-top: 2px;
+  }
+  .widget .bottom-stat {
+    text-align: center;
+  }
+  .widget .bottom-stat-label {
+    font-size: 11px;
+    color: rgba(243,234,225,0.4);
+  }
+  .widget .bottom-stat-val {
+    font-size: 15px;
+    font-weight: 500;
+    color: #F3EAE1;
+    margin-top: 2px;
+  }
+  .widget .bottom-stat-val.green {
+    color: #6A9984;
+  }
+
+  /* Slider */
+  .widget .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+  .widget .slider-label {
+    font-size: 12px;
+    color: rgba(243,234,225,0.4);
+    min-width: 56px;
+  }
+  .widget .slider-label.right {
+    text-align: right;
+  }
+  .widget input[type="range"] {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    border-radius: 4px;
+    background: rgba(243,234,225,0.1);
+    outline: none;
+    cursor: pointer;
+  }
+  .widget input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #6A9984;
+    border: 3px solid #081410;
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+  .widget input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+  }
+  .widget input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #6A9984;
+    border: 3px solid #081410;
+    cursor: pointer;
+  }
+  .widget .tick-marks {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 68px;
+    margin-bottom: 28px;
+  }
+  .widget .tick-marks span {
+    font-size: 11px;
+    color: rgba(243,234,225,0.3);
+  }
+
+  /* Chart area */
+  .widget .chart-wrap {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    margin-bottom: 16px;
+  }
+  .widget .legend-row {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  .widget .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: rgba(243,234,225,0.5);
+  }
+  .widget .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+  }
+
+  /* Disclaimer */
+  .widget .disclaimer {
+    background: rgba(243,234,225,0.03);
+    border: 1px solid rgba(243,234,225,0.06);
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-size: 12px;
+    color: rgba(243,234,225,0.35);
+    line-height: 1.7;
+    margin-bottom: 24px;
+  }
+
+  /* CTA */
+  .widget .cta-row {
+    text-align: center;
+  }
+  .widget .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 48px;
+    border-radius: 100px;
+    background: rgba(106,153,132,0.2);
+    border: 1.5px solid rgba(106,153,132,0.35);
+    color: #F3EAE1;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+  .widget .cta-btn:hover {
+    background: #6A9984;
+    color: #081410;
+    border-color: #6A9984;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 36px rgba(106,153,132,0.25);
+  }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    .widget .widget-header h2 { font-size: 26px; }
+    .widget .input-row { flex-wrap: wrap; gap: 8px; }
+    .widget .input-row .spacer { display: none; }
+    .widget .weight-num { font-size: 36px; }
+    .widget .body-display { height: 380px; }
+    .widget .body-display canvas { width: 280px; height: 360px; }
+  }
+</style>
+
+  <!-- Header -->
+  <div class="widget-header">
+    <div class="eyebrow-w">Transformation Calculator</div>
+    <h2>See What 24 Months Can <em>Do for You</em></h2>
+    <p>Enter your starting weight and drag the slider to preview your projected transformation with physician-managed semaglutide therapy.</p>
+  </div>
+
+  <!-- Mode Toggle -->
+  <div class="mode-toggle">
+    <button id="btn-med" class="mode-btn active-med" onclick="setMode('med')">Semaglutide only</button>
+    <button id="btn-both" class="mode-btn inactive" onclick="setMode('both')">Semaglutide + exercise</button>
+  </div>
+
+  <!-- Inputs -->
+  <div class="input-row">
+    <label>Starting weight</label>
+    <input type="number" id="start-input" value="400" min="150" max="500" step="5" oninput="recalc()"/>
+    <span class="unit">lbs</span>
+    <span class="spacer"></span>
+    <label>Height</label>
+    <select id="height-select" onchange="recalc()">
+      <option value="60">5'0"</option><option value="61">5'1"</option><option value="62">5'2"</option>
+      <option value="63">5'3"</option><option value="64">5'4"</option><option value="65">5'5"</option>
+      <option value="66">5'6"</option><option value="67">5'7"</option><option value="68">5'8"</option>
+      <option value="69">5'9"</option><option value="70" selected>5'10"</option><option value="71">5'11"</option>
+      <option value="72">6'0"</option><option value="73">6'1"</option><option value="74">6'2"</option>
+      <option value="75">6'3"</option><option value="76">6'4"</option>
+    </select>
+  </div>
+
+  <!-- Body Display -->
+  <div class="body-display">
+    <canvas id="bodyCanvas" width="320" height="400"></canvas>
+
+    <div class="stat-overlay stat-tr">
+      <div class="weight-num" id="weight-display">400</div>
+      <div class="weight-unit">lbs</div>
+    </div>
+
+    <div class="stat-overlay stat-tl">
+      <div class="month-label" id="month-display">Month 0</div>
+      <div class="lost-label" id="lost-display">Starting weight</div>
+    </div>
+
+    <div class="stat-overlay stat-bottom">
+      <div class="bottom-stat">
+        <div class="bottom-stat-label">BMI</div>
+        <div class="bottom-stat-val" id="bmi-display">57.5</div>
       </div>
-
-      <div class="reveal" style="max-width: 900px; margin: 0 auto; background: #fff; padding: clamp(24px, 5vw, 40px); border-radius: 24px; border: 1px solid var(--border); box-shadow: 0 10px 40px rgba(0,0,0,0.03);">
-        
-        <div class="projection-grid">
-          
-          <!-- Inputs Column -->
-          <div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
-              <div>
-                <label style="display: block; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text-faint); margin-bottom: 8px;">Starting Weight (lbs)</label>
-                <input type="number" id="proj-weight" value="300" style="width: 100%; padding: 16px; border-radius: 12px; border: 2px solid var(--border); font-family: 'DM Sans', sans-serif; font-size: 20px; font-weight: 500; color: var(--text); outline: none; transition: border-color 0.2s;" oninput="updateProjection()">
-              </div>
-              <div>
-                <label style="display: block; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text-faint); margin-bottom: 8px;">Biological Sex</label>
-                <div style="display: flex; gap: 8px;">
-                  <button id="btn-gender-female" onclick="setGender('female')" style="flex: 1; padding: 16px 8px; border-radius: 12px; border: 2px solid var(--green); background: rgba(61, 140, 94, 0.05); color: var(--green); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s;">Female</button>
-                  <button id="btn-gender-male" onclick="setGender('male')" style="flex: 1; padding: 16px 8px; border-radius: 12px; border: 2px solid var(--border); background: #fff; color: var(--text-muted); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s;">Male</button>
-                </div>
-              </div>
-            </div>
-
-            <div style="margin-bottom: 24px;">
-              <label style="display: block; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text-faint); margin-bottom: 8px;">Medication Type</label>
-              <div style="display: flex; gap: 8px;">
-                <button id="btn-med-sema" onclick="setMedication('sema')" style="flex: 1; padding: 12px; border-radius: 12px; border: 2px solid var(--green); background: rgba(61, 140, 94, 0.05); color: var(--green); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s;">Semaglutide</button>
-                <button id="btn-med-tirz" onclick="setMedication('tirz')" style="flex: 1; padding: 12px; border-radius: 12px; border: 2px solid var(--border); background: #fff; color: var(--text-muted); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s;">Tirzepatide</button>
-              </div>
-            </div>
-
-            <div>
-              <label style="display: block; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--text-faint); margin-bottom: 8px;">Lifestyle Effort</label>
-              <div style="display: flex; gap: 8px;">
-                <button id="btn-life-med" onclick="setLifestyle('med')" style="flex: 1; padding: 12px; border-radius: 12px; border: 2px solid var(--green); background: rgba(61, 140, 94, 0.05); color: var(--green); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s;">Medication Only</button>
-                <button id="btn-life-diet" onclick="setLifestyle('diet')" style="flex: 1; padding: 12px; border-radius: 12px; border: 2px solid var(--border); background: #fff; color: var(--text-muted); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s;">+ Diet & Exercise</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Graphic Column -->
-          <div class="sil-container" style="text-align: center; position: relative;">
-            <div style="font-family: 'Cormorant Garamond', serif; font-size: 64px; font-weight: 300; color: var(--green); line-height: 1; margin-bottom: 8px;" id="proj-lbs">0<span style="font-size: 24px; color: var(--text-muted);"> lbs</span></div>
-            <div style="font-size: 14px; color: var(--text-faint); text-transform: uppercase; letter-spacing: 1px; font-weight: 500; margin-bottom: 12px;">Projected Weight Loss</div>
-            <div style="font-size: 16px; color: var(--text); font-weight: 500; margin-bottom: 32px;" id="proj-final-weight">Projected Final Weight: <strong style="color: var(--green);">200 lbs</strong></div>
-            
-            <div id="anatomy-morph-container" style="position: relative; width: 100%; height: 380px; overflow: hidden; border-bottom: 1px solid var(--border-light); padding-bottom: 20px; display: flex; justify-content: center;">
-              <svg viewBox="0 0 400 420" style="height: 100%; width: auto; max-width: 100%; overflow: visible;" preserveAspectRatio="xMidYMin meet">
-                <defs>
-                  <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stop-color="var(--green)" />
-                    <stop offset="100%" stop-color="#2c5e42" />
-                  </linearGradient>
-                </defs>
-                <path id="anatomy-path" d="" fill="url(#bodyGrad)" style="transition: d 0.4s cubic-bezier(0.25, 1, 0.5, 1);"></path>
-                <image id="chest-logo" href="assets/brand/freeley_icon_cream.png" style="transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);" opacity="0.6" />
-              </svg>
-            </div>
-          </div>
-          
-        </div>
-
-        <!-- Timeline Slider -->
-        <div style="padding-top: 32px; border-top: 1px solid var(--border-light);">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-            <span style="font-size: 14px; font-weight: 600; color: var(--text);">Timeline</span>
-            <span style="font-size: 18px; font-weight: 700; color: var(--green); font-family: 'DM Sans', sans-serif;" id="proj-month-label">Month 0</span>
-          </div>
-          <input type="range" id="proj-slider" min="0" max="36" value="0" step="1" style="width: 100%; height: 8px; -webkit-appearance: none; appearance: none; background: var(--border); border-radius: 4px; outline: none; cursor: pointer; margin-bottom: 8px;" oninput="updateProjection()">
-          <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-faint); letter-spacing: 1px;">
-            <span>START</span>
-            <span>6 MO</span>
-            <span>1 YR</span>
-            <span>1.5 YR</span>
-            <span>2 YR</span>
-            <span>2.5 YR</span>
-            <span>3 YR</span>
-          </div>
-        </div>
-
-        <div style="background: rgba(61, 140, 94, 0.05); padding: 32px; border-radius: 16px; border: 1px solid rgba(61, 140, 94, 0.15); text-align: center; margin-bottom: 24px;">
-          <h4 style="font-family: 'Cormorant Garamond', serif; font-size: 32px; color: var(--green); margin-bottom: 8px; font-weight: 600;">Ready to see these results?</h4>
-          <p style="font-size: 15px; color: var(--text-muted); margin-bottom: 24px;">Check your eligibility for GLP-1 weight loss in just 2 minutes.</p>
-          <a href="quiz.html" class="btn btn-primary" style="width: 100%; justify-content: center;">See If You Qualify</a>
-        </div>
-        
-        <div style="font-size: 10px; color: #999; text-align: center; margin-top: 32px; line-height: 1.5; font-style: italic;">
-          *Disclaimer: This is an estimated projection based on aggregate clinical trial data. Individual results will vary based on adherence, genetics, starting metabolic health, and exact lifestyle modifications. Semaglutide trial (STEP 1) showed avg 14.9% loss at 68 weeks. Tirzepatide trial (SURMOUNT-1) showed avg 20.9% loss at 72 weeks with intensive lifestyle intervention.
-        </div>
-
+      <div class="bottom-stat">
+        <div class="bottom-stat-label">Total lost</div>
+        <div class="bottom-stat-val green" id="total-lost">0 lbs</div>
       </div>
+      <div class="bottom-stat">
+        <div class="bottom-stat-label">% lost</div>
+        <div class="bottom-stat-val green" id="pct-lost">0%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slider -->
+  <div class="slider-row">
+    <span class="slider-label">Month 0</span>
+    <input type="range" min="0" max="24" value="0" step="1" id="month-slider" oninput="updateAll()"/>
+    <span class="slider-label right">Month 24</span>
+  </div>
+  <div class="tick-marks">
+    <span>0</span><span>6</span><span>12</span><span>18</span><span>24</span>
+  </div>
+
+  <!-- Chart -->
+  <div class="chart-wrap">
+    <canvas id="progressChart"></canvas>
+  </div>
+  <div class="legend-row">
+    <span class="legend-item"><span class="legend-dot" style="background:#1B492D;"></span>Semaglutide only</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#B89B62;"></span>+ exercise</span>
+  </div>
+
+  <!-- Disclaimer -->
+  <div class="disclaimer">
+    Based on clinical averages: semaglutide alone ~15–17% body weight loss over 68 weeks; combined with structured exercise ~23–28% over 24 months with continued adherence. Individual results vary significantly. This calculator is for illustrative purposes only and does not constitute medical advice. Consult a licensed provider before starting any weight loss program. Payment does not guarantee a prescription.
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-row">
+    <a href="quiz.html" class="cta-btn">Start My Free Visit →</a>
+  </div>
+
+</div>
+
     </div>
   </section>
 
-  <style>
-    input[type="range"]#proj-slider::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: #fff;
-      border: 4px solid var(--green);
-      box-shadow: 0 4px 12px rgba(61, 140, 94, 0.3);
-      cursor: pointer;
-      transition: transform 0.1s;
-    }
-    input[type="range"]#proj-slider::-webkit-slider-thumb:hover {
-      transform: scale(1.1);
-    }
-  </style>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
   <script>
-    let currentMed = 'sema';
-    let currentLife = 'med';
-    let currentGender = 'female';
+  var startWeight=400,heightIn=70,mode='med',chart;
 
-    function setGender(type) {
-      currentGender = type;
-      document.getElementById('btn-gender-female').style.background = type === 'female' ? 'rgba(61, 140, 94, 0.05)' : '#fff';
-      document.getElementById('btn-gender-female').style.borderColor = type === 'female' ? 'var(--green)' : 'var(--border)';
-      document.getElementById('btn-gender-female').style.color = type === 'female' ? 'var(--green)' : 'var(--text-muted)';
-      document.getElementById('btn-gender-female').style.fontWeight = type === 'female' ? '600' : '500';
+  var MED_PCT=[
+    0,.018,.038,.060,.080,.098,.113,.125,.135,.143,.148,.153,.155,
+    .158,.160,.162,.164,.165,.166,.167,.168,.169,.170,.171,.172
+  ];
+  var BOTH_PCT=[
+    0,.025,.053,.083,.113,.140,.163,.183,.198,.210,.218,.225,.230,
+    .238,.245,.251,.256,.261,.265,.269,.272,.275,.277,.279,.280
+  ];
 
-      document.getElementById('btn-gender-male').style.background = type === 'male' ? 'rgba(61, 140, 94, 0.05)' : '#fff';
-      document.getElementById('btn-gender-male').style.borderColor = type === 'male' ? 'var(--green)' : 'var(--border)';
-      document.getElementById('btn-gender-male').style.color = type === 'male' ? 'var(--green)' : 'var(--text-muted)';
-      document.getElementById('btn-gender-male').style.fontWeight = type === 'male' ? '600' : '500';
-      
-      updateProjection();
+  var VISUAL_BOOST=1.25;
+
+  function gw(p){return p.map(function(v){return Math.round(startWeight*(1-v))})}
+  function getMed(){return gw(MED_PCT)}
+  function getBoth(){return gw(BOTH_PCT)}
+  function getData(){return mode==='med'?getMed():getBoth()}
+  function getVisualWeight(realWeight){
+    var lost=startWeight-realWeight;
+    return Math.max(startWeight*0.45,startWeight-lost*VISUAL_BOOST);
+  }
+
+  function setMode(m){
+    mode=m;
+    var bm=document.getElementById('btn-med'),bb=document.getElementById('btn-both');
+    bm.className='mode-btn '+(m==='med'?'active-med':'inactive');
+    bb.className='mode-btn '+(m==='both'?'active-both':'inactive');
+    updateAll();updateChartStyle();
+  }
+
+  function recalc(){
+    startWeight=Math.max(150,Math.min(500,parseInt(document.getElementById('start-input').value)||300));
+    heightIn=parseInt(document.getElementById('height-select').value);
+    updateAll();
+  }
+
+  function lerp(a,b,t){return a+(b-a)*t}
+  function ss(t){return t*t*(3-2*t)}
+  function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v))}
+  function getBMI(w,h){return(w/(h*h))*703}
+
+  function drawBody(ctx,W,H,visualWeight){
+    var bmi=getBMI(visualWeight,heightIn);
+    var t=ss(clamp((bmi-18)/(55-18),0,1));
+    var hN=clamp((heightIn-60)/(76-60),0,1);
+    var vS=lerp(0.88,1.12,hN),hSc=lerp(1.08,0.92,hN);
+    var cx=W/2,bs=H/400;
+    ctx.clearRect(0,0,W,H);
+
+    var grd=ctx.createLinearGradient(cx,20*bs,cx,370*bs);
+    grd.addColorStop(0,'rgba(106,153,132,0.92)');
+    grd.addColorStop(0.35,'rgba(27,73,45,0.95)');
+    grd.addColorStop(1,'rgba(13,46,26,0.97)');
+
+    var vO=(1-vS)*40*bs;
+    function sy(v){return(v*vS+vO/bs)*bs}
+    function sx(v){return v*hSc*bs}
+
+    var headRx=sx(lerp(15,17,t)),headRy=lerp(16,19,t)*bs,headCy=sy(28);
+    var neckW=sx(lerp(8,13,t)),neckTop=sy(46),neckBot=sy(60);
+    var shoulderW=sx(lerp(38,58,t)),chestW=sx(lerp(34,58,t));
+    var waistW=sx(lerp(27,60,t)),bellyW=sx(lerp(29,66,t));
+    var hipW=sx(lerp(34,58,t)),upperThighW=sx(lerp(20,32,t));
+    var shoulderY=sy(70),chestY=sy(108),waistY=sy(152);
+    var bellyY=sy(175),hipY=sy(198),crotchY=sy(222);
+    var legGap=sx(lerp(4,1.5,t)),thighW=sx(lerp(18,30,t));
+    var kneeW=sx(lerp(13,22,t)),calfW=sx(lerp(11,19,t));
+    var ankleW=sx(lerp(7,12,t)),footW=sx(lerp(11,15,t));
+    var kneeY=sy(278),calfY=sy(308),ankleY=sy(338),footY=sy(354);
+    var armGap=sx(lerp(7,3,t)),armTopW=sx(lerp(10,18,t));
+    var armMidW=sx(lerp(8,15,t)),forearmW=sx(lerp(7,12,t));
+    var wristW=sx(lerp(5,8,t)),handW=sx(lerp(7,11,t));
+    var armStartY=shoulderY-2*bs,armPitY=shoulderY+18*bs*vS;
+    var elbowY=sy(168),wristY=sy(228),handY=sy(244);
+    var s=bs;
+
+    function drawArm(side){
+      var ax=cx+side*(shoulderW+armGap);
+      ctx.beginPath();
+      ctx.moveTo(ax,armStartY);
+      ctx.bezierCurveTo(ax+side*armTopW*0.8,armStartY+5*s,ax+side*armTopW,armPitY-5*s,ax+side*armTopW*0.9,armPitY+10*s);
+      ctx.bezierCurveTo(ax+side*armMidW*0.95,elbowY-20*s,ax+side*armMidW,elbowY-5*s,ax+side*armMidW*0.85,elbowY);
+      ctx.bezierCurveTo(ax+side*forearmW*0.9,elbowY+15*s,ax+side*forearmW,wristY-20*s,ax+side*wristW,wristY);
+      ctx.bezierCurveTo(ax+side*handW*0.6,wristY+4*s,ax+side*handW*0.8,handY-3*s,ax+side*handW*0.5,handY);
+      ctx.bezierCurveTo(ax+side*handW*0.1,handY+3*s,ax-side*wristW*0.3,handY-2*s,ax-side*wristW*0.5,wristY+2*s);
+      ctx.bezierCurveTo(ax-side*forearmW*0.3,wristY-15*s,ax-side*forearmW*0.2,elbowY+18*s,ax-side*armMidW*0.1,elbowY+2*s);
+      ctx.bezierCurveTo(ax-side*armMidW*0.05,elbowY-8*s,ax-side*armTopW*0.15,armPitY+15*s,ax-side*armTopW*0.1,armPitY);
+      ctx.bezierCurveTo(ax-side*armTopW*0.05,armPitY-10*s,ax-side*2*s,armStartY+8*s,ax,armStartY);
+      ctx.closePath();ctx.fill();
     }
 
-    function setMedication(type) {
-      currentMed = type;
-      document.getElementById('btn-med-sema').style.background = type === 'sema' ? 'rgba(61, 140, 94, 0.05)' : '#fff';
-      document.getElementById('btn-med-sema').style.borderColor = type === 'sema' ? 'var(--green)' : 'var(--border)';
-      document.getElementById('btn-med-sema').style.color = type === 'sema' ? 'var(--green)' : 'var(--text-muted)';
-      document.getElementById('btn-med-sema').style.fontWeight = type === 'sema' ? '600' : '500';
+    ctx.fillStyle=grd;
+    drawArm(-1);drawArm(1);
 
-      document.getElementById('btn-med-tirz').style.background = type === 'tirz' ? 'rgba(61, 140, 94, 0.05)' : '#fff';
-      document.getElementById('btn-med-tirz').style.borderColor = type === 'tirz' ? 'var(--green)' : 'var(--border)';
-      document.getElementById('btn-med-tirz').style.color = type === 'tirz' ? 'var(--green)' : 'var(--text-muted)';
-      document.getElementById('btn-med-tirz').style.fontWeight = type === 'tirz' ? '600' : '500';
-      
-      updateProjection();
-    }
+    ctx.fillStyle=grd;
+    ctx.beginPath();
+    ctx.moveTo(cx-neckW,neckTop);
+    ctx.bezierCurveTo(cx-shoulderW*0.5,neckTop+4*s,cx-shoulderW,shoulderY-10*s,cx-shoulderW,shoulderY);
+    ctx.bezierCurveTo(cx-shoulderW-1*s,(shoulderY+chestY)/2,cx-chestW-1*s,chestY-8*s,cx-chestW,chestY);
+    ctx.bezierCurveTo(cx-chestW+1*s,(chestY+waistY)/2,cx-waistW-1*s,waistY-6*s,cx-waistW,waistY);
+    ctx.bezierCurveTo(cx-waistW-2*s,(waistY+bellyY)/2,cx-bellyW,bellyY-3*s,cx-bellyW,bellyY);
+    ctx.bezierCurveTo(cx-bellyW+1*s,(bellyY+hipY)/2,cx-hipW-1*s,hipY-4*s,cx-hipW,hipY);
+    ctx.bezierCurveTo(cx-hipW+1*s,hipY+8*s,cx-upperThighW-4*s,crotchY-8*s,cx-upperThighW-2*s,crotchY);
+    ctx.bezierCurveTo(cx-thighW-legGap,crotchY+16*s,cx-thighW-legGap+1*s,kneeY-22*s,cx-kneeW-legGap,kneeY);
+    ctx.bezierCurveTo(cx-kneeW-legGap+2*s,kneeY+8*s,cx-calfW-legGap-1*s,kneeY+18*s,cx-calfW-legGap,calfY-10*s);
+    ctx.bezierCurveTo(cx-calfW-legGap+1*s,calfY+6*s,cx-ankleW-legGap-2*s,calfY+14*s,cx-ankleW-legGap,ankleY);
+    ctx.lineTo(cx-footW-legGap,footY);ctx.lineTo(cx-legGap+1*s,footY);
+    ctx.lineTo(cx-legGap+1*s,crotchY+6*s);ctx.lineTo(cx+legGap-1*s,crotchY+6*s);
+    ctx.lineTo(cx+legGap-1*s,footY);ctx.lineTo(cx+footW+legGap,footY);
+    ctx.lineTo(cx+ankleW+legGap,ankleY);
+    ctx.bezierCurveTo(cx+ankleW+legGap+2*s,calfY+14*s,cx+calfW+legGap-1*s,calfY+6*s,cx+calfW+legGap,calfY-10*s);
+    ctx.bezierCurveTo(cx+calfW+legGap+1*s,kneeY+18*s,cx+kneeW+legGap-2*s,kneeY+8*s,cx+kneeW+legGap,kneeY);
+    ctx.bezierCurveTo(cx+thighW+legGap-1*s,kneeY-22*s,cx+thighW+legGap,crotchY+16*s,cx+upperThighW+2*s,crotchY);
+    ctx.bezierCurveTo(cx+upperThighW+4*s,crotchY-8*s,cx+hipW-1*s,hipY+8*s,cx+hipW,hipY);
+    ctx.bezierCurveTo(cx+hipW+1*s,hipY-4*s,cx+bellyW-1*s,(bellyY+hipY)/2,cx+bellyW,bellyY);
+    ctx.bezierCurveTo(cx+bellyW,bellyY-3*s,cx+waistW+2*s,(waistY+bellyY)/2,cx+waistW,waistY);
+    ctx.bezierCurveTo(cx+waistW+1*s,waistY-6*s,cx+chestW-1*s,(chestY+waistY)/2,cx+chestW,chestY);
+    ctx.bezierCurveTo(cx+chestW+1*s,chestY-8*s,cx+shoulderW+1*s,(shoulderY+chestY)/2,cx+shoulderW,shoulderY);
+    ctx.bezierCurveTo(cx+shoulderW,shoulderY-10*s,cx+shoulderW*0.5,neckTop+4*s,cx+neckW,neckTop);
+    ctx.closePath();ctx.fill();
 
-    function setLifestyle(type) {
-      currentLife = type;
-      document.getElementById('btn-life-med').style.background = type === 'med' ? 'rgba(61, 140, 94, 0.05)' : '#fff';
-      document.getElementById('btn-life-med').style.borderColor = type === 'med' ? 'var(--green)' : 'var(--border)';
-      document.getElementById('btn-life-med').style.color = type === 'med' ? 'var(--green)' : 'var(--text-muted)';
-      document.getElementById('btn-life-med').style.fontWeight = type === 'med' ? '600' : '500';
+    ctx.beginPath();
+    ctx.moveTo(cx-neckW,neckTop);
+    ctx.bezierCurveTo(cx-neckW+1*s,neckTop-4*s,cx-neckW-1*s,neckBot+2*s,cx-neckW,neckBot-2*s);
+    ctx.lineTo(cx+neckW,neckBot-2*s);
+    ctx.bezierCurveTo(cx+neckW+1*s,neckBot+2*s,cx+neckW-1*s,neckTop-4*s,cx+neckW,neckTop);
+    ctx.closePath();ctx.fill();
 
-      document.getElementById('btn-life-diet').style.background = type === 'diet' ? 'rgba(61, 140, 94, 0.05)' : '#fff';
-      document.getElementById('btn-life-diet').style.borderColor = type === 'diet' ? 'var(--green)' : 'var(--border)';
-      document.getElementById('btn-life-diet').style.color = type === 'diet' ? 'var(--green)' : 'var(--text-muted)';
-      document.getElementById('btn-life-diet').style.fontWeight = type === 'diet' ? '600' : '500';
-      
-      updateProjection();
-    }
+    ctx.beginPath();ctx.ellipse(cx,headCy,headRx,headRy,0,0,Math.PI*2);ctx.fill();
+  }
 
-    function getAnatomyPath(weight, gender) {
-      const minW = 90;
-      const maxW = 800;
-      const w = Math.max(minW, Math.min(maxW, weight));
-      // Curve to scale fat factor
-      const fat = Math.pow((w - minW) / (maxW - minW), 0.7); 
+  function updateAll(){
+    var mo=parseInt(document.getElementById('month-slider').value);
+    var d=getData(),w=d[mo],lost=startWeight-w;
+    var pct=(lost/startWeight)*100,bmi=getBMI(w,heightIn);
+    document.getElementById('weight-display').textContent=Math.round(w);
+    document.getElementById('month-display').textContent=mo===0?'Month 0':'Month '+mo;
+    document.getElementById('lost-display').textContent=mo===0?'Starting weight':'-'+Math.round(lost)+' lbs from start';
+    document.getElementById('bmi-display').textContent=bmi.toFixed(1);
+    document.getElementById('total-lost').textContent=Math.round(lost)+' lbs';
+    document.getElementById('pct-lost').textContent=pct.toFixed(1)+'%';
+    var c=document.getElementById('bodyCanvas');
+    drawBody(c.getContext('2d'),c.width,c.height,getVisualWeight(w));
+    updateChartData();
+  }
 
-      const cx = 200; // Center X
-      
-      // Dynamic Widths
-      const head = 28 + (fat * 18);
-      const neck = 14 + (fat * 28);
-      const sh_outer = gender === 'male' ? 95 + (fat * 85) : 80 + (fat * 75);
-      const arm_outer = sh_outer + 15 + (fat * 60);
-      const arm_inner = arm_outer - 25 - (fat * 25);
-      const chest = gender === 'male' ? 70 + (fat * 100) : 60 + (fat * 85);
-      const waist = gender === 'male' ? 65 + (fat * 155) : 45 + (fat * 135);
-      const hips = gender === 'female' ? 75 + (fat * 165) : 60 + (fat * 125);
-      const thigh = gender === 'female' ? 48 + (fat * 75) : 40 + (fat * 65);
-      const knee = 20 + (fat * 35);
-      
-      // Heights (Y-axis)
-      const yHead = 20;
-      const yJaw = 65;
-      const yNeck = 80;
-      const ySh = 100;
-      const yHand = 260; // Arms stop around hips
-      const yArmpit = 150;
-      const yChest = 170;
-      const yWaist = 240;
-      const yHips = 280;
-      const yCrotch = 320;
-      const yKnee = 400;
+  function updateChartData(){
+    if(!chart)return;
+    chart.data.datasets[0].data=getMed();
+    chart.data.datasets[1].data=getBoth();
+    var mn=Math.min.apply(null,getBoth())-15,mx=startWeight+10;
+    chart.options.scales.y.min=Math.floor(mn/10)*10;
+    chart.options.scales.y.max=Math.ceil(mx/10)*10;
+    chart.update();
+  }
 
-      // Inner gap at the knee/crotch, shrinks as weight goes up
-      const gap = Math.max(0, 15 - (fat * 40));
+  function updateChartStyle(){
+    if(!chart)return;
+    chart.data.datasets[0].borderWidth=mode==='med'?2.5:1;
+    chart.data.datasets[0].borderDash=mode==='med'?[]:[4,4];
+    chart.data.datasets[1].borderWidth=mode==='both'?2.5:1;
+    chart.data.datasets[1].borderDash=mode==='both'?[]:[4,4];
+    updateChartData();
+  }
 
-      const path = `
-        M ${cx} ${yHead}
-        C ${cx+head} ${yHead}, ${cx+head} ${yJaw-10}, ${cx+head*0.8} ${yJaw}
-        C ${cx+neck} ${yJaw+5}, ${cx+neck} ${yNeck-5}, ${cx+neck+10} ${ySh-5}
-        C ${cx+sh_outer-20} ${ySh}, ${cx+sh_outer} ${ySh+10}, ${cx+sh_outer} ${ySh+20}
-        C ${cx+arm_outer} ${yArmpit}, ${cx+arm_outer} ${yWaist}, ${cx+arm_outer} ${yHand}
-        C ${cx+arm_outer-5} ${yHand+15}, ${cx+arm_inner+5} ${yHand+15}, ${cx+arm_inner} ${yHand}
-        C ${cx+arm_inner} ${yWaist}, ${cx+chest+10} ${yArmpit+10}, ${cx+chest} ${yArmpit}
-        C ${cx+chest} ${yArmpit+30}, ${cx+waist} ${yWaist-30}, ${cx+waist} ${yWaist}
-        C ${cx+waist} ${yWaist+20}, ${cx+hips} ${yHips-20}, ${cx+hips} ${yHips}
-        C ${cx+hips} ${yHips+30}, ${cx+thigh*1.5} ${yCrotch}, ${cx+thigh} ${yKnee}
-        L ${cx+gap} ${yKnee}
-        C ${cx+gap+15} ${yCrotch}, ${cx} ${yCrotch+10}, ${cx} ${yCrotch}
-        C ${cx} ${yCrotch+10}, ${cx-gap-15} ${yCrotch}, ${cx-gap} ${yKnee}
-        L ${cx-thigh} ${yKnee}
-        C ${cx-thigh*1.5} ${yCrotch}, ${cx-hips} ${yHips+30}, ${cx-hips} ${yHips}
-        C ${cx-hips} ${yHips-20}, ${cx-waist} ${yWaist+20}, ${cx-waist} ${yWaist}
-        C ${cx-waist} ${yWaist-30}, ${cx-chest} ${yArmpit+30}, ${cx-chest} ${yArmpit}
-        C ${cx-chest-10} ${yArmpit+10}, ${cx-arm_inner} ${yWaist}, ${cx-arm_inner} ${yHand}
-        C ${cx-arm_inner-5} ${yHand+15}, ${cx-arm_outer+5} ${yHand+15}, ${cx-arm_outer} ${yHand}
-        C ${cx-arm_outer} ${yWaist}, ${cx-arm_outer} ${yArmpit}, ${cx-sh_outer} ${ySh+20}
-        C ${cx-sh_outer} ${ySh+10}, ${cx-sh_outer+20} ${ySh}, ${cx-neck-10} ${ySh-5}
-        C ${cx-neck} ${yNeck-5}, ${cx-neck} ${yJaw+5}, ${cx-head*0.8} ${yJaw}
-        C ${cx-head} ${yJaw-10}, ${cx-head} ${yHead}, ${cx} ${yHead}
-      `;
-
-      return {
-        path: path.trim(),
-        cx, chest, yArmpit, yChest
-      };
-    }
-
-    function updateProjection() {
-      const weightInput = document.getElementById('proj-weight').value;
-      let startWeight = parseFloat(weightInput) || 200;
-      if(startWeight < 90) startWeight = 90;
-      if(startWeight > 800) startWeight = 800;
-
-      const month = parseInt(document.getElementById('proj-slider').value);
-      let monthLabel = `Month ${month}`;
-      if (month === 0) monthLabel = 'Start';
-      else if (month % 12 === 0) monthLabel = `Year ${month/12}`;
-      document.getElementById('proj-month-label').innerText = monthLabel;
-
-      // Max percentages based on 36 months (3 years)
-      let maxPct = 0;
-      if (currentMed === 'sema' && currentLife === 'med') maxPct = 0.15;
-      if (currentMed === 'sema' && currentLife === 'diet') maxPct = 0.20;
-      if (currentMed === 'tirz' && currentLife === 'med') maxPct = 0.22;
-      if (currentMed === 'tirz' && currentLife === 'diet') maxPct = 0.28;
-
-      let currentLossPct = 0;
-      if (month > 0) {
-        // Logarithmic/Curved weight loss (fastest at beginning, plateauing towards end)
-        // Map 0 -> 0% ... 36 -> maxPct
-        currentLossPct = Math.pow(month / 36, 0.6) * maxPct; 
+  function initChart(){
+    var labels=Array.from({length:25},function(_,i){return i});
+    chart=new Chart(document.getElementById('progressChart'),{
+      type:'line',
+      data:{labels:labels,datasets:[
+        {label:'Semaglutide only',data:getMed(),borderColor:'#1B492D',borderWidth:2.5,pointRadius:0,pointHoverRadius:4,tension:0.35,fill:false},
+        {label:'+ Exercise',data:getBoth(),borderColor:'#B89B62',borderWidth:1,borderDash:[4,4],pointRadius:0,pointHoverRadius:4,tension:0.35,fill:false}
+      ]},
+      options:{
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins:{
+          legend:{display:false},
+          tooltip:{
+            backgroundColor:'rgba(8,20,16,0.9)',
+            titleColor:'#F3EAE1',
+            bodyColor:'#F3EAE1',
+            borderColor:'rgba(106,153,132,0.2)',
+            borderWidth:1,
+            cornerRadius:8,
+            padding:12,
+            callbacks:{
+              title:function(i){return'Month '+i[0].label},
+              label:function(i){return i.dataset.label+': '+Math.round(i.raw)+' lbs'}
+            }
+          }
+        },
+        scales:{
+          x:{ticks:{font:{size:11,family:'DM Sans'},color:'rgba(243,234,225,0.3)',autoSkip:true,maxTicksLimit:13},grid:{display:false}},
+          y:{min:290,max:410,ticks:{font:{size:11,family:'DM Sans'},color:'rgba(243,234,225,0.3)',callback:function(v){return v+' lbs'}},grid:{color:'rgba(243,234,225,0.05)'}}
+        }
       }
+    });
+  }
 
-      const lbsLost = Math.round(startWeight * currentLossPct);
-      const displayElem = document.getElementById('proj-lbs');
-      displayElem.innerHTML = `${lbsLost}<span style="font-size: 24px; color: var(--text-muted);"> lbs</span>`;
-
-      const currentBodyWeight = startWeight - lbsLost;
-      
-      const finalWeightElem = document.getElementById('proj-final-weight');
-      if (finalWeightElem) {
-        finalWeightElem.innerHTML = `Projected Final Weight: <strong style="color: var(--green);">${currentBodyWeight} lbs</strong>`;
-      }
-      
-      const parts = getAnatomyPath(currentBodyWeight, currentGender);
-      const svgPath = document.getElementById('anatomy-path');
-      if (svgPath) {
-        svgPath.setAttribute('d', parts.path);
-      }
-      
-      const logoImg = document.getElementById('chest-logo');
-      if (logoImg) {
-        const logoSize = Math.max(30, Math.min(80, parts.chest * 0.6)); 
-        logoImg.setAttribute('width', logoSize);
-        logoImg.setAttribute('height', logoSize);
-        logoImg.setAttribute('x', parts.cx - (logoSize / 2));
-        logoImg.setAttribute('y', parts.yArmpit - (logoSize / 2) + 10);
-      }
-      
-      // Make gradient track follow slider thumb
-      const slider = document.getElementById('proj-slider');
-      const pct = (slider.value / 36) * 100;
-      slider.style.background = `linear-gradient(to right, var(--green) 0%, var(--green) ${pct}%, var(--border) ${pct}%, var(--border) 100%)`;
-    }
-
-    // Initialize
-    setTimeout(updateProjection, 100);
+  initChart();
+  updateAll();
   </script>
 
   <!-- WHAT TO EXPECT / EDUCATION -->
