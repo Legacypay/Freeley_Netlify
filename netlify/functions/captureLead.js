@@ -1,5 +1,4 @@
 exports.handler = async (event, context) => {
-  // Only allow POST requests for capturing leads
   if (event.httpMethod !== "POST") {
     return {
       statusCode: 405,
@@ -20,25 +19,34 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // PHASE 4 ABANDONED CART STUB:
-    // When the ESP (Email Service Provider) like Klaviyo or Make/n8n webhook is ready,
-    // we simply execute an HTTP POST to their endpoint here.
-    
-    // Example: (Uncomment and replace URL when ready)
-    /*
-    await fetch("https://hook.us2.make.com/YOUR_WEBHOOK_URL", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, phone, timestamp, source: "Freeley_Quiz_Save_Progress" })
-    });
-    */
+    // This webhook URL should be added to your Netlify dashboard under Site Settings > Environment Variables > N8N_WEBHOOK_URL
+    // If you are testing locally, replace this string temporarily with your actual webhook URL.
+    const WEBHOOK_URL = process.env.N8N_WEBHOOK_URL || "https://your-n8n-make-zapier-webhook.url/catch";
 
-    console.log(`[LEAD CAPTURED] Email: ${email} | Phone: ${phone} | Time: ${timestamp}`);
+    try {
+      // Fire HTTP POST webhook to your ESP / n8n / Make.
+      // We don't wait for the return value strictly; we just fire and forget using `fetch`.
+      const response = await fetch(WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          email: email, 
+          phone: phone, 
+          timestamp: timestamp, 
+          source: "Freeley_Quiz_Save_Progress_Abandoned_Cart"
+        })
+      });
+      
+      console.log(`[LEAD CAPTURED] Email: ${email} | Phone: ${phone} | Webhook Status: ${response.status}`);
+    } catch (e) {
+      console.error("[WEBHOOK ERROR] Unable to reach n8n / Make endpoint:", e.message);
+    }
 
+    // Always return a fast 200 OK so the frontend user isn't kept waiting.
     return {
       statusCode: 200,
       body: JSON.stringify({
-        message: "Lead captured successfully.",
+        message: "Lead securely captured and queued for webhook dispatch.",
         captured: { email, phone, timestamp }
       })
     };
