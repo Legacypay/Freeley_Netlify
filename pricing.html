@@ -104,7 +104,7 @@
     /* Pricing cards */
     .pricing-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 24px;
       margin-bottom: 60px;
     }
@@ -543,8 +543,8 @@
 
     @media(max-width:1024px) {
       .pricing-grid {
-        grid-template-columns: 1fr;
-        max-width: 480px;
+        grid-template-columns: 1fr 1fr;
+        max-width: 900px;
         margin-left: auto;
         margin-right: auto;
       }
@@ -559,7 +559,10 @@
     }
 
     @media(max-width:640px) {
-
+      .pricing-grid {
+        grid-template-columns: 1fr;
+        max-width: 480px;
+      }
       .compare-table td,
       .compare-table th {
         padding: 12px 14px;
@@ -626,6 +629,25 @@
             <a href="quiz.html" class="pc-cta">Get Started →</a>
           </div>
           <div class="pricing-card reveal reveal-delay-3">
+            <img src="assets/brand/freeley_hair_bottle.png" alt="Hair Loss" style="height: 180px; width: 100%; object-fit: contain; border-radius: 12px; margin-bottom: 24px; background: #f4f7f6;">
+            <div class="pc-name">Hair Loss</div>
+            <div class="pc-desc">Clinically proven compounded oral and topical treatments. Finasteride, Minoxidil, and more.</div>
+            <div class="pc-price"><sup>$</sup><span class="price-val" data-monthly="34" data-quarterly="29">34</span>
+            </div>
+            <div class="pc-period">per month <span class="pc-was" style="display:none">$34/mo</span></div>
+            <div class="pc-divider"></div>
+            <ul class="pc-features">
+              <li>Free physician consultation</li>
+              <li>Stop hair loss and regrow your hair</li>
+              <li>Oral and topical custom formulations</li>
+              <li>Compounded at licensed 503A pharmacy</li>
+              <li>Monthly physician check-in</li>
+              <li>Discreet climate-controlled shipping</li>
+              <li>Cancel anytime, no penalties</li>
+            </ul>
+            <a href="quiz.html" class="pc-cta">Get Started →</a>
+          </div>
+          <div class="pricing-card reveal reveal-delay-4">
             <img src="assets/peptides_new.webp?v=2" alt="Longevity Stack" style="height: 180px; width: 100%; object-fit: cover; border-radius: 12px; margin-bottom: 24px;">
             <div class="pc-name">Longevity Stack</div>
             <div class="pc-desc">Peptides, NAD+, and anti-aging protocols. Custom-designed by your physician.</div>
@@ -748,6 +770,7 @@
               <option value="tirz">GLP-1 Tirzepatide</option>
               <option value="sexual">Sexual Wellness</option>
               <option value="longevity">Longevity Stack</option>
+              <option value="hair">Hair Loss</option>
             </select>
           </div>
           <div>
@@ -858,10 +881,10 @@
   <script src="shared.js"></script>
   <script>
     const PRICES = {
-      freeley: { sema: 134, tirz: 134, sexual: 89, longevity: 149 },
-      brand: { sema: 900, tirz: 1000, sexual: 350, longevity: 400 },
-      hims: { sema: 299, tirz: 349, sexual: 149, longevity: 250 },
-      clinic: { sema: 450, tirz: 500, sexual: 250, longevity: 350 }
+      freeley: { sema: 134, tirz: 134, sexual: 89, longevity: 149, hair: 34 },
+      brand: { sema: 900, tirz: 1000, sexual: 350, longevity: 400, hair: 120 },
+      hims: { sema: 299, tirz: 349, sexual: 149, longevity: 250, hair: 80 },
+      clinic: { sema: 450, tirz: 500, sexual: 250, longevity: 350, hair: 100 }
     };
     function calcSavings() {
       const t = document.getElementById('savingsTreatment').value;
