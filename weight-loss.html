@@ -1283,7 +1283,7 @@
 
     scene3d=new THREE.Scene();
     camera3d=new THREE.PerspectiveCamera(35,w/h,0.1,100);
-    camera3d.position.set(0,0.83,2.2);
+    camera3d.position.set(0,0.83,2.6);
     camera3d.lookAt(0,0.83,0);
 
     renderer3d=new THREE.WebGLRenderer({antialias:true,alpha:true});
@@ -1385,8 +1385,8 @@
     var bodyH=maxY-minY;
 
     // BMI factor: how much to scale
-    var bmiNorm=Math.max(0,Math.min(1,(bmi-18)/40)); // 0 at BMI 18, 1 at BMI 58
-    var t=bmiNorm*bmiNorm*(3-2*bmiNorm); // smoothstep
+    var bmiNorm=Math.max(0,Math.min(1,(bmi-18)/45)); // 0 at BMI 18, 1 at BMI 63
+    var t=Math.pow(bmiNorm, 1.2); // slight exponential curve for more dramatic difference at high BMI
 
     for(var i=0;i<count;i++){
       var bx=basePos[i*3];
@@ -1396,56 +1396,42 @@
       // Normalized height: 0=feet, 1=head
       var hNorm=(by-minY)/bodyH;
 
-      // Scale factor varies by body region
+      // Scale factor varies by body region - EXAGGERATED FOR VISIBILITY
       var scaleFactor=1.0;
 
       if(hNorm<0.05){
-        // Feet - minimal scaling
-        scaleFactor=1+t*0.15;
+        scaleFactor=1+t*0.2; // Feet
       } else if(hNorm<0.15){
-        // Ankles/calves
-        scaleFactor=1+t*0.3;
+        scaleFactor=1+t*0.5; // Ankles/calves
       } else if(hNorm<0.25){
-        // Knees
-        scaleFactor=1+t*0.25;
+        scaleFactor=1+t*0.4; // Knees
       } else if(hNorm<0.45){
-        // Thighs - significant scaling
-        scaleFactor=1+t*0.55;
+        scaleFactor=1+t*1.0; // Thighs
       } else if(hNorm<0.55){
-        // Hips/pelvis - heavy scaling
-        scaleFactor=1+t*0.7;
+        scaleFactor=1+t*1.4; // Hips/pelvis
       } else if(hNorm<0.62){
-        // Belly - maximum scaling
-        scaleFactor=1+t*0.85;
-        // Extra forward protrusion for belly
+        scaleFactor=1+t*1.9; // Belly - maximum scaling
         if(bz>0){
-          bz+=t*0.04*bodyH*(1-Math.abs(hNorm-0.58)/0.04);
+          bz+=t*0.09*bodyH*(1-Math.abs(hNorm-0.58)/0.04); // Extra belly protrusion
         }
       } else if(hNorm<0.70){
-        // Waist - heavy scaling
-        scaleFactor=1+t*0.7;
+        scaleFactor=1+t*1.4; // Waist
       } else if(hNorm<0.78){
-        // Chest/ribs
-        scaleFactor=1+t*0.5;
+        scaleFactor=1+t*0.9; // Chest/ribs
       } else if(hNorm<0.82){
-        // Shoulders
-        scaleFactor=1+t*0.35;
+        scaleFactor=1+t*0.6; // Shoulders
       } else if(hNorm<0.85){
-        // Neck
-        scaleFactor=1+t*0.25;
+        scaleFactor=1+t*0.4; // Neck
       } else if(hNorm<0.88){
-        // Lower face/jaw
-        scaleFactor=1+t*0.2;
+        scaleFactor=1+t*0.3; // Jaw
       } else {
-        // Head/skull - minimal scaling
-        scaleFactor=1+t*0.08;
+        scaleFactor=1+t*0.1; // Head/skull
       }
 
       // Arms scale less (check if x is far from center)
       var distFromCenter=Math.abs(bx)/bodyH;
       if(distFromCenter>0.12&&hNorm>0.45&&hNorm<0.85){
-        // Arm region - scale x and z more, don't scale y
-        scaleFactor=1+t*0.4;
+        scaleFactor=1+t*0.6; // Arms
       }
 
       // Apply: scale x and z (width), keep y (height) mostly unchanged

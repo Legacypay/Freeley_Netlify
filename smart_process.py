@@ -1,6 +1,6 @@
 import os
-from PIL import Image
-from rembg import remove
+from PIL import Image # type: ignore
+from rembg import remove # type: ignore
 
 def smart_process(input_path, output_prefix, num_expected=7):
     if not os.path.exists(input_path):
@@ -14,11 +14,11 @@ def smart_process(input_path, output_prefix, num_expected=7):
     width, height = no_bg.size
     
     # 2. Find transparent columns
-    data = list(no_bg.getdata())
+    data = list(no_bg.getdata()) # type: ignore
     col_has_content = [False] * width
     for y in range(height):
         for x in range(width):
-            alpha = data[y * width + x][3]
+            alpha = data[y * width + x][3] # type: ignore
             if alpha > 10:
                 col_has_content[x] = True
                 

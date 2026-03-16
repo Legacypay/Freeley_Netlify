@@ -1,6 +1,6 @@
 import os
-from PIL import Image
-from rembg import remove
+from PIL import Image # type: ignore
+from rembg import remove # type: ignore
 
 def process_and_crop(input_path, output_prefix, num_slices=7):
     if not os.path.exists(input_path):
