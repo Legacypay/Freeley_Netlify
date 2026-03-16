@@ -65,6 +65,7 @@ const FOOTER_HTML = `
       <a href="how-it-works.html">How It Works</a>
       <a href="physicians.html">Medical Team</a>
       <a href="about.html">About Freeley</a>
+      <a href="blog.html">Blog & Insights</a>
       <a href="faq.html">FAQ</a>
       <a href="contact.html">Contact Us</a>
     </div>
