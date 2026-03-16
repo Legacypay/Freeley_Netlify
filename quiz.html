@@ -833,36 +833,36 @@
         <div class="progress-item" data-step="2">
           <div class="progress-dot">2</div>
           <div>
-            <div class="progress-text-title">Health Profile</div>
-            <div class="progress-text-sub">Basic health information</div>
+            <div class="progress-text-title">Save Progress</div>
+            <div class="progress-text-sub">Where to send your results</div>
           </div>
         </div>
         <div class="progress-item" data-step="3">
           <div class="progress-dot">3</div>
           <div>
-            <div class="progress-text-title">Current Symptoms</div>
-            <div class="progress-text-sub">What you're experiencing</div>
+            <div class="progress-text-title">Health Profile</div>
+            <div class="progress-text-sub">Basic health information</div>
           </div>
         </div>
         <div class="progress-item" data-step="4">
           <div class="progress-dot">4</div>
           <div>
-            <div class="progress-text-title">Medical History</div>
-            <div class="progress-text-sub">Conditions & medications</div>
+            <div class="progress-text-title">Current Symptoms</div>
+            <div class="progress-text-sub">What you're experiencing</div>
           </div>
         </div>
         <div class="progress-item" data-step="5">
           <div class="progress-dot">5</div>
           <div>
-            <div class="progress-text-title">Lifestyle</div>
-            <div class="progress-text-sub">Habits & preferences</div>
+            <div class="progress-text-title">Medical History</div>
+            <div class="progress-text-sub">Conditions & medications</div>
           </div>
         </div>
         <div class="progress-item" data-step="6">
           <div class="progress-dot">6</div>
           <div>
-            <div class="progress-text-title">Contact Info</div>
-            <div class="progress-text-sub">Where to send your plan</div>
+            <div class="progress-text-title">Lifestyle</div>
+            <div class="progress-text-sub">Habits & preferences</div>
           </div>
         </div>
         <div class="progress-item" data-step="results">
@@ -889,13 +889,13 @@
         <div class="quiz-progress-track">
           <div class="quiz-progress-fill" id="progressFill" style="width:0%"></div>
         </div>
-        <div class="quiz-progress-label" id="progressLabel">Step 1 of 5</div>
+        <div class="quiz-progress-label" id="progressLabel">Step 1 of 6</div>
       </div>
       <div class="quiz-steps">
 
         <!-- STEP 1: Goal -->
         <div class="quiz-step active" id="step-1">
-          <span class="step-badge">Step 1 of 5</span>
+          <span class="step-badge">Step 1 of 6</span>
           <div class="step-question">What's your primary <em>health goal?</em></div>
           <div class="step-sub">Select all that apply — we'll recommend the best treatment path for your situation.
           </div>
@@ -946,17 +946,55 @@
           </div>
           <div class="quiz-nav">
             <div></div>
-            <button class="quiz-next" onclick="nextStep(2)">Continue <svg width="16" height="16" viewBox="0 0 16 16"
-                fill="none">
-                <path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.8" stroke-linecap="round"
-                  stroke-linejoin="round" />
-              </svg></button>
+            <button class="quiz-next" onclick="nextStep(2)">Continue <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg></button>
           </div>
         </div>
 
-        <!-- STEP 2: Health Profile -->
+        <!-- STEP 2: Save Progress -->
         <div class="quiz-step" id="step-2">
-          <span class="step-badge">Step 2 of 5</span>
+          <span class="step-badge">Step 2 of 6</span>
+          <div class="step-question">Save your <em>progress</em></div>
+          <div class="step-sub">Enter your details below to save your answers. You'll see your results at the end.</div>
+
+          <div style="background: rgba(61, 140, 94, 0.08); border: 1px solid rgba(61, 140, 94, 0.2); border-radius: 12px; padding: 16px; margin-bottom: 28px; display: flex; gap: 14px; align-items: flex-start; max-width: 440px;">
+            <i class="ri-shield-check-fill" style="color: var(--green-light); font-size: 20px; line-height: 1;"></i>
+            <div style="font-size: 13px; color: var(--text-muted); line-height: 1.45;"><strong>HIPAA Secure.</strong> Your information is encrypted and strictly confidential. We will never sell your personal data.</div>
+          </div>
+
+          <div class="input-group" style="max-width: 440px;">
+            <label class="input-label">Email Address</label>
+            <input class="input-field" type="email" id="contact-email" placeholder="you@example.com">
+          </div>
+          <div class="input-group" style="max-width: 440px; margin-bottom: 32px;">
+            <label class="input-label">Phone Number</label>
+            <input class="input-field" type="tel" id="contact-phone" placeholder="(555) 555-5555">
+          </div>
+
+          <div class="input-group"
+            style="max-width: 440px; margin-bottom: 40px; display: flex; gap: 12px; align-items: flex-start;">
+            <input type="checkbox" id="contact-consent"
+              style="margin-top: 4px; width: 18px; height: 18px; flex-shrink: 0; accent-color: var(--green-light);">
+            <label for="contact-consent"
+              style="font-size: 13px; color: var(--text-muted); line-height: 1.5; font-weight: 300; cursor: pointer;">
+              I agree to the Terms of Service and Privacy Policy. I consent to be contacted by Freeley regarding my
+              treatment match and health profile via email and SMS.
+            </label>
+          </div>
+
+          <div class="quiz-nav">
+            <button class="quiz-back" onclick="nextStep(1)"><svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M13 8H3M7 12l-4-4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg> Back</button>
+            <button class="quiz-next" onclick="saveProgressAndContinue(3)" style="width: 100%; justify-content: center; padding: 18px;">Save & Continue <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-left:8px"><path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg></button>
+          </div>
+        </div>
+
+      </div><!-- end quiz-steps -->
+
+      <!-- STEP 3: Health Profile -->
+        <div class="quiz-step" id="step-3">
+          <span class="step-badge">Step 3 of 6</span>
           <div class="step-question">Tell us about <em>yourself</em></div>
           <div class="step-sub">This helps our physicians understand your baseline health and ensure treatment is
             appropriate.</div>
@@ -1049,21 +1087,17 @@
             </select>
           </div>
           <div class="quiz-nav">
-            <button class="quiz-back" onclick="nextStep(1)"><svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <button class="quiz-back" onclick="nextStep(2)"><svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <path d="M13 8H3M7 12l-4-4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
                   stroke-linejoin="round" />
               </svg> Back</button>
-            <button class="quiz-next" onclick="nextStep(3)">Continue <svg width="16" height="16" viewBox="0 0 16 16"
-                fill="none">
-                <path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.8" stroke-linecap="round"
-                  stroke-linejoin="round" />
-              </svg></button>
+            <button class="quiz-next" onclick="nextStep(4)">Continue <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg></button>
           </div>
         </div>
 
-        <!-- STEP 3: Symptoms -->
-        <div class="quiz-step" id="step-3">
-          <span class="step-badge">Step 3 of 5</span>
+        <!-- STEP 4: Symptoms -->
+        <div class="quiz-step" id="step-4">
+          <span class="step-badge">Step 4 of 6</span>
           <div class="step-question">What are you <em>currently experiencing?</em></div>
           <div class="step-sub">Select everything that's been affecting your quality of life. Your physician will review
             all of this.</div>
@@ -1127,21 +1161,17 @@
             </div>
           </div>
           <div class="quiz-nav">
-            <button class="quiz-back" onclick="nextStep(2)"><svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <button class="quiz-back" onclick="nextStep(3)"><svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <path d="M13 8H3M7 12l-4-4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
                   stroke-linejoin="round" />
               </svg> Back</button>
-            <button class="quiz-next" onclick="nextStep(4)">Continue <svg width="16" height="16" viewBox="0 0 16 16"
-                fill="none">
-                <path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.8" stroke-linecap="round"
-                  stroke-linejoin="round" />
-              </svg></button>
+            <button class="quiz-next" onclick="nextStep(5)">Continue <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg></button>
           </div>
         </div>
 
-        <!-- STEP 4: Medical History -->
-        <div class="quiz-step" id="step-4">
-          <span class="step-badge">Step 4 of 5</span>
+        <!-- STEP 5: Medical History -->
+        <div class="quiz-step" id="step-5">
+          <span class="step-badge">Step 5 of 6</span>
           <div class="step-question">Any relevant <em>medical history?</em></div>
           <div class="step-sub">This is strictly confidential and helps us ensure your safety. Our physicians review
             everything.</div>
@@ -1176,21 +1206,17 @@
             </div>
           </div>
           <div class="quiz-nav">
-            <button class="quiz-back" onclick="nextStep(3)"><svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <button class="quiz-back" onclick="nextStep(4)"><svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <path d="M13 8H3M7 12l-4-4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
                   stroke-linejoin="round" />
               </svg> Back</button>
-            <button class="quiz-next" onclick="nextStep(5)">Continue <svg width="16" height="16" viewBox="0 0 16 16"
-                fill="none">
-                <path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.8" stroke-linecap="round"
-                  stroke-linejoin="round" />
-              </svg></button>
+            <button class="quiz-next" onclick="nextStep(6)">Continue <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg></button>
           </div>
         </div>
 
-        <!-- STEP 5: Lifestyle -->
-        <div class="quiz-step" id="step-5">
-          <span class="step-badge">Step 5 of 5</span>
+        <!-- STEP 6: Lifestyle -->
+        <div class="quiz-step" id="step-6">
+          <span class="step-badge">Step 6 of 6</span>
           <div class="step-question">How would you describe your <em>lifestyle?</em></div>
           <div class="step-sub">Helps us tailor dosing schedules and delivery formats to fit your routine.</div>
           <div style="margin-bottom:36px;">
@@ -1247,50 +1273,6 @@
             </div>
           </div>
           <div class="quiz-nav">
-            <button class="quiz-back" onclick="nextStep(4)"><svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M13 8H3M7 12l-4-4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-                  stroke-linejoin="round" />
-              </svg> Back</button>
-            <button class="quiz-next" onclick="nextStep(6)">Continue <svg width="16" height="16" viewBox="0 0 16 16"
-                fill="none">
-                <path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.8" stroke-linecap="round"
-                  stroke-linejoin="round" />
-              </svg></button>
-          </div>
-        </div>
-
-        <!-- STEP 6: Contact -->
-        <div class="quiz-step" id="step-6">
-          <span class="step-badge">Step 6 of 6</span>
-          <div class="step-question">Where should we send your <em>results?</em></div>
-          <div class="step-sub">We'll build your secure profile and instantly reveal your treatment matches and pricing.</div>
-
-          <div style="background: rgba(61, 140, 94, 0.08); border: 1px solid rgba(61, 140, 94, 0.2); border-radius: 12px; padding: 16px; margin-bottom: 28px; display: flex; gap: 14px; align-items: flex-start; max-width: 440px;">
-            <i class="ri-shield-check-fill" style="color: var(--green-light); font-size: 20px; line-height: 1;"></i>
-            <div style="font-size: 13px; color: var(--text-muted); line-height: 1.45;"><strong>HIPAA Secure.</strong> Your information is encrypted and strictly confidential. We will never sell your personal data.</div>
-          </div>
-
-          <div class="input-group" style="max-width: 440px;">
-            <label class="input-label">Email Address</label>
-            <input class="input-field" type="email" id="contact-email" placeholder="you@example.com">
-          </div>
-          <div class="input-group" style="max-width: 440px; margin-bottom: 32px;">
-            <label class="input-label">Phone Number</label>
-            <input class="input-field" type="tel" id="contact-phone" placeholder="(555) 555-5555">
-          </div>
-
-          <div class="input-group"
-            style="max-width: 440px; margin-bottom: 40px; display: flex; gap: 12px; align-items: flex-start;">
-            <input type="checkbox" id="contact-consent"
-              style="margin-top: 4px; width: 18px; height: 18px; flex-shrink: 0; accent-color: var(--green-light);">
-            <label for="contact-consent"
-              style="font-size: 13px; color: var(--text-muted); line-height: 1.5; font-weight: 300; cursor: pointer;">
-              I agree to the Terms of Service and Privacy Policy. I consent to be contacted by Freeley regarding my
-              treatment match and health profile via email and SMS.
-            </label>
-          </div>
-
-          <div class="quiz-nav">
             <button class="quiz-back" onclick="nextStep(5)"><svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <path d="M13 8H3M7 12l-4-4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
                   stroke-linejoin="round" />
@@ -1299,9 +1281,7 @@
           </div>
         </div>
 
-      </div><!-- end quiz-steps -->
-
-      <!-- RESULTS -->
+        <!-- RESULTS -->
       <div class="results-screen" id="results-screen">
 
         <!-- Gamified Discount Countdown Banner -->
@@ -1467,6 +1447,35 @@
         updateProgress(n);
       }
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    async function saveProgressAndContinue(nextStepNum) {
+      const btn = document.querySelector('#step-2 .quiz-next');
+      const email = document.getElementById('contact-email').value;
+      const phone = document.getElementById('contact-phone').value;
+      
+      if (!email || !phone) {
+        alert("Please enter your email and phone number to save your progress.");
+        return;
+      }
+
+      btn.style.opacity = '0.7';
+      btn.innerText = 'Saving...';
+      
+      try {
+        await fetch('/.netlify/functions/captureLead', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, phone })
+        });
+      } catch(e) {
+        console.error("Lead capture failed (silent):", e);
+      }
+      
+      btn.style.opacity = '1';
+      btn.innerHTML = 'Save & Continue <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-left:8px"><path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>';
+      
+      nextStep(nextStepNum);
     }
 
     function showResults(isRestoring = false) {

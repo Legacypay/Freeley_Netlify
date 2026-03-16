@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medical Weight Loss Prescribed Online | Freeley</title>
+  <meta name="description" content="Lose weight with board-certified physicians and compounded GLP-1 weight loss medications like Semaglutide. Doorstep delivery.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap"
+    rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    body { background: var(--cream); }
+    
+    /* Distraction-Free Header */
+    .promo-header {
+      background: var(--cream);
+      padding: 24px 0;
+      text-align: center;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    .promo-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: -1px;
+    }
+    .promo-logo span { color: var(--green-light); }
+
+    /* Promo Hero */
+    .promo-hero {
+      background: var(--green-dark);
+      background-image: url("assets/brand/freeley_pattern_dark.jpg"); background-size: cover; background-position: center;
+      padding: 80px 0 100px;
+      position: relative;
+      overflow: hidden;
+    }
+    .promo-hero::before {
+      content: '';
+      position: absolute;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(61, 140, 94, 0.15), transparent 70%);
+      pointer-events: none;
+    }
+
+    .promo-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .promo-eyebrow {
+      display: inline-block;
+      background: rgba(61, 140, 94, 0.2);
+      border: 1px solid rgba(61, 140, 94, 0.4);
+      color: var(--green-light);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 50px;
+      margin-bottom: 24px;
+      font-weight: 600;
+    }
+
+    .promo-hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(40px, 6vw, 68px);
+      font-weight: 300;
+      line-height: 1.1;
+      color: #fff;
+      margin-bottom: 24px;
+    }
+    .promo-hero h1 em {
+      color: var(--green-light);
+      font-style: italic;
+    }
+
+    .promo-hero p {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 18px;
+      color: rgba(255,255,255,0.7);
+      max-width: 600px;
+      margin: 0 auto 40px;
+      line-height: 1.6;
+      font-weight: 300;
+    }
+
+    .promo-cta-primary {
+      display: inline-flex;
+      background: var(--green-light);
+      color: #fff;
+      padding: 20px 48px;
+      border-radius: 50px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 18px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s;
+      box-shadow: 0 8px 24px rgba(61, 140, 94, 0.3);
+    }
+    .promo-cta-primary:hover {
+      background: #4aa870;
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(61, 140, 94, 0.4);
+    }
+
+    .promo-trust-badges {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-top: 40px;
+      flex-wrap: wrap;
+    }
+    .trust-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: rgba(255,255,255,0.6);
+      font-size: 14px;
+    }
+    .trust-badge i { color: var(--green-light); font-size: 18px; }
+
+    /* Features */
+    .promo-features {
+      padding: 80px 24px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+    }
+
+    .feature-card {
+      text-align: center;
+    }
+    .feature-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: rgba(61, 140, 94, 0.1);
+      color: var(--green-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin: 0 auto 24px;
+    }
+    .feature-card h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+    .feature-card p {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* Info Banner */
+    .promo-info-banner {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 800px;
+      margin: 0 auto 80px;
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.02);
+    }
+    .banner-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 64px;
+      color: var(--text);
+      line-height: 1;
+      font-weight: 300;
+    }
+    .banner-details p {
+      margin-bottom: 8px;
+      color: var(--text-muted);
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .banner-details i { color: var(--green-light); }
+    
+    .promo-footer {
+      background: #000;
+      color: rgba(255,255,255,0.4);
+      padding: 40px 24px;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    @media(max-width: 768px) {
+      .features-grid { grid-template-columns: 1fr; }
+      .promo-info-banner { flex-direction: column; text-align: center; gap: 24px; padding: 32px 24px; }
+      .banner-details p { justify-content: center; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="promo-header">
+    <a href="/" class="promo-logo">Freeley<span>.</span></a>
+  </header>
+
+  <section class="promo-hero">
+    <div class="promo-container">
+      <span class="promo-eyebrow">Medical Weight Loss</span>
+      <h1>Weight loss medication<br>that <em>actually</em> works.</h1>
+      <p>100% online telehealth. Get board-certified physician care and compounded Semaglutide starting at just $134/month with free fast-track shipping.</p>
+      
+      <a href="/quiz" class="promo-cta-primary">Find Your Plan Today →</a>
+      
+      <div class="promo-trust-badges">
+        <div class="trust-badge"><i class="ri-shield-check-fill"></i> No Hidden Fees</div>
+        <div class="trust-badge"><i class="ri-hospital-fill"></i> 503A Pharmacies</div>
+        <div class="trust-badge"><i class="ri-user-star-fill"></i> Real Physicians</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="promo-features">
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><i class="ri-file-list-3-fill"></i></div>
+        <h3>1. Online Intake</h3>
+        <p>Complete a quick medical history form. It takes less than 3 minutes and is completely confidential.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="ri-stethoscope-fill"></i></div>
+        <h3>2. Doctor Review</h3>
+        <p>A US board-certified physician will review your profile and prescribe the appropriate compounded GLP-1 medication.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="ri-truck-fill"></i></div>
+        <h3>3. Fast Delivery</h3>
+        <p>Your medication is compounded securely at a 503A pharmacy and shipped directly to your door in unbranded packaging.</p>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding: 0 24px;">
+    <div class="promo-info-banner">
+      <div class="banner-price">$134<span style="font-size:20px;color:rgba(0,0,0,0.4)">/mo</span></div>
+      <div class="banner-details">
+        <p><i class="ri-check-line"></i> Medical Consultation Included</p>
+        <p><i class="ri-check-line"></i> Same price for all dosages (No titration markups)</p>
+        <p><i class="ri-check-line"></i> Compounded Semaglutide + B12</p>
+        <p><i class="ri-check-line"></i> Cancel anytime, zero commitments</p>
+      </div>
+    </div>
+    <div style="text-align: center; margin-bottom: 100px;">
+      <a href="/quiz" class="promo-cta-primary">Start Your Free Assessment</a>
+    </div>
+  </section>
+
+  <footer class="promo-footer">
+    <p>&copy; 2026 Freeley Health LLC. All rights reserved.</p>
+    <p style="margin-top: 12px; font-size: 11px; max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.6;">DISCLAIMER: This is a promotional landing page. Only a licensed physician can determine if a prescription medication is right for you. Compounded medications are not FDA-approved, but are prepared by state-licensed compounding pharmacies.</p>
+  </footer>
+
+</body>
+</html>
