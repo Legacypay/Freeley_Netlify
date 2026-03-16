@@ -1137,13 +1137,19 @@
   <div class="widget-header">
     <div class="eyebrow-w">Transformation Calculator</div>
     <h2>See What 24 Months Can <em>Do for You</em></h2>
-    <p>Enter your starting weight and drag the slider to preview your projected transformation with physician-managed semaglutide therapy.</p>
+  <p>Enter your starting weight and drag the slider to preview your projected transformation.</p>
   </div>
 
-  <!-- Mode Toggle -->
+  <!-- Medication Toggle -->
   <div class="mode-toggle">
-    <button id="btn-med" class="mode-btn active-med" onclick="setMode('med')">Semaglutide only</button>
-    <button id="btn-both" class="mode-btn inactive" onclick="setMode('both')">Semaglutide + exercise</button>
+    <button id="btn-sema" class="mode-btn active-med" onclick="setMed('sema')">Semaglutide</button>
+    <button id="btn-tirz" class="mode-btn inactive" onclick="setMed('tirz')">Tirzepatide</button>
+  </div>
+
+  <!-- Lifestyle Toggle -->
+  <div class="mode-toggle">
+    <button id="btn-med" class="mode-btn active-both" onclick="setMode('med')">Medication Only</button>
+    <button id="btn-both" class="mode-btn inactive" onclick="setMode('both')">+ Exercise</button>
   </div>
 
   <!-- Gender Toggle -->
@@ -1214,7 +1220,7 @@
     <canvas id="progressChart"></canvas>
   </div>
   <div class="legend-row">
-    <span class="legend-item"><span class="legend-dot" style="background:#1B492D;"></span>Semaglutide only</span>
+    <span class="legend-item" id="legend-med"><span class="legend-dot" style="background:#1B492D;"></span>Semaglutide only</span>
     <span class="legend-item"><span class="legend-dot" style="background:#B89B62;"></span>+ exercise</span>
   </div>
 
@@ -1238,27 +1244,54 @@
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-  var startWeight=400,heightIn=70,mode='med',chart;
+  var startWeight=400,heightIn=70,chart;
+  var mode='med'; // 'med' or 'both'
+  var medType='sema'; // 'sema' or 'tirz'
   var currentGender='female';
 
-  var MED_PCT=[
+  var SEMA_MED_PCT=[
     0,.018,.038,.060,.080,.098,.113,.125,.135,.143,.148,.153,.155,
     .158,.160,.162,.164,.165,.166,.167,.168,.169,.170,.171,.172
   ];
-  var BOTH_PCT=[
+  var SEMA_BOTH_PCT=[
     0,.025,.053,.083,.113,.140,.163,.183,.198,.210,.218,.225,.230,
     .238,.245,.251,.256,.261,.265,.269,.272,.275,.277,.279,.280
   ];
+  
+  var TIRZ_MED_PCT=[
+    0,.025,.050,.078,.105,.130,.145,.160,.175,.185,.195,.202,.208,
+    .212,.215,.218,.220,.222,.223,.224,.225,.226,.227,.228,.229
+  ];
+  var TIRZ_BOTH_PCT=[
+    0,.030,.060,.095,.130,.160,.180,.200,.220,.235,.245,.255,.260,
+    .265,.270,.275,.280,.285,.290,.293,.295,.297,.300,.300,.300
+  ];
 
   function gw(p){return p.map(function(v){return Math.round(startWeight*(1-v))})}
-  function getMed(){return gw(MED_PCT)}
-  function getBoth(){return gw(BOTH_PCT)}
+  function getMed(){return gw(medType==='sema'?SEMA_MED_PCT:TIRZ_MED_PCT)}
+  function getBoth(){return gw(medType==='sema'?SEMA_BOTH_PCT:TIRZ_BOTH_PCT)}
   function getData(){return mode==='med'?getMed():getBoth()}
   function getBMI(w,h){return(w/(h*h))*703}
 
+  function setMed(m){
+    medType=m;
+    document.getElementById('btn-sema').className='mode-btn '+(m==='sema'?'active-med':'inactive');
+    document.getElementById('btn-tirz').className='mode-btn '+(m==='tirz'?'active-med':'inactive');
+    
+    // Update chart labels
+    if(chart){
+      chart.data.datasets[0].label=(m==='sema'?'Semaglutide':'Tirzepatide')+' only';
+      chart.data.datasets[1].label='+ Exercise';
+      document.getElementById('legend-med').innerHTML='<span class="legend-dot" style="background:#1B492D;"></span>'+(m==='sema'?'Semaglutide':'Tirzepatide')+' only';
+      chart.update();
+    }
+    
+    updateAll();updateChartStyle();
+  }
+
   function setMode(m){
     mode=m;
-    document.getElementById('btn-med').className='mode-btn '+(m==='med'?'active-med':'inactive');
+    document.getElementById('btn-med').className='mode-btn '+(m==='med'?'active-both':'inactive');
     document.getElementById('btn-both').className='mode-btn '+(m==='both'?'active-both':'inactive');
     updateAll();updateChartStyle();
   }
@@ -1283,7 +1316,7 @@
 
     scene3d=new THREE.Scene();
     camera3d=new THREE.PerspectiveCamera(35,w/h,0.1,100);
-    camera3d.position.set(0,0.83,2.6);
+    camera3d.position.set(0,0.83,3.0);
     camera3d.lookAt(0,0.83,0);
 
     renderer3d=new THREE.WebGLRenderer({antialias:true,alpha:true});
@@ -1468,7 +1501,7 @@
     chart=new Chart(document.getElementById('progressChart'),{
       type:'line',
       data:{labels:labels,datasets:[
-        {label:'Semaglutide only',data:getMed(),borderColor:'#1B492D',borderWidth:2.5,pointRadius:0,pointHoverRadius:4,tension:0.35,fill:false},
+        {label:'Medication only',data:getMed(),borderColor:'#1B492D',borderWidth:2.5,pointRadius:0,pointHoverRadius:4,tension:0.35,fill:false},
         {label:'+ Exercise',data:getBoth(),borderColor:'#B89B62',borderWidth:1,borderDash:[4,4],pointRadius:0,pointHoverRadius:4,tension:0.35,fill:false}
       ]},
       options:{
