@@ -1272,7 +1272,7 @@
   /* ===== THREE.JS 3D BODY - REAL OBJ MODELS ===== */
   var scene3d,camera3d,renderer3d,controls3d;
   var bodyMeshFemale=null,bodyMeshMale=null;
-  var baseFemalePositions=null,baseMalePositions=null;
+  var femaleData=null, maleData=null;
   var bodyCenter={x:0,y:0,z:0};
   var currentBodyMesh=null;
 
@@ -1317,43 +1317,61 @@
       renderer3d.setSize(nw,nh);
     });
 
-    // Load OBJ models
-    var loader=new THREE.OBJLoader();
+    var loader=new THREE.FileLoader();
     var mat=new THREE.MeshPhongMaterial({
       color:0x1B492D,specular:0x5a9a7a,shininess:20,flatShading:false,side:THREE.DoubleSide
     });
 
-    // Load female model
-    loader.load('models/mean_female.obj',function(obj){
-      obj.traverse(function(child){
-        if(child.isMesh){
-          child.material=mat;
-          child.geometry.computeVertexNormals();
-          bodyMeshFemale=child;
-          baseFemalePositions=new Float32Array(child.geometry.attributes.position.array);
-        }
-      });
-      scene3d.add(obj);
-      currentBodyMesh=bodyMeshFemale;
-      applyBMIMorph(getBMI(startWeight,heightIn));
-      console.log('Female model loaded, vertices:', baseFemalePositions?baseFemalePositions.length/3:'none');
-    },undefined,function(err){console.error('Female OBJ load error:',err);});
+    loader.load('models/female_measurement_data.json', function(text){
+      femaleData = JSON.parse(text);
+      var geom = new THREE.BufferGeometry();
+      var indices = [];
+      for(var i=0; i<femaleData.faces.length; i++){
+        indices.push(femaleData.faces[i][0], femaleData.faces[i][1], femaleData.faces[i][2]);
+      }
+      geom.setIndex(indices);
+      geom.setAttribute('position', new THREE.Float32BufferAttribute(femaleData.vertex_means, 3));
+      geom.computeVertexNormals();
+      geom.computeBoundingBox();
 
-    // Load male model (hidden initially)
-    loader.load('models/mean_male.obj',function(obj){
-      obj.traverse(function(child){
-        if(child.isMesh){
-          child.material=mat.clone();
-          child.material.side=THREE.DoubleSide;
-          child.geometry.computeVertexNormals();
-          bodyMeshMale=child;
-          baseMalePositions=new Float32Array(child.geometry.attributes.position.array);
-        }
-      });
-      obj.visible=false;
-      scene3d.add(obj);
-      console.log('Male model loaded, vertices:', baseMalePositions?baseMalePositions.length/3:'none');
-    },undefined,function(err){console.error('Male OBJ load error:',err);});
+      bodyMeshFemale = new THREE.Mesh(geom, mat);
+      
+      var bb = geom.boundingBox;
+      var hy = bb.max.y - bb.min.y;
+      var scale = 1.7 / hy;
+      bodyMeshFemale.scale.set(scale, scale, scale);
+      bodyMeshFemale.position.set(0, -bb.min.y * scale, 0);
+
+      scene3d.add(bodyMeshFemale);
+      currentBodyMesh=bodyMeshFemale;
+      applyExactMorph();
+    });
+
+    loader.load('models/male_measurement_data.json', function(text){
+      maleData = JSON.parse(text);
+      var geom = new THREE.BufferGeometry();
+      var indices = [];
+      for(var i=0; i<maleData.faces.length; i++){
+        indices.push(maleData.faces[i][0], maleData.faces[i][1], maleData.faces[i][2]);
+      }
+      geom.setIndex(indices);
+      geom.setAttribute('position', new THREE.Float32BufferAttribute(maleData.vertex_means, 3));
+      geom.computeVertexNormals();
+      geom.computeBoundingBox();
+
+      bodyMeshMale = new THREE.Mesh(geom, mat.clone());
+      bodyMeshMale.material.side = THREE.DoubleSide;
+      
+      var bb = geom.boundingBox;
+      var hy = bb.max.y - bb.min.y;
+      var scale = 1.7 / hy;
+      bodyMeshMale.scale.set(scale, scale, scale);
+      bodyMeshMale.position.set(0, -bb.min.y * scale, 0);
+      
+      bodyMeshMale.visible=false;
+      scene3d.add(bodyMeshMale);
+      if(currentGender==='male') applyExactMorph();
+    });
 
     animate3d();
   }
@@ -1364,80 +1382,33 @@
     if(renderer3d&&scene3d&&camera3d)renderer3d.render(scene3d,camera3d);
   }
 
-  /* BMI-based vertex morphing */
-  function applyBMIMorph(bmi){
+  /* Precise PCA Morphing from BMI Visualizer JSON data */
+  function applyExactMorph(){
     var mesh=currentBodyMesh;
     if(!mesh)return;
 
-    var basePos=(currentGender==='female')?baseFemalePositions:baseMalePositions;
-    if(!basePos)return;
+    var data = (currentGender==='female') ? femaleData : maleData;
+    if(!data)return;
 
-    var positions=mesh.geometry.attributes.position.array;
-    var count=positions.length/3;
+    var mo=parseInt(document.getElementById('month-slider').value);
+    var wLbs=getData()[mo];
+    
+    // Convert to metric as per JSON units
+    var wKg = wLbs * 0.453592;
+    var hMm = heightIn * 25.4;
 
-    // Compute body bounding box from base positions
-    var minY=Infinity,maxY=-Infinity;
-    for(var i=0;i<count;i++){
-      var y=basePos[i*3+1];
-      if(y<minY)minY=y;
-      if(y>maxY)maxY=y;
-    }
-    var bodyH=maxY-minY;
+    var wDiff = wKg - data.measurements_means.weight;
+    var hDiff = hMm - data.measurements_means.stature;
 
-    // BMI factor: how much to scale
-    var bmiNorm=Math.max(0,Math.min(1,(bmi-18)/45)); // 0 at BMI 18, 1 at BMI 63
-    var t=Math.pow(bmiNorm, 1.2); // slight exponential curve for more dramatic difference at high BMI
+    var pos = mesh.geometry.attributes.position.array;
+    var count = pos.length;
 
-    for(var i=0;i<count;i++){
-      var bx=basePos[i*3];
-      var by=basePos[i*3+1];
-      var bz=basePos[i*3+2];
+    var means = data.vertex_means;
+    var wOffsets = data.vertex_offsets.weight;
+    var hOffsets = data.vertex_offsets.stature;
 
-      // Normalized height: 0=feet, 1=head
-      var hNorm=(by-minY)/bodyH;
-
-      // Scale factor varies by body region - EXAGGERATED FOR VISIBILITY
-      var scaleFactor=1.0;
-
-      if(hNorm<0.05){
-        scaleFactor=1+t*0.2; // Feet
-      } else if(hNorm<0.15){
-        scaleFactor=1+t*0.5; // Ankles/calves
-      } else if(hNorm<0.25){
-        scaleFactor=1+t*0.4; // Knees
-      } else if(hNorm<0.45){
-        scaleFactor=1+t*1.0; // Thighs
-      } else if(hNorm<0.55){
-        scaleFactor=1+t*1.4; // Hips/pelvis
-      } else if(hNorm<0.62){
-        scaleFactor=1+t*1.9; // Belly - maximum scaling
-        if(bz>0){
-          bz+=t*0.09*bodyH*(1-Math.abs(hNorm-0.58)/0.04); // Extra belly protrusion
-        }
-      } else if(hNorm<0.70){
-        scaleFactor=1+t*1.4; // Waist
-      } else if(hNorm<0.78){
-        scaleFactor=1+t*0.9; // Chest/ribs
-      } else if(hNorm<0.82){
-        scaleFactor=1+t*0.6; // Shoulders
-      } else if(hNorm<0.85){
-        scaleFactor=1+t*0.4; // Neck
-      } else if(hNorm<0.88){
-        scaleFactor=1+t*0.3; // Jaw
-      } else {
-        scaleFactor=1+t*0.1; // Head/skull
-      }
-
-      // Arms scale less (check if x is far from center)
-      var distFromCenter=Math.abs(bx)/bodyH;
-      if(distFromCenter>0.12&&hNorm>0.45&&hNorm<0.85){
-        scaleFactor=1+t*0.6; // Arms
-      }
-
-      // Apply: scale x and z (width), keep y (height) mostly unchanged
-      positions[i*3]=bx*scaleFactor;
-      positions[i*3+1]=by; // Height stays same
-      positions[i*3+2]=bz*scaleFactor;
+    for(var i=0; i<count; i++){
+      pos[i] = means[i] + (wDiff * wOffsets[i]) + (hDiff * hOffsets[i]);
     }
 
     mesh.geometry.attributes.position.needsUpdate=true;
@@ -1469,7 +1440,7 @@
     document.getElementById('bmi-display').textContent=bmi.toFixed(1);
     document.getElementById('total-lost').textContent=Math.round(lost)+' lbs';
     document.getElementById('pct-lost').textContent=pct.toFixed(1)+'%';
-    applyBMIMorph(bmi);
+    applyExactMorph();
     updateChartData();
   }
 
