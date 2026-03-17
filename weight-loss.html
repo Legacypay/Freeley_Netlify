@@ -843,9 +843,9 @@
     outline: none;
   }
   .widget .mode-btn.active-med {
-    background: #1B492D;
+    background: rgba(243,234,225,0.15);
     color: #F3EAE1;
-    border: 1.5px solid #1B492D;
+    border: 1.5px solid rgba(243,234,225,0.4);
   }
   .widget .mode-btn.active-both {
     background: #B89B62;
@@ -1337,7 +1337,7 @@
     controls3d=new THREE.OrbitControls(camera3d,renderer3d.domElement);
     controls3d.enableZoom=false;
     controls3d.enablePan=false;
-    controls3d.autoRotate=true;
+    controls3d.autoRotate=false;
     controls3d.autoRotateSpeed=1.0;
     controls3d.minPolarAngle=Math.PI*0.05;
     controls3d.maxPolarAngle=Math.PI*0.95;
@@ -1353,7 +1353,7 @@
 
     var loader=new THREE.FileLoader();
     var mat=new THREE.MeshPhongMaterial({
-      color:0x1B492D,specular:0x5a9a7a,shininess:20,flatShading:false,side:THREE.DoubleSide
+      color:0xB89B62,specular:0xF3EAE1,shininess:15,flatShading:false,side:THREE.DoubleSide
     });
 
     loader.load('models/female_measurement_data.json', function(text){
