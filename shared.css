@@ -258,3 +258,16 @@ footer {
     padding-bottom: 100px;
   }
 }
+
+.treatment-card-price strong,
+.treatment-card-price,
+.gp-price,
+.hpc-price,
+.pc-price,
+.stat-val,
+.hero-stat-val,
+.hero-proof-val,
+.tg-week,
+.step-number {
+  font-family: 'Georgia', serif !important;
+}
