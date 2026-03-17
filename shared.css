@@ -119,6 +119,34 @@ body {
 .btn-lg { padding: 18px 44px; font-size: 16px; }
 .btn-sm { padding: 10px 22px; font-size: 13px; }
 
+@keyframes pulse-cta-glow {
+  0% { box-shadow: 0 0 0 0 rgba(106, 153, 132, 0.6); }
+  70% { box-shadow: 0 0 0 24px rgba(106, 153, 132, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(106, 153, 132, 0); }
+}
+.hero-cta-pulse {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 56px;
+  font-size: 22px;
+  font-weight: 600;
+  font-family: var(--dm-sans, 'DM Sans', sans-serif);
+  background: #6A9984;
+  color: #fff;
+  border-radius: 100px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  animation: pulse-cta-glow 2.5s infinite;
+}
+.hero-cta-pulse:hover {
+  background: #fff;
+  color: #1B492D;
+  transform: translateY(-4px);
+  animation: none;
+  box-shadow: 0 20px 40px rgba(106, 153, 132, 0.3);
+}
+
 /* ── TYPOGRAPHY ── */
 .display {
   font-family: 'Cormorant Garamond', serif;
