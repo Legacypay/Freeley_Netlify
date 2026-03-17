@@ -547,14 +547,28 @@
 
       <div class="section-label">Enter Payment Details</div>
       
+      <div class="express-checkout" style="margin-bottom: 32px;">
+        <div style="text-align: center; font-size: 12px; color: var(--text-muted); margin-bottom: 16px; position: relative; text-transform: uppercase; letter-spacing: 1px; font-weight: 500;">
+          <span style="background: var(--bg); padding: 0 16px; position:relative; z-index:2; background:#f9f9f9;">Express Checkout</span>
+          <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: var(--border); z-index:1;"></div>
+        </div>
+        <div style="display: flex; gap: 12px;">
+          <button style="flex: 1; background: #000; color: #fff; padding: 14px; border-radius: 8px; border: none; font-size: 17px; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; transition: transform 0.2s;"><i class="ri-apple-fill" style="font-size: 22px;"></i> Pay</button>
+          <button style="flex: 1; background: #fff; color: #3c4043; padding: 14px; border-radius: 8px; border: 1px solid #dadce0; font-size: 17px; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; font-family: 'Product Sans', Arial, sans-serif; font-weight: 500; transition: transform 0.2s;"><svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.64 12.2c0-.82-.07-1.62-.21-2.4H12v4.54h6.53c-.28 1.48-1.12 2.73-2.39 3.58v2.98h3.86c2.26-2.08 3.56-5.14 3.56-8.7z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-2.98c-1.08.72-2.46 1.15-4.07 1.15-3.13 0-5.78-2.11-6.73-4.96H1.32v3.08A11.96 11.96 0 0012 24z"/><path fill="#FBBC05" d="M5.27 14.3A7.16 7.16 0 015 12c0-.79.13-1.57.38-2.3V6.62H1.32A11.96 11.96 0 000 12c0 1.93.46 3.75 1.28 5.38l3.99-3.08z"/><path fill="#EA4335" d="M12 4.75c1.76 0 3.34.6 4.58 1.78l3.44-3.44C17.94 1.18 15.23 0 12 0 7.38 0 3.32 2.65 1.32 6.62l3.95 3.08c.95-2.85 3.6-4.95 6.73-4.95z"/></svg> Pay</button>
+        </div>
+        <div style="text-align: center; font-size: 12px; color: var(--text-muted); margin-top: 16px; position: relative; text-transform: uppercase; letter-spacing: 1px; font-weight: 500;">
+          <span style="background: var(--bg); padding: 0 16px; position:relative; z-index:2; background:#f9f9f9;">Or Pay With Card</span>
+          <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: var(--border); z-index:1;"></div>
+        </div>
+      </div>
+      
       <div class="payment-box">
         <div class="payment-header">
           <div class="payment-title">Credit card</div>
-          <div class="card-logos">
-            <!-- Simulated card icons -->
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1200px-Mastercard-logo.svg.png" alt="Mastercard" style="object-fit: contain;">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/1000px-Visa_Inc._logo.svg.png" alt="Visa" style="object-fit: contain;">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/American_Express_logo_%282018%29.svg/1200px-American_Express_logo_%282018%29.svg.png" alt="Amex" style="object-fit: contain;">
+          <div class="card-logos" style="display: flex; gap: 8px; align-items: center;">
+            <svg viewBox="0 0 36 24" width="36" height="24" xmlns="http://www.w3.org/2000/svg"><rect width="36" height="24" rx="4" fill="#15243C"/><path d="M12.64 16.5H9.98V7.51h2.66v8.99zm14.12 0h-2.66V7.51h2.66v8.99zM18.8 12.3l-2.02-3.13-2 3.12v4.21h-2.65V7.51h2.65v4.2l1.9-2.95h3.04l-2.28 3.51 2.37 4.23h-3.01z" fill="#fff"/></svg>
+            <svg viewBox="0 0 36 24" width="36" height="24" xmlns="http://www.w3.org/2000/svg"><rect width="36" height="24" rx="4" fill="#F79E1B"/><circle cx="13" cy="12" r="7" fill="#EB001B"/><circle cx="23" cy="12" r="7" fill="#F79E1B" fill-opacity=".8"/></svg>
+            <svg viewBox="0 0 36 24" width="36" height="24" xmlns="http://www.w3.org/2000/svg"><rect width="36" height="24" rx="4" fill="#1A1F71"/><path d="M14.6 15.6l-2-5.4-2.2 5.4H8L11.5 7h2.3l3.6 8.6h-2.8zm-2.8-2.6l-1-2.8-1 2.8h2zM21.5 7h4v1.8h-2.3v1.6h2v1.8h-2v1.7h2.5v1.8h-4.2V7zm7.5 8.6l-1.8-5h-.1l-1.8 5h-2.3l3-8.6h2.2l3 8.6h-2.2z" fill="#fff"/></svg>
           </div>
         </div>
         
@@ -583,7 +597,7 @@
         <!-- Treatment Line Item -->
         <div class="line-item">
           <div class="line-item-left">
-            <img src="assets/vial_demo.webp" id="checkout-img" class="product-img" alt="Medication" style="border: 1px solid var(--border);">
+            <img src="assets/brand/semag_transparent.png" id="checkout-img" class="product-img" alt="Medication" style="border: 1px solid var(--border);">
             <div>
               <div class="item-name" id="summary-treatment-name">Semaglutide</div>
               <div class="item-desc" id="summary-treatment-desc">Compounded w/ B12 (Cyanocobalamin)</div>
@@ -646,6 +660,11 @@
 
         <button class="btn-checkout">Complete Order</button>
         
+        <div style="margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 11px; color: var(--text-muted); text-transform: uppercase; text-align: center; line-height: 1.4; letter-spacing: 0.5px; font-weight: 500;">
+          <div style="background: rgba(61,140,94,0.06); padding: 14px; border-radius: 12px; border: 1px solid rgba(61,140,94,0.15);"><i class="ri-truck-fill" style="font-size: 20px; color: var(--forest); display: block; margin-bottom: 6px;"></i> Free Overnight<br>Shipping</div>
+          <div style="background: rgba(61,140,94,0.06); padding: 14px; border-radius: 12px; border: 1px solid rgba(61,140,94,0.15);"><i class="ri-money-dollar-circle-fill" style="font-size: 20px; color: var(--forest); display: block; margin-bottom: 6px;"></i> No Hidden<br>Fees</div>
+        </div>
+        
         <div class="fsa-badge">
           Eligible for FSA / HSA <i class="ri-secure-payment-line" style="font-size: 18px; color: var(--forest);"></i>
         </div>
@@ -707,6 +726,8 @@
     }
 
     const currentConfig = pricingData[treatmentType];
+
+    let selectedPlanIndex = -1;
 
     function applyCompoundParams() {
       if (treatmentType === 'weight-loss') {
@@ -772,8 +793,6 @@
 
     applyCompoundParams();
 
-    let selectedPlanIndex = -1;
-
     function renderPlans() {
       const grid = document.getElementById('planGrid');
       grid.innerHTML = '';
@@ -799,7 +818,7 @@
           subtitleText = `$${total.toFixed(2)} Total for ${plan.months} Months`;
         }
 
-        const savingsHtml = savings > 0 ? `<div class="plan-savings">$${savings.toFixed(0)} Total Savings</div>` : '';
+        const savingsHtml = savings > 0 ? `<div class="plan-savings" style="display:inline-flex; align-items:center; gap:4px; padding: 4px 8px; background: rgba(26, 74, 46, 0.08); border-radius: 6px; font-size: 12px; margin-top: 8px;"><i class="ri-discount-percent-fill"></i> <span>You save <strong>$${savings.toFixed(0)}</strong></span></div>` : '';
 
         const card = document.createElement('div');
         card.className = `plan-card ${isSelected ? 'active' : ''}`;
