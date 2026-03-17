@@ -781,7 +781,7 @@
   </section>
 
   <!-- INTERACTIVE PROJECTION TOOL -->
-  <section class="results-section" style="padding: 100px 0; background: #081410;">
+  <section class="results-section" style="padding: 100px 0; background: var(--green);">
     <div class="container" style="display: flex; justify-content: center;">
 
 <div class="widget" style="width:100%;max-width:620px;">
@@ -1012,17 +1012,17 @@
     flex: 1;
     -webkit-appearance: none;
     appearance: none;
-    height: 4px;
-    border-radius: 4px;
-    background: rgba(243,234,225,0.1);
+    height: 12px;
+    border-radius: 6px;
+    background: rgba(243,234,225,0.2);
     outline: none;
     cursor: pointer;
   }
   .widget input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 20px;
-    height: 20px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     background: #6A9984;
     border: 3px solid #081410;
@@ -1047,8 +1047,9 @@
     margin-bottom: 28px;
   }
   .widget .tick-marks span {
-    font-size: 11px;
-    color: rgba(243,234,225,0.3);
+    font-size: 15px;
+    font-weight: 600;
+    color: rgba(243,234,225,0.8);
   }
 
   /* Chart area */
@@ -1216,10 +1217,10 @@
   </div>
 
   <!-- Chart -->
-  <div class="chart-wrap">
+  <div class="chart-wrap" style="display: none;">
     <canvas id="progressChart"></canvas>
   </div>
-  <div class="legend-row">
+  <div class="legend-row" style="display: none;">
     <span class="legend-item" id="legend-med"><span class="legend-dot" style="background:#1B492D;"></span>Semaglutide only</span>
     <span class="legend-item"><span class="legend-dot" style="background:#B89B62;"></span>+ exercise</span>
   </div>
@@ -1529,7 +1530,7 @@
   }
 
   initScene();
-  initChart();
+  // initChart();
   </script>
 
 
