@@ -801,6 +801,12 @@
       .quiz-main {
         padding: 88px 20px 40px;
       }
+      .quiz-next {
+        width: 100%;
+        justify-content: center;
+        padding: 18px;
+        font-size: 16px;
+      }
 
       .options-2,
       .options-3 {
@@ -1607,11 +1613,25 @@
 
     function toggleOption(el) {
       el.classList.toggle('selected');
+      if (window.innerWidth <= 640) {
+        const nextBtn = el.closest('.quiz-step').querySelector('.quiz-next');
+        if (nextBtn) {
+          nextBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
     }
 
     function selectSingle(el, group, autoNextStep = null) {
       document.querySelectorAll(`[data-group="${group}"]`).forEach(c => c.classList.remove('selected'));
       el.classList.add('selected');
+      
+      if (window.innerWidth <= 640 && !autoNextStep) {
+        const nextBtn = el.closest('.quiz-step').querySelector('.quiz-next');
+        if (nextBtn) {
+          nextBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+
       if (autoNextStep) {
         setTimeout(() => nextStep(autoNextStep), 350);
       }
