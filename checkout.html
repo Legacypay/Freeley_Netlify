@@ -29,7 +29,7 @@
     }
 
     body {
-      background-image: url("assets/brand/freeley_pattern_light.jpg"); background-size: cover; background-attachment: fixed; background-color: var(--cream);
+      background-image: url("assets/brand/freeley_pattern_dark.jpg"); background-size: cover; background-attachment: fixed; background-color: var(--forest);
       font-family: var(--poppins);
       color: var(--charcoal);
       margin: 0;
@@ -124,6 +124,7 @@
       font-weight: 700;
       margin: 0 0 24px 0;
       line-height: 1.2;
+      color: var(--white);
     }
 
     .benefits-grid {
@@ -139,18 +140,19 @@
       gap: 12px;
       font-weight: 500;
       font-size: 14px;
+      color: var(--white);
     }
 
     .benefit-item i {
       font-size: 20px;
-      color: var(--forest);
+      color: var(--gold);
     }
 
     .section-label {
       font-size: 20px;
       font-weight: 600;
       margin-bottom: 20px;
-      color: var(--charcoal);
+      color: var(--white);
     }
 
     .trust-bubble {
@@ -507,7 +509,7 @@
 
   <!-- Minimal Nav -->
   <nav class="checkout-nav">
-    <a href="/"><img src="/assets/freeley_wordmark_dark.png" alt="Freeley" onerror="this.src='/assets/freeley_logo_primary.png'"></a>
+    <a href="/"><img src="assets/brand/freeley_wordmark_dark.png" alt="Freeley" onerror="this.src='assets/brand/freeley_logo_primary.png'"></a>
     <div class="step-indicator">
       <div class="step"><div class="step-icon"><i class="ri-check-line"></i></div> Assessment</div>
       <i class="ri-arrow-right-s-line" style="color: #ccc;"></i>
@@ -532,7 +534,7 @@
       </div>
 
       <div id="compoundSelector" style="display: none; margin-bottom: 32px; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); padding: 24px; border-radius: 16px; border: 1px solid var(--border);">
-        <div class="section-label" style="margin-top: 0; margin-bottom: 16px;">Select your GLP-1 Medication:</div>
+        <div class="section-label" style="margin-top: 0; margin-bottom: 16px; color: var(--charcoal);">Select your GLP-1 Medication:</div>
         <div style="display: flex; gap: 12px; flex-wrap: wrap;">
           <button id="cmp-sema" onclick="setCheckoutCompound('sema')" style="flex:1; padding: 16px; border-radius: 12px; border: 2px solid var(--forest); background: rgba(27, 73, 45, 0.05); color: var(--forest); font-family:var(--poppins); font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s;">Semaglutide</button>
           <button id="cmp-tirz" onclick="setCheckoutCompound('tirz')" style="flex:1; padding: 16px; border-radius: 12px; border: 2px solid var(--border); background: rgba(255, 255, 255, 0.5); color: var(--text-muted); font-family:var(--poppins); font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s;">Tirzepatide</button>
