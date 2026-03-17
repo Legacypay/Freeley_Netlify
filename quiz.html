@@ -540,6 +540,9 @@
       animation: fadeUp 0.5s ease both;
     }
 
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    .spinner-icon { animation: spin 1s linear infinite; }
+
     .results-screen.active {
       display: block;
     }
@@ -1282,6 +1285,16 @@
         </div>
 
         <!-- RESULTS -->
+      <div id="loading-screen" style="display:none; text-align:center; padding: 120px 20px;">
+        <i class="ri-loader-4-fill spinner-icon" style="font-size: 56px; color: var(--green-light); display: inline-block; margin-bottom: 24px;"></i>
+        <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 36px; margin-bottom: 32px; font-weight: 300;">Analyzing your profile...</h2>
+        <div style="max-width: 320px; margin: 0 auto; text-align: left; font-size: 16px; color: var(--text-muted); line-height: 2.2;">
+          <div id="ls-1" style="opacity: 0; transform: translateY(10px); transition: all 0.4s;"><i class="ri-checkbox-circle-fill" style="color: var(--green-light); margin-right: 8px;"></i> Checking eligibility guidelines...</div>
+          <div id="ls-2" style="opacity: 0; transform: translateY(10px); transition: all 0.4s;"><i class="ri-checkbox-circle-fill" style="color: var(--green-light); margin-right: 8px;"></i> Reviewing medical history...</div>
+          <div id="ls-3" style="opacity: 0; transform: translateY(10px); transition: all 0.4s;"><i class="ri-checkbox-circle-fill" style="color: var(--green-light); margin-right: 8px;"></i> Building custom protocol...</div>
+        </div>
+      </div>
+
       <div class="results-screen" id="results-screen">
 
         <!-- Gamified Discount Countdown Banner -->
@@ -1307,9 +1320,9 @@
           <div class="plan-card" id="plan-wl">
             <div class="plan-recommended-tag">Best Match</div>
             <span class="plan-icon"><i class="ri-scales-3-fill"></i></span>
+            <img src="assets/brand/semag_transparent.png" alt="Semaglutide" style="position: absolute; top: 36px; right: 28px; height: 64px; width: auto; object-fit: contain;">
             <div class="plan-name">GLP-1 Weight Loss</div>
-            <div class="plan-desc">Semaglutide compounded with B12. Ideal for metabolic support and sustained weight
-              loss.</div>
+            <div class="plan-desc">Semaglutide compounded with B12. Ideal for metabolic support and sustained weight loss.</div>
             <div class="plan-price">$194.29<span style="font-size:18px;color:var(--text-muted)">/mo</span></div>
             <div class="plan-price-sub">All dosages · same price</div>
             <ul class="plan-features">
@@ -1323,9 +1336,9 @@
           <div class="plan-card" id="plan-ed">
             <div class="plan-recommended-tag">Best Match</div>
             <span class="plan-icon"><i class="ri-flashlight-fill"></i></span>
+            <img src="assets/ed_pills_new.webp" alt="Sexual Wellness Treatment" style="position: absolute; top: 36px; right: 28px; height: 60px; width: auto; object-fit: contain; border-radius: 8px;">
             <div class="plan-name">Sexual Wellness</div>
-            <div class="plan-desc">3-in-1 ED sublingual troches. Sildenafil, Tadalafil, and Apomorphine compounded.
-            </div>
+            <div class="plan-desc">3-in-1 ED sublingual troches. Sildenafil, Tadalafil, and Apomorphine compounded.</div>
             <div class="plan-price">$89<span style="font-size:18px;color:rgba(255,255,255,0.4)">/mo</span></div>
             <div class="plan-price-sub">All medications included</div>
             <ul class="plan-features">
@@ -1339,9 +1352,9 @@
           <div class="plan-card" id="plan-long">
             <div class="plan-recommended-tag">Best Match</div>
             <span class="plan-icon"><i class="ri-node-tree"></i></span>
+            <img src="assets/peptides_new.webp" alt="Longevity Protocol" style="position: absolute; top: 36px; right: 28px; height: 60px; width: auto; object-fit: contain; border-radius: 8px;">
             <div class="plan-name">Longevity Stack</div>
-            <div class="plan-desc">Sermorelin + NAD+. Targeted for energy, recovery, and anti-aging at the cellular
-              level.</div>
+            <div class="plan-desc">Sermorelin + NAD+. Targeted for energy, recovery, and anti-aging at the cellular level.</div>
             <div class="plan-price">$149<span style="font-size:18px;color:var(--text-muted)">/mo</span></div>
             <div class="plan-price-sub">Custom stack</div>
             <ul class="plan-features">
@@ -1355,6 +1368,7 @@
           <div class="plan-card" id="plan-hair">
             <div class="plan-recommended-tag">Best Match</div>
             <span class="plan-icon"><i class="ri-seedling-fill"></i></span>
+            <img src="assets/brand/freeley_hair_bottle.png" alt="Hair Loss Treatment" style="position: absolute; top: 32px; right: 28px; height: 64px; width: auto; object-fit: contain;">
             <div class="plan-name">Hair Loss Treatments</div>
             <div class="plan-desc">Finasteride, Minoxidil, or Dutasteride. Block DHT and stimulate regrowth effectively.</div>
             <div class="plan-price">$49<span style="font-size:18px;color:var(--text-muted)">/mo</span></div>
@@ -1479,6 +1493,26 @@
     }
 
     function showResults(isRestoring = false) {
+      if (!isRestoring) {
+        document.querySelectorAll('.quiz-step').forEach(s => s.classList.remove('active'));
+        const loading = document.getElementById('loading-screen');
+        loading.style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        setTimeout(() => { document.getElementById('ls-1').style.opacity='1'; document.getElementById('ls-1').style.transform='translateY(0)'; }, 600);
+        setTimeout(() => { document.getElementById('ls-2').style.opacity='1'; document.getElementById('ls-2').style.transform='translateY(0)'; }, 1400);
+        setTimeout(() => { document.getElementById('ls-3').style.opacity='1'; document.getElementById('ls-3').style.transform='translateY(0)'; }, 2400);
+        
+        setTimeout(() => {
+          loading.style.display = 'none';
+          showResultsActual(false);
+        }, 3600);
+      } else {
+        showResultsActual(true);
+      }
+    }
+
+    function showResultsActual(isRestoring) {
       let quizData;
       if (isRestoring && sessionStorage.getItem('freeley_quiz_data')) {
         quizData = JSON.parse(sessionStorage.getItem('freeley_quiz_data'));
