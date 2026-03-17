@@ -1052,18 +1052,58 @@
         <img src="assets/brand/New_hero2_transparent.png" alt="Freeley" style="width: 110%; margin-left: -5%; height: auto; display: block; object-fit: contain;">
       </div>
       <p class="hero-desc">Freeley pairs you with a licensed provider who treats the root cause &mdash; hormones, metabolism, and all &mdash; so the weight actually stays off.<br><br>Lose the weight. Ditch the guesswork. <em>Live Freeley.</em></p>
-      <div class="hero-actions" style="margin-bottom: 24px;">
-        <a href="quiz.html" class="btn btn-primary btn-lg">Start My Free Visit →</a>
-        <a href="how-it-works.html" class="hero-arrow-link">See what's included <svg width="16" height="16" viewBox="0 0 16 16"
+      <style>
+        @keyframes pulse-cta-glow {
+          0% { box-shadow: 0 0 0 0 rgba(106, 153, 132, 0.6); }
+          70% { box-shadow: 0 0 0 24px rgba(106, 153, 132, 0); }
+          100% { box-shadow: 0 0 0 0 rgba(106, 153, 132, 0); }
+        }
+        .hero-cta-pulse {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          padding: 24px 56px;
+          font-size: 22px;
+          font-weight: 600;
+          font-family: var(--dm-sans, 'DM Sans', sans-serif);
+          background: #6A9984;
+          color: #fff;
+          border-radius: 100px;
+          text-decoration: none;
+          transition: all 0.3s ease;
+          animation: pulse-cta-glow 2.5s infinite;
+        }
+        .hero-cta-pulse:hover {
+          background: #fff;
+          color: #1B492D;
+          transform: translateY(-4px);
+          animation: none;
+          box-shadow: 0 20px 40px rgba(106, 153, 132, 0.3);
+        }
+      </style>
+      <div class="hero-actions" style="margin-bottom: 24px; align-items: center; gap: 32px;">
+        <a href="quiz.html" class="hero-cta-pulse">Start My Risk-Free Visit →</a>
+        <a href="how-it-works.html" class="hero-arrow-link" style="font-size: 16px;">See what's included <svg width="16" height="16" viewBox="0 0 16 16"
             fill="none">
             <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
               stroke-linejoin="round" />
           </svg></a>
       </div>
-      <div style="font-size: 13px; color: rgba(255, 255, 255, 0.45); margin-bottom: 56px; display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap;">
-        <span><i class="ri-check-line" style="color: #7dba96; margin-right: 4px;"></i>No credit card required</span>
-        <span><i class="ri-check-line" style="color: #7dba96; margin-right: 4px;"></i>Takes 2 minutes</span>
-        <span><i class="ri-check-line" style="color: #7dba96; margin-right: 4px;"></i>Cancel anytime</span>
+      <div style="font-size: 14px; font-weight: 500; color: rgba(255, 255, 255, 0.6); margin-bottom: 40px; display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap;">
+        <span><i class="ri-check-line" style="color: #7dba96; margin-right: 4px; font-size:16px;"></i>No credit card required</span>
+        <span><i class="ri-check-line" style="color: #7dba96; margin-right: 4px; font-size:16px;"></i>Takes 2 minutes</span>
+        <span><i class="ri-check-line" style="color: #7dba96; margin-right: 4px; font-size:16px;"></i>Cancel anytime</span>
+      </div>
+      
+      <!-- Risk Free Guarantee -->
+      <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px; margin-bottom: 56px; max-width: 500px; margin-left: auto; margin-right: auto; text-align: center; backdrop-filter: blur(8px); box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 12px;">
+          <i class="ri-shield-star-fill" style="color: #F7CB45; font-size: 28px;"></i>
+          <span style="font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 2px; color: rgba(255,255,255,0.9); text-transform: uppercase;">Risk-Free Guarantee</span>
+        </div>
+        <div style="font-family: 'DM Sans', sans-serif; font-size: 24px; color: #fff; font-weight: 600; line-height: 1.4;">
+          See results in <span style="color: #6A9984; font-weight: 700;">30 days</span> or<br>you don't pay.
+        </div>
       </div>
       <div class="hero-stats">
         <div>
