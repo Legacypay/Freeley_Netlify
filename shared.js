@@ -84,11 +84,24 @@ const FOOTER_HTML = `
 </footer>
 `;
 
-const FLOATING_MOBILE_CTA = `
-<div class="floating-mobile-cta">
-  <a href="quiz.html" class="btn btn-primary btn-lg" style="width: 100%; justify-content: center; box-shadow: 0 4px 14px rgba(61,140,94,0.4);">
-    Start My Free Visit →
-  </a>
+const STICKY_MOBILE_CTA = `
+<div class="sticky-mobile-cta" id="stickyMobileCta">
+  <div class="sticky-cta-content">
+    <div class="sticky-cta-text">
+       <span class="sticky-cta-title">GLP-1 Weight Loss</span>
+       <span class="sticky-cta-price">Starts at $194/mo</span>
+    </div>
+    <a href="quiz.html" class="btn btn-primary" style="padding: 12px 24px; font-weight: 600;">Start Free Visit</a>
+  </div>
+</div>
+`;
+
+const URGENCY_BANNER = `
+<div class="urgency-banner" id="urgencyBanner">
+  <div class="container" style="display: flex; justify-content: center; align-items: center; gap: 8px;">
+    <span class="pulse-dot"></span>
+    <span style="font-size: 12.5px; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase;">High Demand: Accepting new patients for <span id="currentMonthStr"></span>. Next batch ships in <span style="color:#fff;">24 hours</span>.</span>
+  </div>
 </div>
 `;
 
@@ -110,14 +123,51 @@ function toggleMobileNav() {
 }
 
 function initPage(activePage) {
-  // Inject nav + footer
+  // Inject banner, nav + footer
   document.body.insertAdjacentHTML('afterbegin', NAV_HTML(activePage));
+  document.body.insertAdjacentHTML('afterbegin', URGENCY_BANNER);
   document.body.insertAdjacentHTML('beforeend', FOOTER_HTML);
-  document.body.insertAdjacentHTML('beforeend', FLOATING_MOBILE_CTA);
+  document.body.insertAdjacentHTML('beforeend', STICKY_MOBILE_CTA);
+  
+  document.getElementById('currentMonthStr').textContent = new Date().toLocaleString('default', { month: 'long' });
 
-  // Mobile nav styles
+  // Mobile nav styles + Urgency/Sticky CSS
   const style = document.createElement('style');
-  style.textContent = MOBILE_NAV_STYLES;
+  style.textContent = MOBILE_NAV_STYLES + `
+  .urgency-banner {
+    position: fixed; top: 0; left: 0; right: 0;
+    background: rgba(61, 140, 94, 0.25); backdrop-filter: blur(10px);
+    color: var(--green-light); padding: 8px 0; text-align: center;
+    border-bottom: 1px solid rgba(61, 140, 94, 0.3); z-index: 201;
+  }
+  .pulse-dot {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--green-light);
+    box-shadow: 0 0 0 2px rgba(61, 140, 94, 0.3); animation: pulse 2s infinite; display: inline-block;
+  }
+  @keyframes pulse {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(61, 140, 94, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(61, 140, 94, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(61, 140, 94, 0); }
+  }
+  #nav { top: 34px !important; } /* Push nav down below urgency banner */
+  .mobile-nav { top: 106px !important; }
+  
+  .sticky-mobile-cta {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: rgba(7, 21, 16, 0.95); backdrop-filter: blur(14px);
+    border-top: 1px solid rgba(255,255,255,0.08); padding: 16px 24px;
+    z-index: 200; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    display: none; padding-bottom: max(16px, env(safe-area-inset-bottom));
+  }
+  @media (max-width: 768px) {
+    .sticky-mobile-cta { display: block; }
+    .sticky-mobile-cta.visible { transform: translateY(0); }
+  }
+  .sticky-cta-content { display: flex; justify-content: space-between; align-items: center; max-width: 480px; margin: 0 auto; }
+  .sticky-cta-text { display: flex; flex-direction: column; }
+  .sticky-cta-title { font-size: 11px; color: rgba(255,255,255,0.6); margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.5px; font-weight:600;}
+  .sticky-cta-price { font-size: 15px; font-weight: 700; color: #fff; }
+  `;
   document.head.appendChild(style);
 
   // Scroll reveal
@@ -130,11 +180,26 @@ function initPage(activePage) {
   }, { threshold: 0.08 });
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-  // Nav scroll effect
+  // Nav scroll effect & Sticky Mobile CTA visibility
   window.addEventListener('scroll', () => {
     const nav = document.getElementById('nav');
-    if (window.scrollY > 40) nav.style.background = 'rgba(7,21,16,0.98)';
-    else nav.style.background = 'rgba(7,21,16,0.94)';
+    const stickyCta = document.getElementById('stickyMobileCta');
+    if (window.scrollY > 40) {
+        nav.style.background = 'rgba(7,21,16,0.98)';
+        nav.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+    } else {
+        nav.style.background = 'rgba(7,21,16,0.94)';
+        nav.style.borderBottom = 'none';
+    }
+    
+    // Show sticky cta after scrolling down a bit (mobile only)
+    if (stickyCta && window.innerWidth <= 768) {
+      if (window.scrollY > 400) {
+        stickyCta.classList.add('visible');
+      } else {
+        stickyCta.classList.remove('visible');
+      }
+    }
   });
   // Structured Data (MedicalWebPage)
   const schemaScript = document.createElement('script');

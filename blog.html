@@ -3,99 +3,122 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Health & Wellness Blog — Freeley</title>
+  <title>Your Guide to Smarter Weight Loss — Freeley Blog</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
   <link rel="stylesheet" href="shared.css">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <style>
+    body { background: var(--cream, #FDFCF7); font-family: 'DM Sans', sans-serif; color: var(--charcoal, #2B2A29); margin: 0; padding: 0; }
     .hub-hero {
-      padding: 160px 0 80px;
-      text-align: center;
-      background-image: url("assets/brand/freeley_pattern_light.jpg");
-      background-size: cover;
-      background-attachment: fixed;
-      background-color: var(--cream);
+      padding: 100px 24px 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+      text-align: left;
     }
     .hub-hero h1 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(48px, 6vw, 72px);
-      font-weight: 300;
-      color: var(--charcoal);
-      margin-bottom: 24px;
+      font-weight: 700;
+      font-size: clamp(38px, 5vw, 48px);
+      color: var(--forest, #3D8C5E);
+      margin-bottom: 16px;
+      margin-top: 0;
     }
-    .blog-grid {
+    .hub-hero p {
+      color: var(--text-muted, #595959);
+      font-size: 18px;
+      max-width: 800px;
+      line-height: 1.6;
+      margin: 0;
+    }
+    .pill-nav {
+      display: flex; gap: 12px; max-width: 1200px; margin: 0 auto; padding: 0 24px 60px; flex-wrap: wrap;
+    }
+    .pill {
+      padding: 8px 24px; border: 1px solid var(--border, #E6E4DD); border-radius: 50px; font-size: 14px; font-weight: 500; color: var(--text-muted, #595959); text-decoration: none; transition: 0.2s; background: transparent;
+    }
+    .pill:hover, .pill.active { border-color: var(--forest, #3D8C5E); color: var(--forest, #3D8C5E); }
+    
+    .blog-layout {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 40px;
-      padding: 100px 0;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 60px;
+      padding: 0 24px 100px;
       max-width: 1200px;
       margin: 0 auto;
     }
-    .article-card {
-      display: block;
-      text-decoration: none;
-      color: var(--charcoal);
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 32px;
-      transition: all 0.3s;
+    @media (max-width: 900px) {
+      .blog-layout { grid-template-columns: 1fr; }
     }
-    .article-card:hover {
-      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-      transform: translateY(-4px);
-      border-color: rgba(61,140,94,0.3);
-    }
-    .ac-tag {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: var(--green-light);
-      font-weight: 600;
-      margin-bottom: 16px;
-      display: block;
-    }
-    .ac-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 32px;
-      line-height: 1.2;
-      margin-bottom: 16px;
-      color: var(--charcoal);
-    }
-    .ac-excerpt {
-      font-size: 15px;
-      color: var(--text-muted);
-      line-height: 1.6;
+    
+    /* Featured */
+    .featured-card { text-decoration: none; color: inherit; display: block; }
+    .featured-card:hover .fc-title { color: var(--forest); }
+    .featured-card img { width: 100%; height: 420px; object-fit: cover; border-radius: 20px; margin-bottom: 24px; }
+    .fc-title { font-size: 32px; font-weight: 700; margin: 0 0 12px 0; display: flex; align-items: center; justify-content: space-between; transition: 0.2s;}
+    .fc-excerpt { font-size: 16px; color: var(--text-muted); line-height: 1.6; margin: 0; }
+    
+    /* Side list */
+    .side-list { display: flex; flex-direction: column; gap: 32px; }
+    .side-card { display: flex; gap: 24px; text-decoration: none; color: inherit; border-bottom: 1px solid var(--border, #E6E4DD); padding-bottom: 32px; align-items: center; }
+    .side-card:last-child { border-bottom: none; padding-bottom: 0; }
+    .side-card:hover .sc-title { color: var(--forest); }
+    .side-card img { width: 180px; height: 120px; object-fit: cover; border-radius: 12px; flex-shrink: 0; }
+    .sc-content { flex: 1; min-width: 0; }
+    .sc-title { font-size: 18px; font-weight: 700; margin: 0 0 8px 0; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; transition: 0.2s; line-height: 1.3; }
+    .sc-excerpt { font-size: 14px; color: var(--text-muted); line-height: 1.5; margin: 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .arrow-icon { font-size: 24px; color: var(--charcoal); opacity: 0.5; transition: 0.2s transform; flex-shrink: 0; }
+    .featured-card:hover .arrow-icon, .side-card:hover .arrow-icon { transform: translateX(6px); opacity: 1; color: var(--forest); }
+    
+    @media (max-width: 500px) {
+      .side-card { flex-direction: column; gap: 16px; }
+      .side-card img { width: 100%; height: 200px; }
     }
   </style>
 </head>
 <body>
+  <!-- Simplified minimal nav area can go here if needed -->
+  <nav style="padding: 24px; max-width: 1200px; margin: 0 auto; display: flex; align-items: center;">
+     <a href="/"><img src="assets/brand/freeley_wordmark_dark.png" alt="Freeley" style="height: 28px;"></a>
+  </nav>
+
   <section class="hub-hero">
-    <div class="container reveal">
-      <h1>Medical <em>Insights</em></h1>
-      <p style="color:var(--text-muted); font-size:18px;">Expert guidance on weight management, longevity, and men's health.</p>
-    </div>
+    <h1>Your Guide to Smarter Weight Loss</h1>
+    <p>Expert insights, real stories, and science-backed tips to help you feel confident, healthy, and in control—one step at a time.</p>
   </section>
-  <div class="container">
-    <div class="blog-grid">
-      
-      <a href="seo-test-article.html" class="article-card reveal reveal-delay-1">
-        <span class="ac-tag">Men's Health</span>
-        <h2 class="ac-title">The Ultimate Guide to Men's Health Telemedicine</h2>
-        <p class="ac-excerpt">Why the modern man is skipping the waiting room and what you need to know about getting safe, clinical-grade ED and hair loss treatments online.</p>
-      </a>
-      <a href="costs-of-compounded-semantics-versus-branded.html" class="article-card reveal reveal-delay-2">
-        <span class="ac-tag">Healthcare Costs</span>
-        <h2 class="ac-title">Costs of Compounded Semantics Versus Branded Medications</h2>
-        <p class="ac-excerpt">Explore the financial implications of choosing compounded medications over branded options and how it impacts patient care and healthcare systems.</p>
-      </a>
-      <a href="cost-of-compounded-semaglutide-vs-brand-name-ozempic.html" class="article-card reveal reveal-delay-3">
-        <span class="ac-tag">Semaglutide, Ozempic, Cost Comparison</span>
-        <h2 class="ac-title">Cost of Compounded Semaglutide vs Brand Name Ozempic</h2>
-        <p class="ac-excerpt">Explore the cost differences between compounded semaglutide and brand name Ozempic, and discover which option might be right for you.</p>
+  <div class="pill-nav">
+    <a href="#" class="pill active">All</a>
+    <a href="#" class="pill">Longevity</a>
+    <a href="#" class="pill">Men's Health</a>
+    <a href="#" class="pill">Weight Loss</a>
+  </div>
+  <div class="blog-layout">
+    
+    <div class="featured-col">
+      <a href="cost-of-compounded-semaglutide-vs-brand-name-ozempic.html" class="featured-card">
+        <img src="assets/brand/new_hero.jpeg" alt="Cost of Compounded Semaglutide vs Brand Name Ozempic">
+        <h2 class="fc-title">Cost of Compounded Semaglutide vs Brand Name Ozempic <i class="ri-arrow-right-line arrow-icon"></i></h2>
+        <p class="fc-excerpt">Explore the cost differences between compounded semaglutide and brand name Ozempic, and discover which option might be right for your budget.</p>
       </a>
     </div>
+    <div class="side-list">
+      
+      <a href="seo-test-article.html" class="side-card">
+        <img src="assets/brand/hair_loss_hero.png" alt="The Ultimate Guide to Men's Health Telemedicine">
+        <div class="sc-content">
+          <h2 class="sc-title">The Ultimate Guide to Men's Health Telemedicine <i class="ri-arrow-right-line arrow-icon"></i></h2>
+          <p class="sc-excerpt">Why the modern man is skipping the waiting room and what you need to know about getting safe, clinical-grade ED and hair loss treatments online.</p>
+        </div>
+      </a>
+      <a href="costs-of-compounded-semantics-versus-branded.html" class="side-card">
+        <img src="assets/sarah.jpeg" alt="Costs of Compounded Semantics Versus Branded Medications">
+        <div class="sc-content">
+          <h2 class="sc-title">Costs of Compounded Semantics Versus Branded Medications <i class="ri-arrow-right-line arrow-icon"></i></h2>
+          <p class="sc-excerpt">Explore the financial implications of choosing compounded medications over branded options and how it impacts patient care and healthcare systems.</p>
+        </div>
+      </a>
+    </div>
+    
   </div>
   <script src="shared.js"></script>
   <script>initPage('');</script>
