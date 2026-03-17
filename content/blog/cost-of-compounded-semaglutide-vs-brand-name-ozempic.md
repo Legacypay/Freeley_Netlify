@@ -3,7 +3,7 @@ title: "Cost of Compounded Semaglutide vs Brand Name Ozempic"
 tag: "Weight Loss"
 excerpt: "Explore the cost differences between compounded semaglutide and brand name Ozempic, and discover which option might be right for your budget."
 date: "2026-03-16T12:00:00Z"
-image: "assets/brand/new_hero.jpeg"
+image: "assets/blog_scale.png"
 ---
 
 With GLP-1 medications dominating the weight loss conversation, many patients are turning to **Semaglutide** (the active ingredient in Ozempic and Wegovy) to hit their goals. But when comparing the **cost of compounded semaglutide vs brand name Ozempic**, the difference in out-of-pocket expenses can be staggering.
