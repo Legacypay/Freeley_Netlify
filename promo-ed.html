@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ED Treatment that Works | Freeley</title>
+  <link rel="icon" type="image/png" href="favicon.png?v=2">
+  <meta name="description" content="Get your confidence back with the 3-in-1 Sublingual ED Troche. Ships fast and free.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Montserrat:wght@400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    body {
+      background: #FAFAF8;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--charcoal);
+    }
+
+    /* Universal Mobile-First Container */
+    .mobile-container {
+      max-width: 480px;
+      margin: 0 auto;
+      background: #fff;
+      box-shadow: 0 0 40px rgba(0,0,0,0.05);
+      position: relative;
+    }
+
+    /* Distraction-Free Header */
+    .hl-header {
+      padding: 16px 24px;
+      text-align: center;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      position: sticky;
+      top: 0;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .hl-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+    .hl-logo span { color: #508cde; }
+
+    /* 1. HERO */
+    .hl-hero {
+      padding: 40px 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      background: #f4f8fc;
+    }
+    .stars { color: #facc15; font-size: 14px; margin-bottom: 16px; display: inline-flex; align-items: center; gap: 4px; justify-content: center; width: 100%;}
+    .stars span { color: var(--text-muted); font-size: 11px; margin-left: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+    
+    .hl-hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 42px;
+      line-height: 1.1;
+      margin-bottom: 24px;
+      color: var(--charcoal);
+    }
+    .hl-hero h1 em { color: #508cde; }
+    
+    .hero-btn {
+      display: block;
+      width: 100%;
+      background: #204573;
+      color: #fff;
+      padding: 18px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      text-decoration: none;
+      margin-bottom: 12px;
+      box-shadow: 0 8px 24px rgba(32, 69, 115, 0.3);
+    }
+    .hero-guarantee {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    
+    .hero-img {
+      width: 100%;
+      border-radius: 16px;
+      margin-top: 32px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+      display: block;
+    }
+
+    /* 2. LOGOS */
+    .as-seen-in {
+      padding: 32px 24px;
+      text-align: center;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .logo-p { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); margin-bottom: 20px; font-weight: 600; }
+    .logo-grid {
+      display: flex; justify-content: space-between; align-items: center; opacity: 0.6; filter: grayscale(100%);
+    }
+    .logo-grid img { height: 20px; }
+
+    /* 3. BENEFITS */
+    .benefits { padding: 48px 24px; }
+    .benefits h2 { font-family: 'Cormorant Garamond', serif; font-size: 32px; margin-bottom: 24px; line-height: 1.2; text-align: center; }
+    
+    .benefit-item {
+      display: flex; gap: 16px; margin-bottom: 24px; align-items: flex-start;
+      background: #f4f8fc; padding: 20px; border-radius: 16px;
+    }
+    .b-icon {
+      width: 40px; height: 40px; border-radius: 50%; background: #508cde; color: white; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 20px;
+    }
+    .b-text h4 { font-size: 16px; margin-bottom: 4px; color: var(--charcoal); }
+    .b-text p { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
+
+    /* 4. UGC */
+    .ugc { padding: 0 24px 48px; }
+    .ugc-video {
+      position: relative; border-radius: 16px; overflow: hidden; background: #000; height: 400px;
+    }
+    .ugc-video img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
+    .play-btn {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 64px; height: 64px; background: rgba(255,255,255,0.9); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-size: 24px; color: var(--charcoal);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    }
+
+    /* 5. STATS */
+    .stats {
+      background: #204573; color: white; padding: 48px 24px; text-align: center;
+    }
+    .stat-number { font-family: 'Cormorant Garamond', serif; font-size: 64px; color: #9fccff; line-height: 1; margin-bottom: 8px; }
+    .stat-desc { font-size: 18px; font-weight: 500; margin-bottom: 32px; }
+    .stat-list { text-align: left; }
+    .stat-list li { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; font-size: 15px; color: rgba(255,255,255,0.8); }
+    .stat-list i { color: #9fccff; font-size: 20px; }
+
+    /* 6. TESTIMONIALS */
+    .testimonials { padding: 48px 24px; background: #f4f8fc; }
+    .review-card {
+      background: white; padding: 24px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); margin-bottom: 20px;
+    }
+    .review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .reviewer { font-weight: 600; font-size: 15px; display: flex; align-items: center; gap: 8px; }
+    .verified { color: #508cde; font-size: 14px; }
+    .review-text { font-size: 15px; color: var(--text-muted); line-height: 1.6; font-style: italic; }
+
+    /* 7. PRODUCT DETAILS */
+    .product-details { padding: 48px 24px; }
+    .product-carousel {
+      width: 100%; aspect-ratio: 1; background: #f4f8fc; border-radius: 16px; margin-bottom: 24px;
+      position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden;
+    }
+    .product-carousel img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+
+    .product-price { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+    .current-price { font-size: 28px; font-weight: 700; font-family: 'Georgia', serif; }
+    .original-price { font-size: 18px; color: var(--text-faint); text-decoration: line-through; font-family: 'Georgia', serif; }
+    .save-tag { background: #fee2e2; color: #ef4444; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 700; margin-left: auto;}
+    
+    .product-title { font-size: 24px; margin-bottom: 8px; }
+    .product-bullets { margin-bottom: 32px; }
+    .product-bullets li { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; font-size: 15px; color: var(--text-muted); }
+    .product-bullets i { color: #508cde; }
+
+    .sticky-atc {
+      position: sticky; bottom: 0; background: white; padding: 16px 24px; border-top: 1px solid var(--border-light); z-index: 100;
+    }
+
+    /* 8. TIMELINE */
+    .timeline { padding: 48px 24px; background: #f4f8fc; }
+    .timeline h2 { font-family: 'Cormorant Garamond', serif; font-size: 32px; text-align: center; margin-bottom: 40px; }
+    .time-step { display: flex; gap: 24px; margin-bottom: 32px; position: relative; }
+    .time-step::before { content: ''; position: absolute; left: 19px; top: 40px; bottom: -32px; width: 2px; background: var(--border); }
+    .time-step:last-child::before { display: none; }
+    .time-icon { width: 40px; height: 40px; background: white; border: 2px solid #508cde; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #508cde; z-index: 2;}
+    .time-content { padding-top: 10px; }
+    .time-content h4 { font-size: 18px; margin-bottom: 6px; }
+    .time-content p { font-size: 15px; color: var(--text-muted); line-height: 1.5; }
+
+    /* 9. FAQs */
+    .faqs { padding: 48px 24px 100px; }
+    .faqs h2 { font-family: 'Cormorant Garamond', serif; font-size: 32px; text-align: center; margin-bottom: 32px; }
+    .faq-item { border-bottom: 1px solid var(--border-light); padding: 20px 0; }
+    .faq-q { font-weight: 600; font-size: 16px; margin-bottom: 8px; display: flex; justify-content: space-between; }
+    .faq-a { font-size: 15px; color: var(--text-muted); line-height: 1.6; }
+  </style>
+  <link rel="canonical" href="https://freeley.com/promo-ed">
+</head>
+
+<body>
+
+  <div class="mobile-container">
+    
+    <header class="hl-header">
+      <a href="/" class="hl-logo">Freeley<span>.</span></a>
+      <a href="/quiz" style="font-size: 13px; font-weight: 600; color: #204573; text-decoration: none;">Get Started</a>
+    </header>
+
+    <!-- 1. HERO -->
+    <section class="hl-hero">
+      <div class="stars">★★★★★ <span style="justify-content:flex-start;">Rated 4.9/5 (18,000+ Reviews)</span></div>
+      <h1>Live your best <br><em>sex life.</em></h1>
+      <p style="color: var(--text-muted); font-size: 16px; margin-bottom: 32px; line-height: 1.5;">Clinical-grade 3-in-1 sublingual ED compound. Fast-acting, reliable, and discreetly delivered.</p>
+      
+      <a href="/quiz" class="hero-btn">Start My Risk-Free Visit →</a>
+      <div class="hero-guarantee">
+        <i class="ri-shield-check-fill"></i> Works in as fast as 15 minutes
+      </div>
+
+      <img src="https://images.unsplash.com/photo-1516585427167-9f4af9627e6c?auto=format&fit=crop&q=80&w=800" alt="Confident couple" class="hero-img" style="object-fit:cover; height: 350px;">
+    </section>
+
+    <!-- 2. LOGOS -->
+    <section class="as-seen-in">
+      <p class="logo-p">Our Treatments Featured In</p>
+      <div class="logo-grid" style="justify-content: space-around;">
+        <strong style="font-family: serif; font-size: 20px;">GQ</strong>
+        <strong style="font-family: sans-serif; font-size: 15px; text-transform: uppercase;">Forbes</strong>
+        <strong style="font-family: sans-serif; font-size: 14px; text-transform: uppercase;">Men's Health</strong>
+      </div>
+    </section>
+
+    <!-- 3. BENEFITS -->
+    <section class="benefits">
+      <h2>Why Guys Are Switching to Freeley</h2>
+      
+      <div class="benefit-item">
+        <div class="b-icon"><i class="ri-flashlight-fill"></i></div>
+        <div class="b-text">
+          <h4>Targeted Absorption</h4>
+          <p>Dissolves rapidly under your tongue. Bypass the digestive system so it works in 15 minutes, not hours.</p>
+        </div>
+      </div>
+      <div class="benefit-item">
+        <div class="b-icon"><i class="ri-rocket-line"></i></div>
+        <div class="b-text">
+          <h4>Primes Arousal Pathways</h4>
+          <p>Unlike standard generic pills, our formula includes Apomorphine to activate dopamine arousal pathways in the brain first.</p>
+        </div>
+      </div>
+      <div class="benefit-item">
+        <div class="b-icon"><i class="ri-battery-charge-fill"></i></div>
+        <div class="b-text">
+          <h4>Control & Confidence</h4>
+          <p>Tadalafil stays in your system supporting sustained blood flow for up to 36 hours. Stop timing your pills.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. UGC -->
+    <section class="ugc">
+      <div class="ugc-video">
+        <img src="https://images.unsplash.com/photo-1542385151-efdcf96590b5?auto=format&fit=crop&q=80&w=800" alt="Customer Results">
+        <div class="play-btn"><i class="ri-play-fill"></i></div>
+      </div>
+      <p style="text-align: center; font-size: 14px; font-weight: 500; margin-top: 16px;">Watch real guys share what happened after they switched to the 3-in-1 Troche.</p>
+    </section>
+
+    <!-- 5. STATS -->
+    <section class="stats">
+      <div class="stat-number">3x</div>
+      <div class="stat-desc">More effective than generics alone</div>
+      
+      <ul class="stat-list" style="list-style: none; padding: 0; margin: 0 auto; max-width: 320px;">
+        <li><i class="ri-check-line"></i> Sildenafil (Fast Onset)</li>
+        <li><i class="ri-check-line"></i> Tadalafil (36-hour window)</li>
+        <li><i class="ri-check-line"></i> Apomorphine (Mental readiness)</li>
+      </ul>
+    </section>
+
+    <!-- 6. TESTIMONIALS -->
+    <section class="testimonials">
+      <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 32px; text-align: center; margin-bottom: 32px;">Real Guys, Real Results</h2>
+      
+      <div class="review-card">
+        <div class="review-header">
+          <div class="reviewer">Mark R. <i class="ri-verified-badge-fill verified"></i></div>
+          <div class="stars" style="margin:0; justify-content: flex-start;">★★★★★</div>
+        </div>
+        <p class="review-text">"I used to take standard pills and had to wait 2 hours, completely ruining the momentum. The minty troche melts in minutes and I'm ready to go. Total gamechanger for my marriage."</p>
+      </div>
+
+      <div class="review-card">
+        <div class="review-header">
+          <div class="reviewer">Jason T. <i class="ri-verified-badge-fill verified"></i></div>
+          <div class="stars" style="margin:0; justify-content: flex-start;">★★★★★</div>
+        </div>
+        <p class="review-text">"It's like someone turned the clock back 15 years. No performance anxiety, no second-guessing if the pill has kicked in yet. The 36-hour window is amazing for weekend getaways."</p>
+      </div>
+    </section>
+
+    <!-- 7. PRODUCT DETAILS -->
+    <section class="product-details" id="product">
+      
+      <div class="stars" style="justify-content:flex-start;">★★★★★ <span style="margin-left:8px; color:var(--text); font-weight:500;">Trustpilot</span></div>
+      
+      <h2 class="product-title">3-in-1 ED Troche</h2>
+      
+      <div class="product-carousel">
+        <img src="assets/ed_pills_new.webp" alt="3-in-1 ED Troche">
+      </div>
+
+      <div class="product-price">
+        <span class="current-price">$89.00</span><span style="font-size:14px; color:var(--text-muted); margin-left:-8px;">/mo</span>
+        <!-- <span class="save-tag">SAVE 20%</span> -->
+      </div>
+      
+      <ul class="product-bullets" style="list-style:none; padding:0;">
+        <li><i class="ri-flashlight-fill"></i> Dissolves under the tongue (Sublingual)</li>
+        <li><i class="ri-shield-check-line"></i> Sildenafil + Tadalafil + Apomorphine</li>
+        <li><i class="ri-user-heart-line"></i> Physician consultation & fast shipping included</li>
+      </ul>
+
+      <p style="font-size: 13px; color: var(--text-muted); text-align: center; margin-bottom: 8px;">Prescription subject to physician approval.</p>
+    </section>
+
+    <!-- 8. TIMELINE -->
+    <section class="timeline">
+      <h2>Here's What Happens Next</h2>
+      
+      <div class="time-step">
+        <div class="time-icon">1</div>
+        <div class="time-content">
+          <h4>0 Minutes</h4>
+          <p>Place the minty troche under your tongue. It absorbs directly into your bloodstream through the mucosal membrane, bypassing the slow digestive process.</p>
+        </div>
+      </div>
+      
+      <div class="time-step">
+        <div class="time-icon">15</div>
+        <div class="time-content">
+          <h4>15 Minutes In</h4>
+          <p>The apomorphine primes your brain's dopamine receptors for arousal, while the sildenafil kicks in rapidly, increasing physical blood flow exactly when you need it.</p>
+        </div>
+      </div>
+      
+      <div class="time-step">
+        <div class="time-icon">36</div>
+        <div class="time-content">
+          <h4>Up to 36 Hours</h4>
+          <p>The tadalafil stays in your system, providing sustained readiness. If the moment arises tomorrow, you won't need to take another dose.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. FAQs -->
+    <section class="faqs">
+      <h2>Objections & Answers</h2>
+      
+      <div class="faq-item">
+        <div class="faq-q">What is a troche? <i class="ri-add-line"></i></div>
+        <div class="faq-a">A troche (pronounced tro-key) is a tiny lozenge that dissolves under your tongue. It allows the medication to be absorbed directly into your bloodstream for significantly faster results than swallowing a pill.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Does it just give me an erection? <i class="ri-add-line"></i></div>
+        <div class="faq-a">No! You still require sexual stimulation or arousal. Our formula simply ensures that when you *are* aroused, your body responds immediately and firmly.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Do I have to do a video call? <i class="ri-add-line"></i></div>
+        <div class="faq-a">Usually no. You complete a simple online medical questionnaire. Our US board-certified doctors review it asynchronously. If safe and appropriate, they will prescribe the medication.</div>
+      </div>
+    </section>
+
+    <!-- STICKY ATC -->
+    <div class="sticky-atc">
+      <a href="/quiz" class="hero-btn" style="margin: 0; text-align: center;">Try It Risk Free - $89/mo</a>
+    </div>
+
+  </div> <!-- End Mobile Container -->
+
+  <script src="shared.js"></script>
+</body>
+</html>
