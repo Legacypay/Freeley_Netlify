@@ -3,6 +3,7 @@ title: "Where to Buy Compounded Semaglutide Online Safely"
 tag: "compounded semaglutide, online pharmacy, safe purchase"
 excerpt: "Discover how to safely purchase compounded semaglutide online with this comprehensive guide, ensuring your health and safety remain a priority."
 date: 2023-11-01
+image: "assets/blog_hero_semaglutide_delivery.png"
 ---
 
 # Where to Buy Compounded Semaglutide Online Safely

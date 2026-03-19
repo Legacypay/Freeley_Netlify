@@ -32,7 +32,7 @@ console.log(`Working on keyword: ${targetKeyword}`);
 // The remaining keywords
 const remainingKeywords = keywords.slice(1).join('\n');
 
-const prompt = `You are the Chief Medical Officer at Freeley Health. Write an engaging, highly-researched, SEO-optimized medical article about "${targetKeyword}". Use bolding, H2s, H3s, and format the output STRICTLY in Markdown so it can be deployed directly to our Netlify CMS infrastructure. Include YAML frontmatter at the top with "title", "tag", "excerpt", and "date". Conclude with a call to action leading readers to our free medical assessment at freeley.com/quiz.html. DO NOT wrap the output in markdown block ticks (\`\`\`), output pure raw text.`;
+const prompt = `You are the Chief Medical Officer at Freeley Health. Write an engaging, highly-researched, SEO-optimized medical article about "${targetKeyword}". Use bolding, H2s, H3s, and format the output STRICTLY in Markdown so it can be deployed directly to our Netlify CMS infrastructure. Include YAML frontmatter at the top with "title", "tag", "excerpt", "date", and "image". For the "image" field, generate a highly descriptive prompt for a photorealistic, minimalistic, aesthetic photo relevant to the article, URL-encode it, and set the value to EXACTLY: "https://image.pollinations.ai/prompt/[YOUR_URL_ENCODED_PROMPT]?width=1200&height=800&nologo=true". Conclude with a call to action leading readers to our free medical assessment at freeley.com/quiz.html. DO NOT wrap the output in markdown block ticks (\`\`\`), output pure raw text.`;
 
 async function run() {
   try {

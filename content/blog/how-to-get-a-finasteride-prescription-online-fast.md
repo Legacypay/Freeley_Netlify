@@ -3,6 +3,7 @@ title: "How to Get a Finasteride Prescription Online Fast"
 tag: "finasteride, online prescription, hair loss treatment"
 excerpt: "Discover the fastest way to get a finasteride prescription online. Learn the steps, benefits, and how Freeley Health simplifies your journey to effective hair loss treatment."
 date: "2023-10-20"
+image: "assets/blog_hero_finasteride_hair.png"
 ---
 
 # How to Get a Finasteride Prescription Online Fast
