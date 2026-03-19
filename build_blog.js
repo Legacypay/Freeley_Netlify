@@ -19,6 +19,7 @@ const PAGE_TEMPLATE = `<!DOCTYPE html>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{title}} — Freeley Blog</title>
+  <link rel="canonical" href="https://freeley.com/{{slug}}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="shared.css">
@@ -108,7 +109,7 @@ const PAGE_TEMPLATE = `<!DOCTYPE html>
     <div class="blog-cta">
       <h3 style="margin-top:0">Ready to start your journey?</h3>
       <p style="margin-bottom:24px; font-size:16px;">Consult directly with a licensed physician to find the right treatment path for you.</p>
-      <a href="quiz.html" class="btn btn-primary" style="display:inline-block">Complete Free Assessment →</a>
+      <a href="/quiz" class="btn btn-primary" style="display:inline-block">Complete Free Assessment →</a>
     </div>
   </div>
 
@@ -123,6 +124,7 @@ const HUB_TEMPLATE = `<!DOCTYPE html>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Your Guide to Smarter Weight Loss — Freeley Blog</title>
+  <link rel="canonical" href="https://freeley.com/blog">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
@@ -256,6 +258,7 @@ function processBlogs() {
     let pageHTML = PAGE_TEMPLATE
       .replace(/{{title}}/g, title)
       .replace(/{{tag}}/g, tag)
+      .replace(/{{slug}}/g, slug)
       .replace(/{{read_time}}/g, readTime)
       .replace(/{{content}}/g, htmlContent);
 
@@ -284,7 +287,7 @@ function processBlogs() {
     let sideHTML = '';
     rest.forEach(post => {
       sideHTML += `
-      <a href="${post.slug}.html" class="side-card">
+      <a href="/${post.slug}" class="side-card">
         <img src="${post.image}" alt="${post.title}">
         <div class="sc-content">
           <h2 class="sc-title">${post.title} <i class="ri-arrow-right-line arrow-icon"></i></h2>
@@ -295,7 +298,7 @@ function processBlogs() {
 
     layoutHTML = `
     <div class="featured-col">
-      <a href="${featured.slug}.html" class="featured-card">
+      <a href="/${featured.slug}" class="featured-card">
         <img src="${featured.image}" alt="${featured.title}">
         <h2 class="fc-title">${featured.title} <i class="ri-arrow-right-line arrow-icon"></i></h2>
         <p class="fc-excerpt">${featured.excerpt}</p>

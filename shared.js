@@ -2,19 +2,19 @@
 
 const NAV_HTML = (activePage = '') => `
 <nav class="nav" id="nav">
-  <a href="index.html" class="nav-logo">Freeley<span>.</span></a>
+  <a href="/" class="nav-logo">Freeley<span>.</span></a>
   <div class="nav-links">
-    <a href="weight-loss.html" ${activePage === 'weight-loss' ? 'class="active"' : ''}>GLP-1 Weight Loss</a>
-    <a href="hair-loss.html" ${activePage === 'hair-loss' ? 'class="active"' : ''}>Hair Loss</a>
-    <a href="sexual-wellness.html" ${activePage === 'sexual-wellness' ? 'class="active"' : ''}>Sexual Wellness</a>
-    <a href="longevity.html" ${activePage === 'longevity' ? 'class="active"' : ''}>Longevity</a>
-    <a href="how-it-works.html" ${activePage === 'how' ? 'class="active"' : ''}>How It Works</a>
-    <a href="pricing.html" ${activePage === 'pricing' ? 'class="active"' : ''}>Pricing</a>
+    <a href="/weight-loss" ${activePage === 'weight-loss' ? 'class="active"' : ''}>GLP-1 Weight Loss</a>
+    <a href="/hair-loss" ${activePage === 'hair-loss' ? 'class="active"' : ''}>Hair Loss</a>
+    <a href="/sexual-wellness" ${activePage === 'sexual-wellness' ? 'class="active"' : ''}>Sexual Wellness</a>
+    <a href="/longevity" ${activePage === 'longevity' ? 'class="active"' : ''}>Longevity</a>
+    <a href="/how-it-works" ${activePage === 'how' ? 'class="active"' : ''}>How It Works</a>
+    <a href="/pricing" ${activePage === 'pricing' ? 'class="active"' : ''}>Pricing</a>
   </div>
   <div class="nav-right">
-    <a href="physicians.html" class="nav-login">Medical Team</a>
-    <a href="hub.html" class="nav-login">Sign In</a>
-    <a href="quiz.html" class="nav-cta">Start My Free Visit →</a>
+    <a href="/physicians" class="nav-login">Medical Team</a>
+    <a href="/hub" class="nav-login">Sign In</a>
+    <a href="/quiz" class="nav-cta">Start My Free Visit →</a>
   </div>
   <button class="nav-mobile-toggle" onclick="toggleMobileNav()" aria-label="Menu">
     <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
@@ -23,15 +23,15 @@ const NAV_HTML = (activePage = '') => `
   </button>
 </nav>
 <div class="mobile-nav" id="mobileNav">
-  <a href="index.html">Home</a>
-  <a href="weight-loss.html">GLP-1 Weight Loss</a>
-  <a href="hair-loss.html">Hair Loss</a>
-  <a href="sexual-wellness.html">Sexual Wellness</a>
-  <a href="longevity.html">Longevity</a>
-  <a href="how-it-works.html">How It Works</a>
-  <a href="physicians.html">Medical Team</a>
-  <a href="pricing.html">Pricing</a>
-  <a href="quiz.html" class="mobile-cta">Start My Free Visit →</a>
+  <a href="/">Home</a>
+  <a href="/weight-loss">GLP-1 Weight Loss</a>
+  <a href="/hair-loss">Hair Loss</a>
+  <a href="/sexual-wellness">Sexual Wellness</a>
+  <a href="/longevity">Longevity</a>
+  <a href="/how-it-works">How It Works</a>
+  <a href="/physicians">Medical Team</a>
+  <a href="/pricing">Pricing</a>
+  <a href="/quiz" class="mobile-cta">Start My Free Visit →</a>
 </div>
 `;
 
@@ -39,7 +39,7 @@ const FOOTER_HTML = `
 <footer>
   <div class="footer-grid">
     <div>
-      <a href="index.html" class="footer-brand-logo"><img src="assets/brand/freeley_logo_white.svg" alt="Freeley" height="34"></a>
+      <a href="/" class="footer-brand-logo"><img src="assets/brand/freeley_logo_white.svg" alt="Freeley" height="34"></a>
       <p class="footer-brand-desc">Healthcare technology connecting patients to licensed physicians and compounding pharmacies — on your terms.</p>
       <div class="footer-social">
         <a href="https://www.instagram.com/freeleyhealth" target="_blank" rel="noopener noreferrer" title="Instagram">IG</a>
@@ -54,27 +54,27 @@ const FOOTER_HTML = `
     </div>
     <div class="footer-col">
       <h4>Treatments</h4>
-      <a href="weight-loss.html">GLP-1 Weight Loss</a>
-      <a href="hair-loss.html">Hair Loss</a>
-      <a href="sexual-wellness.html">Sexual Wellness</a>
-      <a href="longevity.html">Longevity & Peptides</a>
-      <a href="pricing.html">Pricing</a>
+      <a href="/weight-loss">GLP-1 Weight Loss</a>
+      <a href="/hair-loss">Hair Loss</a>
+      <a href="/sexual-wellness">Sexual Wellness</a>
+      <a href="/longevity">Longevity & Peptides</a>
+      <a href="/pricing">Pricing</a>
     </div>
     <div class="footer-col">
       <h4>Company</h4>
-      <a href="how-it-works.html">How It Works</a>
-      <a href="physicians.html">Medical Team</a>
-      <a href="about.html">About Freeley</a>
-      <a href="blog.html">Blog & Insights</a>
-      <a href="faq.html">FAQ</a>
-      <a href="contact.html">Contact Us</a>
+      <a href="/how-it-works">How It Works</a>
+      <a href="/physicians">Medical Team</a>
+      <a href="/about">About Freeley</a>
+      <a href="/blog">Blog & Insights</a>
+      <a href="/faq">FAQ</a>
+      <a href="/contact">Contact Us</a>
     </div>
     <div class="footer-col">
       <h4>Legal</h4>
-      <a href="privacy.html">Privacy Policy</a>
-      <a href="terms.html">Terms of Service</a>
-      <a href="hipaa.html">HIPAA Notice</a>
-      <a href="telehealth.html">Telehealth Consent</a>
+      <a href="/privacy">Privacy Policy</a>
+      <a href="/terms">Terms of Service</a>
+      <a href="/hipaa">HIPAA Notice</a>
+      <a href="/telehealth">Telehealth Consent</a>
     </div>
   </div>
   <div class="footer-bottom">
@@ -91,7 +91,7 @@ const STICKY_MOBILE_CTA = `
        <span class="sticky-cta-title">GLP-1 Weight Loss</span>
        <span class="sticky-cta-price">Starts at $194/mo</span>
     </div>
-    <a href="quiz.html" class="btn btn-primary" style="padding: 12px 24px; font-weight: 600;">Start Free Visit</a>
+    <a href="/quiz" class="btn btn-primary" style="padding: 12px 24px; font-weight: 600;">Start Free Visit</a>
   </div>
 </div>
 `;

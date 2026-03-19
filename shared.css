@@ -268,6 +268,11 @@ footer {
 .hero-stat-val,
 .hero-proof-val,
 .tg-week,
-.step-number {
+.step-number,
+.plan-price-large,
+.item-price,
+.grand-total span,
+.totals-row span,
+.plan-savings strong {
   font-family: 'Georgia', serif !important;
 }
