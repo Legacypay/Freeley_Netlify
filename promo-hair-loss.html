@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Regrow Your Hair | Freeley</title>
+  <link rel="icon" type="image/png" href="favicon.png?v=2">
+  <meta name="description" content="Stop hair loss and regrow your hair with clinical-grade treatments.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Montserrat:wght@400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    body {
+      background: #FAFAF8;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--charcoal);
+    }
+
+    /* Universal Mobile-First Container */
+    .mobile-container {
+      max-width: 480px;
+      margin: 0 auto;
+      background: #fff;
+      box-shadow: 0 0 40px rgba(0,0,0,0.05);
+      position: relative;
+    }
+
+    /* Distraction-Free Header */
+    .hl-header {
+      padding: 16px 24px;
+      text-align: center;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      position: sticky;
+      top: 0;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .hl-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+    .hl-logo span { color: var(--green-light); }
+
+    /* 1. HERO */
+    .hl-hero {
+      padding: 40px 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      background: var(--cream);
+    }
+    .stars { color: #facc15; font-size: 14px; margin-bottom: 16px; display: inline-flex; align-items: center; gap: 4px; }
+    .stars span { color: var(--text-muted); font-size: 11px; margin-left: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+    
+    .hl-hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 42px;
+      line-height: 1.1;
+      margin-bottom: 24px;
+      color: var(--charcoal);
+    }
+    .hl-hero h1 em { color: var(--green-light); }
+    
+    .hero-btn {
+      display: block;
+      width: 100%;
+      background: var(--green-dark);
+      color: #fff;
+      padding: 18px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      text-decoration: none;
+      margin-bottom: 12px;
+      box-shadow: 0 8px 24px rgba(13, 40, 24, 0.2);
+    }
+    .hero-guarantee {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    
+    .hero-img {
+      width: 100%;
+      border-radius: 16px;
+      margin-top: 32px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+      display: block;
+    }
+
+    /* 2. LOGOS */
+    .as-seen-in {
+      padding: 32px 24px;
+      text-align: center;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .logo-p { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); margin-bottom: 20px; font-weight: 600; }
+    .logo-grid {
+      display: flex; justify-content: space-between; align-items: center; opacity: 0.6; filter: grayscale(100%);
+    }
+    .logo-grid img { height: 20px; }
+
+    /* 3. BENEFITS */
+    .benefits { padding: 48px 24px; }
+    .benefits h2 { font-family: 'Cormorant Garamond', serif; font-size: 32px; margin-bottom: 24px; line-height: 1.2; text-align: center; }
+    
+    .benefit-item {
+      display: flex; gap: 16px; margin-bottom: 24px; align-items: flex-start;
+      background: var(--cream); padding: 20px; border-radius: 16px;
+    }
+    .b-icon {
+      width: 40px; height: 40px; border-radius: 50%; background: var(--green-light); color: white; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 20px;
+    }
+    .b-text h4 { font-size: 16px; margin-bottom: 4px; color: var(--charcoal); }
+    .b-text p { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
+
+    /* 4. UGC */
+    .ugc { padding: 0 24px 48px; }
+    .ugc-video {
+      position: relative; border-radius: 16px; overflow: hidden; background: #000; height: 400px;
+    }
+    .ugc-video img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
+    .play-btn {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 64px; height: 64px; background: rgba(255,255,255,0.9); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-size: 24px; color: var(--charcoal);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    }
+
+    /* 5. STATS */
+    .stats {
+      background: var(--green-dark); color: white; padding: 48px 24px; text-align: center;
+    }
+    .stat-number { font-family: 'Cormorant Garamond', serif; font-size: 64px; color: var(--green-light); line-height: 1; margin-bottom: 8px; }
+    .stat-desc { font-size: 18px; font-weight: 500; margin-bottom: 32px; }
+    .stat-list { text-align: left; }
+    .stat-list li { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; font-size: 15px; color: rgba(255,255,255,0.8); }
+    .stat-list i { color: var(--green-light); font-size: 20px; }
+
+    /* 6. TESTIMONIALS */
+    .testimonials { padding: 48px 24px; background: var(--cream); }
+    .review-card {
+      background: white; padding: 24px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); margin-bottom: 20px;
+    }
+    .review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .reviewer { font-weight: 600; font-size: 15px; display: flex; align-items: center; gap: 8px; }
+    .verified { color: #3b82f6; font-size: 14px; }
+    .review-text { font-size: 15px; color: var(--text-muted); line-height: 1.6; font-style: italic; }
+
+    /* 7. PRODUCT DETAILS */
+    .product-details { padding: 48px 24px; }
+    .product-carousel {
+      width: 100%; aspect-ratio: 1; background: var(--cream); border-radius: 16px; margin-bottom: 24px;
+      background-image: url('assets/brand/hair_loss_hero.png'); background-size: cover; background-position: center;
+    }
+    .product-price { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+    .current-price { font-size: 28px; font-weight: 700; font-family: 'Georgia', serif; }
+    .original-price { font-size: 18px; color: var(--text-faint); text-decoration: line-through; font-family: 'Georgia', serif; }
+    .save-tag { background: #fee2e2; color: #ef4444; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 700; margin-left: auto;}
+    
+    .product-title { font-size: 24px; margin-bottom: 8px; }
+    .product-bullets { margin-bottom: 32px; }
+    .product-bullets li { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; font-size: 15px; color: var(--text-muted); }
+    .product-bullets i { color: var(--green-light); }
+
+    .sticky-atc {
+      position: sticky; bottom: 0; background: white; padding: 16px 24px; border-top: 1px solid var(--border-light); z-index: 100;
+    }
+
+    /* 8. TIMELINE */
+    .timeline { padding: 48px 24px; background: var(--cream); }
+    .timeline h2 { font-family: 'Cormorant Garamond', serif; font-size: 32px; text-align: center; margin-bottom: 40px; }
+    .time-step { display: flex; gap: 24px; margin-bottom: 32px; position: relative; }
+    .time-step::before { content: ''; position: absolute; left: 19px; top: 40px; bottom: -32px; width: 2px; background: var(--border); }
+    .time-step:last-child::before { display: none; }
+    .time-icon { width: 40px; height: 40px; background: white; border: 2px solid var(--green-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--green-light); z-index: 2;}
+    .time-content { padding-top: 10px; }
+    .time-content h4 { font-size: 18px; margin-bottom: 6px; }
+    .time-content p { font-size: 15px; color: var(--text-muted); line-height: 1.5; }
+
+    /* 9. FAQs */
+    .faqs { padding: 48px 24px 100px; }
+    .faqs h2 { font-family: 'Cormorant Garamond', serif; font-size: 32px; text-align: center; margin-bottom: 32px; }
+    .faq-item { border-bottom: 1px solid var(--border-light); padding: 20px 0; }
+    .faq-q { font-weight: 600; font-size: 16px; margin-bottom: 8px; display: flex; justify-content: space-between; }
+    .faq-a { font-size: 15px; color: var(--text-muted); line-height: 1.6; }
+  </style>
+  <link rel="canonical" href="https://freeley.com/promo-hair-loss">
+</head>
+
+<body>
+
+  <div class="mobile-container">
+    
+    <header class="hl-header">
+      <a href="/" class="hl-logo">Freeley<span>.</span></a>
+      <a href="/quiz" style="font-size: 13px; font-weight: 600; color: var(--green-dark); text-decoration: none;">Get Started</a>
+    </header>
+
+    <!-- 1. HERO -->
+    <section class="hl-hero">
+      <div class="stars">★★★★★ <span>Rated 4.9/5 (2,400+ Reviews)</span></div>
+      <h1>They Won't Stop <em>Asking What You Did</em></h1>
+      <p style="color: var(--text-muted); font-size: 16px; margin-bottom: 32px; line-height: 1.5;">Clinical-grade hair regrowth delivered to your door. Keep your hair, and your confidence.</p>
+      
+      <a href="/quiz" class="hero-btn">See If You Qualify →</a>
+      <div class="hero-guarantee">
+        <i class="ri-shield-check-fill"></i> Physician-Backed Treatment
+      </div>
+
+      <img src="assets/blog_hero_finasteride_hair.png" alt="Confident man in mirror" class="hero-img">
+    </section>
+
+    <!-- 2. LOGOS -->
+    <section class="as-seen-in">
+      <p class="logo-p">Our Treatments Featured In</p>
+      <div class="logo-grid">
+        <!-- Text stand-ins for layout, you can swap with actual logo SVGs -->
+        <strong style="font-family: serif; font-size: 18px;">GQ</strong>
+        <strong style="font-family: sans-serif; font-size: 14px; text-transform: uppercase;">Men's Health</strong>
+        <strong style="font-family: serif; font-size: 16px; text-transform: uppercase;">Forbes</strong>
+      </div>
+    </section>
+
+    <!-- 3. BENEFITS -->
+    <section class="benefits">
+      <h2>Okay, But Does It Actually Work?</h2>
+      
+      <div class="benefit-item">
+        <div class="b-icon"><i class="ri-stop-circle-line"></i></div>
+        <div class="b-text">
+          <h4>Stops Shedding In Its Tracks</h4>
+          <p>Blocks DHT at the source, halting the primary cause of male pattern baldness before you lose more.</p>
+        </div>
+      </div>
+      <div class="benefit-item">
+        <div class="b-icon"><i class="ri-seedling-line"></i></div>
+        <div class="b-text">
+          <h4>Reactivates Dormant Follicles</h4>
+          <p>Stimulates blood flow and nutrient delivery directly to the scalp, waking up sleepy hair follicles.</p>
+        </div>
+      </div>
+      <div class="benefit-item">
+        <div class="b-icon"><i class="ri-home-smile-line"></i></div>
+        <div class="b-text">
+          <h4>No Awkward Waiting Rooms</h4>
+          <p>100% online telehealth. Get discreet packaging delivered directly to your door.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. UGC -->
+    <section class="ugc">
+      <div class="ugc-video">
+        <!-- Stand-in for a customer video thumbnail -->
+        <img src="https://images.unsplash.com/photo-1517523910541-69fca03e05a2?auto=format&fit=crop&q=80&w=800" alt="Customer Results">
+        <div class="play-btn"><i class="ri-play-fill"></i></div>
+      </div>
+      <p style="text-align: center; font-size: 14px; font-weight: 500; margin-top: 16px;">Watch real guys share what happened after they started Freeley.</p>
+    </section>
+
+    <!-- 5. STATS -->
+    <section class="stats">
+      <div class="stat-number">94%</div>
+      <div class="stat-desc">of men keep the hair they have</div>
+      
+      <ul class="stat-list" style="list-style: none; padding: 0; margin: 0 auto; max-width: 300px;">
+        <li><i class="ri-check-line"></i> FDA-Approved ingredients</li>
+        <li><i class="ri-check-line"></i> 8 out of 10 see visible regrowth</li>
+        <li><i class="ri-check-line"></i> Works seamlessly into your routine</li>
+      </ul>
+    </section>
+
+    <!-- 6. TESTIMONIALS -->
+    <section class="testimonials">
+      <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 32px; text-align: center; margin-bottom: 32px;">Real Guys, Real Results</h2>
+      
+      <div class="review-card">
+        <div class="review-header">
+          <div class="reviewer">David C. <i class="ri-verified-badge-fill verified"></i></div>
+          <div class="stars" style="margin:0;">★★★★★</div>
+        </div>
+        <p class="review-text">"I was sweeping up clumps of hair every morning. Started the compounded Finasteride/Minoxidil spray and 3 months later my crown is filling in completely. Wife definitely noticed."</p>
+      </div>
+
+      <div class="review-card">
+        <div class="review-header">
+          <div class="reviewer">Marcus T. <i class="ri-verified-badge-fill verified"></i></div>
+          <div class="stars" style="margin:0;">★★★★★</div>
+        </div>
+        <p class="review-text">"The oral formula is just too easy. Pop it in the morning. No greasy foams on my head. Honestly kicking myself for not starting 2 years ago."</p>
+      </div>
+    </section>
+
+    <!-- 7. PRODUCT DETAILS -->
+    <section class="product-details" id="product">
+      <div class="product-carousel"></div>
+      
+      <div class="stars">★★★★★ <span style="margin-left:8px; color:var(--text); font-weight:500;">Trustpilot</span></div>
+      
+      <h2 class="product-title">Compounded Finasteride + Minoxidil</h2>
+      
+      <div class="product-price">
+        <span class="current-price">$39.00</span>
+        <span class="original-price">$49.00</span>
+        <span class="save-tag">SAVE 20%</span>
+      </div>
+      
+      <ul class="product-bullets" style="list-style:none; padding:0;">
+        <li><i class="ri-shield-check-line"></i> Synergistic 2-in-1 compounded formula</li>
+        <li><i class="ri-drop-line"></i> Choose between Oral Pill or Topical Spray</li>
+        <li><i class="ri-user-heart-line"></i> Precision-dosed by licensed physicians</li>
+      </ul>
+
+      <p style="font-size: 13px; color: var(--text-muted); text-align: center; margin-bottom: 8px;">Includes free physician consultation & shipping.</p>
+    </section>
+
+    <!-- 8. TIMELINE -->
+    <section class="timeline">
+      <h2>Here's What Happens Next</h2>
+      
+      <div class="time-step">
+        <div class="time-icon">1</div>
+        <div class="time-content">
+          <h4>Month 1: The Halt</h4>
+          <p>The shedding stops. The formula begins blocking DHT instantly, preserving the follicles you still have.</p>
+        </div>
+      </div>
+      
+      <div class="time-step">
+        <div class="time-icon">3</div>
+        <div class="time-content">
+          <h4>Month 3: The Wake-Up</h4>
+          <p>You'll notice tiny "peach fuzz" hairs emerging along the hairline and crown as dormant follicles reactivate.</p>
+        </div>
+      </div>
+      
+      <div class="time-step">
+        <div class="time-icon">6</div>
+        <div class="time-content">
+          <h4>Month 6: The Payoff</h4>
+          <p>Noticeably thicker, denser hair. The mirror anxiety is gone, and you can style your hair the way you used to.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. FAQs -->
+    <section class="faqs">
+      <h2>Objections & Answers</h2>
+      
+      <div class="faq-item">
+        <div class="faq-q">Will it affect my sex drive? <i class="ri-add-line"></i></div>
+        <div class="faq-a">In clinical trials, less than 2% of men experience side effects related to libido. If you are concerned, our physicians can prescribe a topical formula which limits systemic absorption while still treating the scalp.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Do I have to use it forever? <i class="ri-add-line"></i></div>
+        <div class="faq-a">Yes. Male pattern baldness is genetic. If you stop treatment, DHT levels will rise again and hair loss will resume within 3-6 months.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Do I need my own prescription? <i class="ri-add-line"></i></div>
+        <div class="faq-a">No! Our network of U.S. board-certified physicians will review your assessment and write a prescription if appropriate, all fully online.</div>
+      </div>
+    </section>
+
+    <!-- STICKY ATC -->
+    <div class="sticky-atc">
+      <a href="/quiz" class="hero-btn" style="margin: 0; text-align: center;">Try It Risk Free - $39/mo</a>
+    </div>
+
+  </div> <!-- End Mobile Container -->
+
+  <script src="shared.js"></script>
+</body>
+</html>
