@@ -6,335 +6,434 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Medical Weight Loss Prescribed Online | Freeley</title>
   <link rel="icon" type="image/png" href="favicon.png?v=2">
-  <meta name="description" content="Lose weight with board-certified physicians and compounded GLP-1 weight loss medications like Semaglutide. Doorstep delivery.">
+  <meta name="description" content="Lose weight with board-certified physicians and compounded GLP-1 weight loss medications like Semaglutide and Tirzepatide.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link
-    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Montserrat:wght@400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Montserrat:wght@400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
   <link rel="stylesheet" href="shared.css">
   <style>
-    body { background: var(--cream); }
-    
-    /* Distraction-Free Header */
-    .promo-header {
-      background: var(--cream);
-      padding: 24px 0;
-      text-align: center;
-      border-bottom: 1px solid rgba(0,0,0,0.05);
+    body {
+      background: #FAFAF8;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--charcoal);
     }
-    
-    .promo-logo {
+
+    /* Universal Mobile-First Container */
+    .mobile-container {
+      max-width: 480px;
+      margin: 0 auto;
+      background: #fff;
+      box-shadow: 0 0 40px rgba(0,0,0,0.05);
+      position: relative;
+    }
+
+    /* Distraction-Free Header */
+    .hl-header {
+      padding: 16px 24px;
+      text-align: center;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      position: sticky;
+      top: 0;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .hl-logo {
       font-family: 'Playfair Display', serif;
-      font-size: 28px;
+      font-size: 24px;
       font-weight: 800;
       color: var(--text);
       text-decoration: none;
-      letter-spacing: -1px;
+      letter-spacing: -0.5px;
     }
-    .promo-logo span { color: var(--green-light); }
+    .hl-logo span { color: var(--green-light); }
 
-    /* Promo Hero */
-    .promo-hero {
-      background: var(--green-dark);
-      background-image: url("assets/brand/freeley_pattern_dark.jpg"); background-size: cover; background-position: center;
-      padding: 80px 0 100px;
-      position: relative;
-      overflow: hidden;
-    }
-    .promo-hero::before {
-      content: '';
-      position: absolute;
-      top: -100px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 800px;
-      height: 600px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(61, 140, 94, 0.15), transparent 70%);
-      pointer-events: none;
-    }
-
-    .promo-container {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 0 24px;
-      text-align: center;
-      position: relative;
-      z-index: 2;
-    }
-
-    .promo-eyebrow {
-      display: inline-block;
-      background: rgba(61, 140, 94, 0.2);
-      border: 1px solid rgba(61, 140, 94, 0.4);
-      color: var(--green-light);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 11px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      padding: 6px 16px;
-      border-radius: 50px;
-      margin-bottom: 24px;
-      font-weight: 600;
-    }
-
-    .promo-hero h1 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(40px, 6vw, 68px);
-      font-weight: 300;
-      line-height: 1.1;
-      color: #fff;
-      margin-bottom: 24px;
-    }
-    .promo-hero h1 em {
-      color: var(--green-light);
-      font-style: italic;
-    }
-
-    .promo-hero p {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 18px;
-      color: rgba(255,255,255,0.7);
-      max-width: 600px;
-      margin: 0 auto 40px;
-      line-height: 1.6;
-      font-weight: 300;
-    }
-
-    .promo-cta-primary {
-      display: inline-flex;
-      background: var(--green-light);
-      color: #fff;
-      padding: 20px 48px;
-      border-radius: 50px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 18px;
-      font-weight: 600;
-      text-decoration: none;
-      transition: all 0.3s;
-      box-shadow: 0 8px 24px rgba(61, 140, 94, 0.3);
-    }
-    .promo-cta-primary:hover {
-      background: #4aa870;
-      transform: translateY(-2px);
-      box-shadow: 0 12px 30px rgba(61, 140, 94, 0.4);
-    }
-
-    .promo-trust-badges {
-      display: flex;
-      justify-content: center;
-      gap: 32px;
-      margin-top: 40px;
-      flex-wrap: wrap;
-    }
-    .trust-badge {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: rgba(255,255,255,0.6);
-      font-size: 14px;
-    }
-    .trust-badge i { color: var(--green-light); font-size: 18px; }
-
-    /* Floating Bottles */
-    .floating-bottle-left,
-    .floating-bottle-right {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 320px;
-      height: auto;
-      z-index: 1;
-      pointer-events: none;
-      filter: drop-shadow(0 20px 30px rgba(0,0,0,0.5));
-      animation: float-bottle 6s ease-in-out infinite;
-    }
-    .floating-bottle-left {
-      left: 2%;
-      animation-name: float-left;
-    }
-    .floating-bottle-right {
-      right: 2%;
-      animation-name: float-right;
-      animation-delay: -3s;
-    }
-
-    @keyframes float-left {
-      0%, 100% { transform: translateY(-50%) rotate(-5deg); }
-      50% { transform: translateY(-55%) rotate(-2deg); }
-    }
-    @keyframes float-right {
-      0%, 100% { transform: translateY(-50%) rotate(5deg); }
-      50% { transform: translateY(-45%) rotate(2deg); }
-    }
-
-    @media(max-width: 1100px) {
-      .floating-bottle-left,
-      .floating-bottle-right {
-        width: 220px;
-        opacity: 0.4;
-      }
-    }
-
-    @media(max-width: 768px) {
-      .floating-bottle-left,
-      .floating-bottle-right {
-        display: none;
-      }
-    }
-
-    /* Features */
-    .promo-features {
-      padding: 80px 24px;
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 40px;
-    }
-
-    .feature-card {
-      text-align: center;
-    }
-    .feature-icon {
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      background: rgba(61, 140, 94, 0.1);
-      color: var(--green-light);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 28px;
-      margin: 0 auto 24px;
-    }
-    .feature-card h3 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 26px;
-      margin-bottom: 12px;
-      color: var(--text);
-    }
-    .feature-card p {
-      font-size: 15px;
-      color: var(--text-muted);
-      line-height: 1.6;
-    }
-
-    /* Info Banner */
-    .promo-info-banner {
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 40px;
-      max-width: 800px;
-      margin: 0 auto 80px;
-      display: flex;
-      align-items: center;
-      gap: 40px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.02);
-    }
-    .banner-price {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 64px;
-      color: var(--text);
-      line-height: 1;
-      font-weight: 300;
-    }
-    .banner-details p {
-      margin-bottom: 8px;
-      color: var(--text-muted);
-      font-size: 16px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .banner-details i { color: var(--green-light); }
-    
-    .promo-footer {
-      background: #000;
-      color: rgba(255,255,255,0.4);
+    /* 1. HERO */
+    .hl-hero {
       padding: 40px 24px;
       text-align: center;
+      position: relative;
+      overflow: hidden;
+      background: var(--cream);
+    }
+    .stars { color: #facc15; font-size: 14px; margin-bottom: 16px; display: inline-flex; align-items: center; gap: 4px; justify-content: center; width: 100%;}
+    .stars span { color: var(--text-muted); font-size: 11px; margin-left: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+    
+    .hl-hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 42px;
+      line-height: 1.1;
+      margin-bottom: 24px;
+      color: var(--charcoal);
+    }
+    .hl-hero h1 em { color: var(--green-light); }
+    
+    .hero-btn {
+      display: block;
+      width: 100%;
+      background: var(--green-dark);
+      color: #fff;
+      padding: 18px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      text-decoration: none;
+      margin-bottom: 12px;
+      box-shadow: 0 8px 24px rgba(13, 40, 24, 0.2);
+    }
+    .hero-guarantee {
       font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    
+    .hero-img {
+      width: 100%;
+      border-radius: 16px;
+      margin-top: 32px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+      display: block;
     }
 
-    @media(max-width: 768px) {
-      .features-grid { grid-template-columns: 1fr; }
-      .promo-info-banner { flex-direction: column; text-align: center; gap: 24px; padding: 32px 24px; }
-      .banner-details p { justify-content: center; }
+    /* 2. LOGOS */
+    .as-seen-in {
+      padding: 32px 24px;
+      text-align: center;
+      border-bottom: 1px solid var(--border-light);
     }
+    .logo-p { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); margin-bottom: 20px; font-weight: 600; }
+    .logo-grid {
+      display: flex; justify-content: space-between; align-items: center; opacity: 0.6; filter: grayscale(100%);
+    }
+    .logo-grid img { height: 20px; }
+
+    /* 3. BENEFITS */
+    .benefits { padding: 48px 24px; }
+    .benefits h2 { font-family: 'Cormorant Garamond', serif; font-size: 32px; margin-bottom: 24px; line-height: 1.2; text-align: center; }
+    
+    .benefit-item {
+      display: flex; gap: 16px; margin-bottom: 24px; align-items: flex-start;
+      background: var(--cream); padding: 20px; border-radius: 16px;
+    }
+    .b-icon {
+      width: 40px; height: 40px; border-radius: 50%; background: var(--green-light); color: white; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 20px;
+    }
+    .b-text h4 { font-size: 16px; margin-bottom: 4px; color: var(--charcoal); }
+    .b-text p { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
+
+    /* 4. UGC */
+    .ugc { padding: 0 24px 48px; }
+    .ugc-video {
+      position: relative; border-radius: 16px; overflow: hidden; background: #000; height: 400px;
+    }
+    .ugc-video img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
+    .play-btn {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 64px; height: 64px; background: rgba(255,255,255,0.9); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-size: 24px; color: var(--charcoal);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    }
+
+    /* 5. STATS */
+    .stats {
+      background: var(--green-dark); color: white; padding: 48px 24px; text-align: center;
+    }
+    .stat-number { font-family: 'Cormorant Garamond', serif; font-size: 64px; color: var(--green-light); line-height: 1; margin-bottom: 8px; }
+    .stat-desc { font-size: 18px; font-weight: 500; margin-bottom: 32px; }
+    .stat-list { text-align: left; }
+    .stat-list li { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; font-size: 15px; color: rgba(255,255,255,0.8); }
+    .stat-list i { color: var(--green-light); font-size: 20px; }
+
+    /* 6. TESTIMONIALS */
+    .testimonials { padding: 48px 24px; background: var(--cream); }
+    .review-card {
+      background: white; padding: 24px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); margin-bottom: 20px;
+    }
+    .review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .reviewer { font-weight: 600; font-size: 15px; display: flex; align-items: center; gap: 8px; }
+    .verified { color: #3b82f6; font-size: 14px; }
+    .review-text { font-size: 15px; color: var(--text-muted); line-height: 1.6; font-style: italic; }
+
+    /* 7. PRODUCT DETAILS */
+    .product-details { padding: 48px 24px; }
+    .product-carousel {
+      width: 100%; aspect-ratio: 1; background: var(--cream); border-radius: 16px; margin-bottom: 24px;
+      position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden;
+    }
+    .product-carousel img {
+      width: 80%; height: auto; object-fit: contain; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.2));
+    }
+    .pdp-tabs {
+      display: flex; background: var(--border-light); border-radius: 8px; padding: 4px; margin-bottom: 24px;
+    }
+    .pdp-tab {
+      flex: 1; text-align: center; padding: 10px; font-size: 14px; font-weight: 600; border-radius: 6px; cursor: pointer; color: var(--text-muted);
+    }
+    .pdp-tab.active { background: white; color: var(--green-dark); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+
+    .product-price { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+    .current-price { font-size: 28px; font-weight: 700; font-family: 'Georgia', serif; }
+    .original-price { font-size: 18px; color: var(--text-faint); text-decoration: line-through; font-family: 'Georgia', serif; }
+    
+    .product-title { font-size: 24px; margin-bottom: 8px; }
+    .product-bullets { margin-bottom: 32px; }
+    .product-bullets li { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; font-size: 15px; color: var(--text-muted); }
+    .product-bullets i { color: var(--green-light); }
+
+    .sticky-atc {
+      position: sticky; bottom: 0; background: white; padding: 16px 24px; border-top: 1px solid var(--border-light); z-index: 100;
+    }
+
+    /* 8. TIMELINE */
+    .timeline { padding: 48px 24px; background: var(--cream); }
+    .timeline h2 { font-family: 'Cormorant Garamond', serif; font-size: 32px; text-align: center; margin-bottom: 40px; }
+    .time-step { display: flex; gap: 24px; margin-bottom: 32px; position: relative; }
+    .time-step::before { content: ''; position: absolute; left: 19px; top: 40px; bottom: -32px; width: 2px; background: var(--border); }
+    .time-step:last-child::before { display: none; }
+    .time-icon { width: 40px; height: 40px; background: white; border: 2px solid var(--green-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--green-light); z-index: 2;}
+    .time-content { padding-top: 10px; }
+    .time-content h4 { font-size: 18px; margin-bottom: 6px; }
+    .time-content p { font-size: 15px; color: var(--text-muted); line-height: 1.5; }
+
+    /* 9. FAQs */
+    .faqs { padding: 48px 24px 100px; }
+    .faqs h2 { font-family: 'Cormorant Garamond', serif; font-size: 32px; text-align: center; margin-bottom: 32px; }
+    .faq-item { border-bottom: 1px solid var(--border-light); padding: 20px 0; }
+    .faq-q { font-weight: 600; font-size: 16px; margin-bottom: 8px; display: flex; justify-content: space-between; }
+    .faq-a { font-size: 15px; color: var(--text-muted); line-height: 1.6; }
   </style>
   <link rel="canonical" href="https://freeley.com/promo-weight-loss">
 </head>
 
 <body>
 
-  <header class="promo-header">
-    <a href="/" class="promo-logo">Freeley<span>.</span></a>
-  </header>
-
-  <section class="promo-hero">
-    <img src="assets/brand/tirzz_transparent.png" alt="Tirzepatide Medication" class="floating-bottle-left">
-    <img src="assets/brand/semag_transparent.png" alt="Semaglutide Medication" class="floating-bottle-right">
+  <div class="mobile-container">
     
-    <div class="promo-container">
-      <span class="promo-eyebrow">Medical Weight Loss</span>
-      <h1>Weight loss medication<br>that <em>actually</em> works.</h1>
-      <p>100% online telehealth. Get board-certified physician care and compounded Semaglutide starting at just $99.29/month with free fast-track shipping.</p>
+    <header class="hl-header">
+      <a href="/" class="hl-logo">Freeley<span>.</span></a>
+      <a href="/quiz" style="font-size: 13px; font-weight: 600; color: var(--green-dark); text-decoration: none;">Get Started</a>
+    </header>
+
+    <!-- 1. HERO -->
+    <section class="hl-hero">
+      <div class="stars">★★★★★ <span style="justify-content:flex-start;">Rated 4.9/5 (12,400+ Reviews)</span></div>
+      <h1>Weight Loss Medication <br><em>That Actually Works</em></h1>
+      <p style="color: var(--text-muted); font-size: 16px; margin-bottom: 32px; line-height: 1.5;">Clinical-grade GLP-1 treatments delivered to your door. Lose weight safely with a board-certified physician.</p>
       
-      <a href="/quiz" class="promo-cta-primary">Find Your Plan Today →</a>
+      <a href="/quiz" class="hero-btn">See If You Qualify →</a>
+      <div class="hero-guarantee">
+        <i class="ri-shield-check-fill"></i> No Hidden Fees or Commitments
+      </div>
+
+      <img src="assets/weight_loss_scale_hero.png" alt="Happy woman on scale" class="hero-img" style="object-fit:cover; height: 350px;">
+    </section>
+
+    <!-- 2. LOGOS -->
+    <section class="as-seen-in">
+      <p class="logo-p">Our Treatments Featured In</p>
+      <div class="logo-grid" style="justify-content: space-around;">
+        <strong style="font-family: serif; font-size: 20px;">VOGUE</strong>
+        <strong style="font-family: sans-serif; font-size: 15px; text-transform: uppercase;">Forbes</strong>
+        <strong style="font-family: serif; font-size: 16px; text-transform: uppercase;">Women's Health</strong>
+      </div>
+    </section>
+
+    <!-- 3. BENEFITS -->
+    <section class="benefits">
+      <h2>Okay, But Does It Actually Work?</h2>
       
-      <div class="promo-trust-badges">
-        <div class="trust-badge"><i class="ri-shield-check-fill"></i> No Hidden Fees</div>
-        <div class="trust-badge"><i class="ri-hospital-fill"></i> 503A Pharmacies</div>
-        <div class="trust-badge"><i class="ri-user-star-fill"></i> Real Physicians</div>
+      <div class="benefit-item">
+        <div class="b-icon"><i class="ri-volume-mute-line"></i></div>
+        <div class="b-text">
+          <h4>Quiets The "Food Noise"</h4>
+          <p>GLP-1s target the brain's hunger receptors. The constant cravings and obsession over your next meal disappear.</p>
+        </div>
       </div>
-    </div>
-  </section>
+      <div class="benefit-item">
+        <div class="b-icon"><i class="ri-restaurant-line"></i></div>
+        <div class="b-text">
+          <h4>You Stay Full Longer</h4>
+          <p>It slows down stomach emptying. Small portions finally make you feel completely satisfied and full.</p>
+        </div>
+      </div>
+      <div class="benefit-item">
+        <div class="b-icon"><i class="ri-heart-pulse-line"></i></div>
+        <div class="b-text">
+          <h4>Improves Metabolic Health</h4>
+          <p>By balancing blood sugar and insulin levels, your body stops hoarding fat and starts burning it.</p>
+        </div>
+      </div>
+    </section>
 
-  <section class="promo-features">
-    <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon"><i class="ri-file-list-3-fill"></i></div>
-        <h3>1. Online Intake</h3>
-        <p>Complete a quick medical history form. It takes less than 3 minutes and is completely confidential.</p>
+    <!-- 4. UGC -->
+    <section class="ugc">
+      <div class="ugc-video">
+        <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=800" alt="Customer Results">
+        <div class="play-btn"><i class="ri-play-fill"></i></div>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon"><i class="ri-stethoscope-fill"></i></div>
-        <h3>2. Doctor Review</h3>
-        <p>A US board-certified physician will review your profile and prescribe the appropriate compounded GLP-1 medication.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon"><i class="ri-truck-fill"></i></div>
-        <h3>3. Fast Delivery</h3>
-        <p>Your medication is compounded securely at a 503A pharmacy and shipped directly to your door in unbranded packaging.</p>
-      </div>
-    </div>
-  </section>
+      <p style="text-align: center; font-size: 14px; font-weight: 500; margin-top: 16px;">Watch real patients share what happened after they started Freeley.</p>
+    </section>
 
-  <section style="padding: 0 24px;">
-    <div class="promo-info-banner">
-      <div class="banner-price">$194.29<span style="font-size:20px;color:rgba(0,0,0,0.4)">/mo</span></div>
-      <div class="banner-details">
-        <p><i class="ri-check-line"></i> Medical Consultation Included</p>
-        <p><i class="ri-check-line"></i> Same price for all dosages (No titration markups)</p>
-        <p><i class="ri-check-line"></i> Compounded Semaglutide + B12</p>
-        <p><i class="ri-check-line"></i> Cancel anytime, zero commitments</p>
+    <!-- 5. STATS -->
+    <section class="stats">
+      <div class="stat-number">15-20%</div>
+      <div class="stat-desc">average body weight lost in 1 year</div>
+      
+      <ul class="stat-list" style="list-style: none; padding: 0; margin: 0 auto; max-width: 320px;">
+        <li><i class="ri-check-line"></i> FDA-Approved active ingredients</li>
+        <li><i class="ri-check-line"></i> Compounded securely in 503A Pharmacies</li>
+        <li><i class="ri-check-line"></i> Overseen by Board-Certified Physicians</li>
+      </ul>
+    </section>
+
+    <!-- 6. TESTIMONIALS -->
+    <section class="testimonials">
+      <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 32px; text-align: center; margin-bottom: 32px;">Real People, Real Results</h2>
+      
+      <div class="review-card">
+        <div class="review-header">
+          <div class="reviewer">Jessica M. <i class="ri-verified-badge-fill verified"></i></div>
+          <div class="stars" style="margin:0; justify-content: flex-start;">★★★★★</div>
+        </div>
+        <p class="review-text">"I tried every diet under the sun and nothing stuck. Tirzepatide literally shut off that voice in my head telling me to snack. Down 42 lbs in 7 months and I feel like myself again."</p>
       </div>
-    </div>
-    <div style="text-align: center; margin-bottom: 100px;">
-      <a href="/quiz" class="promo-cta-primary">Start Your Free Assessment</a>
-    </div>
-  </section>
 
-  <footer class="promo-footer">
-    <p>&copy; 2026 Freeley Health LLC. All rights reserved.</p>
-    <p style="margin-top: 12px; font-size: 11px; max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.6;">DISCLAIMER: This is a promotional landing page. Only a licensed physician can determine if a prescription medication is right for you. Compounded medications are not FDA-approved, but are prepared by state-licensed compounding pharmacies.</p>
-  </footer>
+      <div class="review-card">
+        <div class="review-header">
+          <div class="reviewer">Sarah L. <i class="ri-verified-badge-fill verified"></i></div>
+          <div class="stars" style="margin:0; justify-content: flex-start;">★★★★★</div>
+        </div>
+        <p class="review-text">"Freeley made the process so easy compared to my local office charging $800/mo. The Semaglutide arrived ice cold in 3 days. I've lost 25 lbs to date."</p>
+      </div>
+    </section>
 
+    <!-- 7. PRODUCT DETAILS -->
+    <section class="product-details" id="product">
+      
+      <div class="stars" style="justify-content:flex-start;">★★★★★ <span style="margin-left:8px; color:var(--text); font-weight:500;">Trustpilot</span></div>
+      
+      <h2 class="product-title">Compounded GLP-1s</h2>
+      <p style="font-size:15px; color:var(--text-muted); margin-bottom: 24px;">Select the active ingredient that fits your goals.</p>
+
+      <div class="pdp-tabs" id="med-tabs">
+        <div class="pdp-tab active" data-target="sema">Semaglutide</div>
+        <div class="pdp-tab" data-target="tirz">Tirzepatide</div>
+      </div>
+
+      <!-- SEMAGLUTIDE CARD -->
+      <div id="card-sema" style="display:block;">
+        <div class="product-carousel">
+          <img src="assets/brand/semag_transparent.png" alt="Semaglutide">
+        </div>
+        <div class="product-price">
+          <span class="current-price">$99.29</span><span style="font-size:14px; color:var(--text-muted); margin-left:-8px;">/mo</span>
+          <span class="original-price" style="margin-left:auto;">$249.00</span>
+        </div>
+        <ul class="product-bullets" style="list-style:none; padding:0;">
+          <li><i class="ri-shield-check-line"></i> Same active ingredient as Wegovy®</li>
+          <li><i class="ri-percent-line"></i> Average 15% body weight loss</li>
+          <li><i class="ri-refresh-line"></i> Starts as low as $99.29 for month one</li>
+        </ul>
+      </div>
+
+      <!-- TIRZEPATIDE CARD -->
+      <div id="card-tirz" style="display:none;">
+        <div class="product-carousel">
+          <img src="assets/brand/tirzz_transparent.png" alt="Tirzepatide">
+        </div>
+        <div class="product-price">
+          <span class="current-price">$194.29</span><span style="font-size:14px; color:var(--text-muted); margin-left:-8px;">/mo</span>
+          <span class="original-price" style="margin-left:auto;">$349.00</span>
+        </div>
+        <ul class="product-bullets" style="list-style:none; padding:0;">
+          <li><i class="ri-shield-check-line"></i> Same active ingredient as Zepbound®</li>
+          <li><i class="ri-percent-line"></i> Average 20%+ body weight loss (Dual-action)</li>
+          <li><i class="ri-star-line"></i> Maximum clinical efficacy </li>
+        </ul>
+      </div>
+
+      <p style="font-size: 13px; color: var(--text-muted); text-align: center; margin-bottom: 8px;">Includes free physician consultation & cold shipping.</p>
+    </section>
+
+    <!-- 8. TIMELINE -->
+    <section class="timeline">
+      <h2>Here's What Happens Next</h2>
+      
+      <div class="time-step">
+        <div class="time-icon">1</div>
+        <div class="time-content">
+          <h4>Month 1: The Reset</h4>
+          <p>Your appetite decreases significantly. You'll naturally eat smaller portions and feel fuller much faster. Less bloating is common.</p>
+        </div>
+      </div>
+      
+      <div class="time-step">
+        <div class="time-icon">3</div>
+        <div class="time-content">
+          <h4>Month 3: The Momentum</h4>
+          <p>You're dropping consistent, healthy weight week over week. Clothes fit significantly better. Energy levels stabilize without sugar crashes.</p>
+        </div>
+      </div>
+      
+      <div class="time-step">
+        <div class="time-icon">6</div>
+        <div class="time-content">
+          <h4>Month 6: The Transformation</h4>
+          <p>Significant, noticeable weight loss. Improved metabolic markers. The compounding effect of healthy eating feels effortless.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. FAQs -->
+    <section class="faqs">
+      <h2>Objections & Answers</h2>
+      
+      <div class="faq-item">
+        <div class="faq-q">Do I need insurance? <i class="ri-add-line"></i></div>
+        <div class="faq-a">No! Our program is completely out-of-pocket, meaning you skip the PA denials, red tape, and wait times. You pay one flat rate.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">How do the injections work? <i class="ri-add-line"></i></div>
+        <div class="faq-a">It's a tiny, virtually painless subcutaneous injection (under the skin) done just once a week. Your box includes everything you need, plus video instructions.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">What is compounded medication? <i class="ri-add-line"></i></div>
+        <div class="faq-a">When brand-name drugs are in shortage, the FDA allows state-licensed 503A compounding pharmacies to custom-make the medication using the exact same active pharmaceutical ingredients.</div>
+      </div>
+    </section>
+
+    <!-- STICKY ATC -->
+    <div class="sticky-atc">
+      <a href="/quiz" class="hero-btn" style="margin: 0; text-align: center;">Find Your Plan Today</a>
+    </div>
+
+  </div> <!-- End Mobile Container -->
+
+  <script src="shared.js"></script>
+  <script>
+    // Simple tab switching logic for the Product section
+    document.querySelectorAll('.pdp-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.pdp-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        
+        const target = tab.getAttribute('data-target');
+        if(target === 'sema') {
+          document.getElementById('card-sema').style.display = 'block';
+          document.getElementById('card-tirz').style.display = 'none';
+        } else {
+          document.getElementById('card-sema').style.display = 'none';
+          document.getElementById('card-tirz').style.display = 'block';
+        }
+      });
+    });
+  </script>
 </body>
 </html>
