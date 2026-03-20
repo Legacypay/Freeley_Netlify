@@ -584,6 +584,69 @@
         padding: 12px 14px;
       }
     }
+
+    /* Trust Guarantee Strip */
+    .guarantee-strip {
+      padding: 80px 0;
+      background: var(--off-white);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .guarantee-inner {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 60px;
+      align-items: center;
+    }
+    .guarantee-badge {
+      text-align: center;
+    }
+    .guarantee-shield {
+      width: 100px; height: 100px;
+      margin: 0 auto 16px;
+      background: linear-gradient(135deg, var(--green-light), var(--green-mid));
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 12px 36px rgba(61,140,94,0.25);
+    }
+    .guarantee-shield svg { width: 48px; height: 48px; }
+    .guarantee-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24px; font-weight: 400; margin-bottom: 6px;
+    }
+    .guarantee-sub {
+      font-size: 13px; color: var(--text-muted); font-weight: 300;
+    }
+    .guarantee-pillars {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .guarantee-pillar {
+      padding: 28px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+    .guarantee-pillar:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+    }
+    .guarantee-pillar-icon {
+      font-size: 28px; margin-bottom: 12px; display: block;
+    }
+    .guarantee-pillar-title {
+      font-size: 15px; font-weight: 600; margin-bottom: 6px;
+    }
+    .guarantee-pillar-desc {
+      font-size: 12px; color: var(--text-muted); line-height: 1.6; font-weight: 300;
+    }
+    @media(max-width:768px) {
+      .guarantee-inner { grid-template-columns: 1fr; text-align: center; }
+      .guarantee-pillars { grid-template-columns: 1fr; max-width: 360px; margin: 0 auto; }
+    }
   </style>
   <link rel="icon" type="image/png" href="favicon.png?v=2">
   <link rel="canonical" href="https://freeley.com/pricing">
@@ -825,6 +888,45 @@
                 id="ourPrice">$194.29/mo</span></div>
             <div class="savings-row highlight"><span class="label">Monthly savings</span><span class="val"
                 id="monthlySavings">$766/mo</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRUST GUARANTEE STRIP -->
+  <section class="guarantee-strip">
+    <div class="container">
+      <div class="guarantee-inner">
+        <div class="guarantee-badge reveal">
+          <div class="guarantee-shield">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <path d="M9 12l2 2 4-4"/>
+            </svg>
+          </div>
+          <div class="guarantee-title">The Freeley Promise</div>
+          <div class="guarantee-sub">If you're not satisfied, contact us within 30 days for a full refund on your first month.</div>
+          <div style="margin-top: 16px; display: flex; align-items: center; justify-content: center; gap: 4px;">
+            <span style="color: #f5a623; font-size: 18px;">★★★★★</span>
+            <span style="font-size: 13px; color: var(--text-muted); font-weight: 500;">4.9/5 from 2,400+ patients</span>
+          </div>
+        </div>
+        <div class="guarantee-pillars reveal reveal-delay-1">
+          <div class="guarantee-pillar">
+            <span class="guarantee-pillar-icon"><i class="ri-hospital-fill" style="color: var(--green);"></i></span>
+            <div class="guarantee-pillar-title">Licensed Pharmacy</div>
+            <div class="guarantee-pillar-desc">All medications compounded at PCAB-accredited, 503A-licensed U.S. pharmacies.</div>
+          </div>
+          <div class="guarantee-pillar">
+            <span class="guarantee-pillar-icon"><i class="ri-stethoscope-fill" style="color: var(--green);"></i></span>
+            <div class="guarantee-pillar-title">Physician-Prescribed</div>
+            <div class="guarantee-pillar-desc">Every treatment is reviewed and prescribed by a board-certified, state-licensed physician.</div>
+          </div>
+          <div class="guarantee-pillar">
+            <span class="guarantee-pillar-icon"><i class="ri-test-tube-fill" style="color: var(--green);"></i></span>
+            <div class="guarantee-pillar-title">Third-Party Tested</div>
+            <div class="guarantee-pillar-desc">Every batch tested for potency, sterility, and purity by independent labs before shipping.</div>
           </div>
         </div>
       </div>
