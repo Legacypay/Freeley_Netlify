@@ -1,0 +1,8 @@
+{
+  "product-semaglutide": {
+    "error": "{\"message\":\"Invalid method for URL (POST /v1/videos/generations)\",\"type\":\"invalid_request_error\",\"param\":null,\"code\":null}",
+    "status": "failed",
+    "sceneName": "product-semaglutide",
+    "createdAt": "2026-03-20T19:48:20.374Z"
+  }
+}

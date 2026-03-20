@@ -163,7 +163,7 @@ async function createVideoJob(scene, resolution = '1280x720', duration = 10) {
   console.log(`   Resolution: ${size} | Duration: ${duration}s`);
   console.log(`   Estimated cost: ~$${(duration * (size === '1920x1080' ? 0.50 : 0.10)).toFixed(2)}`);
 
-  const response = await fetch('https://api.openai.com/v1/videos/generations', {
+  const response = await fetch('https://api.openai.com/v1/videos', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -171,7 +171,7 @@ async function createVideoJob(scene, resolution = '1280x720', duration = 10) {
     },
     body: JSON.stringify({
       model: 'sora-2',
-      prompt: scene.prompt,
+      input: scene.prompt,
       size: size,
       n: 1,
       duration: duration
