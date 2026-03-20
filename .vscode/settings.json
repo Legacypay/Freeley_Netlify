@@ -1,0 +1,6 @@
+{
+  "python.defaultInterpreterPath": "/Library/Developer/CommandLineTools/usr/bin/python3",
+  "python.analysis.extraPaths": [
+    "/Users/anthonydel/Library/Python/3.9/lib/python/site-packages"
+  ]
+}

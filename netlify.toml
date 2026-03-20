@@ -2,6 +2,19 @@
   command = "npm install && node build_blog.js"
   publish = "."
 
+[functions]
+  directory = "netlify/functions"
+
+# ── MD Integrations Environment Variables ──────────────────────
+# Set these in Netlify Dashboard > Site Settings > Environment Variables:
+#
+#   MDI_CLIENT_ID              - Partner Client ID from MD Integrations
+#   MDI_CLIENT_SECRET          - Partner Client Secret (keep safe!)
+#   MDI_BASE_URL               - API base URL (default: https://api.mdintegrations.com)
+#   MDI_WEBHOOK_SECRET         - Secret for verifying incoming MDI webhooks
+#   MDI_DEFAULT_PHARMACY_ID    - Default 503A compounding pharmacy ID
+#   N8N_WEBHOOK_URL            - Your n8n/Make/Zapier webhook for notifications
+
 # ── Cache-Control Headers ──────────────────────────────────
 # Ensures browsers always revalidate with Netlify instead of
 # serving stale cached content after deployments.

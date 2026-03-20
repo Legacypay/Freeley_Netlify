@@ -14,7 +14,7 @@ def extract_content(url):
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'html.parser')
     
-    content_html = []
+    content_html: list[str] = []
     
     def clean_text(text):
         if not text: return ""

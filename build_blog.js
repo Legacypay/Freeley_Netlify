@@ -94,6 +94,16 @@ const PAGE_TEMPLATE = `<!DOCTYPE html>
       border-radius: 20px;
       text-align: center;
     }
+    .blog-hero-img {
+      display: block;
+      width: 100%;
+      max-width: 760px;
+      max-height: 420px;
+      object-fit: cover;
+      margin: -40px auto 0;
+      border-radius: 20px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+    }
   </style>
 </head>
 <body>
@@ -104,6 +114,7 @@ const PAGE_TEMPLATE = `<!DOCTYPE html>
       <h1>{{title}}</h1>
     </div>
   </section>
+  {{hero_image}}
   <div class="blog-content reveal reveal-delay-1">
     {{content}}
     <div class="blog-cta">
@@ -254,12 +265,18 @@ function processBlogs() {
     const dateStr = data.date || new Date().toISOString();
     const image = data.image || "assets/brand/new_hero.jpeg";
 
+    // Build hero image HTML if image exists
+    const heroImageHTML = image
+      ? `<img src="${image}" alt="${title}" class="blog-hero-img">`
+      : '';
+
     // Compile single page HTML
     let pageHTML = PAGE_TEMPLATE
       .replace(/{{title}}/g, title)
       .replace(/{{tag}}/g, tag)
       .replace(/{{slug}}/g, slug)
       .replace(/{{read_time}}/g, readTime)
+      .replace(/{{hero_image}}/g, heroImageHTML)
       .replace(/{{content}}/g, htmlContent);
 
     // Ensure Remix Icon is loaded in individual blog pages too
