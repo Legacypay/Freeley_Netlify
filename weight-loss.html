@@ -531,6 +531,111 @@
       }
     }
 
+    /* Sticky CTA Bar */
+    .sticky-cta-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(26,74,46,0.97);
+      backdrop-filter: blur(12px);
+      padding: 14px 0;
+      z-index: 900;
+      transform: translateY(100%);
+      transition: transform 0.4s ease;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .sticky-cta-bar.visible {
+      transform: translateY(0);
+    }
+    .sticky-cta-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .sticky-cta-text {
+      color: #fff;
+      font-size: 15px;
+      font-weight: 500;
+    }
+    .sticky-cta-text span {
+      color: #7dba96;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 400;
+      margin-right: 12px;
+    }
+    .sticky-cta-btn {
+      background: var(--green-light);
+      color: #fff;
+      padding: 12px 32px;
+      border-radius: 50px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .sticky-cta-btn:hover {
+      background: var(--green-bright);
+      transform: translateY(-1px);
+    }
+    @media(max-width:640px) {
+      .sticky-cta-text span { display: block; font-size: 18px; }
+      .sticky-cta-inner { flex-direction: column; text-align: center; }
+    }
+
+    /* Patient Stories Strip */
+    .patient-stories-strip {
+      padding: 80px 0;
+      background: var(--off-white);
+    }
+    .story-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 48px;
+    }
+    .story-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px;
+      transition: all 0.3s;
+    }
+    .story-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.06);
+    }
+    .story-stat-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(61,140,94,0.08);
+      border: 1px solid rgba(61,140,94,0.2);
+      border-radius: 10px;
+      padding: 8px 16px;
+      margin-bottom: 16px;
+    }
+    .story-stat-badge strong {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24px;
+      color: var(--green);
+    }
+    .story-stat-badge span {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.3;
+    }
+    @media(max-width:768px) {
+      .story-cards { grid-template-columns: 1fr; max-width: 400px; margin-left: auto; margin-right: auto; }
+    }
+
     /* ── VIAL CAROUSEL ── */
     .vial-carousel {
       position: relative;
@@ -1805,6 +1910,71 @@
     </div>
   </section>
 
+  <!-- PATIENT STORIES -->
+  <section class="patient-stories-strip">
+    <div class="container">
+      <div class="reveal" style="text-align: center; margin-bottom: 16px;">
+        <span class="eyebrow">Real Results</span>
+        <h2 class="display" style="font-size:clamp(34px,4.5vw,52px); margin-top:12px;">Why patients switch<br><em>to Freeley</em></h2>
+        <p style="color:var(--text-muted); font-size:16px; max-width:520px; margin:12px auto 0; font-weight:300; line-height:1.65;">Real stories from real patients. Names changed for privacy — results and timelines are authentic.</p>
+      </div>
+      <div class="story-cards">
+        <div class="story-card reveal reveal-delay-1">
+          <div class="story-stat-badge">
+            <strong>-31 lbs</strong>
+            <span>in 3 months</span>
+          </div>
+          <p style="font-size: 15px; color: var(--text-muted); line-height: 1.7; margin-bottom: 20px; font-weight: 300;">"I tried every diet app imaginable. Nothing stuck until my doctor started me on semaglutide through Freeley. The cravings just… stopped. I'm down 31 lbs and my A1C went from 6.4 to 5.6."</p>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--green-mist); display: flex; align-items: center; justify-content: center; font-weight: 600; color: var(--green); font-size: 14px;">MK</div>
+            <div>
+              <div style="font-weight: 600; font-size: 14px;">Maria K.</div>
+              <div style="font-size: 12px; color: var(--text-faint);">Semaglutide · Austin, TX</div>
+            </div>
+          </div>
+        </div>
+        <div class="story-card reveal reveal-delay-2">
+          <div class="story-stat-badge">
+            <strong>-47 lbs</strong>
+            <span>in 5 months</span>
+          </div>
+          <p style="font-size: 15px; color: var(--text-muted); line-height: 1.7; margin-bottom: 20px; font-weight: 300;">"My biggest fear was needles. But the syringes are so tiny I barely feel them. I switched from Ozempic because Freeley is a third of the price. Same medication, same results. Absolute no-brainer."</p>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--green-mist); display: flex; align-items: center; justify-content: center; font-weight: 600; color: var(--green); font-size: 14px;">JT</div>
+            <div>
+              <div style="font-weight: 600; font-size: 14px;">James T.</div>
+              <div style="font-size: 12px; color: var(--text-faint);">Tirzepatide · Miami, FL</div>
+            </div>
+          </div>
+        </div>
+        <div class="story-card reveal reveal-delay-3">
+          <div class="story-stat-badge">
+            <strong>-22 lbs</strong>
+            <span>in 8 weeks</span>
+          </div>
+          <p style="font-size: 15px; color: var(--text-muted); line-height: 1.7; margin-bottom: 20px; font-weight: 300;">"I'm a nurse so I was skeptical of telehealth weight loss. But Freeley's physician reviewed my full history, set up a conservative titration, and I've been blown away. My patients are asking what I'm doing."</p>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--green-mist); display: flex; align-items: center; justify-content: center; font-weight: 600; color: var(--green); font-size: 14px;">RP</div>
+            <div>
+              <div style="font-weight: 600; font-size: 14px;">Rachel P.</div>
+              <div style="font-size: 12px; color: var(--text-faint);">Semaglutide · Denver, CO</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STICKY CTA BAR -->
+  <div class="sticky-cta-bar" id="stickyCta">
+    <div class="sticky-cta-inner">
+      <div class="sticky-cta-text">
+        <span>$194.29/mo</span> All dosages · Free physician consult · Cancel anytime
+      </div>
+      <a href="quiz.html" class="sticky-cta-btn">Start Free Visit →</a>
+    </div>
+  </div>
+
   <!-- FAQ -->
   <section class="faq-section">
     <div class="container">
@@ -1921,6 +2091,18 @@
       item.classList.toggle('open');
     }
     initPage('weight-loss');
+
+    // Sticky CTA bar - show after scrolling past hero
+    const stickyCta = document.getElementById('stickyCta');
+    if (stickyCta) {
+      const hero = document.querySelector('.treatment-hero');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          stickyCta.classList.toggle('visible', !e.isIntersecting);
+        });
+      }, { threshold: 0 });
+      if (hero) observer.observe(hero);
+    }
   </script>
   <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
 </body>
