@@ -17,5 +17,11 @@
     "size": "1280x720",
     "sceneName": "product-semaglutide",
     "createdAt": "2026-03-20T20:19:32.752Z"
+  },
+  "hero-weight-loss": {
+    "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON",
+    "status": "failed",
+    "sceneName": "hero-weight-loss",
+    "createdAt": "2026-03-20T20:29:06.175Z"
   }
 }
