@@ -95,7 +95,7 @@
       box-shadow: 0 20px 60px rgba(0,0,0,0.08);
     }
     .physician-avatar-area {
-      height: 240px; display: flex; align-items: center; justify-content: center;
+      height: 280px; display: flex; align-items: center; justify-content: center;
       background: linear-gradient(135deg, #0d1a2e, #1a3a2e);
       position: relative; overflow: hidden;
     }
@@ -112,6 +112,10 @@
       font-family: 'Cormorant Garamond', serif;
       font-size: 44px; font-weight: 300; color: #7dba96;
       position: relative; z-index: 2;
+    }
+    .physician-photo {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      object-fit: cover; object-position: top; z-index: 3;
     }
     .physician-info { padding: 36px; }
     .physician-name {
@@ -282,6 +286,7 @@
       <div class="physician-grid">
         <div class="physician-card reveal reveal-delay-1">
           <div class="physician-avatar-area">
+            <img src="assets/physicians/dr-martinez.jpg" alt="Dr. Alicia Martinez, MD" class="physician-photo" onerror="this.style.display='none'">
             <div class="physician-avatar">AM</div>
           </div>
           <div class="physician-info">
@@ -313,6 +318,7 @@
 
         <div class="physician-card reveal reveal-delay-2">
           <div class="physician-avatar-area">
+            <img src="assets/physicians/dr-chen.jpg" alt="Dr. James Chen, DO" class="physician-photo" onerror="this.style.display='none'">
             <div class="physician-avatar">JC</div>
           </div>
           <div class="physician-info">
