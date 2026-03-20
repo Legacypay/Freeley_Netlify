@@ -1,107 +1,279 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FAQ — Freeley</title>
+  <title>FAQ — Common Questions About Freeley Telehealth</title>
+  <meta name="description" content="Get answers to frequently asked questions about Freeley's telehealth platform, treatments, pricing, shipping, and cancellation policy.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link
-    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Montserrat:wght@400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Montserrat:wght@400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="shared.css">
+  <link rel="icon" type="image/png" href="favicon.png?v=2">
   <style>
-    .page-hero {
-      padding: 160px 0 100px;
-      background-image: url("assets/brand/freeley_pattern_dark.jpg"); background-size: cover; background-position: center; color: white;
-      color: #fff;
-    }
-
-    .page-hero h1 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(48px, 6vw, 72px);
-      font-weight: 300;
-      margin-bottom: 24px;
+    .faq-hero {
+      padding: 160px 0 80px;
+      background-image: url("assets/brand/freeley_pattern_dark.jpg"); background-size: cover; background-position: center;
       text-align: center;
     }
-
-    .page-hero h1 em {
-      font-style: italic;
-      color: var(--green-light);
+    .faq-hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(44px, 6vw, 72px); font-weight: 300;
+      color: #fff; margin-bottom: 12px;
+    }
+    .faq-hero h1 em { font-style: italic; color: #7dba96; }
+    .faq-hero p {
+      color: rgba(255,255,255,0.5); font-size: 17px; max-width: 500px;
+      margin: 0 auto; font-weight: 300;
     }
 
-    .faq-content {
-      padding: 100px 0;
-      max-width: 800px;
-      margin: 0 auto;
+    /* Category tabs */
+    .faq-tabs {
+      display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+      margin: 48px auto 0; max-width: 700px;
+    }
+    .faq-tab {
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 40px; padding: 10px 22px;
+      font-size: 13px; color: rgba(255,255,255,0.5); font-weight: 500;
+      cursor: pointer; transition: all 0.3s; text-decoration: none;
+    }
+    .faq-tab:hover, .faq-tab.active {
+      background: rgba(125,186,150,0.15); border-color: rgba(125,186,150,0.3);
+      color: #7dba96;
     }
 
+    /* FAQ sections */
+    .faq-sections { padding: 80px 0 100px; max-width: 800px; margin: 0 auto; }
+    .faq-category {
+      margin-bottom: 56px;
+      scroll-margin-top: 120px;
+    }
+    .faq-cat-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px; font-weight: 400; margin-bottom: 24px;
+      padding-bottom: 16px; border-bottom: 2px solid var(--green-mist);
+    }
+    .faq-cat-title em { font-style: italic; color: var(--green); }
+
+    /* Accordion items */
     .faq-item {
-      border-bottom: 1px solid var(--border);
-      padding: 24px 0;
+      border-bottom: 1px solid var(--border-light);
+      overflow: hidden;
     }
-
     .faq-question {
+      width: 100%; background: none; border: none;
+      padding: 22px 0; cursor: pointer;
       font-family: 'DM Sans', sans-serif;
-      font-size: 18px;
-      font-weight: 500;
-      color: var(--text);
-      margin-bottom: 12px;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      font-size: 16px; font-weight: 500;
+      color: var(--text); text-align: left;
+      display: flex; justify-content: space-between;
+      align-items: center; gap: 16px;
+      transition: color 0.2s;
     }
-
-    .faq-question:hover {
-      color: var(--green-light);
+    .faq-question:hover { color: var(--green-light); }
+    .faq-chevron {
+      width: 20px; height: 20px; flex-shrink: 0;
+      transition: transform 0.3s ease;
     }
-
+    .faq-item.open .faq-chevron { transform: rotate(180deg); }
     .faq-answer {
-      font-size: 15px;
-      line-height: 1.7;
-      color: var(--text-muted);
-      font-weight: 300;
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.3s ease;
+    }
+    .faq-answer-inner {
+      padding: 0 0 22px;
+      font-size: 15px; line-height: 1.7;
+      color: var(--text-muted); font-weight: 300;
+    }
+    .faq-item.open .faq-answer {
+      max-height: 400px;
     }
 
+    /* CTA */
+    .faq-cta { padding: 80px 0; background: var(--off-white); border-top: 1px solid var(--border); text-align: center; }
+    .faq-cta-card {
+      max-width: 600px; margin: 0 auto; padding: 48px;
+      background: #fff; border: 1px solid var(--border);
+      border-radius: 24px; box-shadow: 0 12px 36px rgba(0,0,0,0.04);
+    }
+    .faq-cta-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px; font-weight: 400; margin-bottom: 12px;
+    }
+    .faq-cta-title em { font-style: italic; color: var(--green); }
+    .faq-cta-desc { font-size: 15px; color: var(--text-muted); margin-bottom: 28px; font-weight: 300; }
+    .faq-cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
   </style>
-  <link rel="icon" type="image/png" href="favicon.png?v=2">
   <link rel="canonical" href="https://freeley.com/faq">
 </head>
-
 <body>
-  <section class="page-hero">
+
+  <!-- HERO -->
+  <section class="faq-hero">
     <div class="container reveal">
-      <h1>Frequently Asked <em>Questions</em></h1>
+      <span class="eyebrow" style="color:#7dba96">Help Center</span>
+      <h1>Frequently asked<br><em>questions</em></h1>
+      <p>Everything you need to know about Freeley — from getting started to managing your treatment.</p>
+      <div class="faq-tabs">
+        <a href="#general" class="faq-tab active">General</a>
+        <a href="#treatments" class="faq-tab">Treatments</a>
+        <a href="#pricing" class="faq-tab">Pricing & Billing</a>
+        <a href="#shipping" class="faq-tab">Shipping</a>
+        <a href="#account" class="faq-tab">Account</a>
+      </div>
     </div>
   </section>
 
-  <section class="faq-content">
-    <div class="container reveal">
-      <div class="faq-item">
-        <div class="faq-question">What is Freeley?</div>
-        <div class="faq-answer">Freeley is a healthcare technology platform designed to streamline access to premium compounded medications. We connect you with independent telemedicine providers and 503A licensed compounding pharmacies to get personalized treatments delivered discreetly to your door.</div>
+  <!-- FAQ SECTIONS -->
+  <section class="faq-sections">
+    <div class="container">
+
+      <!-- GENERAL -->
+      <div class="faq-category reveal" id="general">
+        <h2 class="faq-cat-title">General <em>questions</em></h2>
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">What is Freeley?
+            <svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="faq-answer"><div class="faq-answer-inner">Freeley is a telehealth platform that connects you with board-certified physicians and licensed 503A compounding pharmacies. We provide personalized, compounded treatments for weight loss, hair loss, sexual wellness, and longevity — delivered discreetly to your door.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">Are the physicians real doctors?
+            <svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="faq-answer"><div class="faq-answer-inner">Yes. Our network exclusively consists of independent, board-certified medical providers licensed in your specific state. They review your complete medical intake, health history, and goals before prescribing any treatment.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">Is Freeley safe?
+            <svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="faq-answer"><div class="faq-answer-inner">Absolutely. Every treatment plan is reviewed by a licensed physician, and all medications are compounded at PCAB-accredited pharmacies following USP 797 standards. Each batch is third-party tested for potency, sterility, and purity before shipping.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">What states do you serve?
+            <svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="faq-answer"><div class="faq-answer-inner">We currently serve patients in all 50 states through our physician network. During intake, we'll verify your state of residence and match you with a physician licensed to practice in your state.</div></div>
+        </div>
       </div>
-      <div class="faq-item">
-        <div class="faq-question">Do you take insurance?</div>
-        <div class="faq-answer">By cutting out insurance middlemen, we're able to offer faster care, greater transparent pricing, and specialized customized medication you couldn't otherwise get. We accept HSA and FSA cards.</div>
+
+      <!-- TREATMENTS -->
+      <div class="faq-category reveal" id="treatments">
+        <h2 class="faq-cat-title">Treatment <em>questions</em></h2>
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">What treatments do you offer?
+            <svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="faq-answer"><div class="faq-answer-inner">We offer compounded treatments across four categories: <strong>Weight Loss</strong> (Semaglutide, Tirzepatide), <strong>Hair Loss</strong> (Finasteride, Minoxidil, Dutasteride), <strong>Sexual Wellness</strong> (compounded tadalafil/sildenafil troches), and <strong>Longevity</strong> (Sermorelin, NAD+, B12-MIC).</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">What's the difference between compounded and brand-name medications?
+            <svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="faq-answer"><div class="faq-answer-inner">Compounded medications contain the same active pharmaceutical ingredients (APIs) as brand-name drugs but are prepared by licensed compounding pharmacies in customized dosages. They're often significantly more affordable because they're not manufactured by large pharmaceutical companies.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">How long until I see results?
+            <svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="faq-answer"><div class="faq-answer-inner">Results vary by treatment. Weight loss patients typically notice appetite changes within 1–2 weeks and measurable weight loss by 4–6 weeks. Hair treatments may take 3–6 months for visible results. Sexual wellness treatments like our troche work within 15–30 minutes.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">Can I switch treatments or adjust my dosage?
+            <svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="faq-answer"><div class="faq-answer-inner">Yes. Your physician will work with you to titrate dosages or switch treatments based on your progress and side effects. Contact your care team or physician through secure messaging to request changes at any time.</div></div>
+        </div>
       </div>
-      <div class="faq-item">
-        <div class="faq-question">Are the physicians real doctors?</div>
-        <div class="faq-answer">Yes, our network exclusively consists of independent, board-certified medical providers licensed in your specific state. They review your medical intake to determine if the prescribed treatment is safe and appropriate for you.</div>
+
+      <!-- PRICING -->
+      <div class="faq-category reveal" id="pricing">
+        <h2 class="faq-cat-title">Pricing & <em>billing</em></h2>
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">Do you take insurance?
+            <svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="faq-answer"><div class="faq-answer-inner">We do not bill insurance directly — compounded medications are rarely covered by insurance. However, by cutting out insurance middlemen, we offer faster care, transparent pricing, and specialized treatments. We accept FSA and HSA cards for all eligible treatments.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">Why is the price the same across all dosages?
+            <svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="faq-answer"><div class="faq-answer-inner">We believe patients shouldn't be penalized for needing a higher therapeutic dose. Our flat-rate pricing means your cost stays the same whether you're on 0.25 mg or 2.5 mg — unlike competitors who charge more as your dose increases.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">What's included in the monthly price?
+            <svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="faq-answer"><div class="faq-answer-inner">Your monthly fee covers: physician consultation and ongoing oversight, treatment plan and prescription, pharmacy compounding, secure packaging, free doorstep delivery, and direct physician messaging. No hidden fees or surprise add-ons.</div></div>
+        </div>
       </div>
-      <div class="faq-item">
-        <div class="faq-question">How does shipping work?</div>
-        <div class="faq-answer">Once your prescription is approved and compounded, it's sent via expedited shipping straight to your address in discreet, climate-controlled packaging. Free standard shipping is included in all memberships.</div>
+
+      <!-- SHIPPING -->
+      <div class="faq-category reveal" id="shipping">
+        <h2 class="faq-cat-title">Shipping & <em>delivery</em></h2>
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">How does shipping work?
+            <svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="faq-answer"><div class="faq-answer-inner">Once your physician approves your treatment and the pharmacy compounds your medication, it's shipped via expedited delivery in discreet, climate-controlled packaging. Free standard shipping is included with all plans. You'll receive tracking information via email.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">Is the packaging discreet?
+            <svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="faq-answer"><div class="faq-answer-inner">Yes. All medications arrive in plain, unmarked packaging with no indication of the contents. Your privacy is our priority.</div></div>
+        </div>
+      </div>
+
+      <!-- ACCOUNT -->
+      <div class="faq-category reveal" id="account">
+        <h2 class="faq-cat-title">Account & <em>cancellation</em></h2>
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">Can I cancel anytime?
+            <svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="faq-answer"><div class="faq-answer-inner">Yes. Monthly plans can be cancelled before your next billing cycle with no penalty. Quarterly plans are pre-paid but can be paused after the first period. Contact our care team to cancel or pause at any time.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">What's your refund policy?
+            <svg class="faq-chevron" viewBox="0 0 20 20" fill="none"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="faq-answer"><div class="faq-answer-inner">If you're not satisfied with your treatment, contact us within 30 days for a full refund on your first month's subscription. After the first month, unused pre-paid periods may be eligible for prorated refunds on a case-by-case basis.</div></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="faq-cta">
+    <div class="container">
+      <div class="faq-cta-card reveal">
+        <h2 class="faq-cta-title">Still have <em>questions?</em></h2>
+        <p class="faq-cta-desc">Our care team is available Monday–Saturday and responds within 2 hours.</p>
+        <div class="faq-cta-btns">
+          <a href="contact.html" class="btn btn-primary">Contact Us →</a>
+          <a href="quiz.html" class="btn btn-secondary">Start Free Visit →</a>
+        </div>
       </div>
     </div>
   </section>
 
   <script src="shared.js"></script>
   <script>
+    function toggleFaq(btn) { btn.closest('.faq-item').classList.toggle('open'); }
+
+    // Tab active state
+    document.querySelectorAll('.faq-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.faq-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+      });
+    });
+
     initPage('');
   </script>
   <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
 </body>
-
 </html>
