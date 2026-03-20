@@ -163,6 +163,10 @@ async function createVideoJob(scene, resolution = '1280x720', duration = 10) {
   console.log(`   Resolution: ${size} | Duration: ${duration}s`);
   console.log(`   Estimated cost: ~$${(duration * (size === '1920x1080' ? 0.50 : 0.10)).toFixed(2)}`);
 
+  // Sora 2 accepts seconds as string: '4', '8', or '12'
+  const validSeconds = [4, 8, 12];
+  const snappedDuration = validSeconds.reduce((a, b) => Math.abs(b - duration) < Math.abs(a - duration) ? b : a);
+
   const response = await fetch('https://api.openai.com/v1/videos', {
     method: 'POST',
     headers: {
@@ -171,10 +175,9 @@ async function createVideoJob(scene, resolution = '1280x720', duration = 10) {
     },
     body: JSON.stringify({
       model: 'sora-2',
-      input: scene.prompt,
+      prompt: scene.prompt,
       size: size,
-      n: 1,
-      duration: duration
+      seconds: String(snappedDuration)
     })
   });
 
@@ -188,7 +191,7 @@ async function createVideoJob(scene, resolution = '1280x720', duration = 10) {
 }
 
 async function checkJobStatus(jobId) {
-  const response = await fetch(`https://api.openai.com/v1/videos/generations/${jobId}`, {
+  const response = await fetch(`https://api.openai.com/v1/videos/${jobId}`, {
     headers: {
       'Authorization': `Bearer ${apiKey}`
     }
@@ -196,9 +199,17 @@ async function checkJobStatus(jobId) {
   return response.json();
 }
 
-async function downloadVideo(url, filename) {
+async function downloadVideo(videoId, filename) {
   const filepath = path.join(VIDEOS_DIR, filename);
-  const response = await fetch(url);
+  // Sora uses GET /v1/videos/{id}/content to stream the raw MP4 binary
+  const response = await fetch(`https://api.openai.com/v1/videos/${videoId}/content`, {
+    headers: {
+      'Authorization': `Bearer ${apiKey}`
+    }
+  });
+  if (!response.ok) {
+    throw new Error(`Download failed: ${response.status} ${response.statusText}`);
+  }
   const buffer = await response.arrayBuffer();
   fs.writeFileSync(filepath, Buffer.from(buffer));
   const sizeMB = (buffer.byteLength / (1024 * 1024)).toFixed(2);
@@ -294,11 +305,14 @@ async function run() {
     const status = await checkJobStatus(flags.status);
     console.log(JSON.stringify(status, null, 2));
 
-    if (status.status === 'completed' && status.output?.url) {
+    if (status.status === 'completed') {
       const jobs = loadJobs();
       const job = Object.values(jobs).find(j => j.id === flags.status);
       if (job && SCENES[job.sceneName]) {
-        await downloadVideo(status.output.url, SCENES[job.sceneName].filename);
+        await downloadVideo(flags.status, SCENES[job.sceneName].filename);
+      } else {
+        // Fallback: download with job ID as filename
+        await downloadVideo(flags.status, `${flags.status}.mp4`);
       }
     }
     return;
@@ -350,11 +364,8 @@ async function run() {
       console.log('   ⏳ Waiting for generation...');
       const result = await pollUntilComplete(job.id);
 
-      if (result.output?.url) {
-        await downloadVideo(result.output.url, scene.filename);
-      } else if (result.data && result.data[0]?.url) {
-        await downloadVideo(result.data[0].url, scene.filename);
-      }
+      // Download the completed video via /v1/videos/{id}/content
+      await downloadVideo(job.id, scene.filename);
 
       // Rate limit between scenes
       if (scenesToGenerate.length > 1) {

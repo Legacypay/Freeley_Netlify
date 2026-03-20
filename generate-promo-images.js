@@ -1,5 +1,6 @@
 /**
- * Generate hyperrealistic DALL-E 3 images for promo landing pages.
+ * Generate hyperrealistic GPT Image 1.5 images for promo landing pages.
+ * GPT Image 1.5 — OpenAI's flagship photorealism model (LM Arena #1, score: 1264)
  * 
  * Usage: OPENAI_API_KEY=sk-xxx node generate-promo-images.js
  * 
@@ -20,7 +21,7 @@ if (!apiKey) {
 }
 
 const IMAGES_DIR = path.join(__dirname, 'assets', 'promo');
-const IMAGE_QUALITY = 'hd';
+const IMAGE_QUALITY = 'high';
 
 // ────────────────────────────────────────────────────────
 // HYPERREALISTIC STYLE DIRECTIVE
@@ -40,7 +41,7 @@ const IMAGES = [
   // ── WEIGHT LOSS PROMO ──
   {
     filename: 'weight-loss-hero.jpg',
-    size: '1792x1024',
+    size: '1536x1024',
     prompt: `Full-body editorial photograph of a real woman in her mid-30s with a healthy, fit physique, 
 standing in a bright modern kitchen. She wears a fitted sage green ribbed tank top and high-waisted black leggings. 
 She holds a glass of water and looks directly at camera with a calm, confident half-smile. 
@@ -62,7 +63,7 @@ light refracting through the liquid. Product photography quality for a luxury we
   // ── ED PROMO ──
   {
     filename: 'ed-hero.jpg',
-    size: '1792x1024',
+    size: '1536x1024',
     prompt: `Lifestyle photograph of a real couple in their late 30s, shot from the waist up. 
 They stand close together on a rooftop terrace at golden hour. The man has his arm around her waist, 
 and she leans into him with her hand on his chest. Both are laughing naturally — a genuine candid moment. 
@@ -84,7 +85,7 @@ Premium pharmaceutical product photography. No labels, no branding visible. ${HY
   // ── HAIR LOSS PROMO ──
   {
     filename: 'hair-loss-hero.jpg',
-    size: '1792x1024',
+    size: '1536x1024',
     prompt: `Upper body portrait of a real man in his late 20s with a full head of thick, dark hair. 
 He runs his fingers through his hair while looking confidently into the camera. 
 Modern bathroom setting — clean white subway tile, warm brass fixtures, natural window light. 
@@ -106,7 +107,7 @@ marble veining, rosemary needle detail. Premium men's grooming editorial. ${HYPE
   // ── LONGEVITY PROMO ──
   {
     filename: 'longevity-hero.jpg',
-    size: '1792x1024',
+    size: '1536x1024',
     prompt: `Environmental portrait of a fit, athletic man in his early 50s doing yoga on a wooden deck 
 overlooking a misty mountain landscape at sunrise. He is in a warrior pose, wearing a fitted dark grey 
 performance top and black joggers. Morning fog drifts through the pine trees behind him. 
@@ -137,22 +138,24 @@ async function generateImage(img) {
       'Authorization': `Bearer ${apiKey}`
     },
     body: JSON.stringify({
-      model: 'dall-e-3',
+      model: 'gpt-image-1',
       prompt: img.prompt,
       n: 1,
       size: img.size,
-      quality: IMAGE_QUALITY,
-      response_format: 'b64_json'
+      quality: IMAGE_QUALITY
     })
   });
 
   const data = await response.json();
 
-  if (!data.data || !data.data[0] || !data.data[0].b64_json) {
+  if (!data.data || !data.data[0]) {
     throw new Error(JSON.stringify(data.error || 'Unknown error'));
   }
 
-  const imageBuffer = Buffer.from(data.data[0].b64_json, 'base64');
+  // GPT Image 1.5 returns b64_json by default
+  const b64 = data.data[0].b64_json || data.data[0].b64;
+
+  const imageBuffer = Buffer.from(b64, 'base64');
   const filepath = path.join(IMAGES_DIR, img.filename);
   fs.writeFileSync(filepath, imageBuffer);
 
@@ -165,8 +168,9 @@ async function run() {
     fs.mkdirSync(IMAGES_DIR, { recursive: true });
   }
 
-  console.log(`\n📸 Generating ${IMAGES.length} hyperrealistic promo images via DALL-E 3`);
-  console.log(`   Estimated cost: ~$${(IMAGES.length * 0.08).toFixed(2)} (HD quality)`);
+  console.log(`\n📸 Generating ${IMAGES.length} hyperrealistic promo images via GPT Image 1.5`);
+  console.log(`   Model: gpt-image-1 (LM Arena #1 — best photorealism)`);
+  console.log(`   Estimated cost: ~$${(IMAGES.length * 0.06).toFixed(2)} (high quality)`);
   console.log('─'.repeat(60));
 
   let success = 0;
