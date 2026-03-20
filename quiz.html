@@ -817,12 +817,113 @@
         grid-template-columns: 1fr;
       }
     }
+
+    /* Pulse animation on progress bar */
+    .quiz-progress-fill {
+      position: relative;
+    }
+    .quiz-progress-fill::after {
+      content: '';
+      position: absolute;
+      right: 0; top: -3px;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--green-light);
+      box-shadow: 0 0 8px rgba(61,140,94,0.5);
+      animation: progressPulse 2s ease-in-out infinite;
+    }
+    @keyframes progressPulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.5); opacity: 0.5; }
+    }
+
+    /* Social proof nudge */
+    .social-proof-nudge {
+      position: fixed;
+      bottom: 24px;
+      left: 24px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--text-muted);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      z-index: 1000;
+      animation: slideUp 0.5s ease both;
+      animation-delay: 3s;
+      opacity: 0;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .social-proof-nudge .pulse-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      animation: pulseDot 2s ease-in-out infinite;
+    }
+    @keyframes pulseDot {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.4); }
+      50% { box-shadow: 0 0 0 6px rgba(34,197,94,0); }
+    }
+
+    /* BMI card on results */
+    .bmi-card {
+      background: linear-gradient(135deg, var(--green-mist), #fff);
+      border: 1px solid rgba(61,140,94,0.15);
+      border-radius: 20px;
+      padding: 28px 32px;
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+    .bmi-gauge {
+      width: 100px; height: 100px;
+      border-radius: 50%;
+      background: conic-gradient(var(--green-light) 0%, var(--green-light) var(--bmi-pct, 50%), #e0e0e0 var(--bmi-pct, 50%));
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .bmi-gauge-inner {
+      width: 70px; height: 70px;
+      border-radius: 50%;
+      background: #fff;
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column;
+    }
+    .bmi-val {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      font-weight: 400;
+      color: var(--text);
+      line-height: 1;
+    }
+    .bmi-label-sm {
+      font-size: 10px;
+      color: var(--text-faint);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
   </style>
   <link rel="icon" type="image/png" href="favicon.png?v=2">
   <link rel="canonical" href="https://freeley.com/quiz">
 </head>
 
 <body>
+
+  <!-- Social Proof Nudge -->
+  <div class="social-proof-nudge" id="socialProof">
+    <div class="pulse-dot"></div>
+    <span><strong>12 people</strong> started their free visit in the last hour</span>
+  </div>
 
 
   <div class="quiz-wrap">
@@ -1323,6 +1424,26 @@
           <p class="results-sub">Based on your responses, our system has identified the best matches for you. A licensed
             physician will review and approve your plan within 24 hours.</p>
         </div>
+
+        <!-- Personalized BMI Card -->
+        <div class="bmi-card" id="bmiCard" style="display: none;">
+          <div class="bmi-gauge" id="bmiGauge">
+            <div class="bmi-gauge-inner">
+              <div class="bmi-val" id="bmiValue">--</div>
+              <div class="bmi-label-sm">BMI</div>
+            </div>
+          </div>
+          <div style="flex: 1; min-width: 200px;">
+            <div style="font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 400; margin-bottom: 6px;">Your Health Snapshot</div>
+            <div id="bmiCategory" style="display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-bottom: 12px;"></div>
+            <p id="bmiMessage" style="font-size: 14px; color: var(--text-muted); line-height: 1.6; font-weight: 300;"></p>
+          </div>
+          <div style="text-align: center;">
+            <div style="font-size: 11px; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Target Weight Loss</div>
+            <div id="targetLoss" style="font-family: 'Cormorant Garamond', serif; font-size: 36px; color: var(--green); font-weight: 400; line-height: 1;"></div>
+            <div style="font-size: 12px; color: var(--text-faint);">in 6 months*</div>
+          </div>
+        </div>
         <div class="results-plans">
           <div class="plan-card" id="plan-wl">
             <div class="plan-recommended-tag">Best Match</div>
@@ -1586,6 +1707,50 @@
       document.getElementById('results-screen').classList.add('active');
       updateProgress('results');
       window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // Hide social proof on results
+      const nudge = document.getElementById('socialProof');
+      if (nudge) nudge.style.display = 'none';
+
+      // Calculate and show BMI
+      try {
+        const heightStr = quizData.height || '';
+        const ftMatch = heightStr.match(/(\d+)'/);
+        const inMatch = heightStr.match(/'(\d+)"/);
+        const ft = ftMatch ? parseInt(ftMatch[1]) : 0;
+        const inches = inMatch ? parseInt(inMatch[1]) : 0;
+        const totalInches = ft * 12 + inches;
+        const weight = parseFloat(quizData.weight);
+
+        if (totalInches > 0 && weight > 0) {
+          const bmi = (weight / (totalInches * totalInches)) * 703;
+          const bmiRounded = Math.round(bmi * 10) / 10;
+          const pct = Math.min(100, Math.max(0, ((bmi - 15) / 30) * 100));
+          const targetLoss = Math.round(weight * 0.15);
+
+          document.getElementById('bmiValue').textContent = bmiRounded;
+          document.getElementById('bmiGauge').style.setProperty('--bmi-pct', pct + '%');
+          document.getElementById('targetLoss').textContent = '-' + targetLoss + ' lbs';
+
+          const catEl = document.getElementById('bmiCategory');
+          const msgEl = document.getElementById('bmiMessage');
+          if (bmi < 18.5) {
+            catEl.textContent = 'Underweight'; catEl.style.background = '#fef3c7'; catEl.style.color = '#92400e';
+            msgEl.textContent = 'Your BMI is below the normal range. Our physicians can design a plan focused on overall wellness and healthy body composition.';
+          } else if (bmi < 25) {
+            catEl.textContent = 'Normal'; catEl.style.background = '#d1fae5'; catEl.style.color = '#065f46';
+            msgEl.textContent = 'Your BMI is within the healthy range. GLP-1 therapy can still support body recomposition, metabolic optimization, and long-term health goals.';
+          } else if (bmi < 30) {
+            catEl.textContent = 'Overweight'; catEl.style.background = '#fef3c7'; catEl.style.color = '#92400e';
+            msgEl.textContent = 'You\'re in the overweight range — an excellent candidate for GLP-1 weight loss therapy. Most patients in this range lose 10-15% body weight.';
+          } else {
+            catEl.textContent = 'Obese'; catEl.style.background = '#fee2e2'; catEl.style.color = '#991b1b';
+            msgEl.textContent = 'GLP-1 receptor agonists are clinically proven to be most effective in this BMI range. You could see significant health improvements within months.';
+          }
+
+          document.getElementById('bmiCard').style.display = 'flex';
+        }
+      } catch(e) { console.log('BMI calc skipped:', e); }
 
       startCheckoutTimer();
     }
