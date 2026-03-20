@@ -558,8 +558,8 @@
           <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: var(--border); z-index:1;"></div>
         </div>
         <div style="display: flex; gap: 12px;">
-          <button style="flex: 1; background: #000; color: #fff; padding: 14px; border-radius: 8px; border: none; font-size: 17px; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; transition: transform 0.2s;"><i class="ri-apple-fill" style="font-size: 22px;"></i> Pay</button>
-          <button style="flex: 1; background: #fff; color: #3c4043; padding: 14px; border-radius: 8px; border: 1px solid #dadce0; font-size: 17px; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; font-family: 'Product Sans', Arial, sans-serif; font-weight: 500; transition: transform 0.2s;"><svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.64 12.2c0-.82-.07-1.62-.21-2.4H12v4.54h6.53c-.28 1.48-1.12 2.73-2.39 3.58v2.98h3.86c2.26-2.08 3.56-5.14 3.56-8.7z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-2.98c-1.08.72-2.46 1.15-4.07 1.15-3.13 0-5.78-2.11-6.73-4.96H1.32v3.08A11.96 11.96 0 0012 24z"/><path fill="#FBBC05" d="M5.27 14.3A7.16 7.16 0 015 12c0-.79.13-1.57.38-2.3V6.62H1.32A11.96 11.96 0 000 12c0 1.93.46 3.75 1.28 5.38l3.99-3.08z"/><path fill="#EA4335" d="M12 4.75c1.76 0 3.34.6 4.58 1.78l3.44-3.44C17.94 1.18 15.23 0 12 0 7.38 0 3.32 2.65 1.32 6.62l3.95 3.08c.95-2.85 3.6-4.95 6.73-4.95z"/></svg> Pay</button>
+          <button style="flex: 1; background: #000; color: #fff; padding: 14px; border-radius: 8px; border: none; font-size: 17px; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; transition: all 0.2s; opacity: 0.95;" onmouseover="this.style.transform='translateY(-1px)';this.style.opacity='1'" onmouseout="this.style.transform='';this.style.opacity='0.95'"><i class="ri-apple-fill" style="font-size: 22px;"></i> Pay</button>
+          <button style="flex: 1; background: #fff; color: #3c4043; padding: 14px; border-radius: 8px; border: 1px solid #dadce0; font-size: 17px; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; font-family: 'Product Sans', Arial, sans-serif; font-weight: 500; transition: all 0.2s;" onmouseover="this.style.transform='translateY(-1px)';this.style.borderColor='#bbb'" onmouseout="this.style.transform='';this.style.borderColor='#dadce0'"><svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.64 12.2c0-.82-.07-1.62-.21-2.4H12v4.54h6.53c-.28 1.48-1.12 2.73-2.39 3.58v2.98h3.86c2.26-2.08 3.56-5.14 3.56-8.7z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-2.98c-1.08.72-2.46 1.15-4.07 1.15-3.13 0-5.78-2.11-6.73-4.96H1.32v3.08A11.96 11.96 0 0012 24z"/><path fill="#FBBC05" d="M5.27 14.3A7.16 7.16 0 015 12c0-.79.13-1.57.38-2.3V6.62H1.32A11.96 11.96 0 000 12c0 1.93.46 3.75 1.28 5.38l3.99-3.08z"/><path fill="#EA4335" d="M12 4.75c1.76 0 3.34.6 4.58 1.78l3.44-3.44C17.94 1.18 15.23 0 12 0 7.38 0 3.32 2.65 1.32 6.62l3.95 3.08c.95-2.85 3.6-4.95 6.73-4.95z"/></svg> Pay</button>
         </div>
         <div style="text-align: center; font-size: 12px; color: var(--text-muted); margin-top: 16px; position: relative; text-transform: uppercase; letter-spacing: 1px; font-weight: 500;">
           <span style="background: var(--bg); padding: 0 16px; position:relative; z-index:2; background:#f9f9f9;">Or Pay With Card</span>
@@ -569,7 +569,7 @@
       
       <div class="payment-box">
         <div class="payment-header">
-          <div class="payment-title">Credit card</div>
+          <div class="payment-title"><i class="ri-lock-2-line" style="color: var(--forest); margin-right: 6px;"></i>Secure Payment</div>
           <div class="card-logos" style="display: flex; gap: 8px; align-items: center;">
             <svg viewBox="0 0 36 24" width="36" height="24" xmlns="http://www.w3.org/2000/svg"><rect width="36" height="24" rx="4" fill="#15243C"/><path d="M12.64 16.5H9.98V7.51h2.66v8.99zm14.12 0h-2.66V7.51h2.66v8.99zM18.8 12.3l-2.02-3.13-2 3.12v4.21h-2.65V7.51h2.65v4.2l1.9-2.95h3.04l-2.28 3.51 2.37 4.23h-3.01z" fill="#fff"/></svg>
             <svg viewBox="0 0 36 24" width="36" height="24" xmlns="http://www.w3.org/2000/svg"><rect width="36" height="24" rx="4" fill="#F79E1B"/><circle cx="13" cy="12" r="7" fill="#EB001B"/><circle cx="23" cy="12" r="7" fill="#F79E1B" fill-opacity=".8"/></svg>
@@ -578,18 +578,35 @@
         </div>
         
         <div class="form-group">
-          <input type="text" class="form-control" placeholder="Card Number" value="4111 1111 1111 1111">
+          <label style="display: block; font-size: 12px; font-weight: 500; color: #555; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Card Number</label>
+          <div style="position: relative;">
+            <input type="text" class="form-control" placeholder="1234 5678 9012 3456" style="padding-left: 44px;">
+            <i class="ri-bank-card-line" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #aaa; font-size: 18px;"></i>
+          </div>
         </div>
         <div class="form-row">
           <div>
-            <input type="text" class="form-control" placeholder="MM / YY" value="12 / 28">
+            <label style="display: block; font-size: 12px; font-weight: 500; color: #555; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Expiration</label>
+            <input type="text" class="form-control" placeholder="MM / YY">
           </div>
           <div>
-            <input type="text" class="form-control" placeholder="CVC" value="123">
+            <label style="display: block; font-size: 12px; font-weight: 500; color: #555; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Security Code</label>
+            <div style="position: relative;">
+              <input type="text" class="form-control" placeholder="CVC" style="padding-right: 40px;">
+              <i class="ri-question-line" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #ccc; font-size: 16px; cursor: help;" title="3-digit code on the back of your card"></i>
+            </div>
           </div>
         </div>
         <div class="form-group" style="margin-top: 16px;">
-          <input type="text" class="form-control" placeholder="Name on card" value="John Doe">
+          <label style="display: block; font-size: 12px; font-weight: 500; color: #555; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Cardholder Name</label>
+          <input type="text" class="form-control" placeholder="Full name on card">
+        </div>
+
+        <!-- Security Trust Signals -->
+        <div style="display: flex; align-items: center; gap: 16px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border);">
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: #888;"><i class="ri-lock-2-fill" style="color: var(--forest); font-size: 14px;"></i>256-bit SSL</div>
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: #888;"><i class="ri-shield-check-fill" style="color: var(--forest); font-size: 14px;"></i>HIPAA compliant</div>
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: #888;"><i class="ri-eye-off-fill" style="color: var(--forest); font-size: 14px;"></i>PCI Level 1</div>
         </div>
       </div>
     </div>
@@ -663,7 +680,8 @@
           </div>
         </div>
 
-        <button class="btn-checkout" onclick="window.location.href='hub.html'">Complete Order</button>
+        <button class="btn-checkout" onclick="window.location.href='hub.html'" style="position: relative; overflow: hidden;"><i class="ri-lock-2-line" style="margin-right: 8px;"></i>Complete Secure Order</button>
+        <div style="text-align: center; margin-top: 12px; font-size: 11px; color: #999; display: flex; align-items: center; justify-content: center; gap: 6px;"><i class="ri-shield-star-line" style="font-size: 14px; color: var(--forest);"></i>Your information is encrypted and never stored on our servers</div>
         
         <div style="margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 11px; color: var(--text-muted); text-transform: uppercase; text-align: center; line-height: 1.4; letter-spacing: 0.5px; font-weight: 500;">
           <div style="background: rgba(61,140,94,0.06); padding: 14px; border-radius: 12px; border: 1px solid rgba(61,140,94,0.15);"><i class="ri-truck-fill" style="font-size: 20px; color: var(--forest); display: block; margin-bottom: 6px;"></i> Free Overnight<br>Shipping</div>
