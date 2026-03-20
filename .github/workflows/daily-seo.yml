@@ -36,11 +36,12 @@ jobs:
       - name: Build Blog HTML Pages
         run: node build_blog.js
 
-      - name: Commit and Push New Article
+      - name: Commit and Push New Article + Image
         run: |
           git config --global user.name "Freeley Auto-SEO Bot"
           git config --global user.email "bot@freeley.com"
           git add content/blog/*.md content/seo-keywords.txt
+          git add assets/blog/
           git add *.html sitemap.xml
-          git commit -m "🤖 Auto-SEO: new article + rebuilt blog pages" || echo "No changes"
+          git commit -m "🤖 Auto-SEO: new article + DALL-E hero image + rebuilt blog" || echo "No changes"
           git push

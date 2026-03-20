@@ -7,113 +7,121 @@ if (!apiKey) {
   process.exit(1);
 }
 
-// ── Category → Local Image Mapping ─────────────────────────────
-// Each category has an array of local images. The agent picks one
-// that hasn't been used recently for variety.
-//
-// TO ADD MORE IMAGES:
-//   1. Drop your image file into assets/blog/
-//   2. Add the path to the appropriate category array below
-//   3. Commit and push — the next blog post will use it
-//
-const CATEGORY_IMAGES = {
-  'Weight Loss': [
-    'assets/blog/weight-loss-1.jpg',
-    'assets/blog/weight-loss-2.jpg',
-    'assets/blog/weight-loss-3.jpg'
-  ],
-  'Hair Loss': [
-    'assets/blog/hair-loss-1.jpg',
-    'assets/blog/hair-loss-2.jpg',
-    'assets/blog/hair-loss-3.jpg'
-  ],
-  "Men's Health": [
-    'assets/blog/mens-health-1.jpg',
-    'assets/blog/mens-health-2.jpg',
-    'assets/blog/mens-health-3.jpg'
-  ],
-  'ED': [
-    'assets/blog/mens-health-1.jpg',
-    'assets/blog/mens-health-2.jpg',
-    'assets/blog/mens-health-3.jpg'
-  ],
-  'Sexual Wellness': [
-    'assets/blog/mens-health-1.jpg',
-    'assets/blog/mens-health-2.jpg',
-    'assets/blog/mens-health-3.jpg'
-  ],
-  'Longevity': [
-    'assets/blog/longevity-1.jpg',
-    'assets/blog/longevity-2.jpg',
-    'assets/blog/longevity-3.jpg'
-  ],
-  'Peptides': [
-    'assets/blog/longevity-1.jpg',
-    'assets/blog/longevity-2.jpg',
-    'assets/blog/longevity-3.jpg'
-  ],
-  'Telehealth': [
-    'assets/blog/telehealth-1.jpg',
-    'assets/blog/telehealth-2.jpg',
-    'assets/blog/telehealth-3.jpg'
-  ],
-  'Medical Education': [
-    'assets/blog/telehealth-1.jpg',
-    'assets/blog/telehealth-2.jpg',
-    'assets/blog/telehealth-3.jpg'
-  ]
-};
+// ── Image Generation Config ────────────────────────────────────
+const BLOG_IMAGES_DIR = path.join(__dirname, 'assets', 'blog');
+const IMAGE_SIZE = '1792x1024'; // Wide format, perfect for blog heroes
+const IMAGE_QUALITY = 'standard'; // 'standard' or 'hd' ($0.04 vs $0.08 per image)
 
-// Fallback images if category doesn't match
-const FALLBACK_IMAGES = [
-  'assets/blog/telehealth-1.jpg',
-  'assets/blog/telehealth-2.jpg',
-  'assets/blog/telehealth-3.jpg'
-];
+// Brand style guide for consistent image generation
+const BRAND_STYLE = `Photorealistic, clean, modern healthcare aesthetic. 
+Soft natural lighting, warm neutral tones (cream, sage green, soft white). 
+Minimalist composition with shallow depth of field. 
+Premium telehealth brand feel — NOT stock photo looking. 
+No text, no logos, no watermarks, no faces showing full identity. 
+Professional medical/wellness product photography style.`;
 
 /**
- * Pick an image for a given tag, avoiding recently used images.
- * Reads existing blog posts to see what images have been used.
+ * Generate an image via DALL-E 3 and save it locally.
+ * Returns the local file path relative to the project root.
  */
-function pickImageForTag(tag) {
-  const blogDir = path.join(__dirname, 'content', 'blog');
-  const usedImages = [];
+async function generateBlogImage(title, tag, slug) {
+  console.log(`🎨 Generating DALL-E 3 image for: "${title}" [${tag}]`);
 
-  // Scan existing blog posts to find recently used images
-  if (fs.existsSync(blogDir)) {
-    const files = fs.readdirSync(blogDir).filter(f => f.endsWith('.md'));
-    files.forEach(file => {
-      const content = fs.readFileSync(path.join(blogDir, file), 'utf8');
-      const imageMatch = content.match(/^image:\s*"?([^"\n]+)"?/m);
-      if (imageMatch) usedImages.push(imageMatch[1]);
+  // Build a category-aware prompt
+  const categoryHints = {
+    'Weight Loss': 'healthy lifestyle, measuring tape, fresh vegetables, fitness, wellness vials, injection pen',
+    'Hair Loss': 'hair care products, scalp treatment, hair growth serum bottle, grooming',
+    "Men's Health": 'men\'s wellness products, supplement bottles, confident male silhouette, health',
+    'ED': 'men\'s health supplement, discreet packaging, pharmacy, wellness',
+    'Sexual Wellness': 'wellness supplements, discreet luxury packaging, health products',
+    'Longevity': 'peptide vials, NAD+ supplements, biohacking, longevity science, anti-aging serum',
+    'Peptides': 'peptide vials, scientific laboratory, medical research, injection supplies',
+    'Telehealth': 'doctor consultation screen, mobile health app, medical technology, stethoscope',
+    'Medical Education': 'medical books, healthcare education, clinical setting, pharmacy'
+  };
+
+  const hints = categoryHints[tag] || categoryHints['Telehealth'];
+
+  const imagePrompt = `A hero image for a medical health blog article titled "${title}". 
+Visual elements: ${hints}. 
+${BRAND_STYLE}`;
+
+  try {
+    const response = await fetch('https://api.openai.com/v1/images/generations', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model: 'dall-e-3',
+        prompt: imagePrompt,
+        n: 1,
+        size: IMAGE_SIZE,
+        quality: IMAGE_QUALITY,
+        response_format: 'b64_json'
+      })
     });
+
+    const data = await response.json();
+
+    if (!data.data || !data.data[0] || !data.data[0].b64_json) {
+      console.error('❌ DALL-E API error:', JSON.stringify(data.error || data));
+      return null;
+    }
+
+    // Save the image locally
+    if (!fs.existsSync(BLOG_IMAGES_DIR)) {
+      fs.mkdirSync(BLOG_IMAGES_DIR, { recursive: true });
+    }
+
+    const filename = `${slug}.jpg`;
+    const filepath = path.join(BLOG_IMAGES_DIR, filename);
+
+    // Convert base64 to buffer and save
+    const imageBuffer = Buffer.from(data.data[0].b64_json, 'base64');
+    fs.writeFileSync(filepath, imageBuffer);
+
+    const relativePath = `assets/blog/${filename}`;
+    const sizeMB = (imageBuffer.length / (1024 * 1024)).toFixed(2);
+    console.log(`✅ Image saved: ${relativePath} (${sizeMB} MB)`);
+
+    return relativePath;
+
+  } catch (error) {
+    console.error('❌ DALL-E generation failed:', error.message);
+    return null;
   }
-
-  // Get the image pool for this tag
-  const pool = CATEGORY_IMAGES[tag] || FALLBACK_IMAGES;
-
-  // Filter to only images that exist on disk
-  const existingPool = pool.filter(img =>
-    fs.existsSync(path.join(__dirname, img))
-  );
-
-  // If no images exist yet, return the first from the pool
-  // (it will be created when the user adds images)
-  if (existingPool.length === 0) {
-    console.log(`⚠️  No images found for "${tag}". Using placeholder.`);
-    console.log(`   Add images to assets/blog/ and update CATEGORY_IMAGES in seo-agent.js`);
-    return pool[0] || FALLBACK_IMAGES[0];
-  }
-
-  // Prefer images not recently used
-  const unused = existingPool.filter(img => !usedImages.includes(img));
-  if (unused.length > 0) {
-    return unused[Math.floor(Math.random() * unused.length)];
-  }
-
-  // All images used — just pick randomly from the pool
-  return existingPool[Math.floor(Math.random() * existingPool.length)];
 }
+
+/**
+ * Fallback: pick a local category image if DALL-E fails.
+ */
+function pickFallbackImage(tag) {
+  const CATEGORY_FALLBACKS = {
+    'Weight Loss': 'assets/blog_cost_semaglutide.png',
+    'Hair Loss': 'assets/blog_hero_finasteride_hair.png',
+    "Men's Health": 'assets/blog_hero_finasteride_hair.png',
+    'ED': 'assets/blog_hero_finasteride_hair.png',
+    'Sexual Wellness': 'assets/blog_hero_finasteride_hair.png',
+    'Longevity': 'assets/blog_hero_semaglutide_delivery.png',
+    'Peptides': 'assets/blog_hero_semaglutide_delivery.png',
+    'Telehealth': 'assets/blog_hero_tirzepatide_cost.png',
+    'Medical Education': 'assets/blog_hero_tirzepatide_cost.png'
+  };
+
+  const fallback = CATEGORY_FALLBACKS[tag] || 'assets/blog_cost_semaglutide.png';
+
+  if (fs.existsSync(path.join(__dirname, fallback))) {
+    console.log(`📂 Using fallback image: ${fallback}`);
+    return fallback;
+  }
+
+  // Last resort
+  return 'assets/brand/new_hero.jpeg';
+}
+
+// ── Main Pipeline ──────────────────────────────────────────────
 
 const keywordsFile = path.join(__dirname, 'content', 'seo-keywords.txt');
 
@@ -135,13 +143,12 @@ if (keywords.length === 0) {
 
 // Take the first keyword
 const targetKeyword = keywords[0];
-console.log(`Working on keyword: ${targetKeyword}`);
+console.log(`\n📝 Working on keyword: "${targetKeyword}"`);
 
 // The remaining keywords
 const remainingKeywords = keywords.slice(1).join('\n');
 
-// ── Updated Prompt (NO Pollinations) ──────────────────────────
-// The AI only generates text content. Images are handled locally.
+// The AI writes the article — images are generated separately
 const prompt = `You are the Chief Medical Officer at Freeley Health. Write an engaging, highly-researched, SEO-optimized medical article about "${targetKeyword}".
 
 Use bolding, H2s, H3s, and format the output STRICTLY in Markdown.
@@ -150,8 +157,8 @@ Include YAML frontmatter at the top with EXACTLY these fields:
 - "title": A compelling, SEO-friendly article title
 - "tag": Choose ONE category from: Weight Loss, Hair Loss, Men's Health, Longevity, Peptides, Telehealth, Medical Education
 - "excerpt": A 1-2 sentence compelling summary for search results
-- "date": Today's date in ISO format (e.g. "2026-03-20T10:00:00Z")
-- "image": Leave this as "AUTO" — it will be replaced automatically
+- "date": Today's date in ISO format (e.g. "${new Date().toISOString().split('T')[0]}T10:00:00Z")
+- "image": Set this to exactly "AUTO"
 
 Conclude with a call to action leading readers to our free medical assessment at freeley.com/quiz.html.
 
@@ -160,7 +167,8 @@ DO NOT include an H1 heading that duplicates the title — start with H2s.`;
 
 async function run() {
   try {
-    console.log('Fetching from OpenAI...');
+    // ── Step 1: Generate the article text ─────────────────────
+    console.log('📡 Fetching article from OpenAI GPT-4o...');
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -186,49 +194,58 @@ async function run() {
     // Cleanup any lazy formatting from the LLM
     if (markdown.startsWith('```markdown')) {
       markdown = markdown.substring(11).trim();
-      if (markdown.endsWith('```')) {
-        markdown = markdown.slice(0, -3).trim();
-      }
     }
     if (markdown.startsWith('```')) {
       markdown = markdown.substring(3).trim();
-      if (markdown.endsWith('```')) {
-        markdown = markdown.slice(0, -3).trim();
-      }
+    }
+    if (markdown.endsWith('```')) {
+      markdown = markdown.slice(0, -3).trim();
     }
 
-    // ── Extract the tag and assign a local image ────────────────
+    // Extract metadata from the generated article
+    const titleMatch = markdown.match(/^title:\s*"?([^"\n]+)"?/m);
     const tagMatch = markdown.match(/^tag:\s*"?([^"\n]+)"?/m);
+    const title = titleMatch ? titleMatch[1].trim() : targetKeyword;
     const tag = tagMatch ? tagMatch[1].trim() : 'Medical Education';
-    const localImage = pickImageForTag(tag);
+    const slug = targetKeyword.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 
-    console.log(`📂 Tag: "${tag}" → Image: "${localImage}"`);
+    console.log(`📖 Title: "${title}"`);
+    console.log(`🏷️  Tag: "${tag}"`);
+    console.log(`🔗 Slug: "${slug}"`);
 
-    // Replace the AUTO placeholder (or any Pollinations URL) with local image
+    // ── Step 2: Generate the hero image via DALL-E 3 ──────────
+    let imagePath = await generateBlogImage(title, tag, slug);
+
+    // Fall back to local category image if DALL-E fails
+    if (!imagePath) {
+      console.log('⚠️  DALL-E failed — using local fallback image');
+      imagePath = pickFallbackImage(tag);
+    }
+
+    // ── Step 3: Insert the image path into the article ────────
     markdown = markdown.replace(
       /^image:\s*"?.*"?$/m,
-      `image: "${localImage}"`
+      `image: "${imagePath}"`
     );
 
-    // Create the clean filename slug
-    const slug = targetKeyword.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+    // ── Step 4: Save the article ──────────────────────────────
     const outputPath = path.join(__dirname, 'content', 'blog', `${slug}.md`);
-
-    // Ensure directory exists
     const blogDir = path.dirname(outputPath);
     if (!fs.existsSync(blogDir)) {
       fs.mkdirSync(blogDir, { recursive: true });
     }
 
     fs.writeFileSync(outputPath, markdown);
-    console.log(`✅ SEO Article written to ${outputPath}`);
+    console.log(`\n✅ Article saved: ${outputPath}`);
 
-    // Update the keywords list queue
+    // ── Step 5: Update the keyword queue ──────────────────────
     fs.writeFileSync(keywordsFile, remainingKeywords);
-    console.log(`✅ Removed "${targetKeyword}" from the queue. File updated successfully.`);
+    console.log(`✅ Removed "${targetKeyword}" from queue (${keywords.length - 1} remaining)`);
+
+    console.log('\n🎉 Done! Article + image generated successfully.');
 
   } catch (error) {
-    console.error('Failed to run SEO agent Engine:', error);
+    console.error('Failed to run SEO agent:', error);
     process.exit(1);
   }
 }
