@@ -1,0 +1,40 @@
+name: Regenerate Blog Images (DALL-E 3)
+
+on:
+  workflow_dispatch: # Manual trigger — click "Run workflow" on GitHub
+
+jobs:
+  regenerate-images:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Regenerate All Blog Images via DALL-E 3
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: node regenerate-blog-images.js
+
+      - name: Rebuild Blog HTML
+        run: node build_blog.js
+
+      - name: Commit and Push New Images
+        run: |
+          git config --global user.name "Freeley Auto-SEO Bot"
+          git config --global user.email "bot@freeley.com"
+          git add assets/blog/
+          git add content/blog/*.md
+          git add *.html sitemap.xml
+          git commit -m "🎨 Regenerated all blog hero images via DALL-E 3" || echo "No changes"
+          git push
