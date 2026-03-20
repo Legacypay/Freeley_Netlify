@@ -3,134 +3,388 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Our Medical Team — Freeley</title>
+  <title>Our Medical Team — Board-Certified Physicians | Freeley</title>
+  <meta name="description" content="Meet the board-certified physicians who review every Freeley treatment plan. Licensed in all 50 states, specializing in metabolic health, urology, dermatology, and anti-aging medicine.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Montserrat:wght@400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="shared.css">
   <link rel="icon" type="image/png" href="favicon.png?v=2">
   <style>
     .bio-hero {
-      padding: 180px 0 100px;
-      text-align: center;
-      background-image: url("assets/brand/freeley_pattern_light.jpg");
-      background-size: cover;
-      background-attachment: fixed;
-      background-color: var(--cream);
+      padding: 160px 0 100px;
+      background-image: url("assets/brand/freeley_pattern_dark.jpg"); background-size: cover; background-position: center;
+      text-align: center; position: relative; overflow: hidden;
+    }
+    .bio-hero::before {
+      content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      width: 700px; height: 700px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(61,140,94,0.12), transparent 60%);
     }
     .bio-hero h1 {
       font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(48px, 6vw, 72px);
-      font-weight: 300;
-      color: var(--charcoal);
+      font-size: clamp(44px, 6vw, 76px); font-weight: 300;
+      color: #fff; margin-bottom: 16px; letter-spacing: -1px;
+      position: relative; z-index: 2;
+    }
+    .bio-hero h1 em { font-style: italic; color: #7dba96; }
+    .bio-hero p {
+      color: rgba(255,255,255,0.5); font-size: 17px; max-width: 560px;
+      margin: 0 auto 48px; font-weight: 300; line-height: 1.65;
+      position: relative; z-index: 2;
+    }
+
+    /* Clinical stats bar */
+    .clinical-stats {
+      display: flex; justify-content: center; gap: 48px; flex-wrap: wrap;
+      position: relative; z-index: 2;
+    }
+    .clinical-stat { text-align: center; }
+    .clinical-stat-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 52px; font-weight: 300; color: #fff; line-height: 1;
+    }
+    .clinical-stat-label {
+      font-size: 12px; color: rgba(255,255,255,0.4);
+      letter-spacing: 1px; text-transform: uppercase; margin-top: 6px;
+    }
+
+    /* Philosophy section */
+    .philosophy-section { padding: 100px 0; background: var(--cream); }
+    .philosophy-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 80px; align-items: center;
+    }
+    .philosophy-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(34px, 4.5vw, 52px); font-weight: 300;
       margin-bottom: 24px;
     }
-    .bio-hero p {
-      color: var(--text-muted);
-      font-size: 18px;
-      line-height: 1.6;
-      max-width: 600px;
-      margin: 0 auto;
+    .philosophy-title em { font-style: italic; color: var(--green); }
+    .philosophy-text {
+      font-size: 16px; color: var(--text-muted); line-height: 1.8;
+      font-weight: 300; margin-bottom: 20px;
     }
+    .philosophy-values {
+      display: flex; flex-direction: column; gap: 16px; margin-top: 36px;
+    }
+    .pv-item {
+      display: flex; align-items: flex-start; gap: 16px;
+      padding: 20px 24px;
+      background: #fff; border: 1px solid var(--border);
+      border-radius: 16px; transition: all 0.3s;
+    }
+    .pv-item:hover { transform: translateX(6px); box-shadow: var(--shadow-sm); }
+    .pv-icon { font-size: 24px; flex-shrink: 0; margin-top: 2px; }
+    .pv-label { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .pv-desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; font-weight: 300; }
+
+    /* Physician cards */
+    .team-section { padding: 100px 0; }
     .physician-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 40px;
-      padding: 100px 0;
-      max-width: 1000px;
-      margin: 0 auto;
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 40px; max-width: 1000px; margin: 56px auto 0;
     }
     .physician-card {
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+      background: #fff; border: 1px solid var(--border);
+      border-radius: 24px; overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.04);
+      transition: all 0.3s;
     }
-    .physician-img {
-      width: 100%;
-      height: 380px;
-      object-fit: cover;
-      object-position: top;
-      background: var(--cream);
+    .physician-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.08);
     }
-    .physician-info {
-      padding: 32px;
+    .physician-avatar-area {
+      height: 240px; display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, #0d1a2e, #1a3a2e);
+      position: relative; overflow: hidden;
     }
+    .physician-avatar-area::before {
+      content: ''; position: absolute; top: -30px; right: -30px;
+      width: 200px; height: 200px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(125,186,150,0.2), transparent);
+    }
+    .physician-avatar {
+      width: 120px; height: 120px; border-radius: 50%;
+      background: rgba(125,186,150,0.15);
+      border: 3px solid rgba(125,186,150,0.4);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 44px; font-weight: 300; color: #7dba96;
+      position: relative; z-index: 2;
+    }
+    .physician-info { padding: 36px; }
     .physician-name {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 28px;
-      color: var(--charcoal);
-      margin-bottom: 8px;
+      font-size: 28px; color: var(--charcoal); margin-bottom: 6px;
     }
     .physician-title {
-      font-size: 14px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--green-light);
-      font-weight: 600;
-      margin-bottom: 20px;
+      font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px;
+      color: var(--green-light); font-weight: 600; margin-bottom: 20px;
     }
     .physician-bio {
-      font-size: 15px;
-      color: var(--text-muted);
-      line-height: 1.6;
-      margin-bottom: 24px;
+      font-size: 14px; color: var(--text-muted);
+      line-height: 1.7; font-weight: 300; margin-bottom: 24px;
+    }
+    .physician-specialties {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px;
+    }
+    .physician-specialty {
+      background: var(--green-mist); color: var(--green-mid);
+      font-size: 11px; padding: 5px 14px; border-radius: 20px;
+      font-weight: 500; letter-spacing: 0.3px;
     }
     .physician-creds {
-      border-top: 1px solid var(--border-light);
-      padding-top: 20px;
-      font-size: 13px;
-      color: var(--charcoal);
-      font-family: monospace;
+      border-top: 1px solid var(--border-light); padding-top: 20px;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .physician-cred {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 13px; color: var(--text-muted);
+    }
+    .physician-cred strong { color: var(--text); font-weight: 600; min-width: 100px; }
+    .physician-cred-icon { color: var(--green-light); font-size: 16px; }
+
+    /* Approach section */
+    .approach-section {
+      padding: 100px 0;
+      background-image: url("assets/brand/freeley_pattern_dark.jpg"); background-size: cover; background-position: center;
+      color: white;
+    }
+    .approach-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 24px; margin-top: 56px;
+    }
+    .approach-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 22px; padding: 36px 28px;
+      transition: all 0.3s; text-align: center;
+    }
+    .approach-card:hover {
+      background: rgba(255,255,255,0.07);
+      border-color: rgba(61,140,94,0.3);
+    }
+    .approach-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 56px; font-weight: 300; color: #7dba96;
+      line-height: 1; margin-bottom: 16px;
+    }
+    .approach-title { font-size: 17px; font-weight: 600; color: #fff; margin-bottom: 10px; }
+    .approach-desc { font-size: 14px; color: rgba(255,255,255,0.45); line-height: 1.7; font-weight: 300; }
+
+    /* CTA */
+    .team-cta {
+      background-image: url("assets/brand/freeley_pattern_dark.jpg"); background-size: cover; background-position: center;
+      padding: 100px 0; text-align: center;
+    }
+    .team-cta h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(38px,5vw,64px); font-weight: 300; color: #fff; margin-bottom: 16px;
+    }
+    .team-cta h2 em { font-style: italic; color: #7dba96; }
+    .team-cta p { color: rgba(255,255,255,0.5); font-size: 16px; margin-bottom: 40px; }
+
+    @media(max-width:1024px) {
+      .philosophy-grid { grid-template-columns: 1fr; }
+      .physician-grid { grid-template-columns: 1fr; max-width: 520px; }
+      .approach-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media(max-width:640px) {
+      .clinical-stats { gap: 28px; }
+      .approach-grid { grid-template-columns: 1fr; }
     }
   </style>
   <link rel="canonical" href="https://freeley.com/physicians">
 </head>
 <body>
 
+  <!-- HERO -->
   <section class="bio-hero">
-    <div class="container reveal">
-      <h1>Our Medical <em>Team</em></h1>
-      <p>Meet the board-certified physicians dedicated to providing exceptional, evidence-based care through the Freeley telehealth platform.</p>
+    <div class="container">
+      <div class="reveal">
+        <span class="eyebrow" style="color:#7dba96">Medical Team</span>
+        <h1>Your health,<br>in <em>expert hands</em></h1>
+        <p>Every Freeley treatment plan is reviewed and prescribed by a board-certified physician. No algorithms, no shortcuts — real clinical oversight for every patient.</p>
+      </div>
+      <div class="clinical-stats reveal reveal-delay-1">
+        <div class="clinical-stat">
+          <div class="clinical-stat-num">50</div>
+          <div class="clinical-stat-label">States licensed</div>
+        </div>
+        <div class="clinical-stat">
+          <div class="clinical-stat-num">30+</div>
+          <div class="clinical-stat-label">Years combined experience</div>
+        </div>
+        <div class="clinical-stat">
+          <div class="clinical-stat-num">100%</div>
+          <div class="clinical-stat-label">Board-certified</div>
+        </div>
+        <div class="clinical-stat">
+          <div class="clinical-stat-num">24hr</div>
+          <div class="clinical-stat-label">Avg. review time</div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <div class="container">
-    <div class="physician-grid">
-      <div class="physician-card reveal reveal-delay-1">
-        <!-- Placeholder image until generative AI is available -->
-        <div class="physician-img" style="background:var(--cream); display:flex; align-items:center; justify-content:center; color:var(--text-muted);">[Image Placeholder]</div>
-        <div class="physician-info">
-          <div class="physician-name">Dr. Alicia Martinez, MD</div>
-          <div class="physician-title">Chief Medical Director</div>
-          <div class="physician-bio">Dr. Martinez is a board-certified endocrinologist specializing in metabolic health and medical weight management. With over 15 years of clinical practice, she oversees Freeley's clinical safety protocols and treatment guidelines.</div>
-          <div class="physician-creds">
-            <strong>Board Certification:</strong> Internal Medicine, Endocrinology<br>
-            <strong>Education:</strong> Johns Hopkins University School of Medicine<br>
-            <strong>Licenses:</strong> CA, FL, NY, TX, IL + 15 others
-          </div>
+  <!-- CLINICAL PHILOSOPHY -->
+  <section class="philosophy-section">
+    <div class="container">
+      <div class="philosophy-grid">
+        <div class="reveal">
+          <span class="eyebrow">Our Approach</span>
+          <h2 class="philosophy-title">Medicine should be<br><em>personal, not transactional</em></h2>
+          <p class="philosophy-text">Our physicians take the time to understand your unique health profile, goals, and medical history before recommending treatment. This isn't a prescription mill — it's a clinical partnership designed around you.</p>
+          <p class="philosophy-text">When a treatment isn't appropriate for you, your physician will explain why and offer alternatives. Patient safety always comes first.</p>
         </div>
-      </div>
-
-      <div class="physician-card reveal reveal-delay-2">
-        <div class="physician-img" style="background:var(--cream); display:flex; align-items:center; justify-content:center; color:var(--text-muted);">[Image Placeholder]</div>
-        <div class="physician-info">
-          <div class="physician-name">Dr. James Chen, DO</div>
-          <div class="physician-title">Lead Physician, Men's Health</div>
-          <div class="physician-bio">Dr. Chen specializes in urology and men's wellness. He is an advocate for accessible, destigmatized treatments for sexual health and longevity, bringing his extensive expertise to the Freeley platform.</div>
-          <div class="physician-creds">
-            <strong>Board Certification:</strong> Urology<br>
-            <strong>Education:</strong> UCLA David Geffen School of Medicine<br>
-            <strong>Licenses:</strong> All 50 States via Interstate Medical Licensure Compact
+        <div class="philosophy-values reveal reveal-delay-1">
+          <div class="pv-item">
+            <span class="pv-icon"><i class="ri-stethoscope-fill" style="color: var(--green);"></i></span>
+            <div>
+              <div class="pv-label">Evidence-Based Protocols</div>
+              <div class="pv-desc">Treatment guidelines built on peer-reviewed research and clinical best practices — not marketing trends.</div>
+            </div>
+          </div>
+          <div class="pv-item">
+            <span class="pv-icon"><i class="ri-shield-check-fill" style="color: var(--green);"></i></span>
+            <div>
+              <div class="pv-label">Patient Safety First</div>
+              <div class="pv-desc">Contraindication screening, drug interaction checks, and ongoing monitoring built into every treatment plan.</div>
+            </div>
+          </div>
+          <div class="pv-item">
+            <span class="pv-icon"><i class="ri-chat-smile-2-fill" style="color: var(--green);"></i></span>
+            <div>
+              <div class="pv-label">Ongoing Communication</div>
+              <div class="pv-desc">Direct messaging with your physician for questions, dosage adjustments, and progress check-ins.</div>
+            </div>
+          </div>
+          <div class="pv-item">
+            <span class="pv-icon"><i class="ri-bar-chart-grouped-fill" style="color: var(--green);"></i></span>
+            <div>
+              <div class="pv-label">Data-Driven Adjustments</div>
+              <div class="pv-desc">Lab monitoring and biomarker tracking inform dosage changes — not guesswork.</div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
+
+  <!-- PHYSICIAN CARDS -->
+  <section class="team-section">
+    <div class="container">
+      <div class="reveal" style="text-align: center;">
+        <span class="eyebrow">The Team</span>
+        <h2 class="display" style="font-size:clamp(34px,4.5vw,52px);">Meet your<br><em>physicians</em></h2>
+      </div>
+      <div class="physician-grid">
+        <div class="physician-card reveal reveal-delay-1">
+          <div class="physician-avatar-area">
+            <div class="physician-avatar">AM</div>
+          </div>
+          <div class="physician-info">
+            <div class="physician-name">Dr. Alicia Martinez, MD</div>
+            <div class="physician-title">Chief Medical Director</div>
+            <div class="physician-bio">Board-certified endocrinologist specializing in metabolic health and medical weight management. With over 15 years of clinical practice, Dr. Martinez oversees Freeley's clinical safety protocols, treatment guidelines, and physician training programs.</div>
+            <div class="physician-specialties">
+              <span class="physician-specialty">Weight Management</span>
+              <span class="physician-specialty">Metabolic Health</span>
+              <span class="physician-specialty">Endocrinology</span>
+              <span class="physician-specialty">GLP-1 Therapy</span>
+            </div>
+            <div class="physician-creds">
+              <div class="physician-cred">
+                <i class="ri-award-fill physician-cred-icon"></i>
+                <strong>Board Cert</strong> Internal Medicine, Endocrinology
+              </div>
+              <div class="physician-cred">
+                <i class="ri-graduation-cap-fill physician-cred-icon"></i>
+                <strong>Education</strong> Johns Hopkins University School of Medicine
+              </div>
+              <div class="physician-cred">
+                <i class="ri-map-pin-fill physician-cred-icon"></i>
+                <strong>Licenses</strong> CA, FL, NY, TX, IL + 15 others
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="physician-card reveal reveal-delay-2">
+          <div class="physician-avatar-area">
+            <div class="physician-avatar">JC</div>
+          </div>
+          <div class="physician-info">
+            <div class="physician-name">Dr. James Chen, DO</div>
+            <div class="physician-title">Lead Physician, Men's Health</div>
+            <div class="physician-bio">Board-certified urologist and advocate for accessible, destigmatized treatments for sexual health and longevity. Dr. Chen brings extensive clinical expertise to the Freeley platform with a focus on ED treatment protocols and peptide therapy.</div>
+            <div class="physician-specialties">
+              <span class="physician-specialty">Men's Health</span>
+              <span class="physician-specialty">Urology</span>
+              <span class="physician-specialty">ED Treatment</span>
+              <span class="physician-specialty">Peptide Therapy</span>
+            </div>
+            <div class="physician-creds">
+              <div class="physician-cred">
+                <i class="ri-award-fill physician-cred-icon"></i>
+                <strong>Board Cert</strong> Urology
+              </div>
+              <div class="physician-cred">
+                <i class="ri-graduation-cap-fill physician-cred-icon"></i>
+                <strong>Education</strong> UCLA David Geffen School of Medicine
+              </div>
+              <div class="physician-cred">
+                <i class="ri-map-pin-fill physician-cred-icon"></i>
+                <strong>Licenses</strong> All 50 States (IMLC)
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLINICAL APPROACH -->
+  <section class="approach-section">
+    <div class="container">
+      <div class="reveal" style="text-align: center;">
+        <span class="eyebrow" style="color:#7dba96">Clinical Process</span>
+        <h2 class="display display-white" style="font-size:clamp(34px,4.5vw,52px);color:#fff;">How your physician<br><em>manages your care</em></h2>
+      </div>
+      <div class="approach-grid">
+        <div class="approach-card reveal reveal-delay-1">
+          <div class="approach-num">01</div>
+          <div class="approach-title">Review & Evaluate</div>
+          <div class="approach-desc">Your physician reviews your health intake, medical history, current medications, and treatment goals to determine clinical eligibility.</div>
+        </div>
+        <div class="approach-card reveal reveal-delay-2">
+          <div class="approach-num">02</div>
+          <div class="approach-title">Prescribe & Personalize</div>
+          <div class="approach-desc">A customized treatment plan with specific medication, dosage, titration schedule, and monitoring parameters tailored to your needs.</div>
+        </div>
+        <div class="approach-card reveal reveal-delay-3">
+          <div class="approach-num">03</div>
+          <div class="approach-title">Monitor & Optimize</div>
+          <div class="approach-desc">Ongoing check-ins, lab monitoring, and dosage adjustments ensure your treatment stays effective, safe, and aligned with your goals.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="team-cta">
+    <div class="container">
+      <div class="reveal">
+        <h2>Your physician is<br><em>ready to see you</em></h2>
+        <p>Free consultation · No commitment · Same-day review</p>
+        <a href="quiz.html" class="btn btn-primary btn-lg">Start My Free Visit →</a>
+      </div>
+    </div>
+  </section>
 
   <script src="shared.js"></script>
-  <script>
-    initPage('about');
-  </script>
+  <script>initPage('about');</script>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
 </body>
 </html>
