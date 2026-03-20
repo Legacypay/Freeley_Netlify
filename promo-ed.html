@@ -216,18 +216,19 @@
       <a href="/quiz" style="font-size: 13px; font-weight: 600; color: #204573; text-decoration: none;">Get Started</a>
     </header>
 
-    <!-- 1. HERO -->
-    <section class="hl-hero">
-      <div class="stars">★★★★★ <span style="justify-content:flex-start;">Rated 4.9/5 (18,000+ Reviews)</span></div>
-      <h1>Live your best <br><em>sex life.</em></h1>
-      <p style="color: var(--text-muted); font-size: 16px; margin-bottom: 32px; line-height: 1.5;">Clinical-grade 3-in-1 sublingual ED compound. Fast-acting, reliable, and discreetly delivered.</p>
-      
-      <a href="/quiz" class="hero-btn">Start My Risk-Free Visit →</a>
-      <div class="hero-guarantee">
-        <i class="ri-shield-check-fill"></i> Works in as fast as 15 minutes
+    <!-- 1. HERO (Video-Powered) -->
+    <section class="hl-hero video-hero" data-video="assets/videos/hero-sexual-wellness.mp4" data-fallback="assets/promo/ed-hero.jpg" style="padding: 0; background: #000; min-height: 520px; display: flex; align-items: center; justify-content: center;">
+      <div class="video-hero-overlay" style="background: linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.55) 100%);"></div>
+      <div class="video-hero-content" style="position: relative; z-index: 2; padding: 48px 24px; text-align: center; width: 100%;">
+        <div class="stars" style="color: #facc15;">★★★★★ <span style="color: rgba(255,255,255,0.7); justify-content:flex-start;">Rated 4.9/5 (18,000+ Reviews)</span></div>
+        <h1 style="color: #fff;">Live your best <br><em style="color: #7cb8f0;">sex life.</em></h1>
+        <p style="color: rgba(255,255,255,0.85); font-size: 16px; margin-bottom: 32px; line-height: 1.5;">Clinical-grade 3-in-1 sublingual ED compound. Fast-acting, reliable, and discreetly delivered.</p>
+        
+        <a href="/quiz" class="hero-btn" style="max-width: 360px; margin: 0 auto 12px;">Start My Risk-Free Visit →</a>
+        <div class="hero-guarantee" style="color: rgba(255,255,255,0.7);">
+          <i class="ri-shield-check-fill"></i> Works in as fast as 15 minutes
+        </div>
       </div>
-
-      <img src="assets/promo/ed-hero.jpg" alt="Happy couple on rooftop at golden hour" class="hero-img" style="object-fit:cover; height: 350px;">
     </section>
 
     <!-- 2. LOGOS -->
@@ -389,6 +390,7 @@
 
   </div> <!-- End Mobile Container -->
 
+  <script src="video-hero.js"></script>
   <script src="shared.js"></script>
 </body>
 </html>

@@ -212,18 +212,19 @@
       <a href="/quiz" style="font-size: 13px; font-weight: 600; color: var(--green-dark); text-decoration: none;">Get Started</a>
     </header>
 
-    <!-- 1. HERO -->
-    <section class="hl-hero">
-      <div class="stars">★★★★★ <span>Rated 4.9/5 (2,400+ Reviews)</span></div>
-      <h1>They Won't Stop <em>Asking What You Did</em></h1>
-      <p style="color: var(--text-muted); font-size: 16px; margin-bottom: 32px; line-height: 1.5;">Clinical-grade hair regrowth delivered to your door. Keep your hair, and your confidence.</p>
-      
-      <a href="/quiz" class="hero-btn">See If You Qualify →</a>
-      <div class="hero-guarantee">
-        <i class="ri-shield-check-fill"></i> Physician-Backed Treatment
+    <!-- 1. HERO (Video-Powered) -->
+    <section class="hl-hero video-hero" data-video="assets/videos/hero-hair-loss.mp4" data-fallback="assets/promo/hair-loss-hero.jpg" style="padding: 0; background: #000; min-height: 520px; display: flex; align-items: center; justify-content: center;">
+      <div class="video-hero-overlay" style="background: linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.55) 100%);"></div>
+      <div class="video-hero-content" style="position: relative; z-index: 2; padding: 48px 24px; text-align: center; width: 100%;">
+        <div class="stars" style="color: #facc15;">★★★★★ <span style="color: rgba(255,255,255,0.7);">Rated 4.9/5 (2,400+ Reviews)</span></div>
+        <h1 style="color: #fff;">They Won't Stop <em style="color: #c9a86c;">Asking What You Did</em></h1>
+        <p style="color: rgba(255,255,255,0.85); font-size: 16px; margin-bottom: 32px; line-height: 1.5;">Clinical-grade hair regrowth delivered to your door. Keep your hair, and your confidence.</p>
+        
+        <a href="/quiz" class="hero-btn" style="max-width: 360px; margin: 0 auto 12px;">See If You Qualify →</a>
+        <div class="hero-guarantee" style="color: rgba(255,255,255,0.7);">
+          <i class="ri-shield-check-fill"></i> Physician-Backed Treatment
+        </div>
       </div>
-
-      <img src="assets/promo/hair-loss-hero.jpg" alt="Confident man running hands through thick hair" class="hero-img" style="object-fit:cover; height: 350px;">
     </section>
 
     <!-- 2. LOGOS -->
@@ -384,6 +385,7 @@
 
   </div> <!-- End Mobile Container -->
 
+  <script src="video-hero.js"></script>
   <script src="shared.js"></script>
 </body>
 </html>
