@@ -1,9 +1,12 @@
 ---
-title: "Cost Comparison: Compounded Tirzepatide vs. Mounjaro"
-tag: "medication cost, tirzepatide, Mounjaro, diabetes treatment"
-excerpt: "Explore the cost differences between compounded Tirzepatide and Mounjaro for diabetes management. Understand the pricing factors and make informed decisions for your health."
-date: "2023-10-17"
-image: "assets/blog_hero_tirzepatide_cost.png"
+title: 'Cost Comparison: Compounded Tirzepatide vs. Mounjaro'
+tag: 'medication cost, tirzepatide, Mounjaro, diabetes treatment'
+excerpt: >-
+  Explore the cost differences between compounded Tirzepatide and Mounjaro for
+  diabetes management. Understand the pricing factors and make informed
+  decisions for your health.
+date: '2023-10-17'
+image: assets/blog/cost-of-compounded-tirzepatide-vs-mounjaro.jpg
 ---
 
 ## Understanding Tirzepatide and Mounjaro

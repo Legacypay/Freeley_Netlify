@@ -1,9 +1,11 @@
 ---
-title: "Exploring Compounded Oral Minoxidil for Hair Loss Online"
-tag: "Hair Loss"
-excerpt: "Discover the potential of compounded oral minoxidil as a treatment for hair loss, and learn how to access it online safely and effectively."
-date: "2023-10-01"
-image: "assets/blog_hero_finasteride_hair.png"
+title: Exploring Compounded Oral Minoxidil for Hair Loss Online
+tag: Hair Loss
+excerpt: >-
+  Discover the potential of compounded oral minoxidil as a treatment for hair
+  loss, and learn how to access it online safely and effectively.
+date: '2023-10-01'
+image: assets/blog/compounded-oral-minoxidil-for-hair-loss-online.jpg
 ---
 
 # Exploring Compounded Oral Minoxidil for Hair Loss Online

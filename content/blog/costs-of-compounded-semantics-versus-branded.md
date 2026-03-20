@@ -1,9 +1,11 @@
 ---
-title: "Costs of Compounded Semantics Versus Branded Medications"
-tag: "Healthcare Costs"
-excerpt: "Explore the financial implications of choosing compounded medications over branded options and how it impacts patient care and healthcare systems."
-date: 2023-10-25
-image: "assets/sarah.jpeg"
+title: Costs of Compounded Semantics Versus Branded Medications
+tag: Healthcare Costs
+excerpt: >-
+  Explore the financial implications of choosing compounded medications over
+  branded options and how it impacts patient care and healthcare systems.
+date: 2023-10-25T00:00:00.000Z
+image: assets/blog/costs-of-compounded-semantics-versus-branded.jpg
 ---
 
 # Costs of Compounded Semantics Versus Branded Medications

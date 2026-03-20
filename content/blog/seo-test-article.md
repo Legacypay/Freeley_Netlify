@@ -1,9 +1,11 @@
 ---
-title: "The Ultimate Guide to Men's Health Telemedicine"
-tag: "Men's Health"
-excerpt: "Why the modern man is skipping the waiting room and what you need to know about getting safe, clinical-grade ED and hair loss treatments online."
-date: "2026-03-15T10:00:00Z"
-image: "assets/brand/hair_loss_hero.png"
+title: The Ultimate Guide to Men's Health Telemedicine
+tag: Men's Health
+excerpt: >-
+  Why the modern man is skipping the waiting room and what you need to know
+  about getting safe, clinical-grade ED and hair loss treatments online.
+date: '2026-03-15T10:00:00Z'
+image: assets/blog/seo-test-article.jpg
 ---
 
 ## Skipping the Waiting Room
