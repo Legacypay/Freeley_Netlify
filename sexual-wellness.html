@@ -405,6 +405,29 @@
       background: rgba(80, 140, 220, 1);
     }
 
+    /* Sticky CTA Bar */
+    .sticky-cta-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: rgba(13,26,46,0.97); backdrop-filter: blur(12px);
+      padding: 14px 0; z-index: 900;
+      transform: translateY(100%); transition: transform 0.4s ease;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .sticky-cta-bar.visible { transform: translateY(0); }
+    .sticky-cta-inner {
+      max-width: 1200px; margin: 0 auto; padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    .sticky-cta-text { color: #fff; font-size: 15px; font-weight: 500; }
+    .sticky-cta-text span { color: #9fccff; font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 400; margin-right: 12px; }
+    .sticky-cta-btn {
+      background: rgba(80,140,220,0.8); color: #fff; padding: 12px 32px;
+      border-radius: 50px; font-family: 'DM Sans', sans-serif; font-size: 14px;
+      font-weight: 600; text-decoration: none; white-space: nowrap; transition: all 0.2s;
+    }
+    .sticky-cta-btn:hover { background: rgba(80,140,220,1); transform: translateY(-1px); }
+    @media(max-width:640px) { .sticky-cta-text span { display: block; font-size: 18px; } .sticky-cta-inner { flex-direction: column; text-align: center; } }
+
     @media(max-width:1024px) {
       .hero-grid {
         grid-template-columns: 1fr;
@@ -588,6 +611,59 @@
     </div>
   </section>
 
+  <!-- PATIENT STORIES -->
+  <section style="padding: 80px 0; background: var(--off-white);">
+    <div class="container">
+      <div class="reveal" style="text-align: center; margin-bottom: 40px;">
+        <span class="eyebrow">Real Results</span>
+        <h2 class="display" style="font-size:clamp(34px,4.5vw,52px); margin-top:12px;">Why men choose<br><em>the 3-in-1 troche</em></h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 1000px; margin: 0 auto;">
+        <div class="reveal reveal-delay-1" style="background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 32px; transition: all 0.3s;">
+          <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(80,140,220,0.08); border: 1px solid rgba(80,140,220,0.2); border-radius: 10px; padding: 8px 16px; margin-bottom: 16px;">
+            <strong style="font-family: 'Cormorant Garamond', serif; font-size: 22px; color: #2a5a8a;">15 min</strong>
+            <span style="font-size: 12px; color: var(--text-muted);">onset time</span>
+          </div>
+          <p style="font-size: 15px; color: var(--text-muted); line-height: 1.7; margin-bottom: 20px; font-weight: 300;">"I ditched the blue pill. This troche works faster, lasts way longer, and there's no 'planning ahead' anymore. Complete game changer."</p>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(80,140,220,0.1); display: flex; align-items: center; justify-content: center; font-weight: 600; color: #2a5a8a; font-size: 14px;">DM</div>
+            <div><div style="font-weight: 600; font-size: 14px;">David M.</div><div style="font-size: 12px; color: var(--text-faint);">Age 42 · NYC</div></div>
+          </div>
+        </div>
+        <div class="reveal reveal-delay-2" style="background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 32px; transition: all 0.3s;">
+          <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(80,140,220,0.08); border: 1px solid rgba(80,140,220,0.2); border-radius: 10px; padding: 8px 16px; margin-bottom: 16px;">
+            <strong style="font-family: 'Cormorant Garamond', serif; font-size: 22px; color: #2a5a8a;">36 hrs</strong>
+            <span style="font-size: 12px; color: var(--text-muted);">duration</span>
+          </div>
+          <p style="font-size: 15px; color: var(--text-muted); line-height: 1.7; margin-bottom: 20px; font-weight: 300;">"The fact that it lasts the entire weekend is huge. No more awkward timing. My confidence is completely back and my partner noticed immediately."</p>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(80,140,220,0.1); display: flex; align-items: center; justify-content: center; font-weight: 600; color: #2a5a8a; font-size: 14px;">SK</div>
+            <div><div style="font-weight: 600; font-size: 14px;">Sean K.</div><div style="font-size: 12px; color: var(--text-faint);">Age 38 · LA</div></div>
+          </div>
+        </div>
+        <div class="reveal reveal-delay-3" style="background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 32px; transition: all 0.3s;">
+          <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(80,140,220,0.08); border: 1px solid rgba(80,140,220,0.2); border-radius: 10px; padding: 8px 16px; margin-bottom: 16px;">
+            <strong style="font-family: 'Cormorant Garamond', serif; font-size: 22px; color: #2a5a8a;">$89</strong>
+            <span style="font-size: 12px; color: var(--text-muted);">vs $300+ brand</span>
+          </div>
+          <p style="font-size: 15px; color: var(--text-muted); line-height: 1.7; margin-bottom: 20px; font-weight: 300;">"I was paying $300/mo for brand-name pills that barely worked. The Freeley troche is a fraction of the price and honestly more effective. Wish I'd found this sooner."</p>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(80,140,220,0.1); display: flex; align-items: center; justify-content: center; font-weight: 600; color: #2a5a8a; font-size: 14px;">RH</div>
+            <div><div style="font-weight: 600; font-size: 14px;">Robert H.</div><div style="font-size: 12px; color: var(--text-faint);">Age 51 · Chicago</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STICKY CTA BAR -->
+  <div class="sticky-cta-bar" id="stickyCta">
+    <div class="sticky-cta-inner">
+      <div class="sticky-cta-text"><span>$89/mo</span> 3-in-1 troche · Free physician consult · Discreet delivery</div>
+      <a href="quiz.html" class="sticky-cta-btn">Start Free Visit →</a>
+    </div>
+  </div>
+
   <!-- CTA -->
   <section class="treatment-cta">
     <div class="container">
@@ -603,6 +679,15 @@
   <script src="shared.js"></script>
   <script>
     initPage('sexual-wellness');
+    // Sticky CTA
+    const stickyCta = document.getElementById('stickyCta');
+    if (stickyCta) {
+      const hero = document.querySelector('.treatment-hero');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => stickyCta.classList.toggle('visible', !e.isIntersecting));
+      }, { threshold: 0 });
+      if (hero) observer.observe(hero);
+    }
   </script>
   <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
 </body>

@@ -528,6 +528,29 @@
       }
     }
 
+    /* Sticky CTA Bar */
+    .sticky-cta-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: rgba(8,20,16,0.97); backdrop-filter: blur(12px);
+      padding: 14px 0; z-index: 900;
+      transform: translateY(100%); transition: transform 0.4s ease;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .sticky-cta-bar.visible { transform: translateY(0); }
+    .sticky-cta-inner {
+      max-width: 1200px; margin: 0 auto; padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    .sticky-cta-text { color: #fff; font-size: 15px; font-weight: 500; }
+    .sticky-cta-text span { color: #7dba96; font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 400; margin-right: 12px; }
+    .sticky-cta-btn {
+      background: var(--green-light); color: #fff; padding: 12px 32px;
+      border-radius: 50px; font-family: 'DM Sans', sans-serif; font-size: 14px;
+      font-weight: 600; text-decoration: none; white-space: nowrap; transition: all 0.2s;
+    }
+    .sticky-cta-btn:hover { background: var(--green-bright); transform: translateY(-1px); }
+    @media(max-width:640px) { .sticky-cta-text span { display: block; font-size: 18px; } .sticky-cta-inner { flex-direction: column; text-align: center; } }
+
     /* ── VIAL CAROUSEL ── */
     .vial-carousel {
       position: relative;
@@ -948,6 +971,14 @@
     </div>
   </section>
 
+  <!-- STICKY CTA BAR -->
+  <div class="sticky-cta-bar" id="stickyCta">
+    <div class="sticky-cta-inner">
+      <div class="sticky-cta-text"><span>From $39/mo</span> Finasteride · Minoxidil · Dutasteride · Free consult</div>
+      <a href="quiz.html" class="sticky-cta-btn">Start Free Visit →</a>
+    </div>
+  </div>
+
   <!-- CTA -->
   <section class="treatment-cta">
     <div class="container">
@@ -988,6 +1019,15 @@
       item.classList.toggle('open');
     }
     initPage('hair-loss');
+    // Sticky CTA
+    const stickyCta = document.getElementById('stickyCta');
+    if (stickyCta) {
+      const hero = document.querySelector('.treatment-hero');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => stickyCta.classList.toggle('visible', !e.isIntersecting));
+      }, { threshold: 0 });
+      if (hero) observer.observe(hero);
+    }
   </script>
   <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
 </body>
