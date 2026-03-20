@@ -19,8 +19,6 @@ jobs:
   build:
     name: calibreapp/image-actions
     runs-on: ubuntu-latest
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     permissions:
       contents: write
       pull-requests: write
@@ -31,9 +29,8 @@ jobs:
       - name: Compress Images
         id: calibre
         uses: calibreapp/image-actions@main
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          githubToken: ${{ github.token }}
           jpegQuality: "80"
           pngQuality: "80"
           webpQuality: "80"
