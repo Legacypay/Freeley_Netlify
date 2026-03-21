@@ -1599,6 +1599,53 @@
             <div style="font-size: 12px; color: var(--text-faint);">in 6 months*</div>
           </div>
         </div>
+
+        <!-- ═══ PERSONALIZED RECOMMENDED PLAN SUMMARY (#3 + #4) ═══ -->
+        <div id="recommendedPlanSummary" style="display: none; margin-bottom: 40px;">
+          <div style="background: linear-gradient(135deg, #1b492d 0%, #2c6e49 50%, #1b492d 100%); border-radius: 20px; padding: 40px 36px; color: #fff; position: relative; overflow: hidden; box-shadow: 0 16px 40px rgba(27,73,45,0.35);">
+            <!-- Decorative background -->
+            <div style="position: absolute; top: -40px; right: -40px; width: 200px; height: 200px; border-radius: 50%; background: rgba(255,255,255,0.03);"></div>
+            <div style="position: absolute; bottom: -60px; left: -30px; width: 180px; height: 180px; border-radius: 50%; background: rgba(255,255,255,0.02);"></div>
+            
+            <div style="position: relative; z-index: 2;">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+                <span style="background: rgba(255,255,255,0.15); padding: 6px 14px; border-radius: 50px; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; backdrop-filter: blur(4px);">
+                  <i class="ri-star-fill" style="margin-right: 4px; color: #ecc94b;"></i> Your #1 Recommended Plan
+                </span>
+              </div>
+              
+              <div style="display: flex; align-items: center; gap: 28px; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 280px;">
+                  <h3 id="recPlanName" style="font-family: 'Cormorant Garamond', serif; font-size: clamp(28px, 3.5vw, 38px); font-weight: 400; margin-bottom: 8px; line-height: 1.1;"></h3>
+                  <p id="recPlanDesc" style="font-size: 15px; color: rgba(255,255,255,0.75); line-height: 1.6; margin-bottom: 20px;"></p>
+                  
+                  <div style="display: flex; align-items: baseline; gap: 8px; margin-bottom: 24px;">
+                    <span id="recPlanPrice" style="font-family: 'Cormorant Garamond', serif; font-size: 42px; font-weight: 400;"></span>
+                    <span style="font-size: 16px; color: rgba(255,255,255,0.5);">/month</span>
+                    <span style="background: rgba(236,201,66,0.2); color: #ecc94b; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; margin-left: 8px;">SAVE UP TO 49%</span>
+                  </div>
+                  
+                  <a id="recPlanCTA" href="#" style="display: inline-flex; align-items: center; gap: 8px; padding: 16px 32px; background: #fff; color: var(--forest); border-radius: 50px; font-size: 15px; font-weight: 600; text-decoration: none; transition: all 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                    Start Your Treatment <i class="ri-arrow-right-line"></i>
+                  </a>
+                </div>
+                
+                <div id="recPlanImage" style="flex-shrink: 0;">
+                  <img id="recPlanImg" src="" alt="" style="height: 180px; width: auto; object-fit: contain; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));">
+                </div>
+              </div>
+              
+              <!-- Personalized "Why" section -->
+              <div style="margin-top: 28px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.12);">
+                <div style="font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 16px;">
+                  <i class="ri-user-settings-fill" style="margin-right: 4px;"></i> Why this was chosen for you
+                </div>
+                <div id="recPlanReasons" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="results-plans">
           <div class="plan-card" id="plan-wl">
             <div class="plan-recommended-tag">Best Match</div>
@@ -1941,6 +1988,9 @@
         }
       } catch(e) { console.log('BMI calc skipped:', e); }
 
+      // ═══ PERSONALIZED RECOMMENDED PLAN SUMMARY ═══
+      buildPersonalizedRecommendation(quizData);
+
       startCheckoutTimer();
     }
 
@@ -1964,6 +2014,138 @@
           display.textContent = '00:00';
         }
       }, 1000);
+    }
+
+    function buildPersonalizedRecommendation(quizData) {
+      const goals = quizData.goals || [];
+      const activity = quizData.activityLevel || '';
+      const symptoms = quizData.symptoms || [];
+      const history = quizData.medicalHistory || [];
+
+      // Priority: weight loss > ED > longevity > hair
+      const planMap = {
+        'weight-loss': {
+          name: 'GLP-1 Weight Loss Protocol',
+          desc: 'Semaglutide compounded with B12 — clinically proven to reduce body weight by 15-20%. Your physician will personalize your titration schedule based on your profile.',
+          price: '$99.29',
+          img: 'assets/brand/semag_transparent.png',
+          alt: 'Semaglutide',
+          link: '/checkout.html?treatment=weight-loss'
+        },
+        'ed': {
+          name: 'Sexual Wellness Protocol',
+          desc: '3-in-1 sublingual troches combining Sildenafil, Tadalafil, and Apomorphine — fast-dissolving for rapid onset. Physician-customized dosing based on your needs.',
+          price: '$59',
+          img: 'assets/ed_pills_new.webp',
+          alt: 'ED Treatment',
+          link: '/checkout.html?treatment=ed'
+        },
+        'longevity': {
+          name: 'Longevity & Recovery Stack',
+          desc: 'Sermorelin + NAD+ peptide protocol for cellular repair, energy optimization, and anti-aging. Custom-formulated based on your activity level and goals.',
+          price: '$99',
+          img: 'assets/peptides_new.webp',
+          alt: 'Longevity Stack',
+          link: '/checkout.html?treatment=longevity'
+        },
+        'hair': {
+          name: 'Hair Restoration Protocol',
+          desc: 'Finasteride, Minoxidil, or Dutasteride — prescribed based on your pattern and stage. DHT-blocking compounds stop loss and stimulate regrowth.',
+          price: '$29',
+          img: 'assets/brand/freeley_hair_bottle.png',
+          alt: 'Hair Loss Treatment',
+          link: '/checkout.html?treatment=hair-loss'
+        }
+      };
+
+      // Determine #1 recommendation
+      let topPlan = null;
+      if (goals.includes('Lose Weight') || goals.includes('Body Composition')) {
+        topPlan = 'weight-loss';
+      } else if (goals.includes('Sexual Wellness & ED')) {
+        topPlan = 'ed';
+      } else if (goals.includes('Longevity & Performance') || goals.includes('Mental Clarity & Mood')) {
+        topPlan = 'longevity';
+      } else if (goals.includes('Hair Loss')) {
+        topPlan = 'hair';
+      }
+
+      if (!topPlan) return; // No recommendation possible
+
+      const plan = planMap[topPlan];
+
+      // Build personalized reasons
+      const reasons = [];
+
+      // Goal-based reasons
+      if (topPlan === 'weight-loss') {
+        reasons.push({ icon: 'ri-scales-3-fill', text: 'You selected weight loss as a primary health goal' });
+        if (activity === 'Sedentary') {
+          reasons.push({ icon: 'ri-walk-fill', text: 'GLP-1s are especially effective for sedentary lifestyles — they reduce appetite without requiring intense exercise' });
+        } else if (activity === 'Very Active') {
+          reasons.push({ icon: 'ri-run-line', text: 'For active patients, GLP-1 therapy accelerates body recomposition alongside your exercise routine' });
+        } else {
+          reasons.push({ icon: 'ri-heart-pulse-fill', text: 'GLP-1 therapy works synergistically with moderate activity levels for optimal results' });
+        }
+        if (symptoms.includes('Constant Hunger / Cravings')) {
+          reasons.push({ icon: 'ri-restaurant-2-fill', text: 'Semaglutide directly targets appetite signaling — ideal for managing hunger and cravings' });
+        }
+        if (symptoms.includes('Low Energy / Fatigue')) {
+          reasons.push({ icon: 'ri-flashlight-fill', text: 'B12 compound included to combat fatigue during caloric restriction' });
+        }
+      } else if (topPlan === 'ed') {
+        reasons.push({ icon: 'ri-flashlight-fill', text: 'You selected sexual wellness as a priority' });
+        reasons.push({ icon: 'ri-capsule-fill', text: 'Sublingual troches dissolve in 15 minutes for rapid onset — no pills to swallow' });
+        if (activity === 'Very Active') {
+          reasons.push({ icon: 'ri-heart-pulse-fill', text: 'Active lifestyle supports cardiovascular health for optimal treatment response' });
+        }
+      } else if (topPlan === 'longevity') {
+        reasons.push({ icon: 'ri-node-tree', text: 'You selected longevity and performance optimization' });
+        if (symptoms.includes('Low Energy / Fatigue')) {
+          reasons.push({ icon: 'ri-flashlight-fill', text: 'NAD+ directly targets cellular energy production — reversing mitochondrial fatigue' });
+        }
+        if (symptoms.includes('Poor Sleep') || symptoms.includes('Brain Fog')) {
+          reasons.push({ icon: 'ri-mental-health-fill', text: 'Sermorelin boosts deep sleep and cognitive recovery' });
+        }
+        reasons.push({ icon: 'ri-shield-star-fill', text: 'Peptide protocols support recovery, immune function, and biological age reversal' });
+      } else if (topPlan === 'hair') {
+        reasons.push({ icon: 'ri-seedling-fill', text: 'You indicated hair loss as a concern' });
+        reasons.push({ icon: 'ri-shield-check-fill', text: 'DHT blockers prevent further loss while stimulating new follicle growth' });
+        reasons.push({ icon: 'ri-time-fill', text: 'Early intervention produces the best results — starting now maximizes regrowth potential' });
+      }
+
+      // Universal reasons
+      if (history.includes('None of the above')) {
+        reasons.push({ icon: 'ri-checkbox-circle-fill', text: 'No contraindications detected in your medical history — you\'re an ideal candidate' });
+      }
+
+      // Populate the card
+      document.getElementById('recPlanName').textContent = plan.name;
+      document.getElementById('recPlanDesc').textContent = plan.desc;
+      document.getElementById('recPlanPrice').textContent = plan.price;
+      document.getElementById('recPlanImg').src = plan.img;
+      document.getElementById('recPlanImg').alt = plan.alt;
+      document.getElementById('recPlanCTA').href = plan.link;
+
+      // Build reason cards
+      const reasonsContainer = document.getElementById('recPlanReasons');
+      reasonsContainer.innerHTML = reasons.slice(0, 4).map(r => `
+        <div style="display: flex; align-items: flex-start; gap: 10px; background: rgba(255,255,255,0.07); padding: 14px 16px; border-radius: 12px; backdrop-filter: blur(4px);">
+          <i class="${r.icon}" style="color: #7dba96; font-size: 18px; flex-shrink: 0; margin-top: 2px;"></i>
+          <span style="font-size: 13px; line-height: 1.5; color: rgba(255,255,255,0.85);">${r.text}</span>
+        </div>
+      `).join('');
+
+      // Show the card with animation
+      const summary = document.getElementById('recommendedPlanSummary');
+      summary.style.display = 'block';
+      summary.style.opacity = '0';
+      summary.style.transform = 'translateY(20px)';
+      setTimeout(() => {
+        summary.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+        summary.style.opacity = '1';
+        summary.style.transform = 'translateY(0)';
+      }, 300);
     }
 
     function toggleOption(el) {
