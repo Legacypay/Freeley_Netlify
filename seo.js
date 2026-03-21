@@ -10,7 +10,7 @@
 
   const SITE_URL = 'https://freeley.com';
   const SITE_NAME = 'Freeley';
-  const DEFAULT_IMAGE = SITE_URL + '/assets/brand/freeley-og.jpg';
+  const DEFAULT_IMAGE = SITE_URL + '/assets/og/freeley-og.jpg';
   const TWITTER_HANDLE = '@freeleyhealth';
 
   // Page-specific SEO data
@@ -28,28 +28,28 @@
     '/weight-loss.html': {
       title: 'Medical Weight Loss Online — GLP-1 Treatments | Freeley',
       description: 'FDA-approved compounded semaglutide & tirzepatide prescribed by board-certified physicians. Lose 15-20% body weight. Plans from $199/mo. Free consultation.',
-      image: SITE_URL + '/assets/promo/weight-loss-hero.jpg',
+      image: SITE_URL + '/assets/og/og-weight-loss.jpg',
       schema: 'MedicalTherapy',
       schemaName: 'GLP-1 Weight Loss Treatment'
     },
     '/hair-loss.html': {
       title: 'Hair Loss Treatment Online — Finasteride & Minoxidil | Freeley',
       description: 'Clinically proven hair regrowth treatments prescribed online. Oral minoxidil, finasteride, and custom compounded formulas. Results in 3-6 months.',
-      image: SITE_URL + '/assets/promo/hair-loss-hero.jpg',
+      image: SITE_URL + '/assets/og/og-hair-loss.jpg',
       schema: 'MedicalTherapy',
       schemaName: 'Hair Loss Treatment'
     },
     '/sexual-wellness.html': {
       title: 'ED Treatment Online — Discreet & Affordable | Freeley',
       description: 'Prescription ED treatments including tadalafil, sildenafil, and custom 3-in-1 troches. Board-certified physicians. Discreet delivery. Plans from $49/mo.',
-      image: SITE_URL + '/assets/promo/ed-hero.jpg',
+      image: SITE_URL + '/assets/og/og-ed.jpg',
       schema: 'MedicalTherapy',
       schemaName: 'Erectile Dysfunction Treatment'
     },
     '/longevity.html': {
       title: 'Longevity & Peptide Therapy Online | Freeley',
       description: 'Physician-prescribed peptide therapy including BPC-157, NAD+, and growth hormone peptides. Optimize healthspan with cutting-edge anti-aging treatments.',
-      image: SITE_URL + '/assets/promo/longevity-hero.jpg',
+      image: SITE_URL + '/assets/og/og-longevity.jpg',
       schema: 'MedicalTherapy',
       schemaName: 'Peptide & Longevity Therapy'
     },
@@ -66,22 +66,22 @@
     '/promo-weight-loss.html': {
       title: 'Medical Weight Loss — See If You Qualify | Freeley',
       description: 'Compounded GLP-1 treatments from $199/mo. Lose up to 20% body weight with physician-supervised semaglutide or tirzepatide. Start your free visit.',
-      image: SITE_URL + '/assets/promo/weight-loss-hero.jpg'
+      image: SITE_URL + '/assets/og/og-weight-loss.jpg'
     },
     '/promo-ed.html': {
       title: 'ED Treatment — Get Your Prescription Today | Freeley',
       description: 'Discreet erectile dysfunction treatment from $49/mo. Tadalafil, sildenafil, and custom troches prescribed online by board-certified physicians.',
-      image: SITE_URL + '/assets/promo/ed-hero.jpg'
+      image: SITE_URL + '/assets/og/og-ed.jpg'
     },
     '/promo-hair-loss.html': {
       title: 'Hair Regrowth Treatment — Clinically Proven | Freeley',
       description: 'Stop hair loss and regrow with prescription finasteride, minoxidil, and custom formulas. Results in 3-6 months. Plans from $29/mo.',
-      image: SITE_URL + '/assets/promo/hair-loss-hero.jpg'
+      image: SITE_URL + '/assets/og/og-hair-loss.jpg'
     },
     '/promo-longevity.html': {
       title: 'Peptide Therapy — Anti-Aging & Performance | Freeley',
       description: 'Physician-prescribed peptides including BPC-157 and NAD+. Optimize recovery, energy, and healthspan with research-backed longevity protocols.',
-      image: SITE_URL + '/assets/promo/longevity-hero.jpg'
+      image: SITE_URL + '/assets/og/og-longevity.jpg'
     },
     '/about.html': {
       title: 'About Freeley — Our Mission & Team',
