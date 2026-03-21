@@ -1,19 +1,12 @@
 name: "Image Optimizer"
 
 on:
-  push:
-    paths:
-      - '**.jpg'
-      - '**.jpeg'
-      - '**.png'
-      - '**.webp'
   pull_request:
     paths:
       - '**.jpg'
       - '**.jpeg'
       - '**.png'
       - '**.webp'
-  workflow_dispatch:
 
 jobs:
   build:
@@ -24,13 +17,13 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
       - name: Compress Images
         id: calibre
         uses: calibreapp/image-actions@main
         with:
-          githubToken: ${{ github.token }}
+          GITHUB_TOKEN: ${{ github.token }}
           jpegQuality: "80"
           pngQuality: "80"
           webpQuality: "80"
