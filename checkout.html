@@ -10,6 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=DM+Sans:opsz,wght@9..40,400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
   <link rel="stylesheet" href="shared.css">
+  <script src="https://js.stripe.com/v3/"></script>
   
   <style>
     /* Checkout specific aesthetic */
@@ -574,32 +575,23 @@
             <svg viewBox="0 0 36 24" width="36" height="24" xmlns="http://www.w3.org/2000/svg"><rect width="36" height="24" rx="4" fill="#15243C"/><path d="M12.64 16.5H9.98V7.51h2.66v8.99zm14.12 0h-2.66V7.51h2.66v8.99zM18.8 12.3l-2.02-3.13-2 3.12v4.21h-2.65V7.51h2.65v4.2l1.9-2.95h3.04l-2.28 3.51 2.37 4.23h-3.01z" fill="#fff"/></svg>
             <svg viewBox="0 0 36 24" width="36" height="24" xmlns="http://www.w3.org/2000/svg"><rect width="36" height="24" rx="4" fill="#F79E1B"/><circle cx="13" cy="12" r="7" fill="#EB001B"/><circle cx="23" cy="12" r="7" fill="#F79E1B" fill-opacity=".8"/></svg>
             <svg viewBox="0 0 36 24" width="36" height="24" xmlns="http://www.w3.org/2000/svg"><rect width="36" height="24" rx="4" fill="#1A1F71"/><path d="M14.6 15.6l-2-5.4-2.2 5.4H8L11.5 7h2.3l3.6 8.6h-2.8zm-2.8-2.6l-1-2.8-1 2.8h2zM21.5 7h4v1.8h-2.3v1.6h2v1.8h-2v1.7h2.5v1.8h-4.2V7zm7.5 8.6l-1.8-5h-.1l-1.8 5h-2.3l3-8.6h2.2l3 8.6h-2.2z" fill="#fff"/></svg>
-          </div>
-        </div>
-        
-        <div class="form-group">
-          <label style="display: block; font-size: 12px; font-weight: 500; color: #555; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Card Number</label>
-          <div style="position: relative;">
-            <input type="text" class="form-control" placeholder="1234 5678 9012 3456" style="padding-left: 44px;">
-            <i class="ri-bank-card-line" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #aaa; font-size: 18px;"></i>
-          </div>
-        </div>
-        <div class="form-row">
-          <div>
-            <label style="display: block; font-size: 12px; font-weight: 500; color: #555; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Expiration</label>
-            <input type="text" class="form-control" placeholder="MM / YY">
-          </div>
-          <div>
-            <label style="display: block; font-size: 12px; font-weight: 500; color: #555; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Security Code</label>
-            <div style="position: relative;">
-              <input type="text" class="form-control" placeholder="CVC" style="padding-right: 40px;">
-              <i class="ri-question-line" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #ccc; font-size: 16px; cursor: help;" title="3-digit code on the back of your card"></i>
+            <div style="margin-left: 4px;">
+              <svg viewBox="0 0 60 25" width="48" height="20" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="25" rx="4" fill="#635BFF"/><text x="30" y="16" text-anchor="middle" fill="#fff" font-family="system-ui" font-size="10" font-weight="600">stripe</text></svg>
             </div>
           </div>
         </div>
-        <div class="form-group" style="margin-top: 16px;">
-          <label style="display: block; font-size: 12px; font-weight: 500; color: #555; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Cardholder Name</label>
-          <input type="text" class="form-control" placeholder="Full name on card">
+        
+        <!-- Stripe Elements Container -->
+        <div id="stripe-payment-element" style="padding: 16px 0; min-height: 120px;">
+          <!-- Stripe Elements will mount here -->
+          <div id="stripe-loading" style="text-align: center; padding: 40px 0; color: var(--text-muted); font-size: 14px;">
+            <i class="ri-loader-4-line" style="font-size: 24px; animation: spin 1s linear infinite; display: inline-block; color: var(--forest);"></i>
+            <div style="margin-top: 8px;">Loading secure payment form...</div>
+          </div>
+        </div>
+
+        <!-- Payment Error Messages -->
+        <div id="payment-errors" role="alert" style="display: none; background: #fee2e2; border: 1px solid #fca5a5; color: #991b1b; padding: 12px 16px; border-radius: 8px; font-size: 13px; margin-top: 12px;">
         </div>
 
         <!-- Security Trust Signals -->
@@ -680,7 +672,8 @@
           </div>
         </div>
 
-        <button class="btn-checkout" onclick="window.location.href='hub.html'" style="position: relative; overflow: hidden;"><i class="ri-lock-2-line" style="margin-right: 8px;"></i>Complete Secure Order</button>
+        <button class="btn-checkout" id="checkout-btn" type="button" disabled style="position: relative; overflow: hidden;"><i class="ri-lock-2-line" style="margin-right: 8px;"></i><span id="btn-text">Complete Secure Order</span></button>
+        <div id="checkout-spinner" style="display: none; text-align: center; margin-top: 12px; font-size: 13px; color: var(--forest);"><i class="ri-loader-4-line" style="font-size: 18px; animation: spin 1s linear infinite; display: inline-block; margin-right: 6px;"></i>Processing your payment...</div>
         <div style="text-align: center; margin-top: 12px; font-size: 11px; color: #999; display: flex; align-items: center; justify-content: center; gap: 6px;"><i class="ri-shield-star-line" style="font-size: 14px; color: var(--forest);"></i>Your information is encrypted and never stored on our servers</div>
         
         <div style="margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 11px; color: var(--text-muted); text-transform: uppercase; text-align: center; line-height: 1.4; letter-spacing: 0.5px; font-weight: 500;">
@@ -697,14 +690,28 @@
 
   </div>
 
+  <style>
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+
   <script>
-    // Configuration for different treatments
+    // ═══════════════════════════════════════════════════════
+    // STRIPE CONFIGURATION
+    // ═══════════════════════════════════════════════════════
+    const STRIPE_PK = 'pk_test_51TDT1XKIOVUvoOvriLqa5tQ4beMTJGiUZwoxlPHmbEej9WRaC9NstZAQ71GZSfvtaI5As1F0DqNtNsQWsZoVuRic00HrYDmCqc';
+    const stripe = Stripe(STRIPE_PK);
+    let elements;
+    let paymentElement;
+
+    // ═══════════════════════════════════════════════════════
+    // PRICING DATA (must match serverless function)
+    // ═══════════════════════════════════════════════════════
     const pricingData = {
       'weight-loss': {
-        name: 'Semaglutide', // Default, can be overridden by compound
+        name: 'Semaglutide',
         desc: 'Compounded w/ B12 (Cyanocobalamin)',
         planName: 'Personalized Weight Loss Plan',
-        image: 'assets/brand/semag_transparent.png', // Premium sema vial
+        image: 'assets/brand/semag_transparent.png',
         plans: [
           { months: 1, base: 194.29, overridePrice: 194.29, recommended: false },
           { months: 3, base: 194.29, overridePrice: 149.29, recommended: false },
@@ -758,7 +765,7 @@
         if (compoundOverride === 'tirzepatide' || compoundOverride === 'tirz') {
           currentConfig.name = 'Tirzepatide';
           currentConfig.desc = 'Compounded w/ B6 (Pyridoxine)';
-          currentConfig.image = 'assets/brand/tirzz_transparent.png'; // Premium tirz vial
+          currentConfig.image = 'assets/brand/tirzz_transparent.png';
           currentConfig.plans = [
             { months: 1, base: 274.29, overridePrice: 274.29, recommended: false },
             { months: 3, base: 274.29, overridePrice: 214.29, recommended: false },
@@ -777,7 +784,7 @@
         } else {
           currentConfig.name = 'Semaglutide';
           currentConfig.desc = 'Compounded w/ B12 (Cyanocobalamin)';
-          currentConfig.image = 'assets/brand/semag_transparent.png'; // Premium sema vial
+          currentConfig.image = 'assets/brand/semag_transparent.png';
           currentConfig.plans = [
             { months: 1, base: 194.29, overridePrice: 194.29, recommended: false },
             { months: 3, base: 194.29, overridePrice: 149.29, recommended: false },
@@ -802,16 +809,15 @@
       document.getElementById('summary-plan-name').innerText = currentConfig.planName;
       document.getElementById('checkout-img').src = currentConfig.image;
 
-      // Render plans because prices may have changed
       renderPlans();
-      
-      // Also reset selection to best match (6 months, index 2) when switching compounds
       selectPlan(2);
     }
     
     function setCheckoutCompound(type) {
       compoundOverride = type;
       applyCompoundParams();
+      // Re-initialize Stripe when compound changes
+      initStripe();
     }
 
     applyCompoundParams();
@@ -821,7 +827,6 @@
       grid.innerHTML = '';
 
       currentConfig.plans.forEach((plan, index) => {
-        // Find default
         if (selectedPlanIndex === -1 && plan.recommended) {
           selectedPlanIndex = index;
         }
@@ -871,6 +876,8 @@
     function selectPlan(index) {
       selectedPlanIndex = index;
       renderPlans();
+      // Re-initialize Stripe payment with new amount
+      initStripe();
     }
 
     function updateSummary() {
@@ -885,10 +892,154 @@
       
       document.getElementById('totals-subtotal').innerText = `$${total}`;
       document.getElementById('totals-total').innerText = `$${total}`;
+      
+      // Update button text with amount
+      document.getElementById('btn-text').innerText = `Complete Secure Order — $${total}`;
     }
+
+    // ═══════════════════════════════════════════════════════
+    // STRIPE ELEMENTS INITIALIZATION
+    // ═══════════════════════════════════════════════════════
+    let clientSecret = null;
+
+    async function initStripe() {
+      const plan = currentConfig.plans[selectedPlanIndex];
+      const compound = (treatmentType === 'weight-loss') ? (compoundOverride || 'semaglutide') : 'default';
+
+      try {
+        const response = await fetch('/.netlify/functions/create-payment-intent', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            treatment: treatmentType,
+            plan_months: plan.months,
+            compound: compound
+          })
+        });
+
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to initialize payment');
+        }
+
+        clientSecret = data.clientSecret;
+
+        // Create/recreate Elements
+        const appearance = {
+          theme: 'stripe',
+          variables: {
+            colorPrimary: '#1a4a2e',
+            colorBackground: '#f9f9f9',
+            colorText: '#1c1c1c',
+            colorDanger: '#dc2626',
+            fontFamily: '"DM Sans", system-ui, sans-serif',
+            spacingUnit: '4px',
+            borderRadius: '8px'
+          },
+          rules: {
+            '.Input': {
+              border: '1px solid rgba(0,0,0,0.12)',
+              boxShadow: 'none',
+              padding: '12px 14px',
+              fontSize: '15px'
+            },
+            '.Input:focus': {
+              border: '1px solid #1a4a2e',
+              boxShadow: '0 0 0 2px rgba(26,74,46,0.1)'
+            },
+            '.Label': {
+              fontSize: '12px',
+              fontWeight: '500',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px',
+              color: '#555'
+            }
+          }
+        };
+
+        elements = stripe.elements({ clientSecret, appearance });
+        
+        // Clear existing content
+        const container = document.getElementById('stripe-payment-element');
+        container.innerHTML = '';
+
+        paymentElement = elements.create('payment', {
+          layout: 'tabs'
+        });
+        paymentElement.mount('#stripe-payment-element');
+
+        // Enable checkout button once element is ready
+        paymentElement.on('ready', () => {
+          document.getElementById('checkout-btn').disabled = false;
+        });
+
+        paymentElement.on('change', (event) => {
+          const errorEl = document.getElementById('payment-errors');
+          if (event.error) {
+            errorEl.textContent = event.error.message;
+            errorEl.style.display = 'block';
+          } else {
+            errorEl.style.display = 'none';
+          }
+        });
+
+      } catch (error) {
+        console.error('Stripe init error:', error);
+        // Show fallback message
+        const container = document.getElementById('stripe-payment-element');
+        container.innerHTML = `<div style="text-align: center; padding: 24px; color: #991b1b; background: #fee2e2; border-radius: 8px; font-size: 14px;">
+          <i class="ri-error-warning-line" style="font-size: 24px; display: block; margin-bottom: 8px;"></i>
+          Unable to load payment form. Please refresh the page or contact support.
+          <div style="font-size: 12px; color: #999; margin-top: 8px;">${error.message}</div>
+        </div>`;
+      }
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // PAYMENT SUBMISSION
+    // ═══════════════════════════════════════════════════════
+    document.getElementById('checkout-btn').addEventListener('click', async () => {
+      const btn = document.getElementById('checkout-btn');
+      const spinner = document.getElementById('checkout-spinner');
+      const errorEl = document.getElementById('payment-errors');
+      
+      btn.disabled = true;
+      btn.style.opacity = '0.7';
+      spinner.style.display = 'block';
+      errorEl.style.display = 'none';
+
+      try {
+        const { error, paymentIntent } = await stripe.confirmPayment({
+          elements,
+          confirmParams: {
+            return_url: window.location.origin + '/hub.html?payment=success'
+          },
+          redirect: 'if_required'
+        });
+
+        if (error) {
+          errorEl.textContent = error.message;
+          errorEl.style.display = 'block';
+          btn.disabled = false;
+          btn.style.opacity = '1';
+          spinner.style.display = 'none';
+        } else if (paymentIntent && paymentIntent.status === 'succeeded') {
+          // Payment succeeded without redirect
+          window.location.href = '/hub.html?payment=success&pi=' + paymentIntent.id;
+        }
+      } catch (err) {
+        errorEl.textContent = 'Something went wrong. Please try again.';
+        errorEl.style.display = 'block';
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        spinner.style.display = 'none';
+      }
+    });
 
     // Initialize
     renderPlans();
+    initStripe();
   </script>
 </body>
 </html>
