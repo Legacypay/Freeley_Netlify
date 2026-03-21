@@ -235,6 +235,11 @@
       document.getElementById('exit-form-view').style.display = 'none';
       document.getElementById('exit-success').classList.add('show');
       sessionStorage.setItem(STORAGE_KEY, 'captured');
+
+      // Fire analytics
+      if (window.FreeleyAnalytics) {
+        window.FreeleyAnalytics.emailCapture('exit-intent');
+      }
     });
   }
 
