@@ -1,5 +1,18 @@
+# Freeley — robots.txt
 User-agent: *
 Allow: /
-Disallow: /checkout.html
 
+# Block internal/dev pages
+Disallow: /checkout.html
+Disallow: /privacy_scrape.html
+Disallow: /terms_scrape.html
+Disallow: /telehealth_scrape.html
+Disallow: /seo-test-article.html
+Disallow: /models/
+Disallow: /generate-*.js
+
+# Block asset internals
+Disallow: /assets/videos/
+
+# Sitemap
 Sitemap: https://freeley.com/sitemap.xml

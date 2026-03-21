@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page Not Found — Freeley</title>
+  <meta name="description" content="The page you're looking for doesn't exist. Let's get you back on track.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    body {
+      margin: 0;
+      background: #f8f7f4;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .error-page {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 24px;
+    }
+    .error-content {
+      text-align: center;
+      max-width: 520px;
+    }
+    .error-code {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(80px, 15vw, 160px);
+      font-weight: 300;
+      color: #e5e8e6;
+      line-height: 1;
+      margin-bottom: 0;
+    }
+    .error-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(28px, 4vw, 40px);
+      font-weight: 400;
+      color: #1a2b22;
+      margin: -8px 0 16px;
+    }
+    .error-title em {
+      font-style: italic;
+      color: #3d8c5e;
+    }
+    .error-text {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      color: #7a8a80;
+      line-height: 1.6;
+      margin-bottom: 36px;
+    }
+    .error-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .error-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border-radius: 50px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.25s ease;
+    }
+    .error-btn-primary {
+      background: #1a2b22;
+      color: #fff;
+    }
+    .error-btn-primary:hover {
+      background: #2c6e49;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(44, 110, 73, 0.25);
+    }
+    .error-btn-secondary {
+      background: #fff;
+      color: #1a2b22;
+      border: 1.5px solid #e5e8e6;
+    }
+    .error-btn-secondary:hover {
+      border-color: #3d8c5e;
+      color: #3d8c5e;
+      transform: translateY(-2px);
+    }
+    .error-links {
+      margin-top: 48px;
+      padding-top: 32px;
+      border-top: 1px solid #e5e8e6;
+    }
+    .error-links-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #aab5ae;
+      margin-bottom: 16px;
+    }
+    .error-links-grid {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .error-link {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: #7a8a80;
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      background: #fff;
+      border: 1px solid #e5e8e6;
+      transition: all 0.2s;
+    }
+    .error-link:hover {
+      color: #3d8c5e;
+      border-color: #3d8c5e;
+    }
+
+    /* Floating pill animation */
+    .error-pills {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+    .error-pill {
+      position: absolute;
+      font-size: 24px;
+      opacity: 0.08;
+      animation: floatPill 20s infinite linear;
+    }
+    @keyframes floatPill {
+      0% { transform: translateY(100vh) rotate(0deg); }
+      100% { transform: translateY(-100px) rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <!-- Floating background pills -->
+  <div class="error-pills" id="pills"></div>
+
+  <div class="error-page" style="position: relative; z-index: 1;">
+    <div class="error-content">
+      <p class="error-code">404</p>
+      <h1 class="error-title">This page took a <em>wrong turn</em></h1>
+      <p class="error-text">
+        The page you're looking for doesn't exist or has been moved.
+        Let's get you back to feeling your best.
+      </p>
+      <div class="error-actions">
+        <a href="/" class="error-btn error-btn-primary">← Back to Home</a>
+        <a href="/quiz.html" class="error-btn error-btn-secondary">Start Free Visit</a>
+      </div>
+
+      <div class="error-links">
+        <p class="error-links-label">Popular pages</p>
+        <div class="error-links-grid">
+          <a href="/weight-loss.html" class="error-link">Weight Loss</a>
+          <a href="/hair-loss.html" class="error-link">Hair Loss</a>
+          <a href="/sexual-wellness.html" class="error-link">Sexual Wellness</a>
+          <a href="/longevity.html" class="error-link">Longevity</a>
+          <a href="/pricing.html" class="error-link">Pricing</a>
+          <a href="/faq.html" class="error-link">FAQ</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Animated floating pills background
+    const pills = ['💊', '🧬', '🩺', '🧪', '💉', '🌿'];
+    const container = document.getElementById('pills');
+    for (let i = 0; i < 12; i++) {
+      const span = document.createElement('span');
+      span.className = 'error-pill';
+      span.textContent = pills[i % pills.length];
+      span.style.left = Math.random() * 100 + '%';
+      span.style.animationDuration = (15 + Math.random() * 15) + 's';
+      span.style.animationDelay = (Math.random() * 10) + 's';
+      span.style.fontSize = (18 + Math.random() * 20) + 'px';
+      container.appendChild(span);
+    }
+  </script>
+  <script src="analytics.js"></script>
+  <script src="shared.js"></script>
+</body>
+</html>
