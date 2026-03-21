@@ -525,6 +525,10 @@
       icon.href = '/assets/brand/freeley-icon-192.png';
       document.head.appendChild(icon);
     }
+    // Register service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    }
   }
 
   if (document.readyState === 'loading') {
