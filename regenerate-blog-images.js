@@ -1,11 +1,11 @@
 /**
- * One-time script to regenerate DALL-E 3 hero images for ALL existing blog posts.
+ * One-time script to regenerate GPT Image 1 hero images for ALL existing blog posts.
  * 
  * Usage: OPENAI_API_KEY=sk-xxx node regenerate-blog-images.js
  * 
  * This will:
  * 1. Read every .md file in content/blog/
- * 2. Generate a unique DALL-E 3 image based on the title and tag
+ * 2. Generate a unique GPT Image 1 image based on the title and tag
  * 3. Save images to assets/blog/
  * 4. Update the frontmatter image path in each .md file
  */
@@ -22,8 +22,8 @@ if (!apiKey) {
 
 const BLOG_DIR = path.join(__dirname, 'content', 'blog');
 const IMAGES_DIR = path.join(__dirname, 'assets', 'blog');
-const IMAGE_SIZE = '1792x1024';
-const IMAGE_QUALITY = 'standard';
+const IMAGE_SIZE = '1536x1024';
+const IMAGE_QUALITY = 'high';
 
 const BRAND_STYLE = `Photorealistic, clean, modern healthcare aesthetic. 
 Soft natural lighting, warm neutral tones (cream, sage green, soft white). 
@@ -58,22 +58,22 @@ ${BRAND_STYLE}`;
       'Authorization': `Bearer ${apiKey}`
     },
     body: JSON.stringify({
-      model: 'dall-e-3',
+      model: 'gpt-image-1',
       prompt: imagePrompt,
       n: 1,
       size: IMAGE_SIZE,
-      quality: IMAGE_QUALITY,
-      response_format: 'b64_json'
+      quality: IMAGE_QUALITY
     })
   });
 
   const data = await response.json();
 
-  if (!data.data || !data.data[0] || !data.data[0].b64_json) {
-    throw new Error(JSON.stringify(data.error || 'Unknown DALL-E error'));
+  if (!data.data || !data.data[0]) {
+    throw new Error(JSON.stringify(data.error || 'Unknown GPT Image error'));
   }
 
-  const imageBuffer = Buffer.from(data.data[0].b64_json, 'base64');
+  const b64 = data.data[0].b64_json || data.data[0].b64;
+  const imageBuffer = Buffer.from(b64, 'base64');
   const filename = `${slug}.jpg`;
   const filepath = path.join(IMAGES_DIR, filename);
 
@@ -90,8 +90,9 @@ async function run() {
   }
 
   const files = fs.readdirSync(BLOG_DIR).filter(f => f.endsWith('.md'));
-  console.log(`\n🖼️  Regenerating DALL-E 3 images for ${files.length} blog posts\n`);
-  console.log(`   Cost estimate: ~$${(files.length * 0.04).toFixed(2)} (standard quality)\n`);
+  console.log(`\n🖼️  Regenerating GPT Image 1 images for ${files.length} blog posts\n`);
+  console.log(`   Model: gpt-image-1 (best photorealism)`);
+  console.log(`   Cost estimate: ~$${(files.length * 0.08).toFixed(2)} (high quality)\n`);
   console.log('─'.repeat(60));
 
   let success = 0;
@@ -117,7 +118,7 @@ async function run() {
         await new Promise(r => setTimeout(r, 3000));
       }
 
-      console.log('   🎨 Generating image via DALL-E 3...');
+      console.log('   🎨 Generating image via GPT Image 1...');
       const result = await generateImage(title, tag, slug);
       console.log(`   ✅ Saved: ${result.path} (${result.sizeMB} MB)`);
 

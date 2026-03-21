@@ -9,8 +9,8 @@ if (!apiKey) {
 
 // ── Image Generation Config ────────────────────────────────────
 const BLOG_IMAGES_DIR = path.join(__dirname, 'assets', 'blog');
-const IMAGE_SIZE = '1792x1024'; // Wide format, perfect for blog heroes
-const IMAGE_QUALITY = 'standard'; // 'standard' or 'hd' ($0.04 vs $0.08 per image)
+const IMAGE_SIZE = '1536x1024'; // Wide format, perfect for blog heroes
+const IMAGE_QUALITY = 'high'; // GPT Image 1 quality setting
 
 // Brand style guide for consistent image generation
 const BRAND_STYLE = `Photorealistic, clean, modern healthcare aesthetic. 
@@ -21,11 +21,11 @@ No text, no logos, no watermarks, no faces showing full identity.
 Professional medical/wellness product photography style.`;
 
 /**
- * Generate an image via DALL-E 3 and save it locally.
+ * Generate an image via GPT Image 1 and save it locally.
  * Returns the local file path relative to the project root.
  */
 async function generateBlogImage(title, tag, slug) {
-  console.log(`🎨 Generating DALL-E 3 image for: "${title}" [${tag}]`);
+  console.log(`🎨 Generating GPT Image 1 image for: "${title}" [${tag}]`);
 
   // Build a category-aware prompt
   const categoryHints = {
@@ -54,19 +54,18 @@ ${BRAND_STYLE}`;
         'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: 'dall-e-3',
+        model: 'gpt-image-1',
         prompt: imagePrompt,
         n: 1,
         size: IMAGE_SIZE,
-        quality: IMAGE_QUALITY,
-        response_format: 'b64_json'
+        quality: IMAGE_QUALITY
       })
     });
 
     const data = await response.json();
 
-    if (!data.data || !data.data[0] || !data.data[0].b64_json) {
-      console.error('❌ DALL-E API error:', JSON.stringify(data.error || data));
+    if (!data.data || !data.data[0]) {
+      console.error('❌ GPT Image API error:', JSON.stringify(data.error || data));
       return null;
     }
 
@@ -79,7 +78,8 @@ ${BRAND_STYLE}`;
     const filepath = path.join(BLOG_IMAGES_DIR, filename);
 
     // Convert base64 to buffer and save
-    const imageBuffer = Buffer.from(data.data[0].b64_json, 'base64');
+    const b64 = data.data[0].b64_json || data.data[0].b64;
+    const imageBuffer = Buffer.from(b64, 'base64');
     fs.writeFileSync(filepath, imageBuffer);
 
     const relativePath = `assets/blog/${filename}`;
@@ -89,13 +89,13 @@ ${BRAND_STYLE}`;
     return relativePath;
 
   } catch (error) {
-    console.error('❌ DALL-E generation failed:', error.message);
+    console.error('❌ GPT Image generation failed:', error.message);
     return null;
   }
 }
 
 /**
- * Fallback: pick a local category image if DALL-E fails.
+ * Fallback: pick a local category image if GPT Image fails.
  */
 function pickFallbackImage(tag) {
   const CATEGORY_FALLBACKS = {
@@ -213,12 +213,12 @@ async function run() {
     console.log(`🏷️  Tag: "${tag}"`);
     console.log(`🔗 Slug: "${slug}"`);
 
-    // ── Step 2: Generate the hero image via DALL-E 3 ──────────
+    // ── Step 2: Generate the hero image via GPT Image 1 ──────────
     let imagePath = await generateBlogImage(title, tag, slug);
 
-    // Fall back to local category image if DALL-E fails
+    // Fall back to local category image if GPT Image fails
     if (!imagePath) {
-      console.log('⚠️  DALL-E failed — using local fallback image');
+      console.log('⚠️  GPT Image failed — using local fallback image');
       imagePath = pickFallbackImage(tag);
     }
 

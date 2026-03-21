@@ -1,5 +1,5 @@
 /**
- * Generate professional physician headshot images via DALL-E 3.
+ * Generate professional physician headshot images via GPT Image 1.
  * 
  * Usage: OPENAI_API_KEY=sk-xxx node generate-physician-images.js
  */
@@ -15,7 +15,7 @@ if (!apiKey) {
 
 const IMAGES_DIR = path.join(__dirname, 'assets', 'physicians');
 const IMAGE_SIZE = '1024x1024';
-const IMAGE_QUALITY = 'hd';
+const IMAGE_QUALITY = 'high';
 
 const BRAND_STYLE = `Professional headshot portrait photography. 
 Clean, warm studio lighting with soft shadows. 
@@ -52,22 +52,22 @@ async function generateImage(physician) {
       'Authorization': `Bearer ${apiKey}`
     },
     body: JSON.stringify({
-      model: 'dall-e-3',
+      model: 'gpt-image-1',
       prompt: physician.prompt,
       n: 1,
       size: IMAGE_SIZE,
-      quality: IMAGE_QUALITY,
-      response_format: 'b64_json'
+      quality: IMAGE_QUALITY
     })
   });
 
   const data = await response.json();
 
-  if (!data.data || !data.data[0] || !data.data[0].b64_json) {
-    throw new Error(JSON.stringify(data.error || 'Unknown DALL-E error'));
+  if (!data.data || !data.data[0]) {
+    throw new Error(JSON.stringify(data.error || 'Unknown GPT Image error'));
   }
 
-  const imageBuffer = Buffer.from(data.data[0].b64_json, 'base64');
+  const b64 = data.data[0].b64_json || data.data[0].b64;
+  const imageBuffer = Buffer.from(b64, 'base64');
   const filepath = path.join(IMAGES_DIR, physician.filename);
 
   fs.writeFileSync(filepath, imageBuffer);
@@ -83,7 +83,8 @@ async function run() {
     fs.mkdirSync(IMAGES_DIR, { recursive: true });
   }
 
-  console.log(`\n👨‍⚕️ Generating ${PHYSICIANS.length} physician headshots via DALL-E 3 (HD quality)`);
+  console.log(`\n👨‍⚕️ Generating ${PHYSICIANS.length} physician headshots via GPT Image 1`);
+  console.log(`   Model: gpt-image-1 (best photorealism)`);
   console.log(`   Estimated cost: ~$${(PHYSICIANS.length * 0.08).toFixed(2)}\n`);
   console.log('─'.repeat(60));
 
