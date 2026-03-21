@@ -331,3 +331,63 @@ footer {
 @media (prefers-reduced-motion: reduce) {
   .video-hero-bg { display: none; }
 }
+
+/* ─── Mobile Tap Target Improvements ─── */
+/* Google recommends minimum 48dp touch targets */
+@media (max-width: 768px) {
+  /* Buttons & links */
+  .hero-btn,
+  .nav-cta,
+  .quiz-next,
+  .plan-cta,
+  .mbs-cta,
+  .referral-cta,
+  .exit-submit {
+    min-height: 48px;
+    padding-top: 14px;
+    padding-bottom: 14px;
+  }
+
+  /* Plan selection cards */
+  .plan-card,
+  .pricing-card,
+  .treatment-card {
+    padding: 20px 18px;
+    min-height: 60px;
+  }
+
+  /* FAQ accordion */
+  .faq-q {
+    min-height: 48px;
+    padding: 16px 0;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Nav links */
+  nav a,
+  .sidebar-link,
+  .footer-links a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* Quiz option cards */
+  .option-card {
+    padding: 20px 18px;
+    min-height: 60px;
+  }
+
+  /* Radio/checkbox tap areas */
+  input[type="radio"],
+  input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+  }
+
+  /* Trust strip scroll hint */
+  .sp-trust-strip {
+    padding: 12px 16px;
+  }
+}
