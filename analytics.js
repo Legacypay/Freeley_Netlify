@@ -19,7 +19,7 @@
   // ▼▼▼ REPLACE THESE WITH YOUR REAL IDS ▼▼▼
   const GA4_ID = 'G-YE9R925LJP';          // LIVE — Freeley GA4
   const META_PIXEL_ID = 'XXXXXXXXXX';     // From business.facebook.com/events_manager
-  const CLARITY_ID = 'XXXXXXXXXX';        // From clarity.microsoft.com — FREE heatmaps & recordings
+  const CLARITY_ID = 'vzcyjbnt4j';        // LIVE — Freeley Clarity heatmaps & recordings
   // ▲▲▲ REPLACE THESE WITH YOUR REAL IDS ▲▲▲
   // ═══════════════════════════════════════════════════════
 
