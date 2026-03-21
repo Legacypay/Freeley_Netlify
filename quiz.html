@@ -245,11 +245,46 @@
 
     .quiz-step {
       display: none;
-      animation: fadeUp 0.4s ease both;
+      opacity: 0;
+      transform: translateX(30px);
     }
 
     .quiz-step.active {
       display: block;
+      animation: stepSlideIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .quiz-step.exiting {
+      display: block;
+      animation: stepSlideOut 0.25s ease-in forwards;
+    }
+
+    @keyframes stepSlideIn {
+      from { opacity: 0; transform: translateX(30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes stepSlideOut {
+      from { opacity: 1; transform: translateX(0); }
+      to { opacity: 0; transform: translateX(-20px); }
+    }
+
+    /* Staggered option card reveal */
+    .quiz-step.active .option-card {
+      opacity: 0;
+      transform: translateY(12px);
+      animation: optionReveal 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .quiz-step.active .option-card:nth-child(1) { animation-delay: 0.08s; }
+    .quiz-step.active .option-card:nth-child(2) { animation-delay: 0.14s; }
+    .quiz-step.active .option-card:nth-child(3) { animation-delay: 0.20s; }
+    .quiz-step.active .option-card:nth-child(4) { animation-delay: 0.26s; }
+    .quiz-step.active .option-card:nth-child(5) { animation-delay: 0.32s; }
+    .quiz-step.active .option-card:nth-child(6) { animation-delay: 0.38s; }
+
+    @keyframes optionReveal {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .step-badge {
@@ -309,7 +344,7 @@
       border-radius: 18px;
       padding: 24px 28px;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       display: flex;
       align-items: flex-start;
       gap: 16px;
@@ -341,6 +376,14 @@
     .option-card.selected {
       border-color: var(--green-light);
       background: rgba(61, 140, 94, 0.04);
+      animation: cardBounce 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes cardBounce {
+      0% { transform: scale(1); }
+      40% { transform: scale(0.97); }
+      70% { transform: scale(1.02); }
+      100% { transform: scale(1); }
     }
 
     .option-card.selected::after {
@@ -358,6 +401,12 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      animation: checkPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes checkPop {
+      0% { transform: scale(0); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
     }
 
     .option-icon {
@@ -537,11 +586,36 @@
     /* Results screen */
     .results-screen {
       display: none;
-      animation: fadeUp 0.5s ease both;
+      animation: resultsFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    @keyframes resultsFadeIn {
+      from { opacity: 0; transform: translateY(20px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     @keyframes spin { 100% { transform: rotate(360deg); } }
     .spinner-icon { animation: spin 1s linear infinite; }
+
+    /* Confetti burst on results */
+    .results-confetti {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      z-index: 100;
+      overflow: hidden;
+    }
+    .confetti-piece {
+      position: absolute;
+      width: 8px;
+      height: 12px;
+      border-radius: 2px;
+      animation: confettiFall linear forwards;
+    }
+    @keyframes confettiFall {
+      0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
 
     .results-screen.active {
       display: block;
@@ -1580,15 +1654,28 @@
     }
 
     function nextStep(n) {
-      // Hide current step
-      document.querySelectorAll('.quiz-step').forEach(s => s.classList.remove('active'));
+      // Animate out current step, then animate in next
+      const currentStep = document.querySelector('.quiz-step.active');
       const target = document.getElementById('step-' + n);
-      if (target) {
+      
+      if (currentStep && target && currentStep !== target) {
+        currentStep.classList.remove('active');
+        currentStep.classList.add('exiting');
+        
+        setTimeout(() => {
+          currentStep.classList.remove('exiting');
+          target.classList.add('active');
+          current = n;
+          updateProgress(n);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }, 250); // Match stepSlideOut duration
+      } else if (target) {
+        document.querySelectorAll('.quiz-step').forEach(s => s.classList.remove('active'));
         target.classList.add('active');
         current = n;
         updateProgress(n);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     async function saveProgressAndContinue(nextStepNum) {
@@ -1638,6 +1725,24 @@
       } else {
         showResultsActual(true);
       }
+    }
+    function launchConfetti() {
+      const container = document.createElement('div');
+      container.className = 'results-confetti';
+      document.body.appendChild(container);
+      const colors = ['#3d8c5e', '#7dba96', '#2c6e49', '#f5c842', '#e8a735', '#b8d4c8'];
+      for (let i = 0; i < 40; i++) {
+        const piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        piece.style.left = Math.random() * 100 + '%';
+        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+        piece.style.animationDelay = Math.random() * 0.8 + 's';
+        piece.style.width = (Math.random() * 6 + 5) + 'px';
+        piece.style.height = (Math.random() * 8 + 8) + 'px';
+        container.appendChild(piece);
+      }
+      setTimeout(() => container.remove(), 4000);
     }
 
     function showResultsActual(isRestoring) {
@@ -1707,6 +1812,7 @@
       document.getElementById('results-screen').classList.add('active');
       updateProgress('results');
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (!isRestoring) launchConfetti();
 
       // Hide social proof on results
       const nudge = document.getElementById('socialProof');

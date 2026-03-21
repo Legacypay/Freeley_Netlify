@@ -1,0 +1,48 @@
+{
+  "name": "Freeley — Personalized Telehealth",
+  "short_name": "Freeley",
+  "description": "Board-certified physicians. FDA-approved medications. Delivered to your door.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050f0a",
+  "theme_color": "#3d8c5e",
+  "orientation": "portrait-primary",
+  "categories": ["health", "medical", "lifestyle"],
+  "lang": "en-US",
+  "icons": [
+    {
+      "src": "assets/brand/freeley-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/brand/freeley-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Start Your Visit",
+      "short_name": "Quiz",
+      "description": "Take the 2-minute health quiz",
+      "url": "/quiz.html",
+      "icons": [{ "src": "assets/brand/freeley-icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Weight Loss",
+      "short_name": "Weight Loss",
+      "description": "GLP-1 weight loss medication",
+      "url": "/weight-loss.html"
+    },
+    {
+      "name": "Sexual Wellness",
+      "short_name": "ED Treatment",
+      "description": "ED treatment prescribed online",
+      "url": "/sexual-wellness.html"
+    }
+  ]
+}

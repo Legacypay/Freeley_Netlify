@@ -255,6 +255,31 @@
     .sp-signup-avatar:nth-child(2) { background: #2c6e49; }
     .sp-signup-avatar:nth-child(3) { background: #5a9e78; }
 
+    /* ──── Spots Left Urgency Badge ────────────────────────── */
+    .sp-spots-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: rgba(245,168,42,0.08);
+      border: 1px solid rgba(245,168,42,0.2);
+      border-radius: 100px;
+      font-size: 13px;
+      color: #c47f1a;
+      font-weight: 500;
+    }
+    .sp-spots-badge strong {
+      color: #b36d0a;
+      font-weight: 700;
+    }
+    .sp-spots-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #e8a735;
+      animation: sp-pulse 1.5s ease-in-out infinite;
+    }
+
     /* Mobile adjustments */
     @media (max-width: 768px) {
       .sp-toast {
@@ -440,6 +465,21 @@
       document.head.appendChild(metaPixel);
     }
   }
+  // ─── Spots Left Badge Injector ─────────────────────────────
+  function injectSpotsLeft() {
+    const targets = document.querySelectorAll('[data-sp-spots]');
+    const month = new Date().toLocaleString('default', { month: 'long' });
+    targets.forEach(el => {
+      const base = parseInt(el.getAttribute('data-sp-spots') || '12');
+      const variation = Math.floor(Math.random() * 5); // 0-4 fewer
+      const spots = Math.max(3, base - variation);
+      el.innerHTML = `
+        <span class="sp-spots-dot"></span>
+        <span><strong>${spots} spots</strong> remaining for ${month}</span>
+      `;
+      el.classList.add('sp-spots-badge');
+    });
+  }
 
   // ─── Init ──────────────────────────────────────────────────
   function init() {
@@ -447,10 +487,44 @@
     injectActivityBadges();
     injectSignupCounters();
     injectTrustStrip();
+    injectSpotsLeft();
+    injectPWA();
     // injectAnalytics(); // Uncomment when you have real GA4/Meta IDs
 
     // Start toast notifications after delay
     setTimeout(showToast, CONFIG.toastDelay);
+  }
+
+  function injectPWA() {
+    // Manifest link
+    if (!document.querySelector('link[rel="manifest"]')) {
+      const manifest = document.createElement('link');
+      manifest.rel = 'manifest';
+      manifest.href = '/manifest.json';
+      document.head.appendChild(manifest);
+    }
+    // Apple mobile web app meta
+    const metas = [
+      { name: 'apple-mobile-web-app-capable', content: 'yes' },
+      { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' },
+      { name: 'apple-mobile-web-app-title', content: 'Freeley' },
+      { name: 'theme-color', content: '#3d8c5e' }
+    ];
+    metas.forEach(m => {
+      if (!document.querySelector(`meta[name="${m.name}"]`)) {
+        const meta = document.createElement('meta');
+        meta.name = m.name;
+        meta.content = m.content;
+        document.head.appendChild(meta);
+      }
+    });
+    // Apple touch icon
+    if (!document.querySelector('link[rel="apple-touch-icon"]')) {
+      const icon = document.createElement('link');
+      icon.rel = 'apple-touch-icon';
+      icon.href = '/assets/brand/freeley-icon-192.png';
+      document.head.appendChild(icon);
+    }
   }
 
   if (document.readyState === 'loading') {
