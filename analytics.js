@@ -15,7 +15,7 @@
 
   // ═══════════════════════════════════════════════════════
   // ▼▼▼ REPLACE THESE WITH YOUR REAL IDS ▼▼▼
-  const GA4_ID = 'G-XXXXXXXXXX';          // From analytics.google.com
+  const GA4_ID = 'G-YE9R925LJP';          // LIVE — Freeley GA4
   const META_PIXEL_ID = 'XXXXXXXXXX';     // From business.facebook.com/events_manager
   // ▲▲▲ REPLACE THESE WITH YOUR REAL IDS ▲▲▲
   // ═══════════════════════════════════════════════════════
