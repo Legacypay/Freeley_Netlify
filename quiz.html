@@ -911,6 +911,87 @@
       50% { transform: scale(1.5); opacity: 0.5; }
     }
 
+    /* ─── Enhanced Quiz Micro-Animations ─── */
+
+    /* Ripple effect on option card click */
+    .option-card .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(61, 140, 94, 0.15);
+      transform: scale(0);
+      animation: rippleExpand 0.6s ease-out forwards;
+      pointer-events: none;
+    }
+    @keyframes rippleExpand {
+      to { transform: scale(4); opacity: 0; }
+    }
+
+    /* Subtle glow on selected cards */
+    .option-card.selected {
+      box-shadow: 0 0 0 2px rgba(61, 140, 94, 0.2), 0 4px 20px rgba(61, 140, 94, 0.1);
+    }
+    .option-card.selected .option-icon {
+      animation: iconPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes iconPop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.3); }
+      100% { transform: scale(1); }
+    }
+
+    /* Step counter badge animation */
+    .step-badge {
+      animation: badgeFadeIn 0.4s ease both;
+      animation-delay: 0.1s;
+    }
+    @keyframes badgeFadeIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Question text reveal */
+    .quiz-step.active .step-question {
+      animation: questionReveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+      animation-delay: 0.05s;
+    }
+    @keyframes questionReveal {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Progress bar success shake */
+    .quiz-progress-track.step-complete {
+      animation: progressShake 0.4s ease;
+    }
+    @keyframes progressShake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-2px); }
+      75% { transform: translateX(2px); }
+    }
+
+    /* Step transition particle burst */
+    .step-particle {
+      position: fixed;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 1000;
+      animation: particleBurst 0.8s ease-out forwards;
+    }
+    @keyframes particleBurst {
+      0% { transform: translate(0, 0) scale(1); opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    /* Nav button micro-animation */
+    .quiz-next:not(:disabled):active {
+      transform: scale(0.96);
+    }
+    .quiz-back:active {
+      transform: translateX(-2px);
+    }
+
     /* Social proof nudge */
     .social-proof-nudge {
       position: fixed;
@@ -1939,6 +2020,75 @@
         showResults(true);
       }
     });
+
+    // ─── Enhanced Micro-Animations ───
+
+    // Ripple effect on option card click
+    document.addEventListener('click', (e) => {
+      const card = e.target.closest('.option-card');
+      if (!card) return;
+      
+      const rect = card.getBoundingClientRect();
+      const ripple = document.createElement('div');
+      ripple.className = 'ripple';
+      ripple.style.width = ripple.style.height = Math.max(rect.width, rect.height) + 'px';
+      ripple.style.left = (e.clientX - rect.left - Math.max(rect.width, rect.height) / 2) + 'px';
+      ripple.style.top = (e.clientY - rect.top - Math.max(rect.width, rect.height) / 2) + 'px';
+      card.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 600);
+    });
+
+    // Particle burst on step transitions
+    const originalNextStepForParticles = window.nextStep;
+    if (typeof originalNextStepForParticles === 'function') {
+      // Wrap to add particle burst
+      const wrappedNext = window.nextStep;
+      window.nextStep = function(n) {
+        // Add progress track shake
+        const track = document.querySelector('.quiz-progress-track');
+        if (track) {
+          track.classList.remove('step-complete');
+          void track.offsetWidth; // force reflow
+          track.classList.add('step-complete');
+        }
+
+        // Spawn particles from the Continue button
+        const btn = document.querySelector('.quiz-step.active .quiz-next');
+        if (btn) {
+          const rect = btn.getBoundingClientRect();
+          const colors = ['#3d8c5e', '#7dba96', '#2c6e49', '#b8d4c8'];
+          for (let i = 0; i < 8; i++) {
+            const p = document.createElement('div');
+            p.className = 'step-particle';
+            p.style.left = (rect.left + rect.width / 2) + 'px';
+            p.style.top = (rect.top + rect.height / 2) + 'px';
+            p.style.background = colors[Math.floor(Math.random() * colors.length)];
+            const angle = (Math.PI * 2 / 8) * i;
+            const dist = 40 + Math.random() * 60;
+            p.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+            p.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
+            p.style.animation = `particleBurstDirectional 0.6s ease-out forwards`;
+            document.body.appendChild(p);
+            setTimeout(() => p.remove(), 700);
+          }
+        }
+
+        return wrappedNext.call(this, n);
+      };
+    }
+
+    // Add particle burst directional keyframes dynamically
+    if (!document.getElementById('particle-burst-css')) {
+      const style = document.createElement('style');
+      style.id = 'particle-burst-css';
+      style.textContent = `
+        @keyframes particleBurstDirectional {
+          0% { transform: translate(0, 0) scale(1); opacity: 1; }
+          100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+        }
+      `;
+      document.head.appendChild(style);
+    }
 
     updateProgress(1);
     initPage('');

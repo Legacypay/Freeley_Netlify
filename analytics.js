@@ -1,13 +1,15 @@
 /**
- * Freeley Analytics — GA4 + Meta Pixel Tracking
+ * Freeley Analytics — GA4 + Meta Pixel + Microsoft Clarity
  * 
  * ┌──────────────────────────────────────────────┐
  * │  TO ACTIVATE: Replace the IDs below with     │
  * │  your real GA4 Measurement ID & Meta Pixel ID│
+ * │  & Clarity Project ID                        │
  * └──────────────────────────────────────────────┘
  * 
  * Tracks: page views, quiz funnel, CTA clicks, 
  * email captures, plan views, scroll depth, engagement.
+ * Clarity: session recordings, heatmaps, scroll maps.
  */
 
 (function() {
@@ -17,11 +19,13 @@
   // ▼▼▼ REPLACE THESE WITH YOUR REAL IDS ▼▼▼
   const GA4_ID = 'G-YE9R925LJP';          // LIVE — Freeley GA4
   const META_PIXEL_ID = 'XXXXXXXXXX';     // From business.facebook.com/events_manager
+  const CLARITY_ID = 'XXXXXXXXXX';        // From clarity.microsoft.com — FREE heatmaps & recordings
   // ▲▲▲ REPLACE THESE WITH YOUR REAL IDS ▲▲▲
   // ═══════════════════════════════════════════════════════
 
   const IS_GA4_LIVE = GA4_ID !== 'G-XXXXXXXXXX';
   const IS_META_LIVE = META_PIXEL_ID !== 'XXXXXXXXXX';
+  const IS_CLARITY_LIVE = CLARITY_ID !== 'XXXXXXXXXX';
 
   // ─── Install GA4 ──────────────────────────────────────
   function installGA4() {
@@ -62,6 +66,22 @@
 
     window.fbq('init', META_PIXEL_ID);
     window.fbq('track', 'PageView');
+  }
+
+  // ─── Install Microsoft Clarity ──────────────────────
+  function installClarity() {
+    if (!IS_CLARITY_LIVE) {
+      console.log('[Analytics] Clarity in preview mode — replace CLARITY_ID in analytics.js to activate');
+      return;
+    }
+
+    (function(c,l,a,r,i,t,y){
+      c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+      t=l.createElement(r);t.async=1;t.src='https://www.clarity.ms/tag/'+i;
+      y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, 'clarity', 'script', CLARITY_ID);
+
+    console.log('[Analytics] Microsoft Clarity installed — heatmaps & recordings active');
   }
 
   // ─── Unified Event Tracker ────────────────────────────
@@ -279,12 +299,13 @@
   function init() {
     installGA4();
     installMetaPixel();
+    installClarity();
     bindCTATracking();
     bindScrollTracking();
     bindQuizTracking();
     bindProductTracking();
 
-    console.log(`[Analytics] Initialized — GA4: ${IS_GA4_LIVE ? 'LIVE' : 'PREVIEW'} | Meta: ${IS_META_LIVE ? 'LIVE' : 'PREVIEW'}`);
+    console.log(`[Analytics] Initialized — GA4: ${IS_GA4_LIVE ? 'LIVE' : 'PREVIEW'} | Meta: ${IS_META_LIVE ? 'LIVE' : 'PREVIEW'} | Clarity: ${IS_CLARITY_LIVE ? 'LIVE' : 'PREVIEW'}`);
   }
 
   if (document.readyState === 'loading') {
