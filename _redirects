@@ -1,0 +1,43 @@
+# Force .html → clean URLs (301 permanent)
+# Fixes "Alternate page with proper canonical tag" in Google Search Console
+/index.html        /              301!
+/weight-loss.html  /weight-loss   301!
+/sexual-wellness.html /sexual-wellness 301!
+/longevity.html    /longevity     301!
+/hair-loss.html    /hair-loss     301!
+/pricing.html      /pricing       301!
+/quiz.html         /quiz          301!
+/about.html        /about         301!
+/contact.html      /contact       301!
+/faq.html          /faq           301!
+/physicians.html   /physicians    301!
+/how-it-works.html /how-it-works  301!
+/blog.html         /blog          301!
+/checkout.html     /checkout      301!
+/hub.html          /hub           301!
+/privacy.html      /privacy       301!
+/terms.html        /terms         301!
+/hipaa.html        /hipaa         301!
+/telehealth.html   /telehealth    301!
+
+# Blog articles
+/cost-of-compounded-semaglutide.html /cost-of-compounded-semaglutide 301!
+/tirzepatide-vs-semaglutide-weight-loss.html /tirzepatide-vs-semaglutide-weight-loss 301!
+/peptide-therapy-guide.html /peptide-therapy-guide 301!
+/ed-treatment-without-insurance.html /ed-treatment-without-insurance 301!
+/cost-of-compounded-semaglutide-vs-brand-name-ozempic.html /cost-of-compounded-semaglutide-vs-brand-name-ozempic 301!
+/cost-of-compounded-tirzepatide-vs-mounjaro.html /cost-of-compounded-tirzepatide-vs-mounjaro 301!
+/where-to-buy-compounded-semaglutide-online-safely.html /where-to-buy-compounded-semaglutide-online-safely 301!
+/buy-compounded-semaglutide-online-no-hidden-fees.html /buy-compounded-semaglutide-online-no-hidden-fees 301!
+/costs-of-compounded-semantics-versus-branded.html /costs-of-compounded-semantics-versus-branded 301!
+/how-to-get-a-finasteride-prescription-online-fast.html /how-to-get-a-finasteride-prescription-online-fast 301!
+/online-doctor-for-3-in-1-ed-troche-prescription.html /online-doctor-for-3-in-1-ed-troche-prescription 301!
+/sildenafil-tadalafil-apomorphine-troche-online.html /sildenafil-tadalafil-apomorphine-troche-online 301!
+/compounded-oral-minoxidil-for-hair-loss-online.html /compounded-oral-minoxidil-for-hair-loss-online 301!
+/seo-test-article.html /seo-test-article 301!
+
+# Promo pages
+/promo-weight-loss.html /promo-weight-loss 301!
+/promo-ed.html /promo-ed 301!
+/promo-hair-loss.html /promo-hair-loss 301!
+/promo-longevity.html /promo-longevity 301!
