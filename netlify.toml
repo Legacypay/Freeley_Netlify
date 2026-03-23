@@ -33,7 +33,7 @@
   from = "/*.html"
   to = "/:splat"
   status = 301
-  force = false
+  force = true
 
 # Remove trailing slashes (prevent /page/ vs /page duplicates)
 [[redirects]]
