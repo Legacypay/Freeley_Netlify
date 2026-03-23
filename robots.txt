@@ -2,14 +2,18 @@
 User-agent: *
 Allow: /
 
-# Block internal/dev pages
-Disallow: /checkout.html
-Disallow: /privacy_scrape.html
-Disallow: /terms_scrape.html
-Disallow: /telehealth_scrape.html
-Disallow: /seo-test-article.html
+# Block internal/dev pages (clean URLs, no .html)
+Disallow: /checkout
+Disallow: /hub
+Disallow: /privacy_scrape
+Disallow: /terms_scrape
+Disallow: /telehealth_scrape
 Disallow: /models/
 Disallow: /generate-*.js
+Disallow: /netlify/
+
+# Block .html versions (redirected to clean URLs via 301)
+Disallow: /*.html$
 
 # Block asset internals
 Disallow: /assets/videos/

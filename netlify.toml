@@ -2,6 +2,14 @@
   command = "npm install && node build_blog.js"
   publish = "."
 
+[build.processing]
+  # Enable pretty URLs — strips .html from URLs
+  # /weight-loss.html → serves at /weight-loss
+  skip = false
+
+[build.processing.html]
+  pretty_urls = true
+
 [functions]
   directory = "netlify/functions"
 
@@ -15,17 +23,36 @@
 #   MDI_DEFAULT_PHARMACY_ID    - Default 503A compounding pharmacy ID
 #   N8N_WEBHOOK_URL            - Your n8n/Make/Zapier webhook for notifications
 
+# ── REDIRECTS ──────────────────────────────────────────────────
+# 301 redirect .html URLs to clean URLs to prevent duplicate content
+# This fixes the "Alternate page with proper canonical tag" error
+# in Google Search Console.
+
+# Force .html → clean URL (301 permanent redirect)
+[[redirects]]
+  from = "/*.html"
+  to = "/:splat"
+  status = 301
+  force = false
+
+# Remove trailing slashes (prevent /page/ vs /page duplicates)
+[[redirects]]
+  from = "/*/"
+  to = "/:splat"
+  status = 301
+  force = false
+
 # ── Cache-Control Headers ──────────────────────────────────
 # Ensures browsers always revalidate with Netlify instead of
 # serving stale cached content after deployments.
-
 
 [[headers]]
   for = "/*"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
+    X-Robots-Tag = "index, follow"
 
 [[headers]]
   for = "/assets/*"
   [headers.values]
-    Cache-Control = "public, max-age=0, must-revalidate"
+    Cache-Control = "public, max-age=31536000, immutable"
