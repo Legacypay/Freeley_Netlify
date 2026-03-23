@@ -5,14 +5,93 @@ const { marked } = require('marked');
 
 // Set directories
 const CONTENT_DIR = path.join(__dirname, 'content', 'blog');
+const IMAGES_DIR = path.join(__dirname, 'assets', 'blog');
 const OUTPUT_DIR = __dirname; 
+
+// OpenAI API for GPT Image 1 generation
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+
+const BRAND_STYLE = `Photorealistic, clean, modern healthcare aesthetic. 
+Soft natural lighting, warm neutral tones (cream, sage green, soft white). 
+Minimalist composition with shallow depth of field. 
+Premium telehealth brand feel — NOT stock photo looking. 
+No text, no logos, no watermarks, no faces showing full identity. 
+Shot on Canon EOS R5 with RF 85mm f/1.2L USM lens. Natural available light.
+True-to-life textures, zero airbrushing. Completely indistinguishable from a real photograph.`;
+
+const CATEGORY_HINTS = {
+  'Weight Loss': 'healthy lifestyle, measuring tape, fresh vegetables, fitness, wellness vials, glass injection pen on marble',
+  'Hair Loss': 'hair care products, scalp treatment bottle, hair growth serum, grooming tools on clean surface',
+  "Men's Health": 'men\'s wellness products, supplement bottles, confident male silhouette, premium health packaging',
+  'ED': 'men\'s health supplement, discreet luxury packaging, pharmacy bottles, wellness',
+  'Sexual Wellness': 'wellness supplements, discreet luxury packaging, health products, clean aesthetic',
+  'Longevity': 'peptide vials, NAD+ supplements, biohacking devices, longevity science, anti-aging serum',
+  'Peptides': 'peptide vials, scientific glassware, medical research, injection supplies on white surface',
+  'Telehealth': 'doctor consultation on tablet screen, mobile health app, stethoscope, modern clinic',
+  'Medical Education': 'medical reference books, healthcare education materials, clinical setting',
+  'Medication Comparison': 'two medication vials side by side on white marble, comparison layout, clean medical'
+};
+
+async function generateBlogImage(title, tag, slug) {
+  if (!OPENAI_API_KEY) {
+    console.log(`   ⚠️  No OPENAI_API_KEY — skipping image generation for ${slug}`);
+    return null;
+  }
+
+  const hints = CATEGORY_HINTS[tag] || CATEGORY_HINTS['Medical Education'];
+  const imagePrompt = `A hero image for a medical health blog article titled "${title}". 
+Visual elements: ${hints}. 
+${BRAND_STYLE}`;
+
+  console.log(`   📸 Generating GPT Image 1 hero for: ${slug}`);
+
+  try {
+    const response = await fetch('https://api.openai.com/v1/images/generations', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${OPENAI_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: 'gpt-image-1',
+        prompt: imagePrompt,
+        n: 1,
+        size: '1536x1024',
+        quality: 'high'
+      })
+    });
+
+    const data = await response.json();
+
+    if (!data.data || !data.data[0]) {
+      console.error(`   ❌ GPT Image 1 error: ${JSON.stringify(data.error || 'Unknown')}`);
+      return null;
+    }
+
+    const b64 = data.data[0].b64_json || data.data[0].b64;
+    const imageBuffer = Buffer.from(b64, 'base64');
+    
+    if (!fs.existsSync(IMAGES_DIR)) {
+      fs.mkdirSync(IMAGES_DIR, { recursive: true });
+    }
+    
+    const filename = `${slug}.jpg`;
+    const filepath = path.join(IMAGES_DIR, filename);
+    fs.writeFileSync(filepath, imageBuffer);
+    
+    const sizeMB = (imageBuffer.length / (1024 * 1024)).toFixed(2);
+    console.log(`   ✅ Saved: assets/blog/${filename} (${sizeMB} MB) via GPT Image 1`);
+    return `assets/blog/${filename}`;
+  } catch (err) {
+    console.error(`   ❌ Image generation failed: ${err.message}`);
+    return null;
+  }
+}
 
 // Ensure content directory exists
 if (!fs.existsSync(CONTENT_DIR)) {
   fs.mkdirSync(CONTENT_DIR, { recursive: true });
-}
-
-// Define HTML Templates
+}// Define HTML Templates
 const PAGE_TEMPLATE = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -236,7 +315,7 @@ function getWordCount(text) {
   return text.split(/\s+/).length;
 }
 
-function processBlogs() {
+async function processBlogs() {
   const files = fs.readdirSync(CONTENT_DIR).filter(f => f.endsWith('.md'));
   
   if (files.length === 0) {
@@ -246,7 +325,7 @@ function processBlogs() {
 
   const blogPosts = [];
   
-  files.forEach(file => {
+  for (const file of files) {
     const rawContent = fs.readFileSync(path.join(CONTENT_DIR, file), 'utf8');
     const { data, content } = matter(rawContent);
     const slug = file.replace('.md', '');
@@ -263,7 +342,25 @@ function processBlogs() {
     const tag = data.tag || "Medical Education";
     const excerpt = data.excerpt || "Learn more about the latest research and clinical protocols regarding this treatment.";
     const dateStr = data.date || new Date().toISOString();
-    const image = data.image || "assets/brand/new_hero.jpeg";
+    let image = data.image || `assets/blog/${slug}.jpg`;
+
+    // ── GPT IMAGE 1 AUTO-GENERATION ──
+    // If the image doesn't exist on disk, generate it via GPT Image 1
+    const imagePath = path.join(__dirname, image);
+    if (!fs.existsSync(imagePath)) {
+      console.log(`   🔍 Image missing for "${slug}" — generating via GPT Image 1...`);
+      const generatedPath = await generateBlogImage(title, tag, slug);
+      if (generatedPath) {
+        image = generatedPath;
+        // Update the markdown frontmatter with the new image path
+        const updatedFrontmatter = { ...data, image: generatedPath };
+        const updatedContent = matter.stringify(content, updatedFrontmatter);
+        fs.writeFileSync(path.join(CONTENT_DIR, file), updatedContent);
+        console.log(`   📝 Updated frontmatter: ${file} → image: ${generatedPath}`);
+      }
+      // Rate limit: wait 3s between image generations
+      await new Promise(r => setTimeout(r, 3000));
+    }
 
     // Build hero image HTML if image exists
     const heroImageHTML = image
@@ -290,7 +387,7 @@ function processBlogs() {
     blogPosts.push({
       slug, title, tag, excerpt, date: new Date(dateStr), image
     });
-  });
+  }
 
   // Sort by date newest first
   blogPosts.sort((a, b) => b.date - a.date);

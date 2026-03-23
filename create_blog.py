@@ -1,4 +1,97 @@
+"""
+Blog post creator with GPT Image 1 hero image generation.
+
+Usage:
+  OPENAI_API_KEY=sk-xxx python3 create_blog.py
+
+Generates:
+  - 4 blog HTML pages with hero images
+  - Blog hub page (blog.html)
+  - All images via GPT Image 1 (gpt-image-1 model)
+
+⚠️  ONLY uses GPT Image 1 for image generation.
+    No DALL-E. No Gemini. No Unsplash.
+"""
+
 import os
+import json
+import base64
+import urllib.request
+
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
+IMAGES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "blog")
+
+BRAND_STYLE = """Photorealistic, clean, modern healthcare aesthetic. 
+Soft natural lighting, warm neutral tones (cream, sage green, soft white). 
+Minimalist composition with shallow depth of field. 
+Premium telehealth brand feel — NOT stock photo looking. 
+No text, no logos, no watermarks, no faces showing full identity. 
+Shot on Canon EOS R5 with RF 85mm f/1.2L USM lens. Natural available light.
+True-to-life textures, zero airbrushing. Completely indistinguishable from a real photograph."""
+
+CATEGORY_HINTS = {
+    "Weight Loss": "healthy lifestyle, measuring tape, fresh vegetables, fitness, wellness vials, glass injection pen on marble",
+    "Medication Comparison": "two medication vials side by side on white marble, comparison layout, clean medical",
+    "Longevity": "peptide vials, NAD+ supplements, biohacking devices, longevity science, anti-aging serum",
+    "Men's Health": "men's wellness products, supplement bottles, confident male silhouette, premium health packaging",
+    "Medical Education": "medical reference books, healthcare education materials, clinical setting",
+}
+
+
+def generate_gpt_image_1(title, tag, slug):
+    """Generate a hero image using GPT Image 1 (gpt-image-1) via OpenAI API."""
+    if not OPENAI_API_KEY:
+        print(f"   ⚠️  No OPENAI_API_KEY — skipping image generation for {slug}")
+        return None
+
+    os.makedirs(IMAGES_DIR, exist_ok=True)
+
+    hints = CATEGORY_HINTS.get(tag, CATEGORY_HINTS["Medical Education"])
+    prompt = f'A hero image for a medical health blog article titled "{title}". Visual elements: {hints}. {BRAND_STYLE}'
+
+    print(f"   📸 Generating GPT Image 1 hero for: {slug}")
+
+    payload = json.dumps({
+        "model": "gpt-image-1",
+        "prompt": prompt,
+        "n": 1,
+        "size": "1536x1024",
+        "quality": "high"
+    }).encode("utf-8")
+
+    req = urllib.request.Request(
+        "https://api.openai.com/v1/images/generations",
+        data=payload,
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {OPENAI_API_KEY}",
+        },
+        method="POST",
+    )
+
+    try:
+        with urllib.request.urlopen(req) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+
+        if not data.get("data") or not data["data"][0]:
+            print(f"   ❌ GPT Image 1 error: {data.get('error', 'Unknown')}")
+            return None
+
+        b64 = data["data"][0].get("b64_json") or data["data"][0].get("b64")
+        image_bytes = base64.b64decode(b64)
+
+        filepath = os.path.join(IMAGES_DIR, f"{slug}.jpg")
+        with open(filepath, "wb") as f:
+            f.write(image_bytes)
+
+        size_mb = len(image_bytes) / (1024 * 1024)
+        print(f"   ✅ Saved: assets/blog/{slug}.jpg ({size_mb:.2f} MB) via GPT Image 1")
+        return f"assets/blog/{slug}.jpg"
+
+    except Exception as e:
+        print(f"   ❌ Image generation failed: {e}")
+        return None
+
 
 blog_template = """<!DOCTYPE html>
 <html lang="en">
@@ -30,12 +123,22 @@ blog_template = """<!DOCTYPE html>
       margin-inline: auto;
       line-height: 1.1;
     }}
-    .blog-meta {{ /* Fixed syntax error below */
+    .blog-meta {{
       font-size: 14px;
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 1px;
       font-weight: 600;
+    }}
+    .blog-hero-img {{
+      display: block;
+      width: 100%;
+      max-width: 760px;
+      max-height: 420px;
+      object-fit: cover;
+      margin: -40px auto 0;
+      border-radius: 20px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.08);
     }}
     .blog-content {{
       padding: 80px 0;
@@ -70,10 +173,11 @@ blog_template = """<!DOCTYPE html>
 <body>
   <section class="blog-hero">
     <div class="container reveal">
-      <div class="blog-meta">Medical Education · 4 min read</div>
+      <div class="blog-meta">{tag} · 4 min read</div>
       <h1>{title}</h1>
     </div>
   </section>
+  {hero_image}
   <div class="container blog-content reveal reveal-delay-1">
     {content}
     <div class="blog-cta">
@@ -129,13 +233,21 @@ hub_html = """<!DOCTYPE html>
       background: #fff;
       border: 1px solid var(--border);
       border-radius: 20px;
-      padding: 32px;
+      overflow: hidden;
       transition: all 0.3s;
     }
     .article-card:hover {
       box-shadow: 0 10px 30px rgba(0,0,0,0.05);
       transform: translateY(-4px);
       border-color: rgba(61,140,94,0.3);
+    }
+    .article-card img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+    }
+    .article-card-body {
+      padding: 32px;
     }
     .ac-tag {
       font-size: 11px;
@@ -169,26 +281,7 @@ hub_html = """<!DOCTYPE html>
   </section>
   <div class="container">
     <div class="blog-grid">
-      <a href="cost-of-compounded-semaglutide.html" class="article-card reveal reveal-delay-1">
-        <span class="ac-tag">Weight Loss</span>
-        <h2 class="ac-title">The True Cost of Compounded Semaglutide</h2>
-        <p class="ac-excerpt">Breaking down the pricing of GLP-1 medications, avoiding hidden fees, and finding high-quality telehealth providers.</p>
-      </a>
-      <a href="tirzepatide-vs-semaglutide-weight-loss.html" class="article-card reveal reveal-delay-2">
-        <span class="ac-tag">Medication Comparison</span>
-        <h2 class="ac-title">Tirzepatide vs Semaglutide for Weight Loss</h2>
-        <p class="ac-excerpt">A clinical comparison of the two most effective GLP-1 and dual-agonist medications for sustainable weight management.</p>
-      </a>
-      <a href="peptide-therapy-guide.html" class="article-card reveal reveal-delay-3">
-        <span class="ac-tag">Longevity</span>
-        <h2 class="ac-title">A Beginner's Guide to Peptide Therapy</h2>
-        <p class="ac-excerpt">Exploring the science behind Sermorelin, BPC-157, and standard protocols for cellular repair and metabolic health.</p>
-      </a>
-      <a href="ed-treatment-without-insurance.html" class="article-card reveal reveal-delay-4">
-        <span class="ac-tag">Men's Health</span>
-        <h2 class="ac-title">ED Treatment Without Insurance</h2>
-        <p class="ac-excerpt">How modern telehealth is making fast-acting, customized ED compounds accessible without the traditional pharmacy markup.</p>
-      </a>
+      {cards}
     </div>
   </div>
   <script src="shared.js"></script>
@@ -241,17 +334,82 @@ ed_content = """
 """
 
 pages = {
-    "cost-of-compounded-semaglutide.html": ("The True Cost of Compounded Semaglutide", cost_content),
-    "tirzepatide-vs-semaglutide-weight-loss.html": ("Tirzepatide vs Semaglutide for Weight Loss", tirz_content),
-    "peptide-therapy-guide.html": ("A Beginner's Guide to Peptide Therapy", peptide_content),
-    "ed-treatment-without-insurance.html": ("ED Treatment Without Insurance", ed_content)
+    "cost-of-compounded-semaglutide": {
+        "title": "The True Cost of Compounded Semaglutide",
+        "tag": "Weight Loss",
+        "content": cost_content,
+        "excerpt": "Breaking down the pricing of GLP-1 medications, avoiding hidden fees, and finding high-quality telehealth providers.",
+    },
+    "tirzepatide-vs-semaglutide-weight-loss": {
+        "title": "Tirzepatide vs Semaglutide for Weight Loss",
+        "tag": "Medication Comparison",
+        "content": tirz_content,
+        "excerpt": "A clinical comparison of the two most effective GLP-1 and dual-agonist medications for sustainable weight management.",
+    },
+    "peptide-therapy-guide": {
+        "title": "A Beginner's Guide to Peptide Therapy",
+        "tag": "Longevity",
+        "content": peptide_content,
+        "excerpt": "Exploring the science behind Sermorelin, BPC-157, and standard protocols for cellular repair and metabolic health.",
+    },
+    "ed-treatment-without-insurance": {
+        "title": "ED Treatment Without Insurance",
+        "tag": "Men's Health",
+        "content": ed_content,
+        "excerpt": "How modern telehealth is making fast-acting, customized ED compounds accessible without the traditional pharmacy markup.",
+    },
 }
 
-for filename, (title, content) in pages.items():
-    with open(filename, 'w') as f:
-        f.write(blog_template.format(title=title, content=content))
+# ── GENERATE PAGES ──
+cards_html = ""
 
-with open('blog.html', 'w') as f:
-    f.write(hub_html)
+for slug, info in pages.items():
+    title = info["title"]
+    tag = info["tag"]
+    content = info["content"]
+    excerpt = info["excerpt"]
 
-print("Blog pages generated.")
+    # Generate hero image via GPT Image 1 if it doesn't exist
+    image_path = os.path.join(IMAGES_DIR, f"{slug}.jpg")
+    image_src = f"assets/blog/{slug}.jpg"
+
+    if not os.path.exists(image_path):
+        generated = generate_gpt_image_1(title, tag, slug)
+        if generated:
+            image_src = generated
+    else:
+        print(f"   ✅ Image exists: {image_src}")
+
+    hero_image_html = f'<img src="{image_src}" alt="{title}" class="blog-hero-img">'
+
+    # Write individual blog page
+    page_html = blog_template.format(
+        title=title,
+        tag=tag,
+        content=content,
+        hero_image=hero_image_html,
+    )
+    with open(f"{slug}.html", "w") as f:
+        f.write(page_html)
+
+    print(f"✅ Built {slug}.html")
+
+    # Build card for hub
+    cards_html += f"""
+      <a href="{slug}.html" class="article-card reveal">
+        <img src="{image_src}" alt="{title}">
+        <div class="article-card-body">
+          <span class="ac-tag">{tag}</span>
+          <h2 class="ac-title">{title}</h2>
+          <p class="ac-excerpt">{excerpt}</p>
+        </div>
+      </a>
+    """
+
+# Write blog hub
+with open("blog.html", "w") as f:
+    f.write(hub_html.format(cards=cards_html))
+
+print("✅ Built blog.html hub page")
+print("\n📸 All images generated exclusively via GPT Image 1 (gpt-image-1)")
+print("   No DALL-E. No Gemini. No Unsplash.")
