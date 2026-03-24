@@ -1,9 +1,12 @@
 ---
-title: "Buy Compounded Semaglutide Online: No Hidden Fees and Transparent Pricing"
+title: 'Buy Compounded Semaglutide Online: No Hidden Fees and Transparent Pricing'
 tag: Weight Loss
-excerpt: Discover the benefits and insights into purchasing compounded semaglutide online with no hidden fees, ensuring transparency and effective weight management.
-date: 2023-10-11T10:00:00Z
-image: "assets/blog/buy-compounded-semaglutide-online-no-hidden-fees.jpg"
+excerpt: >-
+  Discover the benefits and insights into purchasing compounded semaglutide
+  online with no hidden fees, ensuring transparency and effective weight
+  management.
+date: 2023-10-11T10:00:00.000Z
+image: assets/blog/buy-compounded-semaglutide-online-no-hidden-fees.jpg
 ---
 
 ## Discover the Benefits of Compounded Semaglutide

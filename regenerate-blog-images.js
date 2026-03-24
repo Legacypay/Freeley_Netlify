@@ -25,12 +25,15 @@ const IMAGES_DIR = path.join(__dirname, 'assets', 'blog');
 const IMAGE_SIZE = '1536x1024';
 const IMAGE_QUALITY = 'high';
 
-const BRAND_STYLE = `Photorealistic, clean, modern healthcare aesthetic. 
+const BRAND_STYLE = `Hyperrealistic photograph, completely indistinguishable from a real photo. 
+Shot on Canon EOS R5 with RF 85mm f/1.2L USM lens at f/2.0. Natural available light from a large window.
 Soft natural lighting, warm neutral tones (cream, sage green, soft white). 
-Minimalist composition with shallow depth of field. 
-Premium telehealth brand feel — NOT stock photo looking. 
-No text, no logos, no watermarks, no faces showing full identity. 
-Professional medical/wellness product photography style.`;
+Shallow depth of field with creamy bokeh background. 
+Premium telehealth brand feel — NOT stock photo looking, NOT AI-generated looking. 
+No text, no logos, no watermarks, no faces showing full identity.
+True-to-life skin textures, real fabric wrinkles, authentic surface imperfections.
+Subtle lens flare, natural color grading, film grain at ISO 400.
+Magazine editorial quality — Kinfolk / Cereal magazine aesthetic.`;
 
 const CATEGORY_HINTS = {
   'Weight Loss': 'healthy lifestyle, measuring tape, fresh vegetables, fitness, wellness vials, glass injection pen on marble',

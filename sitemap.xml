@@ -1,200 +1,95 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <!-- Core Pages -->
   <url>
     <loc>https://freeley.com</loc>
-    <lastmod>2026-03-23</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
+    <lastmod>2026-03-24</lastmod>
   </url>
   <url>
     <loc>https://freeley.com/how-it-works</loc>
-    <lastmod>2026-03-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
+    <lastmod>2026-03-24</lastmod>
   </url>
-  <url>
-    <loc>https://freeley.com/quiz</loc>
-    <lastmod>2026-03-23</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://freeley.com/pricing</loc>
-    <lastmod>2026-03-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-
-  <!-- Treatment Pages -->
   <url>
     <loc>https://freeley.com/weight-loss</loc>
-    <lastmod>2026-03-23</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <lastmod>2026-03-24</lastmod>
   </url>
   <url>
     <loc>https://freeley.com/sexual-wellness</loc>
-    <lastmod>2026-03-23</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <lastmod>2026-03-24</lastmod>
   </url>
   <url>
     <loc>https://freeley.com/longevity</loc>
-    <lastmod>2026-03-23</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <lastmod>2026-03-24</lastmod>
   </url>
   <url>
     <loc>https://freeley.com/hair-loss</loc>
-    <lastmod>2026-03-23</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <lastmod>2026-03-24</lastmod>
   </url>
-
-  <!-- Trust & Info Pages -->
+  <url>
+    <loc>https://freeley.com/pricing</loc>
+    <lastmod>2026-03-24</lastmod>
+  </url>
+  <url>
+    <loc>https://freeley.com/quiz</loc>
+    <lastmod>2026-03-24</lastmod>
+  </url>
   <url>
     <loc>https://freeley.com/about</loc>
-    <lastmod>2026-03-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <lastmod>2026-03-24</lastmod>
   </url>
   <url>
     <loc>https://freeley.com/contact</loc>
-    <lastmod>2026-03-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <lastmod>2026-03-24</lastmod>
   </url>
   <url>
     <loc>https://freeley.com/physicians</loc>
-    <lastmod>2026-03-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <lastmod>2026-03-24</lastmod>
   </url>
   <url>
     <loc>https://freeley.com/faq</loc>
-    <lastmod>2026-03-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <lastmod>2026-03-24</lastmod>
   </url>
-  <url>
-    <loc>https://freeley.com/telehealth</loc>
-    <lastmod>2026-03-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <!-- Legal Pages -->
-  <url>
-    <loc>https://freeley.com/privacy</loc>
-    <lastmod>2026-03-23</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
-    <loc>https://freeley.com/terms</loc>
-    <lastmod>2026-03-23</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
-    <loc>https://freeley.com/hipaa</loc>
-    <lastmod>2026-03-23</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
-
-  <!-- Blog -->
   <url>
     <loc>https://freeley.com/blog</loc>
-    <lastmod>2026-03-23</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <lastmod>2026-03-24</lastmod>
   </url>
-  <url>
-    <loc>https://freeley.com/cost-of-compounded-semaglutide</loc>
-    <lastmod>2026-03-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://freeley.com/tirzepatide-vs-semaglutide-weight-loss</loc>
-    <lastmod>2026-03-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://freeley.com/peptide-therapy-guide</loc>
-    <lastmod>2026-03-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://freeley.com/ed-treatment-without-insurance</loc>
-    <lastmod>2026-03-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <!-- SEO Articles -->
   <url>
     <loc>https://freeley.com/cost-of-compounded-semaglutide-vs-brand-name-ozempic</loc>
     <lastmod>2026-03-16</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://freeley.com/cost-of-compounded-tirzepatide-vs-mounjaro</loc>
-    <lastmod>2026-03-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://freeley.com/where-to-buy-compounded-semaglutide-online-safely</loc>
-    <lastmod>2026-03-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://freeley.com/buy-compounded-semaglutide-online-no-hidden-fees</loc>
-    <lastmod>2026-03-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://freeley.com/costs-of-compounded-semantics-versus-branded</loc>
-    <lastmod>2026-03-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://freeley.com/how-to-get-a-finasteride-prescription-online-fast</loc>
-    <lastmod>2026-03-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://freeley.com/online-doctor-for-3-in-1-ed-troche-prescription</loc>
-    <lastmod>2026-03-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://freeley.com/sildenafil-tadalafil-apomorphine-troche-online</loc>
-    <lastmod>2026-03-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://freeley.com/compounded-oral-minoxidil-for-hair-loss-online</loc>
-    <lastmod>2026-03-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://freeley.com/seo-test-article</loc>
     <lastmod>2026-03-15</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://freeley.com/online-doctor-for-3-in-1-ed-troche-prescription</loc>
+    <lastmod>2023-11-24</lastmod>
+  </url>
+  <url>
+    <loc>https://freeley.com/sildenafil-tadalafil-apomorphine-troche-online</loc>
+    <lastmod>2023-11-01</lastmod>
+  </url>
+  <url>
+    <loc>https://freeley.com/where-to-buy-compounded-semaglutide-online-safely</loc>
+    <lastmod>2023-11-01</lastmod>
+  </url>
+  <url>
+    <loc>https://freeley.com/costs-of-compounded-semantics-versus-branded</loc>
+    <lastmod>2023-10-25</lastmod>
+  </url>
+  <url>
+    <loc>https://freeley.com/how-to-get-a-finasteride-prescription-online-fast</loc>
+    <lastmod>2023-10-20</lastmod>
+  </url>
+  <url>
+    <loc>https://freeley.com/cost-of-compounded-tirzepatide-vs-mounjaro</loc>
+    <lastmod>2023-10-17</lastmod>
+  </url>
+  <url>
+    <loc>https://freeley.com/buy-compounded-semaglutide-online-no-hidden-fees</loc>
+    <lastmod>2023-10-11</lastmod>
+  </url>
+  <url>
+    <loc>https://freeley.com/compounded-oral-minoxidil-for-hair-loss-online</loc>
+    <lastmod>2023-10-01</lastmod>
   </url>
 </urlset>

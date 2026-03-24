@@ -1,9 +1,11 @@
 ---
-title: "Exploring the Benefits of Sildenafil, Tadalafil, and Apomorphine Troche Online"
+title: 'Exploring the Benefits of Sildenafil, Tadalafil, and Apomorphine Troche Online'
 tag: Men's Health
-excerpt: "Discover how sildenafil, tadalafil, and apomorphine troche can enhance men's health, available conveniently online."
-date: "2023-11-01T10:00:00Z"
-image: "assets/blog/sildenafil-tadalafil-apomorphine-troche-online.jpg"
+excerpt: >-
+  Discover how sildenafil, tadalafil, and apomorphine troche can enhance men's
+  health, available conveniently online.
+date: '2023-11-01T10:00:00Z'
+image: assets/blog/sildenafil-tadalafil-apomorphine-troche-online.jpg
 ---
 
 ## Understanding Sildenafil, Tadalafil, and Apomorphine Troche

@@ -1,9 +1,14 @@
 ---
-title: "Unlocking the Benefits of Online Doctor Consultations for 3-in-1 ED Troche Prescriptions"
+title: >-
+  Unlocking the Benefits of Online Doctor Consultations for 3-in-1 ED Troche
+  Prescriptions
 tag: Men's Health
-excerpt: "Discover how online doctors provide a seamless solution for obtaining 3-in-1 ED troche prescriptions, improving convenience and privacy for men's health management."
-date: 2023-11-24T10:00:00Z
-image: "assets/blog/online-doctor-for-3-in-1-ed-troche-prescription.jpg"
+excerpt: >-
+  Discover how online doctors provide a seamless solution for obtaining 3-in-1
+  ED troche prescriptions, improving convenience and privacy for men's health
+  management.
+date: 2023-11-24T10:00:00.000Z
+image: assets/blog/online-doctor-for-3-in-1-ed-troche-prescription.jpg
 ---
 
 ## Understanding the 3-in-1 ED Troche
