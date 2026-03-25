@@ -129,8 +129,10 @@ function initPage(activePage) {
   document.body.insertAdjacentHTML('beforeend', FOOTER_HTML);
   document.body.insertAdjacentHTML('beforeend', STICKY_MOBILE_CTA);
   
-  document.getElementById('currentMonthStr').textContent = new Date().toLocaleString('default', { month: 'long' });
-
+    const currentMonthSpan = document.getElementById('currentMonthStr');
+  if (currentMonthSpan) {
+    currentMonthSpan.textContent = new Date().toLocaleString('default', { month: 'long' });
+  }
   // Mobile nav styles + Urgency/Sticky CSS
   const style = document.createElement('style');
   style.textContent = MOBILE_NAV_STYLES + `
