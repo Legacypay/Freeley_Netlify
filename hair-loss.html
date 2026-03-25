@@ -33,9 +33,24 @@
     /* Hero */
     .treatment-hero {
       padding: 140px 0 100px;
-      background-image: url("assets/brand/freeley_pattern_dark.jpg"); background-size: cover; background-position: center;
+      background: linear-gradient(155deg, #382415 0%, #5e3f28 45%, #8a5e3d 100%), url("assets/brand/freeley_pattern_dark.jpg");
+      background-size: cover; background-position: center; background-blend-mode: overlay;
       position: relative;
       overflow: hidden;
+    }
+
+    #goldDustCanvas {
+      position: absolute; 
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 100%; 
+      z-index: 0; 
+      pointer-events: none; 
+      mix-blend-mode: screen; 
+      opacity: 0.6; 
+      mask-image: linear-gradient(to bottom, black 0%, black 80%, transparent 100%); 
+      -webkit-mask-image: linear-gradient(to bottom, black 0%, black 80%, transparent 100%);
     }
 
     .treatment-hero::before {
@@ -663,7 +678,9 @@
 
   <!-- HERO -->
   <section class="treatment-hero">
-    <div class="container">
+    <!-- Gold Dust Growth Canvas Animation -->
+    <canvas id="goldDustCanvas"></canvas>
+    <div class="container" style="position: relative; z-index: 2;">
       <div class="hero-grid">
         <div class="reveal">
           <span class="treatment-eyebrow">Hair Regrowth</span>
@@ -1050,6 +1067,83 @@
         entries.forEach(e => stickyCta.classList.toggle('visible', !e.isIntersecting));
       }, { threshold: 0 });
       if (hero) observer.observe(hero);
+    }
+  </script>
+
+  <script>
+    // Gold Dust Canvas Animation
+    const goldDustCanvas = document.getElementById('goldDustCanvas');
+    if (goldDustCanvas) {
+      const ctx = goldDustCanvas.getContext('2d');
+      let w, h;
+      const dust = [];
+      const colors = ['rgba(212, 175, 55, OP)', 'rgba(255, 215, 0, OP)', 'rgba(218, 165, 32, OP)', 'rgba(184, 134, 11, OP)'];
+
+      function resize() {
+        w = goldDustCanvas.width = goldDustCanvas.offsetWidth;
+        h = goldDustCanvas.height = goldDustCanvas.offsetHeight;
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      class DustMote {
+        constructor() {
+          this.reset(true);
+        }
+        
+        reset(randomY = false) {
+          this.x = Math.random() * w;
+          this.y = randomY ? Math.random() * h : h + Math.random() * 50;
+          this.size = Math.random() * 2 + 0.5;
+          // Upward rising speed represents new growth
+          this.speedY = -(Math.random() * 1.5 + 0.4); 
+          this.speedX = (Math.random() - 0.5) * 0.4; 
+          
+          const rawColor = colors[Math.floor(Math.random() * colors.length)];
+          this.baseOpacity = Math.random() * 0.7 + 0.1;
+          this.color = rawColor.replace('OP', this.baseOpacity);
+          this.glowColor = rawColor.replace('OP', this.baseOpacity * 0.3);
+        }
+
+        update() {
+          this.y += this.speedY;
+          this.x += this.speedX;
+          
+          if (this.y < -this.size * 2) {
+            this.reset();
+          }
+        }
+
+        draw() {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size * 3, 0, Math.PI * 2);
+          ctx.fillStyle = this.glowColor;
+          ctx.fill();
+          
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fillStyle = this.color;
+          ctx.fill();
+        }
+      }
+
+      const dustCount = Math.max(30, Math.floor(w / 12));
+      for (let i = 0; i < dustCount; i++) {
+        dust.push(new DustMote());
+      }
+
+      function loop() {
+        ctx.clearRect(0, 0, w, h);
+        ctx.globalCompositeOperation = 'screen';
+        
+        for (const mote of dust) {
+          mote.update();
+          mote.draw();
+        }
+        
+        requestAnimationFrame(loop);
+      }
+      loop();
     }
   </script>
   <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />

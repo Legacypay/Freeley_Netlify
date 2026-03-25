@@ -27,9 +27,24 @@
   <style>
     .treatment-hero {
       padding: 140px 0 100px;
-      background-image: url("assets/brand/freeley_pattern_dark.jpg"); background-size: cover; background-position: center;
+      background: linear-gradient(155deg, #24163d 0%, #3d2666 45%, #583991 100%), url("assets/brand/freeley_pattern_dark.jpg");
+      background-size: cover; background-position: center; background-blend-mode: overlay;
       position: relative;
       overflow: hidden;
+    }
+
+    #cellsCanvas {
+      position: absolute; 
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 100%; 
+      z-index: 0; 
+      pointer-events: none; 
+      mix-blend-mode: screen; 
+      opacity: 0.6; 
+      mask-image: linear-gradient(to bottom, black 0%, black 80%, transparent 100%); 
+      -webkit-mask-image: linear-gradient(to bottom, black 0%, black 80%, transparent 100%);
     }
 
     .treatment-hero::before {
@@ -405,7 +420,9 @@
 
 
   <section class="treatment-hero">
-    <div class="container">
+    <!-- Cellular Regeneration Canvas Background -->
+    <canvas id="cellsCanvas"></canvas>
+    <div class="container" style="position: relative; z-index: 2;">
       <div class="hero-grid">
         <div class="reveal">
           <span class="treatment-eyebrow">Longevity & Peptides</span>
@@ -704,6 +721,87 @@
       if (hero) observer.observe(hero);
     }
   </script>
+
+  <script>
+    // Cellular Regeneration Canvas Animation
+    const cellsCanvas = document.getElementById('cellsCanvas');
+    if (cellsCanvas) {
+      const ctx = cellsCanvas.getContext('2d');
+      let w, h;
+      const cells = [];
+      const colors = ['rgba(138, 43, 226, OP)', 'rgba(147, 112, 219, OP)', 'rgba(75, 0, 130, OP)', 'rgba(123, 104, 238, OP)', 'rgba(65, 105, 225, OP)'];
+
+      function resize() {
+        w = cellsCanvas.width = cellsCanvas.offsetWidth;
+        h = cellsCanvas.height = cellsCanvas.offsetHeight;
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      class Cell {
+        constructor() {
+          this.reset(true);
+        }
+        
+        reset(randomY = false) {
+          this.x = Math.random() * w;
+          this.y = randomY ? Math.random() * h : h + Math.random() * 50;
+          this.size = Math.random() * 45 + 15;
+          this.speedY = -(Math.random() * 0.4 + 0.1);
+          this.phase = Math.random() * Math.PI * 2;
+          this.phaseSpeed = Math.random() * 0.015 + 0.005;
+          this.amplitude = Math.random() * 0.8 + 0.2; 
+          
+          const rawColor = colors[Math.floor(Math.random() * colors.length)];
+          this.baseOpacity = Math.random() * 0.25 + 0.05;
+          this.colorCenter = rawColor.replace('OP', this.baseOpacity * 2.5);
+          this.colorEdge = rawColor.replace('OP', 0);
+        }
+
+        update() {
+          this.y += this.speedY;
+          this.phase += this.phaseSpeed;
+          this.x += Math.sin(this.phase) * this.amplitude;
+          
+          if (this.y < -this.size * 2) {
+            this.reset();
+          }
+        }
+
+        draw() {
+          // Cellular glow
+          const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
+          gradient.addColorStop(0, this.colorCenter);
+          gradient.addColorStop(1, this.colorEdge);
+          
+          ctx.fillStyle = gradient;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // Density responsive to screen width
+      const cellCount = Math.max(15, Math.floor(w / 40));
+      for (let i = 0; i < cellCount; i++) {
+        cells.push(new Cell());
+      }
+
+      function loop() {
+        ctx.clearRect(0, 0, w, h);
+        
+        ctx.globalCompositeOperation = 'screen';
+        for (const cell of cells) {
+          cell.update();
+          cell.draw();
+        }
+        
+        requestAnimationFrame(loop);
+      }
+      loop();
+    }
+  </script>
+
   <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
 </body>
 
