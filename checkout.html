@@ -15,18 +15,19 @@
   <style>
     /* Checkout specific aesthetic */
     :root {
-      --forest: #1a4a2e; /* Update to match var(--green) */
+      --forest: #1a4a2e;
       --cream: #faf8f4;
-      --gold: #c9a96e;
-      --gold-light: rgba(201, 169, 110, 0.15);
-      --forest-light: #e8f0eb; /* var(--green-pale) */
+      --im8-red: #A40011;
+      --im8-red-gradient: linear-gradient(135deg, #d80621 0%, #a40011 100%);
+      --im8-bg-active: linear-gradient(120deg, rgba(255, 242, 242, 0.9) 0%, rgba(255, 250, 248, 0.9) 100%);
+      --forest-light: #e8f0eb;
       --white: #ffffff;
       --charcoal: #1c1c1c;
-      --gray-light: #f8f5f0; /* var(--off-white) */
-      --border: rgba(0,0,0,0.08); /* Update to shared border opacity */
+      --gray-light: #f8f5f0;
+      --border: rgba(0,0,0,0.08);
       
-      --playfair: 'Cormorant Garamond', serif; /* Use main heading font */
-      --poppins: 'DM Sans', sans-serif; /* Use main body font */
+      --playfair: 'Cormorant Garamond', serif;
+      --poppins: 'DM Sans', sans-serif;
     }
 
     body {
@@ -179,24 +180,30 @@
       background: rgba(255, 255, 255, 0.85);
       backdrop-filter: blur(10px);
       border: 1.5px solid var(--border);
-      border-radius: 12px;
-      padding: 20px 24px;
+      border-radius: 16px;
+      padding: 24px 24px;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      flex-direction: column;
       cursor: pointer;
       position: relative;
-      transition: all 0.2s ease;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .plan-card:hover {
-      border-color: var(--gold);
+      border-color: var(--im8-red);
     }
 
     .plan-card.active {
-      background: linear-gradient(var(--gold-light), var(--gold-light)), rgba(255, 255, 255, 0.85);
-      border-color: var(--gold);
-      box-shadow: 0 4px 15px rgba(184, 155, 98, 0.1);
+      background: var(--im8-bg-active);
+      border-color: var(--im8-red);
+      box-shadow: 0 8px 24px rgba(164, 0, 17, 0.08);
+    }
+
+    .plan-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
     }
 
     .plan-left {
@@ -206,28 +213,74 @@
     }
 
     .radio-circle {
-      width: 20px;
-      height: 20px;
+      width: 24px;
+      height: 24px;
       border: 2px solid #ccc;
       border-radius: 50%;
       position: relative;
+      flex-shrink: 0;
+      transition: all 0.2s;
+      background: #fff;
     }
 
     .plan-card.active .radio-circle {
-      border-color: var(--gold);
+      border-color: var(--im8-red);
+      background: var(--im8-red);
     }
 
     .plan-card.active .radio-circle::after {
-      content: '';
+      content: '\EB7A'; /* Remixicon check */
+      font-family: 'remixicon';
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 10px;
-      height: 10px;
-      background: var(--gold);
-      border-radius: 50%;
+      font-size: 14px;
+      color: #fff;
     }
+
+    .plan-badges {
+      position: absolute;
+      top: -12px;
+      right: 24px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .badge-red {
+      background: var(--im8-red-gradient);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      box-shadow: 0 4px 8px rgba(164, 0, 17, 0.3);
+    }
+
+    .plan-benefits {
+      display: none;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(164, 0, 17, 0.1);
+    }
+
+    .plan-card.active .plan-benefits {
+      display: block;
+      animation: fadeIn 0.3s ease forwards;
+    }
+
+    .benefit-line {
+      display: flex;
+      gap: 8px;
+      font-size: 13.5px;
+      color: var(--charcoal);
+      margin-bottom: 8px;
+      align-items: center;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
 
     .plan-name {
       font-size: 16px;
@@ -252,19 +305,28 @@
     }
 
     .plan-price-large {
-      font-family: var(--playfair);
-      font-size: 28px;
+      font-family: var(--poppins);
+      font-size: 24px;
       font-weight: 700;
-      color: var(--forest);
+      color: var(--charcoal);
       line-height: 1;
       margin-bottom: 4px;
     }
 
-    .plan-price-small {
-      font-size: 12px;
+    .plan-price-large s {
       color: #999;
-      text-transform: uppercase;
+      font-size: 16px;
+      font-weight: 500;
+      margin-right: 4px;
+    }
+
+    .plan-price-small {
+      font-size: 11px;
+      color: #777;
+      font-family: monospace;
       letter-spacing: 0.5px;
+      margin-top: 6px;
+      text-align: right;
     }
 
     /* Payment Form */
@@ -466,24 +528,24 @@
       display: block;
       width: 100%;
       padding: 20px;
-      background: var(--gold);
+      background: var(--im8-red-gradient);
       color: var(--white);
       border: none;
-      border-radius: 12px;
+      border-radius: 30px;
       font-family: var(--poppins);
       font-size: 16px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
       text-align: center;
-      transition: all 0.2s ease;
-      box-shadow: 0 4px 15px rgba(184, 155, 98, 0.3);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 6px 20px rgba(164, 0, 17, 0.35);
       text-transform: uppercase;
       letter-spacing: 1px;
     }
 
     .btn-checkout:hover {
-      background: #a38855;
-      transform: translateY(-2px);
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 8px 25px rgba(164, 0, 17, 0.45);
     }
 
     .fsa-badge {
@@ -852,18 +914,30 @@
         card.className = `plan-card ${isSelected ? 'active' : ''}`;
         card.onclick = () => selectPlan(index);
 
+        const dailyCost = (plan.overridePrice / 30).toFixed(2);
+        
         card.innerHTML = `
-          <div class="plan-left">
-            <div class="radio-circle"></div>
-            <div>
-              <div class="plan-name">${timelineText} ${plan.recommended ? '<span style="background:var(--forest); color:#fff; font-size:10px; padding:2px 6px; border-radius:4px; margin-left:6px; letter-spacing:0.5px; text-transform:uppercase;">Most Popular</span>' : ''}</div>
-              <div class="plan-desc">${subtitleText}</div>
-              ${savingsHtml}
+          ${plan.recommended ? '<div class="plan-badges"><div class="badge-red">BEST VALUE</div></div>' : ''}
+          <div class="plan-card-header">
+            <div class="plan-left">
+              <div class="radio-circle"></div>
+              <div>
+                <div class="plan-name" style="font-size:18px;">${timelineText} <span style="color: var(--forest); font-weight:700; margin-left: 4px;">${savings > 0 ? '(Save '+Math.round((savings/totalBase)*100)+'%)' : ''}</span></div>
+                <div class="plan-desc" style="margin-top:2px;">${subtitleText}</div>
+              </div>
+            </div>
+            <div class="plan-right">
+              <div class="plan-price-large">${savings > 0 ? '<s>$'+Math.floor(plan.base)+'</s>' : ''}$${Math.floor(plan.overridePrice)}<span style="font-size:14px; color:#777;">/mo</span></div>
+              <div class="plan-price-small">$${dailyCost} USD / DAY</div>
             </div>
           </div>
-          <div class="plan-right">
-            <div class="plan-price-large">$${Math.floor(plan.overridePrice)}<sup>.${(plan.overridePrice % 1).toFixed(2).substring(2)}</sup></div>
-            <div class="plan-price-small">A Month</div>
+          
+          <div class="plan-benefits">
+            <div class="benefit-line">🎓 <strong>Exclusive Access</strong> to the Patient Hub Program</div>
+            <div class="benefit-line">💰 <strong>Maximum savings</strong> - lowest price per month</div>
+            <div class="benefit-line">🛡️ <strong>90-Day Money-Back Guarantee</strong></div>
+            <div class="benefit-line">🚚 <strong>Free Overnight Shipping</strong> to all states</div>
+            <div class="benefit-line">⏸️ <strong>Cancel or pause anytime</strong></div>
           </div>
         `;
         
