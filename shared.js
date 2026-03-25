@@ -51,6 +51,13 @@ const FOOTER_HTML = `
         <img src="assets/usa_badge.png" alt="Made in USA" style="height:36px; width:auto; mix-blend-mode: screen;">
         <img src="assets/hipaa_badge.png" alt="HIPAA Compliant" style="height:36px; width:auto; mix-blend-mode: screen;">
       </div>
+      <div style="margin-top: 24px; max-width: 280px;">
+        <!-- TrustBox widget - Review Collector -->
+        <div class="trustpilot-widget" data-locale="en-US" data-template-id="56278e9abfbbba0bdcd568bc" data-businessunit-id="69c2e98765a7a37ca4e3a6f1" data-style-height="52px" data-style-width="100%" data-token="b465654a-b786-48db-9158-f4d79c3e190a">
+          <a href="https://www.trustpilot.com/review/freeley.com" target="_blank" rel="noopener">Trustpilot</a>
+        </div>
+        <!-- End TrustBox widget -->
+      </div>
     </div>
     <div class="footer-col">
       <h4>Treatments</h4>
@@ -82,6 +89,7 @@ const FOOTER_HTML = `
     <div class="footer-copy">© 2025 Freeley Health LLC (DBA Freeley)</div>
   </div>
 </footer>
+<script type="text/javascript" src="//widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js" async></script>
 `;
 
 const STICKY_MOBILE_CTA = `
@@ -96,14 +104,7 @@ const STICKY_MOBILE_CTA = `
 </div>
 `;
 
-const URGENCY_BANNER = `
-<div class="urgency-banner" id="urgencyBanner">
-  <div class="container" style="display: flex; justify-content: center; align-items: center; gap: 8px;">
-    <span class="pulse-dot"></span>
-    <span style="font-size: 12.5px; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase;">High Demand: Accepting new patients for <span id="currentMonthStr"></span>. Next batch ships in <span style="color:#fff;">24 hours</span>.</span>
-  </div>
-</div>
-`;
+
 
 const MOBILE_NAV_STYLES = `
 .mobile-nav {
@@ -123,9 +124,8 @@ function toggleMobileNav() {
 }
 
 function initPage(activePage) {
-  // Inject banner, nav + footer
+  // Inject nav + footer
   document.body.insertAdjacentHTML('afterbegin', NAV_HTML(activePage));
-  document.body.insertAdjacentHTML('afterbegin', URGENCY_BANNER);
   document.body.insertAdjacentHTML('beforeend', FOOTER_HTML);
   document.body.insertAdjacentHTML('beforeend', STICKY_MOBILE_CTA);
   
@@ -134,23 +134,12 @@ function initPage(activePage) {
   // Mobile nav styles + Urgency/Sticky CSS
   const style = document.createElement('style');
   style.textContent = MOBILE_NAV_STYLES + `
-  .urgency-banner {
-    position: fixed; top: 0; left: 0; right: 0;
-    background: rgba(61, 140, 94, 0.25); backdrop-filter: blur(10px);
-    color: var(--green-light); padding: 8px 0; text-align: center;
-    border-bottom: 1px solid rgba(61, 140, 94, 0.3); z-index: 201;
+  /* Tidio chatbot adjustment to prevent covering mobile layout */
+  @media (max-width: 768px) {
+    #tidio-chat-iframe, #tidio-chat {
+      bottom: 80px !important;
+    }
   }
-  .pulse-dot {
-    width: 6px; height: 6px; border-radius: 50%; background: var(--green-light);
-    box-shadow: 0 0 0 2px rgba(61, 140, 94, 0.3); animation: pulse 2s infinite; display: inline-block;
-  }
-  @keyframes pulse {
-    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(61, 140, 94, 0.7); }
-    70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(61, 140, 94, 0); }
-    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(61, 140, 94, 0); }
-  }
-  #nav { top: 34px !important; } /* Push nav down below urgency banner */
-  .mobile-nav { top: 106px !important; }
   
   .sticky-mobile-cta {
     position: fixed; bottom: 0; left: 0; right: 0;

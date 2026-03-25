@@ -16,7 +16,7 @@
   // ─── Configuration ─────────────────────────────────────────
   const CONFIG = {
     toastDelay: 8000,       // First toast after 8s
-    toastInterval: 25000,   // New toast every 25s
+    toastInterval: 30000,   // New toast every 30s
     toastDuration: 5500,    // Each toast visible for 5.5s
     maxToasts: 6,           // Stop after 6 toasts per session
     viewerUpdateInterval: 30000, // Update "viewing now" every 30s
