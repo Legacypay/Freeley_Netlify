@@ -448,8 +448,10 @@
 
 <body>
 
-  <section class="treatment-hero">
-    <div class="container">
+  <section class="treatment-hero" style="position: relative; overflow: hidden;">
+    <!-- Fireworks Canvas Background -->
+    <canvas id="fireworksCanvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 60%; z-index: 0; pointer-events: none; mix-blend-mode: screen; opacity: 0.8; mask-image: linear-gradient(to bottom, black 0%, black 60%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 0%, black 60%, transparent 100%);"></canvas>
+    <div class="container" style="position: relative; z-index: 2;">
       <div class="hero-grid">
         <div class="reveal">
           <span class="treatment-eyebrow">Peak Performance</span>
@@ -715,6 +717,120 @@
       if (hero) observer.observe(hero);
     }
   </script>
+
+  <script>
+    // Fireworks Canvas Background Animation
+    const fireworksCanvas = document.getElementById('fireworksCanvas');
+    if (fireworksCanvas) {
+      const ctx = fireworksCanvas.getContext('2d');
+      let w, h;
+      const particles = [];
+      const colors = ['#f39c12', '#e74c3c', '#f1c40f', '#e67e22', '#3498db', '#9b59b6'];
+
+      function resize() {
+        w = fireworksCanvas.width = fireworksCanvas.offsetWidth;
+        h = fireworksCanvas.height = fireworksCanvas.offsetHeight;
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      let lastLaunchTime = -99999;
+      let cycleStartTime = performance.now();
+
+      class Particle {
+        constructor(x, y, isFirework) {
+          this.x = x;
+          this.y = y;
+          this.isFirework = isFirework;
+          
+          if (isFirework) {
+            // Target a specific altitude
+            this.vx = (Math.random() - 0.5) * 1; // Keep straighter
+            this.vy = -(Math.random() * 2 + 5);
+            this.life = Math.random() * 60 + 50; 
+            this.size = 2.5;
+          } else {
+            // Half the size explosion spread
+            const angle = Math.random() * Math.PI * 2;
+            const speed = Math.random() * 10 + 2; 
+            this.vx = Math.cos(angle) * speed;
+            this.vy = Math.sin(angle) * speed;
+            this.life = Math.random() * 100 + 70;
+            this.size = Math.random() * 3 + 1; // Thinner particles
+          }
+          
+          this.baseLife = this.life;
+          this.color = colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        update() {
+          if (!this.isFirework) {
+            this.vy += 0.02; // Very gentle gravity
+            this.vx *= 0.92; // High friction
+            this.vy *= 0.92;
+            this.size *= 0.985;
+          }
+          this.x += this.vx;
+          this.y += this.vy;
+          this.life--;
+        }
+
+        draw() {
+          ctx.globalAlpha = Math.max(0, this.life / this.baseLife);
+          ctx.fillStyle = this.color;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      function explode(x, y) {
+        // Less particles for half size
+        for (let i = 0; i < 150; i++) {
+          particles.push(new Particle(x, y, false));
+        }
+      }
+
+      function loop() {
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
+        ctx.fillRect(0, 0, w, h);
+        ctx.globalCompositeOperation = 'lighter';
+        
+        ctx.globalAlpha = 1;
+
+        const now = performance.now();
+        const cycleElapsed = (now - cycleStartTime) % 60000;
+        
+        // Active for 30s, Off for 30s
+        if (cycleElapsed < 30000) {
+          // Launch exactly every 5 seconds
+          if (now - lastLaunchTime > 5000) {
+            lastLaunchTime = now;
+            // Fire 3 simultaneous fireworks in different locations within the blank space
+            for (let f = 0; f < 3; f++) {
+              // Target the empty space primarily on the left behind the text (10% to 50% width)
+              const targetX = (Math.random() * (w * 0.4)) + (w * 0.1);
+              particles.push(new Particle(targetX, h, true));
+            }
+          }
+        }
+
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i];
+          p.update();
+          p.draw();
+          if (p.life <= 0) {
+            if (p.isFirework) explode(p.x, p.y);
+            particles.splice(i, 1);
+          }
+        }
+        requestAnimationFrame(loop);
+      }
+      loop();
+    }
+  </script>
+
   <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
 </body>
 
