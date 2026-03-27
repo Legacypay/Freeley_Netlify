@@ -99,7 +99,7 @@ const STICKY_MOBILE_CTA = `
        <span class="sticky-cta-title">GLP-1 Weight Loss</span>
        <span class="sticky-cta-price">Starts at $194/mo</span>
     </div>
-    <a href="/quiz" class="btn btn-primary" style="padding: 12px 24px; font-weight: 600;">Start Free Visit</a>
+    <a href="/quiz" class="btn btn-primary" style="padding: 12px 24px; font-weight: 600;">See if you Qualify</a>
   </div>
 </div>
 `;
