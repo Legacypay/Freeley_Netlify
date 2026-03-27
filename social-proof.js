@@ -483,6 +483,8 @@
 
   // ─── Init ──────────────────────────────────────────────────
   function init() {
+    if (window.Capacitor && window.Capacitor.isNativePlatform()) return;
+    
     injectStyles();
     injectActivityBadges();
     injectSignupCounters();

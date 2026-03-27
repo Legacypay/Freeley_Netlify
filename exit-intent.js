@@ -276,6 +276,7 @@
 
   // ─── Init ─────────────────────────────────────────────────
   function init() {
+    if (window.Capacitor && window.Capacitor.isNativePlatform()) return;
     if (sessionStorage.getItem(STORAGE_KEY)) return;
     injectStyles();
     createModal();
