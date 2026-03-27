@@ -212,5 +212,8 @@ function initPage(activePage) {
   tidioScript.async = true;
   document.body.appendChild(tidioScript);
 
-
+  // Detect Capacitor Native App
+  if (window.Capacitor && window.Capacitor.isNativePlatform()) {
+      document.body.classList.add('mobile-app-mode');
+  }
 }

@@ -373,7 +373,20 @@ footer {
   }
 
   /* Trust strip scroll hint */
+  /* Trust strip scroll hint */
   .sp-trust-strip {
     padding: 12px 16px;
   }
+}
+
+/* ── NATIVE APP GLOBAL OVERRIDES ── */
+body.mobile-app-mode .nav,
+body.mobile-app-mode footer,
+body.mobile-app-mode .site-footer {
+  display: none !important;
+}
+
+body.mobile-app-mode {
+  padding-top: calc(env(safe-area-inset-top) + 12px);
+  padding-bottom: env(safe-area-inset-bottom);
 }

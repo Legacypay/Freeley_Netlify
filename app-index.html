@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Freeley</title>
+    <link rel="stylesheet" href="shared.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Montserrat:wght@400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #071510;
+            background-image: url("assets/brand/freeley_pattern_dark.jpg");
+            background-size: cover;
+            background-position: center;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: calc(env(safe-area-inset-top) + 24px) 24px env(safe-area-inset-bottom);
+            font-family: 'DM Sans', sans-serif;
+            margin: 0;
+        }
+        .app-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-bottom: 40px;
+        }
+        .app-header img {
+            height: 32px;
+        }
+        .app-hero {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .app-hero h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 42px;
+            font-weight: 300;
+            line-height: 1.1;
+            margin: 0 0 12px 0;
+        }
+        .app-hero h1 em {
+            color: #7dba96;
+            font-style: italic;
+        }
+        .category-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            flex: 1;
+        }
+        .category-btn {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(125, 186, 150, 0.2);
+            border-radius: 12px;
+            padding: 22px 24px;
+            text-decoration: none;
+            color: #fff;
+            font-weight: 500;
+            font-size: 17px;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .category-btn:active {
+            background: rgba(125, 186, 150, 0.1);
+            border-color: #7dba96;
+            transform: scale(0.98);
+        }
+        .category-icon {
+            color: #7dba96;
+            font-size: 20px;
+        }
+        .app-footer {
+            margin-top: 40px;
+            padding: 24px 0;
+            text-align: center;
+        }
+        .hub-login {
+            color: #7dba96;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 600;
+            display: block;
+            padding: 12px;
+        }
+    </style>
+</head>
+<body>
+    <header class="app-header">
+        <img src="assets/brand/Freeley_Logo_White.png" alt="Freeley" onerror="this.style.display='none'">
+    </header>
+
+    <main style="flex: 1;">
+        <div class="app-hero">
+            <h1>Your Biology,<br><em>Optimized.</em></h1>
+        </div>
+
+        <div class="category-list">
+            <a href="quiz.html?category=weight-loss" class="category-btn">
+                <span>Weight Loss</span>
+                <span class="category-icon">→</span>
+            </a>
+            <a href="quiz.html?category=testosterone" class="category-btn">
+                <span>Testosterone</span>
+                <span class="category-icon">→</span>
+            </a>
+            <a href="quiz.html?category=hair-loss" class="category-btn">
+                <span>Hair Loss</span>
+                <span class="category-icon">→</span>
+            </a>
+            <a href="quiz.html?category=longevity" class="category-btn">
+                <span>Longevity</span>
+                <span class="category-icon">→</span>
+            </a>
+            <a href="quiz.html?category=sexual-wellness" class="category-btn">
+                <span>Sexual Wellness</span>
+                <span class="category-icon">→</span>
+            </a>
+        </div>
+    </main>
+
+    <footer class="app-footer">
+        <a href="https://hub.freeley.com" class="hub-login">Sign in to Freeley Hub</a>
+    </footer>
+
+    <!-- Capacitor Core script integration to detect native environment -->
+    <script src="shared.js"></script>
+</body>
+</html>
