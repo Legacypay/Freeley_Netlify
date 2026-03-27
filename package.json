@@ -5,7 +5,7 @@
   "main": "dummy.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:mobile": "mkdir -p www && rsync -a --exclude='.git' --exclude='node_modules' --exclude='.venv' --exclude='www' --exclude='ios' --exclude='android' ./ www/ && cp app-index.html www/index.html && npx cap sync"
+    "build:mobile": "mkdir -p www && rsync -a --exclude='.git' --exclude='node_modules' --exclude='.venv' --exclude='www' --exclude='ios' --exclude='android' ./ www/ && npx cap sync"
   },
   "keywords": [],
   "author": "",

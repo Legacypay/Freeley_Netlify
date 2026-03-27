@@ -389,4 +389,10 @@ body.mobile-app-mode .site-footer {
 body.mobile-app-mode {
   padding-top: calc(env(safe-area-inset-top) + 12px);
   padding-bottom: env(safe-area-inset-bottom);
+  overflow-x: hidden !important;
+  width: 100vw !important;
+}
+
+html {
+  overflow-x: hidden !important;
 }
