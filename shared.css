@@ -382,7 +382,12 @@ footer {
 /* ── NATIVE APP GLOBAL OVERRIDES ── */
 body.mobile-app-mode .nav,
 body.mobile-app-mode footer,
-body.mobile-app-mode .site-footer {
+body.mobile-app-mode .site-footer,
+body.mobile-app-mode .exit-overlay,
+body.mobile-app-mode .social-proof-nudge,
+body.mobile-app-mode .sp-toast,
+body.mobile-app-mode #tidio-chat-iframe,
+body.mobile-app-mode #tidio-chat {
   display: none !important;
 }
 

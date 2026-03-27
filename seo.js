@@ -27,7 +27,7 @@
     },
     '/weight-loss.html': {
       title: 'Medical Weight Loss Online — GLP-1 Treatments | Freeley',
-      description: 'FDA-approved compounded semaglutide & tirzepatide prescribed by board-certified physicians. Lose 15-20% body weight. Plans from $199/mo. Free consultation.',
+      description: 'Clinical-grade compounded semaglutide & tirzepatide prescribed by board-certified physicians. Lose 15-20% body weight. Plans from $199/mo. Free consultation.',
       image: SITE_URL + '/assets/og/og-weight-loss.jpg',
       schema: 'MedicalTherapy',
       schemaName: 'GLP-1 Weight Loss Treatment'
@@ -48,7 +48,7 @@
     },
     '/longevity.html': {
       title: 'Longevity & Peptide Therapy Online | Freeley',
-      description: 'Physician-prescribed peptide therapy including BPC-157, NAD+, and growth hormone peptides. Optimize healthspan with cutting-edge anti-aging treatments.',
+      description: 'Physician-prescribed peptide therapy including Sermorelin, NAD+, and B12-MIC. Optimize healthspan with cutting-edge wellness treatments.',
       image: SITE_URL + '/assets/og/og-longevity.jpg',
       schema: 'MedicalTherapy',
       schemaName: 'Peptide & Longevity Therapy'
@@ -69,7 +69,7 @@
       image: SITE_URL + '/assets/og/og-weight-loss.jpg'
     },
     '/promo-ed.html': {
-      title: 'ED Treatment — Get Your Prescription Today | Freeley',
+      title: 'ED Treatment — Request Treatment Today | Freeley',
       description: 'Discreet erectile dysfunction treatment from $49/mo. Tadalafil, sildenafil, and custom troches prescribed online by board-certified physicians.',
       image: SITE_URL + '/assets/og/og-ed.jpg'
     },
@@ -80,17 +80,12 @@
     },
     '/promo-longevity.html': {
       title: 'Peptide Therapy — Anti-Aging & Performance | Freeley',
-      description: 'Physician-prescribed peptides including BPC-157 and NAD+. Optimize recovery, energy, and healthspan with research-backed longevity protocols.',
+      description: 'Physician-prescribed peptides including Sermorelin and NAD+. Optimize recovery, energy, and healthspan with research-backed longevity protocols.',
       image: SITE_URL + '/assets/og/og-longevity.jpg'
     },
     '/about.html': {
       title: 'About Freeley — Our Mission & Team',
       description: 'Freeley is a modern telehealth platform making premium medical treatments accessible, affordable, and delivered to your door.',
-      image: DEFAULT_IMAGE
-    },
-    '/physicians.html': {
-      title: 'Our Physicians — Board-Certified Doctors | Freeley',
-      description: 'Meet the board-certified physicians who review every Freeley treatment plan. Licensed, experienced, and dedicated to your health.',
       image: DEFAULT_IMAGE
     },
     '/faq.html': {

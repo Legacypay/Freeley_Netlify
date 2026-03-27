@@ -1,7 +1,7 @@
 {
   "name": "Freeley — Personalized Telehealth",
   "short_name": "Freeley",
-  "description": "Board-certified physicians. FDA-approved medications. Delivered to your door.",
+  "description": "Board-certified physicians. Compounded treatments. Delivered to your door.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#050f0a",

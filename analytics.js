@@ -297,6 +297,15 @@
 
   // ─── Init ─────────────────────────────────────────────
   function init() {
+    // HIPAA Compliance: Disable all tracking on sensitive patient pages
+    const path = window.location.pathname.toLowerCase();
+    const isSensitivePage = path.includes('quiz') || path.includes('checkout') || path.includes('hub');
+
+    if (isSensitivePage) {
+      console.log('[Analytics] HIPAA-sensitive page detected. Tracking scripts disabled for compliance.');
+      return;
+    }
+
     installGA4();
     installMetaPixel();
     installClarity();

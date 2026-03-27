@@ -12,7 +12,6 @@ const NAV_HTML = (activePage = '') => `
     <a href="/pricing" ${activePage === 'pricing' ? 'class="active"' : ''}>Pricing</a>
   </div>
   <div class="nav-right">
-    <a href="/physicians" class="nav-login">Medical Team</a>
     <a href="/hub" class="nav-login">Sign In</a>
     <a href="/quiz" class="nav-cta">Start My Free Visit →</a>
   </div>
@@ -29,7 +28,6 @@ const NAV_HTML = (activePage = '') => `
   <a href="/sexual-wellness">Sexual Wellness</a>
   <a href="/longevity">Longevity</a>
   <a href="/how-it-works">How It Works</a>
-  <a href="/physicians">Medical Team</a>
   <a href="/pricing">Pricing</a>
   <a href="/quiz" class="mobile-cta">Start My Free Visit →</a>
 </div>
@@ -41,6 +39,12 @@ const FOOTER_HTML = `
     <div>
       <a href="/" class="footer-brand-logo"><img src="assets/brand/freeley_logo_white.svg" alt="Freeley" height="34"></a>
       <p class="footer-brand-desc">Healthcare technology connecting patients to licensed physicians and compounding pharmacies — on your terms.</p>
+      <p class="footer-brand-desc" style="margin-top: 12px; font-size: 13px; opacity: 0.8;">
+        Freeley Telehealth (MSB Holdings)<br>
+        310 Comal Street BLDG A, Ste 272<br>
+        Austin, TX 78702<br>
+        Phone: +1-800-555-5555
+      </p>
       <div class="footer-social">
         <a href="https://www.instagram.com/freeleyhealth" target="_blank" rel="noopener noreferrer" title="Instagram">IG</a>
         <a href="https://www.tiktok.com/@freeley.health" target="_blank" rel="noopener noreferrer" title="TikTok">TT</a>
@@ -70,7 +74,6 @@ const FOOTER_HTML = `
     <div class="footer-col">
       <h4>Company</h4>
       <a href="/how-it-works">How It Works</a>
-      <a href="/physicians">Medical Team</a>
       <a href="/about">About Freeley</a>
       <a href="/blog">Blog & Insights</a>
       <a href="/faq">FAQ</a>
@@ -85,7 +88,7 @@ const FOOTER_HTML = `
     </div>
   </div>
   <div class="footer-bottom">
-    <p class="footer-disclaimer">Freeley is a healthcare technology platform that facilitates connections between patients and independently licensed telemedicine providers and 503A compounding pharmacies. Freeley does not practice medicine, employ physicians, or dispense medications. All treatment decisions are made solely by licensed practitioners. Compounded medications are not FDA-approved. Results vary. Not available in all states. FSA/HSA eligibility varies.</p>
+    <p class="footer-disclaimer">Freeley is a healthcare technology platform that facilitates connections between patients and independently licensed telemedicine providers and 503A compounding pharmacies. Freeley does not practice medicine, employ physicians, or dispense medications. All treatment decisions and prescriptions are made solely by US-licensed physicians. Compounded medications are not FDA-approved, and are independent of any name-brand medications. Results vary. Not available in all states. FSA/HSA eligibility varies.</p>
     <div class="footer-copy">© 2025 Freeley Health LLC (DBA Freeley)</div>
   </div>
 </footer>
