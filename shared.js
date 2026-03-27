@@ -206,14 +206,37 @@ function initPage(activePage) {
   });
   document.head.appendChild(schemaScript);
 
-  // Tidio Live Chat Snippet
-  const tidioScript = document.createElement('script');
-  tidioScript.src = "//code.tidio.co/uoolj1kuzrueusvezow212gd5vlgazas.js"; 
-  tidioScript.async = true;
-  document.body.appendChild(tidioScript);
+  // Tidio Live Chat Snippet (Web Only, Disabled for Mobile App Users)
+  if (!(window.Capacitor && window.Capacitor.isNativePlatform())) {
+    const tidioScript = document.createElement('script');
+    tidioScript.src = "//code.tidio.co/uoolj1kuzrueusvezow212gd5vlgazas.js"; 
+    tidioScript.async = true;
+    document.body.appendChild(tidioScript);
+  }
 
   // Detect Capacitor Native App
   if (window.Capacitor && window.Capacitor.isNativePlatform()) {
       document.body.classList.add('mobile-app-mode');
+      
+      // Morph marketing website into an Existing User Hub app
+      const primaryCta = document.querySelector('.hero-cta-pulse') || document.querySelector('.hero-btn');
+      if (primaryCta) {
+          primaryCta.textContent = 'Sign In to Freeley Hub';
+          primaryCta.href = 'https://hub.freeley.com'; 
+      }
+      
+      const secondaryCta = document.querySelector('.hero-arrow-link');
+      if (secondaryCta) {
+          secondaryCta.innerHTML = 'View our other offerings <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3.33334 8H12.6667"/><path d="M8 3.33334L12.6667 8L8 12.6667"/></svg>';
+          secondaryCta.onclick = (e) => {
+              e.preventDefault();
+              const grid = document.querySelector('.treatments-grid');
+              if(grid) grid.scrollIntoView({behavior: 'smooth', block: 'start'});
+          };
+      }
+      
+      // Eradicate any extra marketing distractions like Trustpilot
+      const trustpilot = document.querySelector('.trustpilot-widget');
+      if (trustpilot) trustpilot.style.display = 'none';
   }
 }
