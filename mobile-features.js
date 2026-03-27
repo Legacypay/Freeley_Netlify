@@ -13,8 +13,7 @@
 
   // ─── Bottom Sheet ──────────────────────────────────────────
   function initBottomSheet() {
-    if (window.innerWidth > 768) return; // Desktop skip
-    if (document.querySelector('.mobile-bottom-sheet')) return; // Already injected
+    return; // Disabled sticky bottom CTA as requested
 
     const css = `
     .mobile-bottom-sheet {
