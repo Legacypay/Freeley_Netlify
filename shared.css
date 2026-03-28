@@ -401,3 +401,16 @@ body.mobile-app-mode {
 html {
   overflow-x: hidden !important;
 }
+
+@keyframes floatTilt {
+  0% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-8px) rotate(1.5deg); }
+  50% { transform: translateY(-12px) rotate(0deg); }
+  75% { transform: translateY(-8px) rotate(-1.5deg); }
+  100% { transform: translateY(0) rotate(0deg); }
+}
+
+.floating-vial {
+  animation: floatTilt 6.5s ease-in-out infinite;
+  will-change: transform;
+}

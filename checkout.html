@@ -674,7 +674,7 @@
         <!-- Treatment Line Item -->
         <div class="line-item">
           <div class="line-item-left">
-            <img src="assets/brand/semaglutide.jpg" id="checkout-img" class="product-img" alt="Medication" style="border: 1px solid var(--border);">
+            <img src="assets/brand/semag_transparent.png" id="checkout-img" class="product-img floating-vial" alt="Medication" style="filter: drop-shadow(0 15px 25px rgba(0,0,0,0.1));">
             <div>
               <div class="item-name" id="summary-treatment-name">Semaglutide</div>
               <div class="item-desc" id="summary-treatment-desc">Compounded w/ B12 (Cyanocobalamin)</div>
@@ -779,8 +779,8 @@
       'weight-loss': {
         name: 'Semaglutide',
         desc: 'Compounded w/ B12 (Cyanocobalamin)',
-        planName: 'Personalized Weight Loss Plan',
-        image: 'assets/brand/semaglutide.jpg',
+        priceId: 'price_1Qx5HhPzO8Bw04uohstP7o8Z',
+        image: 'assets/brand/semag_transparent.png',
         plans: [
           { months: 1, base: 194.29, overridePrice: 194.29, recommended: false },
           { months: 3, base: 194.29, overridePrice: 149.29, recommended: false },
@@ -833,8 +833,9 @@
         document.getElementById('compoundSelector').style.display = 'block';
         if (compoundOverride === 'tirzepatide' || compoundOverride === 'tirz') {
           currentConfig.name = 'Tirzepatide';
+          currentConfig.priceId = 'price_1Qx5HxPzO8Bw04uoyk6K04R4'; // Correct Tirz price ID
           currentConfig.desc = 'Compounded w/ B6 (Pyridoxine)';
-          currentConfig.image = 'assets/brand/tirzepatide.jpg';
+          currentConfig.image = 'assets/brand/tirzz_transparent.png';
           currentConfig.plans = [
             { months: 1, base: 274.29, overridePrice: 274.29, recommended: false },
             { months: 3, base: 274.29, overridePrice: 214.29, recommended: false },
@@ -852,8 +853,9 @@
           document.getElementById('cmp-sema').style.fontWeight = '500';
         } else {
           currentConfig.name = 'Semaglutide';
+          currentConfig.priceId = 'price_1Qx5HhPzO8Bw04uohstP7o8Z'; // Semaglutide
           currentConfig.desc = 'Compounded w/ B12 (Cyanocobalamin)';
-          currentConfig.image = 'assets/brand/semaglutide.jpg';
+          currentConfig.image = 'assets/brand/semag_transparent.png';
           currentConfig.plans = [
             { months: 1, base: 194.29, overridePrice: 194.29, recommended: false },
             { months: 3, base: 194.29, overridePrice: 149.29, recommended: false },
