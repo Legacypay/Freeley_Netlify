@@ -224,10 +224,59 @@
     document.head.appendChild(script);
   }
 
+  
+  function injectArticleSchema() {
+    if (!document.querySelector('.blog-content')) return;
+
+    const data = getPageData();
+    const title = data.title || document.title;
+    const desc = data.description || document.querySelector('meta[name="description"]')?.content;
+    const authorName = "Freeley Clinical Team";
+    const publishDate = "2024-01-01T08:00:00+08:00"; // Generic fallback if date not present
+    
+    // Only add if no existing schema for this type
+    const existing = document.querySelectorAll('script[type="application/ld+json"]');
+    for (const script of existing) {
+      if (script.textContent.includes('NewsArticle') || script.textContent.includes('Article')) return;
+    }
+
+    const schema = {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": window.location.href
+      },
+      "headline": title.split(' — ')[0],
+      "description": desc,
+      "image": data.image,  
+      "author": {
+        "@type": "Organization",
+        "name": authorName,
+        "url": SITE_URL
+      },  
+      "publisher": {
+        "@type": "MedicalOrganization",
+        "name": SITE_NAME,
+        "logo": {
+          "@type": "ImageObject",
+          "url": SITE_URL + "/assets/favicon.svg"
+        }
+      },
+      "datePublished": publishDate
+    };
+
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.textContent = JSON.stringify(schema);
+    document.head.appendChild(script);
+  }
+
   function init() {
     injectOpenGraph();
     injectServiceSchema();
     injectFAQSchema();
+    injectArticleSchema();
   }
 
   if (document.readyState === 'loading') {
