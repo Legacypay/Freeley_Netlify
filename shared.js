@@ -49,7 +49,8 @@ const FOOTER_HTML = `
         <a href="https://www.instagram.com/freeleyhealth" target="_blank" rel="noopener noreferrer" title="Instagram">IG</a>
         <a href="https://www.tiktok.com/@freeley.health" target="_blank" rel="noopener noreferrer" title="TikTok">TT</a>
         <a href="https://x.com/freeley_health" target="_blank" rel="noopener noreferrer" title="X">𝕏</a>
-        <a href="#" title="Facebook">FB</a>
+        <a href="https://www.facebook.com/freeleyhealth" target="_blank" rel="noopener noreferrer" title="Facebook">FB</a>
+        <a href="https://www.reddit.com/r/freeley" target="_blank" rel="noopener noreferrer" title="Reddit">Re</a>
       </div>
       <div style="display:flex; gap:16px; margin-top:32px; align-items:center; opacity:0.8;">
         <img src="assets/usa_badge.png" alt="Made in USA" style="height:36px; width:auto; mix-blend-mode: screen;">
