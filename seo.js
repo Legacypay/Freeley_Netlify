@@ -48,7 +48,7 @@
     },
     '/longevity.html': {
       title: 'Longevity & Peptide Therapy Online | Freeley',
-      description: 'Physician-prescribed peptide therapy including Sermorelin, NAD+, and B12-MIC. Optimize healthspan with cutting-edge wellness treatments.',
+      description: 'Physician-prescribed peptide therapy including Sermorelin, NAD+, and Glutathione. Optimize healthspan with cutting-edge wellness treatments.',
       image: SITE_URL + '/assets/og/og-longevity.jpg',
       schema: 'MedicalTherapy',
       schemaName: 'Peptide & Longevity Therapy'
