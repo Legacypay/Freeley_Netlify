@@ -457,8 +457,53 @@
         </div>
         <div class="reveal">
           <div class="peptide-selector">
-            <img src="assets/brand/longevity.jpg" alt="Longevity Peptides"
-              style="width: 100%; height: 260px; object-fit: cover; border-radius: 12px; margin-bottom: 24px;">
+            <div class="peptide-carousel-container" style="position:relative; width:100%; height:260px; background:radial-gradient(circle at center, rgba(80,140,222,0.1) 0%, transparent 70%); border-radius:12px; margin-bottom:24px; overflow:hidden; touch-action:pan-y;">
+                <div class="peptide-slides" style="display:flex; width:300%; height:100%; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);" id="pepSlider">
+                    <div class="pep-slide" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                        <img src="assets/brand/sermorelin_vial.png" class="floating-vial" style="height: 150px; object-fit:contain; filter:drop-shadow(0 15px 25px rgba(0,0,0,0.3));" alt="Sermorelin">
+                        <div style="text-align:center; transform:translateY(12px);">
+                            <div style="color:#fff; font-weight:700; font-size:18px;">Sermorelin</div>
+                            <div style="color:rgba(255,255,255,0.6); font-size:13px; font-weight:500;">Growth factors &middot; Anti-aging</div>
+                        </div>
+                    </div>
+                    <div class="pep-slide" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                        <img src="assets/brand/glutathione_vial.png" class="floating-vial" style="height: 150px; object-fit:contain; filter:drop-shadow(0 15px 25px rgba(0,0,0,0.3));" alt="Glutathione">
+                        <div style="text-align:center; transform:translateY(12px);">
+                            <div style="color:#fff; font-weight:700; font-size:18px;">Glutathione</div>
+                            <div style="color:rgba(255,255,255,0.6); font-size:13px; font-weight:500;">Detox &middot; Immunity</div>
+                        </div>
+                    </div>
+                    <div class="pep-slide" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                        <img src="assets/brand/nad_vial.png" class="floating-vial" style="height: 150px; object-fit:contain; filter:drop-shadow(0 15px 25px rgba(0,0,0,0.3));" alt="NAD+">
+                        <div style="text-align:center; transform:translateY(12px);">
+                            <div style="color:#fff; font-weight:700; font-size:18px;">NAD+</div>
+                            <div style="color:rgba(255,255,255,0.6); font-size:13px; font-weight:500;">Cellular energy &middot; DNA repair</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="position:absolute; bottom:12px; left:0; right:0; display:flex; justify-content:center; gap:8px;" id="pepDots">
+                    <div class="pep-dot active" data-index="0" style="width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,0.8); cursor:pointer;"></div>
+                    <div class="pep-dot" data-index="1" style="width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,0.3); cursor:pointer;"></div>
+                    <div class="pep-dot" data-index="2" style="width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,0.3); cursor:pointer;"></div>
+                </div>
+            </div>
+            <script>
+                let pepIdx = 0;
+                const sld = document.getElementById('pepSlider');
+                const dts = document.querySelectorAll('.pep-dot');
+                function updPep() {
+                    sld.style.transform = `translateX(-${pepIdx * 33.333}%)`;
+                    dts.forEach((d, i) => d.style.background = (i === pepIdx) ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.3)');
+                }
+                dts.forEach(d => d.addEventListener('click', e => { pepIdx = parseInt(e.target.dataset.index); updPep(); }));
+                let tx=0;
+                sld.addEventListener('touchstart', e => tx = e.changedTouches[0].screenX, {passive:true});
+                sld.addEventListener('touchend', e => {
+                    let nx = e.changedTouches[0].screenX;
+                    if (nx < tx - 30) { pepIdx = pepIdx < 2 ? pepIdx + 1 : 0; updPep(); }
+                    if (nx > tx + 30) { pepIdx = pepIdx > 0 ? pepIdx - 1 : 2; updPep(); }
+                }, {passive:true});
+            </script>
             <div class="ps-title">Build your stack</div>
             <div class="ps-sub">Select the peptides you're interested in — your physician will finalize what's
               appropriate for you.</div>
@@ -644,8 +689,9 @@
       </div>
       <!-- Right: Science supplements -->
       <div style="position: relative; overflow: hidden;">
-        <img src="assets/brand/longevity.jpg" alt="Premium longevity supplements and peptide vials on marble" 
-          style="width: 100%; height: 100%; object-fit: cover; display: block;" loading="lazy">
+        <div style="width: 100%; border-radius: 20px; box-shadow: 0 40px 60px rgba(0,0,0,0.4); text-align:center; padding: 40px 0; background-color: rgba(255,255,255,0.02)">
+          <img src="assets/brand/longevity_3vials_transparent.png" class="floating-vial" alt="Premium longevity supplements and peptide vials" style="width: 80%; height: auto; max-width:600px; border-radius: 12px; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.3));">
+        </div>
         <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 48px 40px; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
           <span style="display: inline-block; background: rgba(255,255,255,0.15); backdrop-filter: blur(6px); padding: 6px 14px; border-radius: 50px; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #fff; margin-bottom: 12px;">Lab-Grade Protocols</span>
           <h3 style="font-family: 'Cormorant Garamond', serif; font-size: clamp(24px, 3vw, 36px); color: #fff; font-weight: 400; line-height: 1.2; margin: 0 0 16px 0;">

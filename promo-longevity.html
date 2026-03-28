@@ -333,8 +333,54 @@
 
       <h2 class="product-title">Build Your Peptide Protocol</h2>
       
-      <div class="product-carousel">
-        <img src="assets/brand/longevity.jpg" alt="Longevity Peptides">
+      <div class="product-carousel" style="padding:0; flex-direction:column;">
+        <div class="peptide-carousel-container" style="position:relative; width:100%; height:100%; overflow:hidden; touch-action:pan-y;">
+            <div class="peptide-slides" style="display:flex; width:300%; height:100%; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);" id="PromoPepSlider">
+                <div class="pep-slide" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                    <img src="assets/brand/sermorelin_vial.png" class="floating-vial" style="height: 55%; object-fit:contain; filter:drop-shadow(0 15px 25px rgba(0,0,0,0.15));" alt="Sermorelin">
+                    <div style="text-align:center; margin-top:24px;">
+                        <div style="color:var(--charcoal); font-weight:700; font-size:22px;">Sermorelin</div>
+                        <div style="color:var(--text-muted); font-size:14px; font-weight:500;">Growth factors &middot; Anti-aging</div>
+                    </div>
+                </div>
+                <div class="pep-slide" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                    <img src="assets/brand/glutathione_vial.png" class="floating-vial" style="height: 55%; object-fit:contain; filter:drop-shadow(0 15px 25px rgba(0,0,0,0.15));" alt="Glutathione">
+                    <div style="text-align:center; margin-top:24px;">
+                        <div style="color:var(--charcoal); font-weight:700; font-size:22px;">Glutathione</div>
+                        <div style="color:var(--text-muted); font-size:14px; font-weight:500;">Detox &middot; Immunity</div>
+                    </div>
+                </div>
+                <div class="pep-slide" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                    <img src="assets/brand/nad_vial.png" class="floating-vial" style="height: 55%; object-fit:contain; filter:drop-shadow(0 15px 25px rgba(0,0,0,0.15));" alt="NAD+">
+                    <div style="text-align:center; margin-top:24px;">
+                        <div style="color:var(--charcoal); font-weight:700; font-size:22px;">NAD+</div>
+                        <div style="color:var(--text-muted); font-size:14px; font-weight:500;">Cellular energy &middot; DNA repair</div>
+                    </div>
+                </div>
+            </div>
+            <div style="position:absolute; bottom:16px; left:0; right:0; display:flex; justify-content:center; gap:8px;" id="PromoPepDots">
+                <div class="promo-pep-dot active" data-index="0" style="width:10px; height:10px; border-radius:50%; background:var(--forest); cursor:pointer; transition:0.3s;"></div>
+                <div class="promo-pep-dot" data-index="1" style="width:10px; height:10px; border-radius:50%; background:rgba(0,0,0,0.1); cursor:pointer; transition:0.3s;"></div>
+                <div class="promo-pep-dot" data-index="2" style="width:10px; height:10px; border-radius:50%; background:rgba(0,0,0,0.1); cursor:pointer; transition:0.3s;"></div>
+            </div>
+        </div>
+        <script>
+            let pIdx = 0;
+            const pSld = document.getElementById('PromoPepSlider');
+            const pDts = document.querySelectorAll('.promo-pep-dot');
+            function updPPep() {
+                pSld.style.transform = `translateX(-${pIdx * 33.333}%)`;
+                pDts.forEach((d, i) => d.style.background = (i === pIdx) ? 'var(--forest)' : 'rgba(0,0,0,0.1)');
+            }
+            pDts.forEach(d => d.addEventListener('click', e => { pIdx = parseInt(e.target.dataset.index); updPPep(); }));
+            let ptx=0;
+            pSld.addEventListener('touchstart', e => ptx = e.changedTouches[0].screenX, {passive:true});
+            pSld.addEventListener('touchend', e => {
+                let pnx = e.changedTouches[0].screenX;
+                if (pnx < ptx - 30) { pIdx = pIdx < 2 ? pIdx + 1 : 0; updPPep(); }
+                if (pnx > ptx + 30) { pIdx = pIdx > 0 ? pIdx - 1 : 2; updPPep(); }
+            }, {passive:true});
+        </script>
       </div>
 
       <div class="product-price">

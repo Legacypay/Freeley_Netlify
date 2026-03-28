@@ -1675,7 +1675,7 @@
           <div class="plan-card" id="plan-long">
             <div class="plan-recommended-tag">Best Match</div>
             <span class="plan-icon"><i class="ri-node-tree"></i></span>
-            <img src="assets/brand/longevity.jpg" alt="Longevity Protocol" style="position: absolute; bottom: 100px; right: 15px; height: 190px; width: auto; max-width: 45%; object-fit: contain; border-radius: 8px; z-index: 1; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1)); mix-blend-mode: multiply;">
+            <img src="assets/brand/longevity_3vials_transparent.png" class="floating-vial" alt="Longevity Protocol" style="position: absolute; bottom: 85px; right: 15px; height: 190px; width: auto; max-width: 45%; object-fit: contain; border-radius: 8px; z-index: 1; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.15)); mix-blend-mode: multiply;">
             <div class="plan-name">Longevity Stack</div>
             <div class="plan-desc">Sermorelin + NAD+. Targeted for energy, recovery, and anti-aging at the cellular level.</div>
             <div class="plan-price">$149<span style="font-size:18px;color:var(--text-muted)">/mo</span></div>
@@ -2013,7 +2013,7 @@
           name: 'Longevity & Recovery Stack',
           desc: 'Sermorelin + NAD+ peptide protocol for cellular repair, energy optimization, and anti-aging. Custom-formulated based on your activity level and goals.',
           price: '$99',
-          img: 'assets/brand/longevity.jpg',
+          img: 'assets/brand/longevity_3vials_transparent.png',
           alt: 'Longevity Stack',
           link: '/checkout.html?treatment=longevity'
         },
@@ -2072,9 +2072,18 @@
         reasons.push({ icon: 'ri-node-tree', text: 'You selected longevity and performance optimization' });
         if (symptoms.includes('Low Energy / Fatigue')) {
           reasons.push({ icon: 'ri-flashlight-fill', text: 'NAD+ directly targets cellular energy production — reversing mitochondrial fatigue' });
-        }
-        if (symptoms.includes('Poor Sleep') || symptoms.includes('Brain Fog')) {
+          plan.name = 'NAD+ Protocol';
+          plan.desc = 'Cellular energy & DNA repair. Custom-formulated based on your activity level and goals.';
+          plan.img = 'assets/brand/nad_vial.png';
+          plan.link = '/checkout.html?treatment=longevity&compound=nad';
+          document.querySelector('#plan-long img').src = 'assets/brand/nad_vial.png';
+        } else if (symptoms.includes('Poor Sleep') || symptoms.includes('Brain Fog')) {
           reasons.push({ icon: 'ri-mental-health-fill', text: 'Sermorelin boosts deep sleep and cognitive recovery' });
+          plan.name = 'Sermorelin Protocol';
+          plan.desc = 'Growth factors & Anti-aging. Custom-formulated based on your activity level and goals.';
+          plan.img = 'assets/brand/sermorelin_vial.png';
+          plan.link = '/checkout.html?treatment=longevity&compound=sermorelin';
+          document.querySelector('#plan-long img').src = 'assets/brand/sermorelin_vial.png';
         }
         reasons.push({ icon: 'ri-shield-star-fill', text: 'Peptide protocols support recovery, immune function, and biological age reversal' });
       } else if (topPlan === 'hair') {

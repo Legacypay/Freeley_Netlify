@@ -804,7 +804,7 @@
         name: 'Longevity Stack',
         desc: 'Glutathione + Premium recovery peptides',
         planName: 'Longevity Optimization Plan',
-        image: 'assets/brand/longevity.jpg',
+        image: 'assets/brand/longevity_3vials_transparent.png',
         plans: [
           { months: 1, base: 149, overridePrice: 149, recommended: false },
           { months: 3, base: 149, overridePrice: 129, recommended: false },
@@ -872,6 +872,20 @@
           document.getElementById('cmp-tirz').style.background = 'rgba(255, 255, 255, 0.5)';
           document.getElementById('cmp-tirz').style.color = 'var(--text-muted)';
           document.getElementById('cmp-tirz').style.fontWeight = '500';
+        }
+      } else if (treatmentType === 'longevity' && compoundOverride) {
+        if (compoundOverride.toLowerCase() === 'sermorelin') {
+          currentConfig.name = 'Sermorelin';
+          currentConfig.desc = 'Growth factors & Anti-aging';
+          currentConfig.image = 'assets/brand/sermorelin_vial.png';
+        } else if (compoundOverride.toLowerCase() === 'glutathione' || compoundOverride.toLowerCase() === 'gluta') {
+          currentConfig.name = 'Glutathione';
+          currentConfig.desc = 'Detox & Immunity';
+          currentConfig.image = 'assets/brand/glutathione_vial.png';
+        } else if (compoundOverride.toLowerCase() === 'nad' || compoundOverride.toLowerCase() === 'nad+') {
+          currentConfig.name = 'NAD+';
+          currentConfig.desc = 'Cellular energy & DNA repair';
+          currentConfig.image = 'assets/brand/nad_vial.png';
         }
       }
       
