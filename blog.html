@@ -40,41 +40,34 @@
     }
     .pill:hover, .pill.active { border-color: var(--forest, #3D8C5E); color: var(--forest, #3D8C5E); }
     
-    .blog-layout {
+        .blog-grid {
       display: grid;
-      grid-template-columns: 1.1fr 1fr;
-      gap: 60px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
       padding: 0 24px 100px;
       max-width: 1200px;
       margin: 0 auto;
     }
     @media (max-width: 900px) {
-      .blog-layout { grid-template-columns: 1fr; }
+      .blog-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .blog-grid { grid-template-columns: 1fr; }
     }
     
-    /* Featured */
-    .featured-card { text-decoration: none; color: inherit; display: block; }
-    .featured-card:hover .fc-title { color: var(--forest); }
-    .featured-card img { width: 100%; height: 420px; object-fit: cover; border-radius: 20px; margin-bottom: 24px; }
-    .fc-title { font-size: 32px; font-weight: 700; margin: 0 0 12px 0; display: flex; align-items: center; justify-content: space-between; transition: 0.2s;}
-    .fc-excerpt { font-size: 16px; color: var(--text-muted); line-height: 1.6; margin: 0; }
-    
-    /* Side list */
-    .side-list { display: flex; flex-direction: column; gap: 32px; }
-    .side-card { display: flex; gap: 24px; text-decoration: none; color: inherit; border-bottom: 1px solid var(--border, #E6E4DD); padding-bottom: 32px; align-items: center; }
-    .side-card:last-child { border-bottom: none; padding-bottom: 0; }
-    .side-card:hover .sc-title { color: var(--forest); }
-    .side-card img { width: 180px; height: 120px; object-fit: cover; border-radius: 12px; flex-shrink: 0; }
-    .sc-content { flex: 1; min-width: 0; }
-    .sc-title { font-size: 18px; font-weight: 700; margin: 0 0 8px 0; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; transition: 0.2s; line-height: 1.3; }
-    .sc-excerpt { font-size: 14px; color: var(--text-muted); line-height: 1.5; margin: 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-    .arrow-icon { font-size: 24px; color: var(--charcoal); opacity: 0.5; transition: 0.2s transform; flex-shrink: 0; }
-    .featured-card:hover .arrow-icon, .side-card:hover .arrow-icon { transform: translateX(6px); opacity: 1; color: var(--forest); }
-    
-    @media (max-width: 500px) {
-      .side-card { flex-direction: column; gap: 16px; }
-      .side-card img { width: 100%; height: 200px; }
+    .blog-card {
+      text-decoration: none; color: inherit; display: flex; flex-direction: column;
+      border: 1px solid var(--border, #E6E4DD); border-radius: 20px; overflow: hidden;
+      background: white; transition: 0.2s transform, 0.2s box-shadow;
     }
+    .blog-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.06); }
+    .blog-card:hover .bc-title { color: var(--forest); }
+    
+    .blog-card img { width: 100%; height: 220px; object-fit: cover; border-bottom: 1px solid var(--border, #E6E4DD); }
+    .bc-content { padding: 24px; display: flex; flex-direction: column; flex: 1; }
+    .bc-title { font-size: 20px; font-weight: 700; margin: 0 0 12px 0; line-height: 1.3; transition: 0.2s; }
+    .bc-excerpt { font-size: 15px; color: var(--text-muted); line-height: 1.6; margin: 0 0 24px 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .bc-read-more { font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--forest); margin-top: auto; display: flex; align-items: center; gap: 8px; }
   </style>
 </head>
 <body>
@@ -93,131 +86,143 @@
     <a href="#" class="pill">Men's Health</a>
     <a href="#" class="pill">Weight Loss</a>
   </div>
-  <div class="blog-layout">
-    
-    <div class="featured-col">
-      <a href="/cost-of-compounded-semaglutide-vs-brand-name-ozempic" class="featured-card">
-        <img src="assets/blog/cost-of-compounded-semaglutide-vs-brand-name-ozempic.jpg" alt="Cost of Compounded Semaglutide vs Brand Name Ozempic">
-        <h2 class="fc-title">Cost of Compounded Semaglutide vs Brand Name Ozempic <i class="ri-arrow-right-line arrow-icon"></i></h2>
-        <p class="fc-excerpt">Explore the cost differences between compounded semaglutide and brand name Ozempic, and discover which option might be right for your budget.</p>
-      </a>
-    </div>
-    <div class="side-list">
-      
-      <a href="/seo-test-article" class="side-card">
-        <img src="assets/blog/seo-test-article.jpg" alt="The Ultimate Guide to Men's Health Telemedicine">
-        <div class="sc-content">
-          <h2 class="sc-title">The Ultimate Guide to Men's Health Telemedicine <i class="ri-arrow-right-line arrow-icon"></i></h2>
-          <p class="sc-excerpt">Why the modern man is skipping the waiting room and what you need to know about getting safe, clinical-grade ED and hair loss treatments online.</p>
-        </div>
-      </a>
-      <a href="/buy-compounded-tirzepatide-online-transparent-pricing" class="side-card">
-        <img src="assets/blog/buy-compounded-tirzepatide-online-transparent-pricing.jpg" alt="Buy Compounded Tirzepatide Online: Transparent Pricing Explained">
-        <div class="sc-content">
-          <h2 class="sc-title">Buy Compounded Tirzepatide Online: Transparent Pricing Explained <i class="ri-arrow-right-line arrow-icon"></i></h2>
-          <p class="sc-excerpt">Discover the benefits of buying compounded tirzepatide online with transparent pricing to manage your health effectively. Learn how to navigate the process safely and efficiently.</p>
-        </div>
-      </a>
-      <a href="/buy-prescription-peptides-online" class="side-card">
-        <img src="assets/blog/buy-prescription-peptides-online.jpg" alt="The Ultimate Guide to Safely Buying Prescription Peptides Online">
-        <div class="sc-content">
-          <h2 class="sc-title">The Ultimate Guide to Safely Buying Prescription Peptides Online <i class="ri-arrow-right-line arrow-icon"></i></h2>
-          <p class="sc-excerpt">Discover the essential steps and considerations for purchasing prescription peptides online safely and effectively.</p>
-        </div>
-      </a>
-      <a href="/cheapest-telehealth-weight-loss-subscription-real-doctors" class="side-card">
-        <img src="assets/blog/cheapest-telehealth-weight-loss-subscription-real-doctors.jpg" alt="Discover the Most Affordable Telehealth Weight Loss Subscriptions with Real Doctors">
-        <div class="sc-content">
-          <h2 class="sc-title">Discover the Most Affordable Telehealth Weight Loss Subscriptions with Real Doctors <i class="ri-arrow-right-line arrow-icon"></i></h2>
-          <p class="sc-excerpt">Explore the most cost-effective telehealth weight loss subscriptions that connect you with real doctors to achieve your health goals seamlessly.</p>
-        </div>
-      </a>
-      <a href="/online-doctor-for-3-in-1-ed-troche-prescription" class="side-card">
-        <img src="assets/blog/online-doctor-for-3-in-1-ed-troche-prescription.jpg" alt="Unlocking the Benefits of Online Doctor Consultations for 3-in-1 ED Troche Prescriptions">
-        <div class="sc-content">
-          <h2 class="sc-title">Unlocking the Benefits of Online Doctor Consultations for 3-in-1 ED Troche Prescriptions <i class="ri-arrow-right-line arrow-icon"></i></h2>
-          <p class="sc-excerpt">Discover how online doctors provide a seamless solution for obtaining 3-in-1 ED troche prescriptions, improving convenience and privacy for men's health management.</p>
-        </div>
-      </a>
-      <a href="/start-semaglutide-online-today" class="side-card">
-        <img src="assets/blog/start-semaglutide-online-today.jpg" alt="Start Semaglutide Online Today: Your Path to Effective Weight Management">
-        <div class="sc-content">
-          <h2 class="sc-title">Start Semaglutide Online Today: Your Path to Effective Weight Management <i class="ri-arrow-right-line arrow-icon"></i></h2>
-          <p class="sc-excerpt">Discover how to start semaglutide online today and take control of your weight with a clinically-proven treatment. Learn about the benefits, process, and get started from the comfort of your home.</p>
-        </div>
-      </a>
-      <a href="/sildenafil-tadalafil-apomorphine-troche-online" class="side-card">
-        <img src="assets/blog/sildenafil-tadalafil-apomorphine-troche-online.jpg" alt="Exploring the Benefits of Sildenafil, Tadalafil, and Apomorphine Troche Online">
-        <div class="sc-content">
-          <h2 class="sc-title">Exploring the Benefits of Sildenafil, Tadalafil, and Apomorphine Troche Online <i class="ri-arrow-right-line arrow-icon"></i></h2>
-          <p class="sc-excerpt">Discover how sildenafil, tadalafil, and apomorphine troche can enhance men's health, available conveniently online.</p>
-        </div>
-      </a>
-      <a href="/where-to-buy-compounded-semaglutide-online-safely" class="side-card">
-        <img src="assets/blog/where-to-buy-compounded-semaglutide-online-safely.jpg" alt="Where to Buy Compounded Semaglutide Online Safely">
-        <div class="sc-content">
-          <h2 class="sc-title">Where to Buy Compounded Semaglutide Online Safely <i class="ri-arrow-right-line arrow-icon"></i></h2>
-          <p class="sc-excerpt">Discover how to safely purchase compounded semaglutide online with this comprehensive guide, ensuring your health and safety remain a priority.</p>
-        </div>
-      </a>
-      <a href="/costs-of-compounded-semantics-versus-branded" class="side-card">
-        <img src="assets/blog/costs-of-compounded-semantics-versus-branded.jpg" alt="Costs of Compounded Semantics Versus Branded Medications">
-        <div class="sc-content">
-          <h2 class="sc-title">Costs of Compounded Semantics Versus Branded Medications <i class="ri-arrow-right-line arrow-icon"></i></h2>
-          <p class="sc-excerpt">Explore the financial implications of choosing compounded medications over branded options and how it impacts patient care and healthcare systems.</p>
-        </div>
-      </a>
-      <a href="/compounded-peptide-therapy-online" class="side-card">
-        <img src="assets/blog/compounded-peptide-therapy-online.jpg" alt="Unlocking the Potential of Compounded Peptide Therapy Online: A Comprehensive Guide">
-        <div class="sc-content">
-          <h2 class="sc-title">Unlocking the Potential of Compounded Peptide Therapy Online: A Comprehensive Guide <i class="ri-arrow-right-line arrow-icon"></i></h2>
-          <p class="sc-excerpt">Explore the benefits and nuances of compounded peptide therapy online, a revolutionary approach to personalized health and wellness.</p>
-        </div>
-      </a>
-      <a href="/how-to-get-a-finasteride-prescription-online-fast" class="side-card">
-        <img src="assets/blog/how-to-get-a-finasteride-prescription-online-fast.jpg" alt="How to Get a Finasteride Prescription Online Fast">
-        <div class="sc-content">
-          <h2 class="sc-title">How to Get a Finasteride Prescription Online Fast <i class="ri-arrow-right-line arrow-icon"></i></h2>
-          <p class="sc-excerpt">Discover the fastest way to get a finasteride prescription online. Learn the steps, benefits, and how Freeley Health simplifies your journey to effective hair loss treatment.</p>
-        </div>
-      </a>
-      <a href="/monthly-weight-loss-subscription-with-doctor" class="side-card">
-        <img src="assets/blog/monthly-weight-loss-subscription-with-doctor.jpg" alt="Unlock Your Weight Loss Potential with a Monthly Doctor-Backed Subscription">
-        <div class="sc-content">
-          <h2 class="sc-title">Unlock Your Weight Loss Potential with a Monthly Doctor-Backed Subscription <i class="ri-arrow-right-line arrow-icon"></i></h2>
-          <p class="sc-excerpt">Discover how a monthly weight loss subscription with doctor guidance can transform your health journey, providing personalized support and accountability.</p>
-        </div>
-      </a>
-      <a href="/cost-of-compounded-tirzepatide-vs-mounjaro" class="side-card">
-        <img src="assets/blog/cost-of-compounded-tirzepatide-vs-mounjaro.jpg" alt="Cost Comparison: Compounded Tirzepatide vs. Mounjaro">
-        <div class="sc-content">
-          <h2 class="sc-title">Cost Comparison: Compounded Tirzepatide vs. Mounjaro <i class="ri-arrow-right-line arrow-icon"></i></h2>
-          <p class="sc-excerpt">Explore the cost differences between compounded Tirzepatide and Mounjaro for diabetes management. Understand the pricing factors and make informed decisions for your health.</p>
-        </div>
-      </a>
-      <a href="/best-online-weight-loss-clinic-2026" class="side-card">
-        <img src="assets/blog/best-online-weight-loss-clinic-2026.jpg" alt="Discover the Best Online Weight Loss Clinic of 2026: Your Ultimate Guide">
-        <div class="sc-content">
-          <h2 class="sc-title">Discover the Best Online Weight Loss Clinic of 2026: Your Ultimate Guide <i class="ri-arrow-right-line arrow-icon"></i></h2>
-          <p class="sc-excerpt">Explore the top-rated online weight loss clinics of 2026 and find the perfect virtual partner to achieve your health goals.</p>
-        </div>
-      </a>
-      <a href="/buy-compounded-semaglutide-online-no-hidden-fees" class="side-card">
-        <img src="assets/blog/buy-compounded-semaglutide-online-no-hidden-fees.jpg" alt="Buy Compounded Semaglutide Online: No Hidden Fees and Transparent Pricing">
-        <div class="sc-content">
-          <h2 class="sc-title">Buy Compounded Semaglutide Online: No Hidden Fees and Transparent Pricing <i class="ri-arrow-right-line arrow-icon"></i></h2>
-          <p class="sc-excerpt">Discover the benefits and insights into purchasing compounded semaglutide online with no hidden fees, ensuring transparency and effective weight management.</p>
-        </div>
-      </a>
-      <a href="/compounded-oral-minoxidil-for-hair-loss-online" class="side-card">
-        <img src="assets/blog/compounded-oral-minoxidil-for-hair-loss-online.jpg" alt="Exploring Compounded Oral Minoxidil for Hair Loss Online">
-        <div class="sc-content">
-          <h2 class="sc-title">Exploring Compounded Oral Minoxidil for Hair Loss Online <i class="ri-arrow-right-line arrow-icon"></i></h2>
-          <p class="sc-excerpt">Discover the potential of compounded oral minoxidil as a treatment for hair loss, and learn how to access it online safely and effectively.</p>
-        </div>
-      </a>
-    </div>
-    
+  <div class="blog-grid">
+    <a href="/cost-of-compounded-semaglutide-vs-brand-name-ozempic" class="blog-card">
+      <img src="assets/blog/cost-of-compounded-semaglutide-vs-brand-name-ozempic.jpg" alt="Cost of Compounded Semaglutide vs Brand Name Ozempic">
+      <div class="bc-content">
+        <h2 class="bc-title">Cost of Compounded Semaglutide vs Brand Name Ozempic</h2>
+        <p class="bc-excerpt">Explore the cost differences between compounded semaglutide and brand name Ozempic, and discover which option might be right for your budget.</p>
+        <span class="bc-read-more">Read Article <i class="ri-arrow-right-line"></i></span>
+      </div>
+    </a>
+    <a href="/seo-test-article" class="blog-card">
+      <img src="assets/blog/seo-test-article.jpg" alt="The Ultimate Guide to Men's Health Telemedicine">
+      <div class="bc-content">
+        <h2 class="bc-title">The Ultimate Guide to Men's Health Telemedicine</h2>
+        <p class="bc-excerpt">Why the modern man is skipping the waiting room and what you need to know about getting safe, clinical-grade ED and hair loss treatments online.</p>
+        <span class="bc-read-more">Read Article <i class="ri-arrow-right-line"></i></span>
+      </div>
+    </a>
+    <a href="/buy-compounded-tirzepatide-online-transparent-pricing" class="blog-card">
+      <img src="assets/blog/buy-compounded-tirzepatide-online-transparent-pricing.jpg" alt="Buy Compounded Tirzepatide Online: Transparent Pricing Explained">
+      <div class="bc-content">
+        <h2 class="bc-title">Buy Compounded Tirzepatide Online: Transparent Pricing Explained</h2>
+        <p class="bc-excerpt">Discover the benefits of buying compounded tirzepatide online with transparent pricing to manage your health effectively. Learn how to navigate the process safely and efficiently.</p>
+        <span class="bc-read-more">Read Article <i class="ri-arrow-right-line"></i></span>
+      </div>
+    </a>
+    <a href="/buy-prescription-peptides-online" class="blog-card">
+      <img src="assets/blog/buy-prescription-peptides-online.jpg" alt="The Ultimate Guide to Safely Buying Prescription Peptides Online">
+      <div class="bc-content">
+        <h2 class="bc-title">The Ultimate Guide to Safely Buying Prescription Peptides Online</h2>
+        <p class="bc-excerpt">Discover the essential steps and considerations for purchasing prescription peptides online safely and effectively.</p>
+        <span class="bc-read-more">Read Article <i class="ri-arrow-right-line"></i></span>
+      </div>
+    </a>
+    <a href="/cheapest-telehealth-weight-loss-subscription-real-doctors" class="blog-card">
+      <img src="assets/blog/cheapest-telehealth-weight-loss-subscription-real-doctors.jpg" alt="Discover the Most Affordable Telehealth Weight Loss Subscriptions with Real Doctors">
+      <div class="bc-content">
+        <h2 class="bc-title">Discover the Most Affordable Telehealth Weight Loss Subscriptions with Real Doctors</h2>
+        <p class="bc-excerpt">Explore the most cost-effective telehealth weight loss subscriptions that connect you with real doctors to achieve your health goals seamlessly.</p>
+        <span class="bc-read-more">Read Article <i class="ri-arrow-right-line"></i></span>
+      </div>
+    </a>
+    <a href="/online-doctor-for-3-in-1-ed-troche-prescription" class="blog-card">
+      <img src="assets/blog/online-doctor-for-3-in-1-ed-troche-prescription.jpg" alt="Unlocking the Benefits of Online Doctor Consultations for 3-in-1 ED Troche Prescriptions">
+      <div class="bc-content">
+        <h2 class="bc-title">Unlocking the Benefits of Online Doctor Consultations for 3-in-1 ED Troche Prescriptions</h2>
+        <p class="bc-excerpt">Discover how online doctors provide a seamless solution for obtaining 3-in-1 ED troche prescriptions, improving convenience and privacy for men's health management.</p>
+        <span class="bc-read-more">Read Article <i class="ri-arrow-right-line"></i></span>
+      </div>
+    </a>
+    <a href="/start-semaglutide-online-today" class="blog-card">
+      <img src="assets/blog/start-semaglutide-online-today.jpg" alt="Start Semaglutide Online Today: Your Path to Effective Weight Management">
+      <div class="bc-content">
+        <h2 class="bc-title">Start Semaglutide Online Today: Your Path to Effective Weight Management</h2>
+        <p class="bc-excerpt">Discover how to start semaglutide online today and take control of your weight with a clinically-proven treatment. Learn about the benefits, process, and get started from the comfort of your home.</p>
+        <span class="bc-read-more">Read Article <i class="ri-arrow-right-line"></i></span>
+      </div>
+    </a>
+    <a href="/sildenafil-tadalafil-apomorphine-troche-online" class="blog-card">
+      <img src="assets/blog/sildenafil-tadalafil-apomorphine-troche-online.jpg" alt="Exploring the Benefits of Sildenafil, Tadalafil, and Apomorphine Troche Online">
+      <div class="bc-content">
+        <h2 class="bc-title">Exploring the Benefits of Sildenafil, Tadalafil, and Apomorphine Troche Online</h2>
+        <p class="bc-excerpt">Discover how sildenafil, tadalafil, and apomorphine troche can enhance men's health, available conveniently online.</p>
+        <span class="bc-read-more">Read Article <i class="ri-arrow-right-line"></i></span>
+      </div>
+    </a>
+    <a href="/where-to-buy-compounded-semaglutide-online-safely" class="blog-card">
+      <img src="assets/blog/where-to-buy-compounded-semaglutide-online-safely.jpg" alt="Where to Buy Compounded Semaglutide Online Safely">
+      <div class="bc-content">
+        <h2 class="bc-title">Where to Buy Compounded Semaglutide Online Safely</h2>
+        <p class="bc-excerpt">Discover how to safely purchase compounded semaglutide online with this comprehensive guide, ensuring your health and safety remain a priority.</p>
+        <span class="bc-read-more">Read Article <i class="ri-arrow-right-line"></i></span>
+      </div>
+    </a>
+    <a href="/costs-of-compounded-semantics-versus-branded" class="blog-card">
+      <img src="assets/blog/costs-of-compounded-semantics-versus-branded.jpg" alt="Costs of Compounded Semantics Versus Branded Medications">
+      <div class="bc-content">
+        <h2 class="bc-title">Costs of Compounded Semantics Versus Branded Medications</h2>
+        <p class="bc-excerpt">Explore the financial implications of choosing compounded medications over branded options and how it impacts patient care and healthcare systems.</p>
+        <span class="bc-read-more">Read Article <i class="ri-arrow-right-line"></i></span>
+      </div>
+    </a>
+    <a href="/compounded-peptide-therapy-online" class="blog-card">
+      <img src="assets/blog/compounded-peptide-therapy-online.jpg" alt="Unlocking the Potential of Compounded Peptide Therapy Online: A Comprehensive Guide">
+      <div class="bc-content">
+        <h2 class="bc-title">Unlocking the Potential of Compounded Peptide Therapy Online: A Comprehensive Guide</h2>
+        <p class="bc-excerpt">Explore the benefits and nuances of compounded peptide therapy online, a revolutionary approach to personalized health and wellness.</p>
+        <span class="bc-read-more">Read Article <i class="ri-arrow-right-line"></i></span>
+      </div>
+    </a>
+    <a href="/how-to-get-a-finasteride-prescription-online-fast" class="blog-card">
+      <img src="assets/blog/how-to-get-a-finasteride-prescription-online-fast.jpg" alt="How to Get a Finasteride Prescription Online Fast">
+      <div class="bc-content">
+        <h2 class="bc-title">How to Get a Finasteride Prescription Online Fast</h2>
+        <p class="bc-excerpt">Discover the fastest way to get a finasteride prescription online. Learn the steps, benefits, and how Freeley Health simplifies your journey to effective hair loss treatment.</p>
+        <span class="bc-read-more">Read Article <i class="ri-arrow-right-line"></i></span>
+      </div>
+    </a>
+    <a href="/monthly-weight-loss-subscription-with-doctor" class="blog-card">
+      <img src="assets/blog/monthly-weight-loss-subscription-with-doctor.jpg" alt="Unlock Your Weight Loss Potential with a Monthly Doctor-Backed Subscription">
+      <div class="bc-content">
+        <h2 class="bc-title">Unlock Your Weight Loss Potential with a Monthly Doctor-Backed Subscription</h2>
+        <p class="bc-excerpt">Discover how a monthly weight loss subscription with doctor guidance can transform your health journey, providing personalized support and accountability.</p>
+        <span class="bc-read-more">Read Article <i class="ri-arrow-right-line"></i></span>
+      </div>
+    </a>
+    <a href="/cost-of-compounded-tirzepatide-vs-mounjaro" class="blog-card">
+      <img src="assets/blog/cost-of-compounded-tirzepatide-vs-mounjaro.jpg" alt="Cost Comparison: Compounded Tirzepatide vs. Mounjaro">
+      <div class="bc-content">
+        <h2 class="bc-title">Cost Comparison: Compounded Tirzepatide vs. Mounjaro</h2>
+        <p class="bc-excerpt">Explore the cost differences between compounded Tirzepatide and Mounjaro for diabetes management. Understand the pricing factors and make informed decisions for your health.</p>
+        <span class="bc-read-more">Read Article <i class="ri-arrow-right-line"></i></span>
+      </div>
+    </a>
+    <a href="/best-online-weight-loss-clinic-2026" class="blog-card">
+      <img src="assets/blog/best-online-weight-loss-clinic-2026.jpg" alt="Discover the Best Online Weight Loss Clinic of 2026: Your Ultimate Guide">
+      <div class="bc-content">
+        <h2 class="bc-title">Discover the Best Online Weight Loss Clinic of 2026: Your Ultimate Guide</h2>
+        <p class="bc-excerpt">Explore the top-rated online weight loss clinics of 2026 and find the perfect virtual partner to achieve your health goals.</p>
+        <span class="bc-read-more">Read Article <i class="ri-arrow-right-line"></i></span>
+      </div>
+    </a>
+    <a href="/buy-compounded-semaglutide-online-no-hidden-fees" class="blog-card">
+      <img src="assets/blog/buy-compounded-semaglutide-online-no-hidden-fees.jpg" alt="Buy Compounded Semaglutide Online: No Hidden Fees and Transparent Pricing">
+      <div class="bc-content">
+        <h2 class="bc-title">Buy Compounded Semaglutide Online: No Hidden Fees and Transparent Pricing</h2>
+        <p class="bc-excerpt">Discover the benefits and insights into purchasing compounded semaglutide online with no hidden fees, ensuring transparency and effective weight management.</p>
+        <span class="bc-read-more">Read Article <i class="ri-arrow-right-line"></i></span>
+      </div>
+    </a>
+    <a href="/compounded-oral-minoxidil-for-hair-loss-online" class="blog-card">
+      <img src="assets/blog/compounded-oral-minoxidil-for-hair-loss-online.jpg" alt="Exploring Compounded Oral Minoxidil for Hair Loss Online">
+      <div class="bc-content">
+        <h2 class="bc-title">Exploring Compounded Oral Minoxidil for Hair Loss Online</h2>
+        <p class="bc-excerpt">Discover the potential of compounded oral minoxidil as a treatment for hair loss, and learn how to access it online safely and effectively.</p>
+        <span class="bc-read-more">Read Article <i class="ri-arrow-right-line"></i></span>
+      </div>
+    </a>
   </div>
   <script src="shared.js"></script>
   <script>initPage('');</script>
