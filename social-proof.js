@@ -486,15 +486,19 @@
     if (window.Capacitor && window.Capacitor.isNativePlatform()) return;
     
     injectStyles();
-    injectActivityBadges();
-    injectSignupCounters();
-    injectTrustStrip();
-    injectSpotsLeft();
+    
+    // DISABLED FOR LEGITSCRIPT COMPLIANCE:
+    // No simulated social proof or artificial urgency allowed.
+    // injectActivityBadges();
+    // injectSignupCounters();
+    // injectSpotsLeft();
+    
+    injectTrustStrip(); // Factual statements are allowed
     injectPWA();
-    // injectAnalytics(); // Uncomment when you have real GA4/Meta IDs
+    // injectAnalytics();
 
-    // Start toast notifications after delay
-    setTimeout(showToast, CONFIG.toastDelay);
+    // DISABLED FOR LEGITSCRIPT COMPLIANCE:
+    // setTimeout(showToast, CONFIG.toastDelay);
   }
 
   function injectPWA() {
