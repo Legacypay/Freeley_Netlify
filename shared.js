@@ -76,6 +76,7 @@ const FOOTER_HTML = `
       <h4>Company</h4>
       <a href="/how-it-works">How It Works</a>
       <a href="/about">About Freeley</a>
+      <a href="/partner-pharmacies">Partner Pharmacies</a>
       <a href="/blog">Blog & Insights</a>
       <a href="/faq">FAQ</a>
       <a href="/contact">Contact Us</a>
@@ -89,7 +90,7 @@ const FOOTER_HTML = `
     </div>
   </div>
   <div class="footer-bottom">
-    <p class="footer-disclaimer">Freeley is a healthcare technology platform that facilitates connections between patients and independently licensed telemedicine providers and 503A compounding pharmacies. Freeley does not practice medicine, employ physicians, or dispense medications. All treatment decisions and prescriptions are made solely by US-licensed physicians. Compounded medications are not FDA-approved, and are independent of any name-brand medications. Results vary. Not available in all states. FSA/HSA eligibility varies.</p>
+    <p class="footer-disclaimer">Freeley is a healthcare technology platform that facilitates connections between patients and independently licensed telemedicine providers and 503A compounding pharmacies, available nationwide across all 50 U.S. states. Freeley does not practice medicine, employ physicians, or dispense medications. All treatment decisions and prescriptions are made solely by US-licensed physicians. Compounded medications are not FDA-approved, and are independent of any name-brand medications. Results vary. FSA/HSA eligibility varies.</p>
     <div class="footer-copy">© 2025 Freeley Health LLC (DBA Freeley)</div>
   </div>
 </footer>
