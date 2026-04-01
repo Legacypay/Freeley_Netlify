@@ -377,37 +377,8 @@
     setTimeout(() => toast.remove(), 600);
   }
 
-  // ─── Activity Badge Injector ───────────────────────────────
-  function injectActivityBadges() {
-    const badges = document.querySelectorAll('[data-sp-activity]');
-    badges.forEach(el => {
-      const base = parseInt(el.getAttribute('data-sp-activity') || '14');
-      const variation = Math.floor(Math.random() * 8) - 3; // ±3
-      const count = Math.max(7, base + variation);
-      el.innerHTML = `
-        <span class="sp-activity-dot"></span>
-        <span><strong>${count}</strong> people viewing this right now</span>
-      `;
-      el.classList.add('sp-activity-badge');
-    });
-  }
-
-  // ─── Signup Counter Injector ───────────────────────────────
-  function injectSignupCounters() {
-    const counters = document.querySelectorAll('[data-sp-signups]');
-    counters.forEach(el => {
-      const baseCount = parseInt(el.getAttribute('data-sp-signups') || '127');
-      const todayCount = Math.floor(Math.random() * 15) + 8; // 8-22 today
-      const initials = ['S', 'M', 'J'];
-      el.innerHTML = `
-        <div class="sp-signup-avatars">
-          ${initials.map(i => `<div class="sp-signup-avatar">${i}</div>`).join('')}
-        </div>
-        <span><strong>${baseCount + todayCount}</strong> patients started this week</span>
-      `;
-      el.classList.add('sp-signup-counter');
-    });
-  }
+  // ─── Activity Badges (REMOVED FOR COMPLIANCE) ────────────────
+  // Fake social proof and urgency tactics violate LegitScript policies.
 
   // ─── Trust Badge Strip ─────────────────────────────────────
   function injectTrustStrip() {
