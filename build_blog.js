@@ -250,41 +250,34 @@ const HUB_TEMPLATE = `<!DOCTYPE html>
     }
     .pill:hover, .pill.active { border-color: var(--forest, #3D8C5E); color: var(--forest, #3D8C5E); }
     
-    .blog-layout {
+    .blog-grid {
       display: grid;
-      grid-template-columns: 1.1fr 1fr;
-      gap: 60px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 32px;
       padding: 0 24px 100px;
-      max-width: 1200px;
+      max-width: 1000px;
       margin: 0 auto;
     }
-    @media (max-width: 900px) {
-      .blog-layout { grid-template-columns: 1fr; }
+    @media (max-width: 800px) {
+      .blog-grid { grid-template-columns: 1fr; }
     }
-    
-    /* Featured */
-    .featured-card { text-decoration: none; color: inherit; display: block; }
-    .featured-card:hover .fc-title { color: var(--forest); }
-    .featured-card img { width: 100%; height: 420px; object-fit: cover; border-radius: 20px; margin-bottom: 24px; }
-    .fc-title { font-size: 32px; font-weight: 700; margin: 0 0 12px 0; display: flex; align-items: center; justify-content: space-between; transition: 0.2s;}
-    .fc-excerpt { font-size: 16px; color: var(--text-muted); line-height: 1.6; margin: 0; }
-    
-    /* Side list */
-    .side-list { display: flex; flex-direction: column; gap: 32px; }
-    .side-card { display: flex; gap: 24px; text-decoration: none; color: inherit; border-bottom: 1px solid var(--border, #E6E4DD); padding-bottom: 32px; align-items: center; }
-    .side-card:last-child { border-bottom: none; padding-bottom: 0; }
-    .side-card:hover .sc-title { color: var(--forest); }
-    .side-card img { width: 180px; height: 120px; object-fit: cover; border-radius: 12px; flex-shrink: 0; }
-    .sc-content { flex: 1; min-width: 0; }
-    .sc-title { font-size: 18px; font-weight: 700; margin: 0 0 8px 0; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; transition: 0.2s; line-height: 1.3; }
-    .sc-excerpt { font-size: 14px; color: var(--text-muted); line-height: 1.5; margin: 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-    .arrow-icon { font-size: 24px; color: var(--charcoal); opacity: 0.5; transition: 0.2s transform; flex-shrink: 0; }
-    .featured-card:hover .arrow-icon, .side-card:hover .arrow-icon { transform: translateX(6px); opacity: 1; color: var(--forest); }
-    
-    @media (max-width: 500px) {
-      .side-card { flex-direction: column; gap: 16px; }
-      .side-card img { width: 100%; height: 200px; }
+    .blog-card {
+      text-decoration: none; color: inherit; display: flex; flex-direction: column;
+      border: 1px solid var(--border, #E6E4DD); border-radius: 16px; overflow: hidden;
+      background: white; transition: all 0.3s ease; position: relative;
     }
+    .blog-card:hover { 
+      transform: translateY(-4px); 
+      box-shadow: 0 16px 40px rgba(61,140,94,0.06);
+      border-color: var(--forest, #3D8C5E);
+    }
+    .blog-card:hover .bc-title { color: var(--forest); }
+    .blog-card:hover .bc-read-more { gap: 12px; }
+    .bc-content { padding: 40px; display: flex; flex-direction: column; flex: 1; justify-content: flex-start; }
+    .bc-category { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--forest); margin-bottom: 20px; display: inline-block; }
+    .bc-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 600; margin: 0 0 16px 0; line-height: 1.25; transition: 0.2s; color: var(--charcoal); }
+    .bc-excerpt { font-size: 16px; color: var(--text-muted); line-height: 1.6; margin: 0 0 32px 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .bc-read-more { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--forest); display: flex; align-items: center; gap: 8px; transition: 0.3s ease; margin-top: auto; }
   </style>
 </head>
 <body>
@@ -303,11 +296,34 @@ const HUB_TEMPLATE = `<!DOCTYPE html>
     <a href="#" class="pill">Men's Health</a>
     <a href="#" class="pill">Weight Loss</a>
   </div>
-  <div class="blog-layout">
-    {{BLOG_LAYOUT_HTML}}
-  </div>
+  {{BLOG_LAYOUT_HTML}}
   <script src="shared.js"></script>
-  <script>initPage('');</script>
+  <script>
+    initPage('');
+    document.addEventListener('DOMContentLoaded', () => {
+      const cards = document.querySelectorAll('.blog-card');
+      const pills = document.querySelectorAll('.pill-nav .pill');
+      pills.forEach(pill => {
+        pill.addEventListener('click', (e) => {
+          e.preventDefault();
+          pills.forEach(p => p.classList.remove('active'));
+          pill.classList.add('active');
+          const text = pill.innerText.trim();
+          let target = 'all';
+          if (text === 'Weight Loss') target = 'weight-loss';
+          if (text === 'Longevity') target = 'longevity';
+          if (text === "Men's Health") target = 'mens-health';
+          cards.forEach(card => {
+            if (target === 'all' || card.getAttribute('data-category') === target) {
+              card.style.display = 'flex';
+            } else {
+              card.style.display = 'none';
+            }
+          });
+        });
+      });
+    });
+  </script>
 </body>
 </html>`;
 
@@ -344,28 +360,11 @@ async function processBlogs() {
     const dateStr = data.date || new Date().toISOString();
     let image = data.image || `assets/blog/${slug}.jpg`;
 
-    // ── GPT IMAGE 1 AUTO-GENERATION ──
-    // If the image doesn't exist on disk, generate it via GPT Image 1
-    const imagePath = path.join(__dirname, image);
-    if (!fs.existsSync(imagePath)) {
-      console.log(`   🔍 Image missing for "${slug}" — generating via GPT Image 1...`);
-      const generatedPath = await generateBlogImage(title, tag, slug);
-      if (generatedPath) {
-        image = generatedPath;
-        // Update the markdown frontmatter with the new image path
-        const updatedFrontmatter = { ...data, image: generatedPath };
-        const updatedContent = matter.stringify(content, updatedFrontmatter);
-        fs.writeFileSync(path.join(CONTENT_DIR, file), updatedContent);
-        console.log(`   📝 Updated frontmatter: ${file} → image: ${generatedPath}`);
-      }
-      // Rate limit: wait 3s between image generations
-      await new Promise(r => setTimeout(r, 3000));
-    }
-
-    // Build hero image HTML if image exists
-    const heroImageHTML = image
-      ? `<img src="${image}" alt="${title}" class="blog-hero-img">`
-      : '';
+    // ── IMAGE GENERATION DISABLED ──
+    // The blog is now strictly typography-driven based on the new aesthetic.
+    // No images will be generated or injected.
+    image = '';
+    const heroImageHTML = '';
 
     // Compile single page HTML
     let pageHTML = PAGE_TEMPLATE
@@ -393,36 +392,27 @@ async function processBlogs() {
   blogPosts.sort((a, b) => b.date - a.date);
 
   // Generate hub layout
-  let layoutHTML = '';
-  if (blogPosts.length > 0) {
-    const featured = blogPosts[0];
-    const rest = blogPosts.slice(1);
+  let layoutHTML = '<div class="blog-grid">';
+  blogPosts.forEach(post => {
+    let category = 'ARTICLE';
+    let dataCat = 'all';
+    const s = post.slug.toLowerCase();
     
-    let sideHTML = '';
-    rest.forEach(post => {
-      sideHTML += `
-      <a href="/${post.slug}" class="side-card">
-        <img src="${post.image}" alt="${post.title}">
-        <div class="sc-content">
-          <h2 class="sc-title">${post.title} <i class="ri-arrow-right-line arrow-icon"></i></h2>
-          <p class="sc-excerpt">${post.excerpt}</p>
-        </div>
-      </a>`;
-    });
+    if (s.includes('semaglutide') || s.includes('tirzepatide') || s.includes('weight') || s.includes('mounjaro')) { category = 'Weight Loss'; dataCat = 'weight-loss'; }
+    else if (s.includes('peptides') || s.includes('longevity') || s.includes('semantics')) { category = 'Longevity'; dataCat = 'longevity'; }
+    else if (s.includes('ed-troche') || s.includes('finasteride') || s.includes('sildenafil') || s.includes('minoxidil') || s.includes('test-article')) { category = "Men's Health"; dataCat = 'mens-health'; }
 
-    layoutHTML = `
-    <div class="featured-col">
-      <a href="/${featured.slug}" class="featured-card">
-        <img src="${featured.image}" alt="${featured.title}">
-        <h2 class="fc-title">${featured.title} <i class="ri-arrow-right-line arrow-icon"></i></h2>
-        <p class="fc-excerpt">${featured.excerpt}</p>
-      </a>
-    </div>
-    <div class="side-list">
-      ${sideHTML}
-    </div>
-    `;
-  }
+    layoutHTML += `
+    <a href="/${post.slug}" class="blog-card" data-category="${dataCat}">
+      <div class="bc-content">
+        <span class="bc-category">${category}</span>
+        <h2 class="bc-title">${post.title}</h2>
+        <p class="bc-excerpt">${post.excerpt}</p>
+        <span class="bc-read-more">Read Article <i class="ri-arrow-right-line"></i></span>
+      </div>
+    </a>`;
+  });
+  layoutHTML += '</div>';
 
   const finalHub = HUB_TEMPLATE.replace('{{BLOG_LAYOUT_HTML}}', layoutHTML);
   fs.writeFileSync(path.join(OUTPUT_DIR, 'blog.html'), finalHub);
