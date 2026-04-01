@@ -51,7 +51,6 @@
     @media (max-width: 800px) {
       .blog-grid { grid-template-columns: 1fr; }
     }
-    
     .blog-card {
       text-decoration: none; color: inherit; display: flex; flex-direction: column;
       border: 1px solid var(--border, #E6E4DD); border-radius: 16px; overflow: hidden;
@@ -64,18 +63,17 @@
     }
     .blog-card:hover .bc-title { color: var(--forest); }
     .blog-card:hover .bc-read-more { gap: 12px; }
-    
     .bc-content { padding: 40px; display: flex; flex-direction: column; flex: 1; justify-content: flex-start; }
     .bc-category { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--forest); margin-bottom: 20px; display: inline-block; }
     .bc-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 600; margin: 0 0 16px 0; line-height: 1.25; transition: 0.2s; color: var(--charcoal); }
-    .bc-excerpt { font-size: 16px; color: var(--text-muted); line-height: 1.6; margin: 0 0 32px 0; }
+    .bc-excerpt { font-size: 16px; color: var(--text-muted); line-height: 1.6; margin: 0 0 32px 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
     .bc-read-more { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--forest); display: flex; align-items: center; gap: 8px; transition: 0.3s ease; margin-top: auto; }
   </style>
 </head>
 <body>
   <!-- Simplified minimal nav area can go here if needed -->
   <nav style="padding: 24px; max-width: 1200px; margin: 0 auto; display: flex; align-items: center;">
-     <a href="/"><img src="assets/brand/freeley_wordmark_dark.png" alt="Freeley" style="height: 28px;" loading="lazy"></a>
+     <a href="/"><img src="assets/brand/freeley_wordmark_dark.png" alt="Freeley" style="height: 28px;"></a>
   </nav>
 
   <section class="hub-hero">
@@ -89,182 +87,168 @@
     <a href="#" class="pill">Weight Loss</a>
   </div>
   <div class="blog-grid">
-    <a href="/cost-of-compounded-semaglutide-vs-brand-name-ozempic" class="blog-card">
+    <a href="/cost-of-compounded-semaglutide-vs-brand-name-ozempic" class="blog-card" data-category="weight-loss">
       <div class="bc-content">
+        <span class="bc-category">Weight Loss</span>
         <h2 class="bc-title">Cost of Compounded Semaglutide vs Brand Name Ozempic</h2>
         <p class="bc-excerpt">Explore the cost differences between compounded semaglutide and brand name Ozempic, and discover which option might be right for your budget.</p>
         <span class="bc-read-more">Read Article <i class="ri-arrow-right-line"></i></span>
       </div>
     </a>
-    <a href="/seo-test-article" class="blog-card">
+    <a href="/seo-test-article" class="blog-card" data-category="mens-health">
       <div class="bc-content">
+        <span class="bc-category">Men's Health</span>
         <h2 class="bc-title">The Ultimate Guide to Men's Health Telemedicine</h2>
         <p class="bc-excerpt">Why the modern man is skipping the waiting room and what you need to know about getting safe, clinical-grade ED and hair loss treatments online.</p>
         <span class="bc-read-more">Read Article <i class="ri-arrow-right-line"></i></span>
       </div>
     </a>
-    <a href="/buy-compounded-tirzepatide-online-transparent-pricing" class="blog-card">
+    <a href="/buy-compounded-tirzepatide-online-transparent-pricing" class="blog-card" data-category="weight-loss">
       <div class="bc-content">
+        <span class="bc-category">Weight Loss</span>
         <h2 class="bc-title">Buy Compounded Tirzepatide Online: Transparent Pricing Explained</h2>
         <p class="bc-excerpt">Discover the benefits of buying compounded tirzepatide online with transparent pricing to manage your health effectively. Learn how to navigate the process safely and efficiently.</p>
         <span class="bc-read-more">Read Article <i class="ri-arrow-right-line"></i></span>
       </div>
     </a>
-    <a href="/buy-prescription-peptides-online" class="blog-card">
+    <a href="/buy-prescription-peptides-online" class="blog-card" data-category="longevity">
       <div class="bc-content">
+        <span class="bc-category">Longevity</span>
         <h2 class="bc-title">The Ultimate Guide to Safely Buying Prescription Peptides Online</h2>
         <p class="bc-excerpt">Discover the essential steps and considerations for purchasing prescription peptides online safely and effectively.</p>
         <span class="bc-read-more">Read Article <i class="ri-arrow-right-line"></i></span>
       </div>
     </a>
-    <a href="/cheapest-telehealth-weight-loss-subscription-real-doctors" class="blog-card">
+    <a href="/cheapest-telehealth-weight-loss-subscription-real-doctors" class="blog-card" data-category="weight-loss">
       <div class="bc-content">
+        <span class="bc-category">Weight Loss</span>
         <h2 class="bc-title">Discover the Most Affordable Telehealth Weight Loss Subscriptions with Real Doctors</h2>
         <p class="bc-excerpt">Explore the most cost-effective telehealth weight loss subscriptions that connect you with real doctors to achieve your health goals seamlessly.</p>
         <span class="bc-read-more">Read Article <i class="ri-arrow-right-line"></i></span>
       </div>
     </a>
-    <a href="/online-doctor-for-3-in-1-ed-troche-prescription" class="blog-card">
+    <a href="/online-doctor-for-3-in-1-ed-troche-prescription" class="blog-card" data-category="mens-health">
       <div class="bc-content">
+        <span class="bc-category">Men's Health</span>
         <h2 class="bc-title">Unlocking the Benefits of Online Doctor Consultations for 3-in-1 ED Troche Prescriptions</h2>
         <p class="bc-excerpt">Discover how online doctors provide a seamless solution for obtaining 3-in-1 ED troche prescriptions, improving convenience and privacy for men's health management.</p>
         <span class="bc-read-more">Read Article <i class="ri-arrow-right-line"></i></span>
       </div>
     </a>
-    <a href="/start-semaglutide-online-today" class="blog-card">
+    <a href="/order-sermorelin-nad-injections-online" class="blog-card" data-category="all">
       <div class="bc-content">
+        <span class="bc-category">ARTICLE</span>
+        <h2 class="bc-title">Unlock the Benefits of Sermorelin NAD+ Injections: Order Online for Enhanced Longevity</h2>
+        <p class="bc-excerpt">Discover the potential health benefits of Sermorelin NAD+ injections and learn how you can conveniently order them online to support your longevity journey.</p>
+        <span class="bc-read-more">Read Article <i class="ri-arrow-right-line"></i></span>
+      </div>
+    </a>
+    <a href="/start-semaglutide-online-today" class="blog-card" data-category="weight-loss">
+      <div class="bc-content">
+        <span class="bc-category">Weight Loss</span>
         <h2 class="bc-title">Start Semaglutide Online Today: Your Path to Effective Weight Management</h2>
         <p class="bc-excerpt">Discover how to start semaglutide online today and take control of your weight with a clinically-proven treatment. Learn about the benefits, process, and get started from the comfort of your home.</p>
         <span class="bc-read-more">Read Article <i class="ri-arrow-right-line"></i></span>
       </div>
     </a>
-    <a href="/sildenafil-tadalafil-apomorphine-troche-online" class="blog-card">
+    <a href="/sildenafil-tadalafil-apomorphine-troche-online" class="blog-card" data-category="mens-health">
       <div class="bc-content">
+        <span class="bc-category">Men's Health</span>
         <h2 class="bc-title">Exploring the Benefits of Sildenafil, Tadalafil, and Apomorphine Troche Online</h2>
         <p class="bc-excerpt">Discover how sildenafil, tadalafil, and apomorphine troche can enhance men's health, available conveniently online.</p>
         <span class="bc-read-more">Read Article <i class="ri-arrow-right-line"></i></span>
       </div>
     </a>
-    <a href="/where-to-buy-compounded-semaglutide-online-safely" class="blog-card">
+    <a href="/where-to-buy-compounded-semaglutide-online-safely" class="blog-card" data-category="weight-loss">
       <div class="bc-content">
+        <span class="bc-category">Weight Loss</span>
         <h2 class="bc-title">Where to Buy Compounded Semaglutide Online Safely</h2>
         <p class="bc-excerpt">Discover how to safely purchase compounded semaglutide online with this comprehensive guide, ensuring your health and safety remain a priority.</p>
         <span class="bc-read-more">Read Article <i class="ri-arrow-right-line"></i></span>
       </div>
     </a>
-    <a href="/costs-of-compounded-semantics-versus-branded" class="blog-card">
+    <a href="/costs-of-compounded-semantics-versus-branded" class="blog-card" data-category="longevity">
       <div class="bc-content">
+        <span class="bc-category">Longevity</span>
         <h2 class="bc-title">Costs of Compounded Semantics Versus Branded Medications</h2>
         <p class="bc-excerpt">Explore the financial implications of choosing compounded medications over branded options and how it impacts patient care and healthcare systems.</p>
         <span class="bc-read-more">Read Article <i class="ri-arrow-right-line"></i></span>
       </div>
     </a>
-    <a href="/compounded-peptide-therapy-online" class="blog-card">
+    <a href="/compounded-peptide-therapy-online" class="blog-card" data-category="all">
       <div class="bc-content">
+        <span class="bc-category">ARTICLE</span>
         <h2 class="bc-title">Unlocking the Potential of Compounded Peptide Therapy Online: A Comprehensive Guide</h2>
         <p class="bc-excerpt">Explore the benefits and nuances of compounded peptide therapy online, a revolutionary approach to personalized health and wellness.</p>
         <span class="bc-read-more">Read Article <i class="ri-arrow-right-line"></i></span>
       </div>
     </a>
-    <a href="/how-to-get-a-finasteride-prescription-online-fast" class="blog-card">
+    <a href="/how-to-get-a-finasteride-prescription-online-fast" class="blog-card" data-category="mens-health">
       <div class="bc-content">
+        <span class="bc-category">Men's Health</span>
         <h2 class="bc-title">How to Get a Finasteride Prescription Online Fast</h2>
         <p class="bc-excerpt">Discover the fastest way to get a finasteride prescription online. Learn the steps, benefits, and how Freeley Health simplifies your journey to effective hair loss treatment.</p>
         <span class="bc-read-more">Read Article <i class="ri-arrow-right-line"></i></span>
       </div>
     </a>
-    <a href="/monthly-weight-loss-subscription-with-doctor" class="blog-card">
+    <a href="/monthly-weight-loss-subscription-with-doctor" class="blog-card" data-category="weight-loss">
       <div class="bc-content">
+        <span class="bc-category">Weight Loss</span>
         <h2 class="bc-title">Unlock Your Weight Loss Potential with a Monthly Doctor-Backed Subscription</h2>
         <p class="bc-excerpt">Discover how a monthly weight loss subscription with doctor guidance can transform your health journey, providing personalized support and accountability.</p>
         <span class="bc-read-more">Read Article <i class="ri-arrow-right-line"></i></span>
       </div>
     </a>
-    <a href="/cost-of-compounded-tirzepatide-vs-mounjaro" class="blog-card">
+    <a href="/cost-of-compounded-tirzepatide-vs-mounjaro" class="blog-card" data-category="weight-loss">
       <div class="bc-content">
+        <span class="bc-category">Weight Loss</span>
         <h2 class="bc-title">Cost Comparison: Compounded Tirzepatide vs. Mounjaro</h2>
         <p class="bc-excerpt">Explore the cost differences between compounded Tirzepatide and Mounjaro for diabetes management. Understand the pricing factors and make informed decisions for your health.</p>
         <span class="bc-read-more">Read Article <i class="ri-arrow-right-line"></i></span>
       </div>
     </a>
-    <a href="/best-online-weight-loss-clinic-2026" class="blog-card">
+    <a href="/best-online-weight-loss-clinic-2026" class="blog-card" data-category="weight-loss">
       <div class="bc-content">
+        <span class="bc-category">Weight Loss</span>
         <h2 class="bc-title">Discover the Best Online Weight Loss Clinic of 2026: Your Ultimate Guide</h2>
         <p class="bc-excerpt">Explore the top-rated online weight loss clinics of 2026 and find the perfect virtual partner to achieve your health goals.</p>
         <span class="bc-read-more">Read Article <i class="ri-arrow-right-line"></i></span>
       </div>
     </a>
-    <a href="/buy-compounded-semaglutide-online-no-hidden-fees" class="blog-card">
+    <a href="/buy-compounded-semaglutide-online-no-hidden-fees" class="blog-card" data-category="weight-loss">
       <div class="bc-content">
+        <span class="bc-category">Weight Loss</span>
         <h2 class="bc-title">Buy Compounded Semaglutide Online: No Hidden Fees and Transparent Pricing</h2>
         <p class="bc-excerpt">Discover the benefits and insights into purchasing compounded semaglutide online with no hidden fees, ensuring transparency and effective weight management.</p>
         <span class="bc-read-more">Read Article <i class="ri-arrow-right-line"></i></span>
       </div>
     </a>
-    <a href="/compounded-oral-minoxidil-for-hair-loss-online" class="blog-card">
+    <a href="/compounded-oral-minoxidil-for-hair-loss-online" class="blog-card" data-category="mens-health">
       <div class="bc-content">
+        <span class="bc-category">Men's Health</span>
         <h2 class="bc-title">Exploring Compounded Oral Minoxidil for Hair Loss Online</h2>
         <p class="bc-excerpt">Discover the potential of compounded oral minoxidil as a treatment for hair loss, and learn how to access it online safely and effectively.</p>
         <span class="bc-read-more">Read Article <i class="ri-arrow-right-line"></i></span>
       </div>
-    </a>
-  </div>
+    </a></div>
   <script src="shared.js"></script>
   <script>
     initPage('');
-    
-    // Blog Filtering Logic
-    document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener('DOMContentLoaded', () => {
       const cards = document.querySelectorAll('.blog-card');
       const pills = document.querySelectorAll('.pill-nav .pill');
-      
-      // Auto-categorize cards based on URL strings
-      cards.forEach(card => {
-        const url = card.getAttribute('href');
-        let category = 'all'; // fallback
-        
-        if (url.includes('semaglutide') || url.includes('tirzepatide') || url.includes('weight') || url.includes('mounjaro')) {
-          category = 'weight-loss';
-        } else if (url.includes('peptides') || url.includes('longevity') || url.includes('semantics')) {
-          category = 'longevity';
-        } else if (url.includes('ed-troche') || url.includes('finasteride') || url.includes('sildenafil') || url.includes('minoxidil') || url.includes('test-article')) {
-          category = 'mens-health';
-        }
-        
-        card.setAttribute('data-category', category);
-
-        // Dynamically create category label
-        let displayCat = 'Weight Loss';
-        if (category === 'longevity') displayCat = 'Longevity';
-        if (category === 'mens-health') displayCat = "Men's Health";
-        if (category === 'all') displayCat = 'Article'; // Fallback
-        
-        const catSpan = document.createElement('span');
-        catSpan.className = 'bc-category';
-        catSpan.innerText = displayCat;
-        card.querySelector('.bc-content').prepend(catSpan);
-      });
-
-      // Handle Pill Clicks
       pills.forEach(pill => {
         pill.addEventListener('click', (e) => {
           e.preventDefault();
-          
-          // Remove active state from all pills
           pills.forEach(p => p.classList.remove('active'));
-          // Add active state to clicked pill
           pill.classList.add('active');
-          
-          const selectedText = pill.innerText.trim();
-          
-          let targetCategory = 'all';
-          if (selectedText === 'Weight Loss') targetCategory = 'weight-loss';
-          if (selectedText === 'Longevity') targetCategory = 'longevity';
-          if (selectedText === "Men's Health") targetCategory = 'mens-health';
-
-          // Filter Cards
+          const text = pill.innerText.trim();
+          let target = 'all';
+          if (text === 'Weight Loss') target = 'weight-loss';
+          if (text === 'Longevity') target = 'longevity';
+          if (text === "Men's Health") target = 'mens-health';
           cards.forEach(card => {
-            if (targetCategory === 'all' || card.getAttribute('data-category') === targetCategory) {
+            if (target === 'all' || card.getAttribute('data-category') === target) {
               card.style.display = 'flex';
             } else {
               card.style.display = 'none';
