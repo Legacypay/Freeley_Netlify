@@ -614,6 +614,72 @@
 
 
 
+      <div class="section-label">Patient Information</div>
+
+      <div class="payment-box" id="patient-info-box" style="margin-bottom: 32px;">
+        <p style="font-size: 13px; color: var(--text-muted); margin: 0 0 20px; line-height: 1.5;">Required to create your secure medical file and submit to your assigned physician.</p>
+
+        <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+          <div style="flex: 1;">
+            <label style="display: block; font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; color: #555; margin-bottom: 6px;">First Name *</label>
+            <input type="text" id="pt-first-name" placeholder="Jane" style="width: 100%; padding: 12px 14px; border: 1px solid rgba(0,0,0,0.12); border-radius: 8px; font-size: 15px; font-family: inherit; box-sizing: border-box; background: #f9f9f9;">
+          </div>
+          <div style="flex: 1;">
+            <label style="display: block; font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; color: #555; margin-bottom: 6px;">Last Name *</label>
+            <input type="text" id="pt-last-name" placeholder="Doe" style="width: 100%; padding: 12px 14px; border: 1px solid rgba(0,0,0,0.12); border-radius: 8px; font-size: 15px; font-family: inherit; box-sizing: border-box; background: #f9f9f9;">
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+          <div style="flex: 1;">
+            <label style="display: block; font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; color: #555; margin-bottom: 6px;">Date of Birth *</label>
+            <input type="date" id="pt-dob" style="width: 100%; padding: 12px 14px; border: 1px solid rgba(0,0,0,0.12); border-radius: 8px; font-size: 15px; font-family: inherit; box-sizing: border-box; background: #f9f9f9;">
+          </div>
+          <div style="flex: 1;">
+            <label style="display: block; font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; color: #555; margin-bottom: 6px;">Gender *</label>
+            <select id="pt-gender" style="width: 100%; padding: 12px 14px; border: 1px solid rgba(0,0,0,0.12); border-radius: 8px; font-size: 15px; font-family: inherit; box-sizing: border-box; background: #f9f9f9;">
+              <option value="">Select...</option>
+              <option value="1">Male</option>
+              <option value="2">Female</option>
+              <option value="9">Prefer not to say</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <label style="display: block; font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; color: #555; margin-bottom: 6px;">Street Address *</label>
+          <input type="text" id="pt-address" placeholder="123 Main St" style="width: 100%; padding: 12px 14px; border: 1px solid rgba(0,0,0,0.12); border-radius: 8px; font-size: 15px; font-family: inherit; box-sizing: border-box; background: #f9f9f9;">
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+          <div style="flex: 2;">
+            <label style="display: block; font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; color: #555; margin-bottom: 6px;">City *</label>
+            <input type="text" id="pt-city" placeholder="Miami" style="width: 100%; padding: 12px 14px; border: 1px solid rgba(0,0,0,0.12); border-radius: 8px; font-size: 15px; font-family: inherit; box-sizing: border-box; background: #f9f9f9;">
+          </div>
+          <div style="flex: 1;">
+            <label style="display: block; font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; color: #555; margin-bottom: 6px;">State *</label>
+            <input type="text" id="pt-state" placeholder="FL" maxlength="2" style="width: 100%; padding: 12px 14px; border: 1px solid rgba(0,0,0,0.12); border-radius: 8px; font-size: 15px; font-family: inherit; box-sizing: border-box; background: #f9f9f9; text-transform: uppercase;">
+          </div>
+          <div style="flex: 1;">
+            <label style="display: block; font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; color: #555; margin-bottom: 6px;">Zip *</label>
+            <input type="text" id="pt-zip" placeholder="33101" maxlength="5" style="width: 100%; padding: 12px 14px; border: 1px solid rgba(0,0,0,0.12); border-radius: 8px; font-size: 15px; font-family: inherit; box-sizing: border-box; background: #f9f9f9;">
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px;">
+          <div style="flex: 1;">
+            <label style="display: block; font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; color: #555; margin-bottom: 6px;">Email *</label>
+            <input type="email" id="pt-email" placeholder="jane@example.com" style="width: 100%; padding: 12px 14px; border: 1px solid rgba(0,0,0,0.12); border-radius: 8px; font-size: 15px; font-family: inherit; box-sizing: border-box; background: #f9f9f9;">
+          </div>
+          <div style="flex: 1;">
+            <label style="display: block; font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; color: #555; margin-bottom: 6px;">Phone *</label>
+            <input type="tel" id="pt-phone" placeholder="(555) 123-4567" style="width: 100%; padding: 12px 14px; border: 1px solid rgba(0,0,0,0.12); border-radius: 8px; font-size: 15px; font-family: inherit; box-sizing: border-box; background: #f9f9f9;">
+          </div>
+        </div>
+
+        <div id="patient-info-error" style="display:none; margin-top: 14px; background: #fee2e2; border: 1px solid #fca5a5; color: #991b1b; padding: 10px 14px; border-radius: 8px; font-size: 13px;"></div>
+      </div>
+
       <div class="section-label">Enter Payment Details</div>
       
       <div class="express-checkout" style="margin-bottom: 32px;">
@@ -1122,9 +1188,89 @@
           btn.style.opacity = '1';
           spinner.style.display = 'none';
         } else if (paymentIntent && paymentIntent.status === 'succeeded') {
-          // Payment succeeded without redirect
+          // Payment succeeded — validate patient info before MDI submission
+          const ptInfoError = document.getElementById('patient-info-error');
+          const firstName = document.getElementById('pt-first-name').value.trim();
+          const lastName  = document.getElementById('pt-last-name').value.trim();
+          const dob       = document.getElementById('pt-dob').value;
+          const gender    = document.getElementById('pt-gender').value;
+          const address   = document.getElementById('pt-address').value.trim();
+          const city      = document.getElementById('pt-city').value.trim();
+          const state     = document.getElementById('pt-state').value.trim().toUpperCase();
+          const zip       = document.getElementById('pt-zip').value.trim();
+          const email     = document.getElementById('pt-email').value.trim();
+          const phone     = document.getElementById('pt-phone').value.trim();
+
+          if (!firstName || !lastName || !dob || !gender || !address || !city || !state || !zip || !email || !phone) {
+            ptInfoError.textContent = 'Please complete all patient information fields above before submitting.';
+            ptInfoError.style.display = 'block';
+            document.getElementById('patient-info-box').scrollIntoView({ behavior: 'smooth' });
+            btn.disabled = false;
+            btn.style.opacity = '1';
+            spinner.style.display = 'none';
+            return;
+          }
+
+          // Determine MDI product key from URL params
+          const productKeyMap = {
+            'weight-loss-sema':      'semaglutide',
+            'weight-loss-tirz':      'tirzepatide',
+            'weight-loss':           'semaglutide',
+            'ed':                    'tadalafil-prn',
+            'longevity-nad':         'nad-plus',
+            'longevity-sermorelin':  'sermorelin-injectable',
+            'longevity':             'sermorelin-injectable',
+            'hair-loss':             parseInt(gender) === 1 ? 'hair-men' : 'hair-women-under45'
+          };
+          let productKey = productKeyMap[treatmentType + (compoundOverride ? '-' + compoundOverride : '')] || productKeyMap[treatmentType] || 'semaglutide';
+          // Special case: hair gender
+          if (treatmentType === 'hair-loss') {
+            productKey = parseInt(gender) === 1 ? 'hair-men' : 'hair-women-under45';
+          }
+
+          // Pull quiz data from sessionStorage if available
+          let quizData = {};
+          try { quizData = JSON.parse(sessionStorage.getItem('freeley_quiz_data') || '{}'); } catch(e) {}
+          const quizAnswers = [
+            { question: 'Primary health goals', answer: (quizData.goals || []).join(', '), type: 'string' },
+            { question: 'Activity level', answer: quizData.activityLevel || 'Not provided', type: 'string' },
+            { question: 'Current weight (lbs)', answer: quizData.weight || 'Not provided', type: 'string' },
+            { question: 'Height', answer: quizData.height || 'Not provided', type: 'string' },
+            { question: 'Symptoms', answer: (quizData.symptoms || []).join(', ') || 'None reported', type: 'string' },
+            { question: 'Medical history', answer: (quizData.medicalHistory || []).join(', ') || 'None reported', type: 'string' }
+          ];
+
+          // Submit to MDI via Netlify function
+          spinner.style.display = 'block';
+          btn.querySelector('#btn-text').textContent = 'Submitting to physician...';
+
+          try {
+            const mdiRes = await fetch('/.netlify/functions/submitQuiz', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                patient: { first_name: firstName, last_name: lastName, email, phone_number: phone,
+                           date_of_birth: dob, gender: parseInt(gender), address, city, state, zip_code: zip },
+                product: productKey,
+                quiz_answers: quizAnswers,
+                allergies: 'None reported',
+                current_medications: 'None reported',
+                medical_conditions: (quizData.medicalHistory || []).join(', ') || 'None reported'
+              })
+            });
+            const mdiData = await mdiRes.json();
+            if (mdiData.patient_id) {
+              sessionStorage.setItem('freeley_patient_id', mdiData.patient_id);
+              sessionStorage.setItem('freeley_case_id', mdiData.case_id);
+              sessionStorage.setItem('freeley_product', productKey);
+            }
+          } catch(mdiErr) {
+            console.warn('[Freeley] MDI submission failed (non-critical, payment succeeded):', mdiErr);
+          }
+
           window.location.href = '/hub.html?payment=success&pi=' + paymentIntent.id;
         }
+
       } catch (err) {
         errorEl.textContent = 'Something went wrong. Please try again.';
         errorEl.style.display = 'block';
@@ -1137,6 +1283,22 @@
     // Initialize
     renderPlans();
     initStripe();
+    // Pre-populate patient fields from quiz sessionStorage
+    (function prefillPatientInfo() {
+      try {
+        const qd = JSON.parse(sessionStorage.getItem('freeley_quiz_data') || '{}');
+        if (qd.email) document.getElementById('pt-email').value = qd.email;
+        if (qd.phone) document.getElementById('pt-phone').value = qd.phone;
+        if (qd.state) document.getElementById('pt-state').value = qd.state;
+        // Map quiz sex to gender select
+        if (qd.sex) {
+          const g = qd.sex.toLowerCase();
+          if (g === 'male')   document.getElementById('pt-gender').value = '1';
+          if (g === 'female') document.getElementById('pt-gender').value = '2';
+        }
+      } catch(e) {}
+    })();
+
   </script>
 </body>
 </html>
