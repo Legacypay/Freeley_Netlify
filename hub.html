@@ -678,33 +678,49 @@
           </div>
 
 
-          <!-- TREATMENTS MOCK -->
+                    <!-- TREATMENTS — live MDI case status -->
           <div id="panel-treatments" class="dash-panel">
             <div class="panel-card">
               <div class="panel-header">
-                <h3>Active Subscriptions</h3>
+                <h3>Active Treatments</h3>
                 <a href="quiz.html" class="req-btn"><i class="ri-add-line"></i> Start New Treatment</a>
               </div>
-              
-              <div class="sub-item">
-                <div class="sub-info">
-                  <img src="assets/brand/tirzz_transparent.png" alt="Tirzepatide" class="sub-img floating-vial" style="filter: drop-shadow(0 15px 25px rgba(0,0,0,0.1)); transform: scale(1.3);">
+
+              <!-- Live case status card (shown when MDI IDs are in sessionStorage) -->
+              <div id="mdi-status-card" style="display:none; border: 1px solid var(--border); border-radius: 14px; padding: 20px; margin-bottom: 16px;">
+                <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+                  <div id="mdi-status-icon" style="font-size: 28px; line-height:1;">📝</div>
                   <div>
-                    <div class="sub-name">Tirzepatide Weight Management</div>
-                    <div class="sub-desc">Prescribed by Dr. Sarah Lewis • Auto-renews Quarterly</div>
-                    <div style="font-size: 13px; margin-top:6px; color:var(--text);"><strong>Status:</strong> Awaiting next refill date (Sept 14)</div>
+                    <div id="mdi-status-title" style="font-weight: 700; font-size: 16px; color: var(--charcoal);">Submitted for Review</div>
+                    <div id="mdi-status-product" style="font-size: 13px; color: var(--text-muted); margin-top: 2px;"></div>
+                  </div>
+                  <button onclick="refreshCaseStatus()" title="Refresh" style="margin-left:auto; background:none; border:none; cursor:pointer; color: var(--forest); font-size: 18px;"><i class="ri-refresh-line"></i></button>
+                </div>
+                <div id="mdi-status-message" style="font-size: 14px; color: var(--text); line-height: 1.6; background: rgba(27,73,46,0.05); border-radius: 8px; padding: 12px 14px;"></div>
+
+                <div id="mdi-clinician-section" style="display:none; margin-top:14px; padding-top:14px; border-top:1px solid var(--border); display:flex; align-items:center; gap:12px;">
+                  <img id="mdi-clinician-photo" src="" alt="" style="width:40px; height:40px; border-radius:50%; object-fit:cover; display:none;">
+                  <div>
+                    <div id="mdi-clinician-name" style="font-weight: 600; font-size: 14px;"></div>
+                    <div id="mdi-clinician-specialty" style="font-size: 12px; color: var(--text-muted);"></div>
                   </div>
                 </div>
-                <div style="text-align: right;">
-                  <button class="req-btn req-btn-outline" style="margin-bottom:8px; width:100%; justify-content:center;">Change Dosage</button><br>
-                  <button class="req-btn req-btn-outline" style="width:100%; justify-content:center; border-color:#ffcdd2; color:#d32f2f;">Cancel Subsription</button>
+
+                <div style="margin-top:14px; display:flex; gap:8px; flex-wrap:wrap;">
+                  <div id="mdi-case-id-badge" style="font-size:11px; background:var(--border-light); padding:4px 10px; border-radius:20px; color:var(--text-muted);"></div>
+                  <div id="mdi-last-updated" style="font-size:11px; background:var(--border-light); padding:4px 10px; border-radius:20px; color:var(--text-muted);"></div>
                 </div>
+              </div>
+
+              <!-- Fallback: no active case -->
+              <div id="mdi-no-case" style="padding: 24px; text-align:center; color: var(--text-muted); font-size: 14px; border: 1px dashed var(--border); border-radius: 14px;">
+                <i class="ri-capsule-line" style="font-size: 36px; display:block; margin-bottom: 10px; opacity:0.4;"></i>
+                No active treatments found. <a href="quiz.html" style="color:var(--forest); font-weight:600;">Take the quiz</a> to get started.
               </div>
             </div>
           </div>
 
-
-          <!-- RECORDS MOCK -->
+<!-- RECORDS MOCK -->
           <div id="panel-records" class="dash-panel">
             <div class="panel-card">
               <div class="panel-header">
@@ -953,6 +969,102 @@
         window.scrollTo({ top: 300, behavior: 'smooth' });
       }
     }
+
+    // ── MDI Case Status ──────────────────────────────────────────
+    const PRODUCT_NAMES = {
+      'tirzepatide': 'Tirzepatide / B12 — Weight Loss',
+      'semaglutide': 'Semaglutide / B12 — Weight Loss',
+      'nad-plus': 'NAD+ (Injectable) — Longevity',
+      'nad-plus-tablet': 'NAD+ (Sublingual) — Longevity',
+      'sermorelin-injectable': 'Sermorelin (Injectable) — Longevity',
+      'sermorelin-troche': 'Sermorelin (Troche) — Longevity',
+      'sermorelin-nasal': 'Sermorelin (Nasal) — Longevity',
+      'glutathione-troche': 'Glutathione (Troche) — Detox',
+      'glutathione-nasal': 'Glutathione (Nasal) — Detox',
+      'glutathione-injectable': 'Glutathione (Injectable) — Detox',
+      'hair-men': 'Cedar Hair Growth (Men) — Hair Loss',
+      'hair-women-45plus': 'Ivy Hair Tablet (Women 45+) — Hair Loss',
+      'hair-women-under45': 'Willow Hair Tablet (Women <45) — Hair Loss',
+      'hair-topical': 'VitalPeptide Hair Therapy — Hair Loss',
+      'tadalafil-daily': 'Tadalafil Daily — Sexual Wellness',
+      'tadalafil-prn': 'Tadalafil As Needed — Sexual Wellness',
+      'olympus-peak': 'Olympus Peak — Sexual Wellness',
+      'olympus-max': 'Olympus Max — Sexual Wellness',
+      'olympus': 'Olympus — Sexual Wellness',
+      'olympus-plus': 'Olympus+ — Sexual Wellness',
+      'vast': 'Vast — Sexual Wellness'
+    };
+
+    async function refreshCaseStatus() {
+      const patientId = sessionStorage.getItem('freeley_patient_id');
+      const caseId    = sessionStorage.getItem('freeley_case_id');
+      const product   = sessionStorage.getItem('freeley_product');
+
+      if (!patientId || !caseId) {
+        document.getElementById('mdi-status-card').style.display = 'none';
+        document.getElementById('mdi-no-case').style.display = 'block';
+        return;
+      }
+
+      document.getElementById('mdi-status-card').style.display = 'block';
+      document.getElementById('mdi-no-case').style.display = 'none';
+      document.getElementById('mdi-status-product').textContent = PRODUCT_NAMES[product] || product || 'Your Treatment';
+      document.getElementById('mdi-case-id-badge').textContent = 'Case: ' + caseId.slice(0, 8) + '...';
+
+      try {
+        const res = await fetch('/.netlify/functions/caseStatus', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ patient_id: patientId, case_id: caseId })
+        });
+        const data = await res.json();
+
+        document.getElementById('mdi-status-icon').textContent  = data.icon  || '📋';
+        document.getElementById('mdi-status-title').textContent = data.title || 'Status Unknown';
+        document.getElementById('mdi-status-message').textContent = data.message || '';
+
+        if (data.last_updated) {
+          const d = new Date(data.last_updated);
+          document.getElementById('mdi-last-updated').textContent = 'Updated ' + d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        if (data.clinician && data.clinician.name) {
+          const sec = document.getElementById('mdi-clinician-section');
+          sec.style.display = 'flex';
+          document.getElementById('mdi-clinician-name').textContent = data.clinician.name;
+          document.getElementById('mdi-clinician-specialty').textContent = data.clinician.specialty || 'Physician';
+          if (data.clinician.photo) {
+            const img = document.getElementById('mdi-clinician-photo');
+            img.src = data.clinician.photo;
+            img.style.display = 'block';
+          }
+        }
+      } catch(e) {
+        document.getElementById('mdi-status-message').textContent = 'Unable to load status. Please try again.';
+      }
+    }
+
+    // On page load: handle payment success redirect & auto-load status
+    (function initHubMDI() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('payment') === 'success') {
+        const banner = document.createElement('div');
+        banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:#1a4a2e;color:#fff;text-align:center;padding:14px 16px;font-size:15px;font-family:inherit;box-shadow:0 2px 16px rgba(0,0,0,0.2);';
+        banner.innerHTML = '🎉 Payment confirmed! Your case has been submitted for physician review. <button onclick="this.parentElement.remove()" style="background:none;border:none;color:#fff;font-size:18px;cursor:pointer;margin-left:12px;opacity:0.7;">✕</button>';
+        document.body.prepend(banner);
+        setTimeout(() => banner && banner.remove(), 8000);
+      }
+
+      const treatmentsNav = document.querySelector('[onclick*="treatments"]');
+      if (treatmentsNav) {
+        const orig = treatmentsNav.getAttribute('onclick');
+        treatmentsNav.setAttribute('onclick', orig + '; refreshCaseStatus();');
+      }
+
+      if (sessionStorage.getItem('freeley_patient_id')) {
+        refreshCaseStatus();
+      }
+    })();
   </script>
 
 </body>
