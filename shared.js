@@ -41,8 +41,8 @@ const FOOTER_HTML = `
       <p class="footer-brand-desc">Healthcare technology connecting patients to licensed physicians and compounding pharmacies — on your terms.</p>
       <p class="footer-brand-desc" style="margin-top: 12px; font-size: 13px; opacity: 0.8;">
         Freeley Telehealth (MSB Holdings)<br>
-        310 Comal Street BLDG A, Ste 272<br>
-        Austin, TX 78702<br>
+        7700 Camino Real, Suite 400<br>
+        Boca Raton, FL 33433<br>
         Phone: +1 (904) 686-6960
       </p>
       <div class="footer-social">
