@@ -737,7 +737,7 @@
     }
 
     .plan-price {
-      font-family: 'Cormorant Garamond', serif;
+      font-family: 'Georgia', serif;
       font-size: 40px;
       font-weight: 300;
       color: var(--text);
@@ -1613,12 +1613,12 @@
                   <p id="recPlanDesc" style="font-size: 15px; color: rgba(255,255,255,0.75); line-height: 1.6; margin-bottom: 20px;"></p>
                   
                   <div style="display: flex; align-items: baseline; gap: 8px; margin-bottom: 24px;">
-                    <span id="recPlanPrice" style="font-family: 'Cormorant Garamond', serif; font-size: 42px; font-weight: 400;"></span>
+                    <span id="recPlanPrice" style="font-family: 'Georgia', serif; font-size: 42px; font-weight: 400;"></span>
                     <span style="font-size: 16px; color: rgba(255,255,255,0.5);">/month</span>
                     <span style="background: rgba(236,201,66,0.2); color: #ecc94b; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; margin-left: 8px;">SAVE UP TO 49%</span>
                   </div>
                   
-                  <a id="recPlanCTA" href="#" style="display: inline-flex; align-items: center; gap: 8px; padding: 16px 32px; background: #fff; color: var(--forest); border-radius: 50px; font-size: 15px; font-weight: 600; text-decoration: none; transition: all 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                  <a id="recPlanCTA" href="#" style="display: inline-flex; align-items: center; gap: 8px; padding: 16px 32px; background: #fff; color: #1b492d; border-radius: 50px; font-size: 15px; font-weight: 600; text-decoration: none; transition: all 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
                     Start Your Treatment <i class="ri-arrow-right-line"></i>
                   </a>
                 </div>
@@ -1875,15 +1875,15 @@
       } else {
         quizData = {
           goals: Array.from(document.querySelectorAll('#step-1 .option-card.selected .option-label')).map(el => el.textContent),
-          age: document.querySelectorAll('#step-2 input[type="number"]')[0]?.value || '',
-          sex: document.querySelectorAll('#step-2 select')[0]?.value || '',
-          height: `${document.querySelectorAll('#step-2 input[type="number"]')[1]?.value || 0}'${document.querySelectorAll('#step-2 input[type="number"]')[2]?.value || 0}"`,
-          weight: document.querySelectorAll('#step-2 input[type="number"]')[3]?.value || '',
-          state: document.querySelectorAll('#step-2 select')[1]?.value || '',
-          symptoms: Array.from(document.querySelectorAll('#step-3 .option-card.selected .option-label')).map(el => el.textContent),
-          medicalHistory: Array.from(document.querySelectorAll('#step-4 .option-card.selected .option-label')).map(el => el.textContent),
-          activityLevel: document.querySelector('#step-5 [data-group="activity"].selected .option-label')?.textContent || '',
-          formatPreference: Array.from(document.querySelectorAll('#step-5 .options-2 .option-card.selected .option-label')).map(el => el.textContent),
+          age: document.querySelectorAll('#step-3 input[type="number"]')[0]?.value || '',
+          sex: document.querySelectorAll('#step-3 select')[0]?.value || '',
+          height: `${document.querySelectorAll('#step-3 input[type="number"]')[1]?.value || 0}'${document.querySelectorAll('#step-3 input[type="number"]')[2]?.value || 0}"`,
+          weight: document.querySelectorAll('#step-3 input[type="number"]')[3]?.value || '',
+          state: document.querySelectorAll('#step-3 select')[1]?.value || '',
+          symptoms: Array.from(document.querySelectorAll('#step-4 .option-card.selected .option-label')).map(el => el.textContent),
+          medicalHistory: Array.from(document.querySelectorAll('#step-5 .option-card.selected .option-label')).map(el => el.textContent),
+          activityLevel: document.querySelector('#step-6 [data-group="activity"].selected .option-label')?.textContent || '',
+          formatPreference: Array.from(document.querySelectorAll('#step-6 .options-2 .option-card.selected .option-label')).map(el => el.textContent),
           email: document.getElementById('contact-email')?.value || '',
           phone: document.getElementById('contact-phone')?.value || '',
           consent: document.getElementById('contact-consent')?.checked || false
