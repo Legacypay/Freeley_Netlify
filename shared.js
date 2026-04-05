@@ -40,7 +40,7 @@ const FOOTER_HTML = `
       <a href="/" class="footer-brand-logo"><img src="assets/brand/freeley_logo_white.svg" alt="Freeley" height="34"></a>
       <p class="footer-brand-desc">Healthcare technology connecting patients to licensed physicians and compounding pharmacies — on your terms.</p>
       <p class="footer-brand-desc" style="margin-top: 12px; font-size: 13px; opacity: 0.8;">
-        Freeley Telehealth (MSB Holdings)<br>
+        Freeley Health LLC<br>
         7700 Camino Real, Suite 400<br>
         Boca Raton, FL 33433<br>
         Phone: +1 (904) 686-6960
