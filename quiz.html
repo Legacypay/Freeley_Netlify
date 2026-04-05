@@ -737,7 +737,7 @@
     }
 
     .plan-price {
-      font-family: 'Georgia', serif;
+      font-family: 'Cormorant Garamond', serif;
       font-size: 40px;
       font-weight: 300;
       color: var(--text);
@@ -1131,6 +1131,13 @@
             <div class="progress-text-sub">Habits & preferences</div>
           </div>
         </div>
+        <div class="progress-item" data-step="7">
+          <div class="progress-dot">7</div>
+          <div>
+            <div class="progress-text-title">Physician Note</div>
+            <div class="progress-text-sub">Message for your doctor</div>
+          </div>
+        </div>
         <div class="progress-item" data-step="results">
           <div class="progress-dot">✦</div>
           <div>
@@ -1155,13 +1162,13 @@
         <div class="quiz-progress-track">
           <div class="quiz-progress-fill" id="progressFill" style="width:0%"></div>
         </div>
-        <div class="quiz-progress-label" id="progressLabel">Step 1 of 6</div>
+        <div class="quiz-progress-label" id="progressLabel">Step 1 of 7</div>
       </div>
       <div class="quiz-steps">
 
         <!-- STEP 1: Goal -->
         <div class="quiz-step active" id="step-1">
-          <span class="step-badge">Step 1 of 6</span>
+          <span class="step-badge">Step 1 of 7</span>
           <div class="step-question">What's your primary <em>health goal?</em></div>
           <div class="step-sub">Select all that apply — we'll recommend the best treatment path for your situation.
           </div>
@@ -1218,7 +1225,7 @@
 
         <!-- STEP 2: Save Progress -->
         <div class="quiz-step" id="step-2">
-          <span class="step-badge">Step 2 of 6</span>
+          <span class="step-badge">Step 2 of 7</span>
           <div class="step-question">Save your <em>progress</em></div>
           <div class="step-sub">Enter your details below to save your answers. You'll see your results at the end.</div>
 
@@ -1259,7 +1266,7 @@
 
       <!-- STEP 3: Health Profile -->
         <div class="quiz-step" id="step-3">
-          <span class="step-badge">Step 3 of 6</span>
+          <span class="step-badge">Step 3 of 7</span>
           <div class="step-question">Tell us about <em>yourself</em></div>
           <div class="step-sub">This helps our physicians understand your baseline health and ensure treatment is
             appropriate.</div>
@@ -1362,7 +1369,7 @@
 
         <!-- STEP 4: Symptoms -->
         <div class="quiz-step" id="step-4">
-          <span class="step-badge">Step 4 of 6</span>
+          <span class="step-badge">Step 4 of 7</span>
           <div class="step-question">What are you <em>currently experiencing?</em></div>
           <div class="step-sub">Select everything that's been affecting your quality of life. Your physician will review
             all of this.</div>
@@ -1436,7 +1443,7 @@
 
         <!-- STEP 5: Medical History -->
         <div class="quiz-step" id="step-5">
-          <span class="step-badge">Step 5 of 6</span>
+          <span class="step-badge">Step 5 of 7</span>
           <div class="step-question">Any relevant <em>medical history?</em></div>
           <div class="step-sub">This is strictly confidential and helps us ensure your safety. Our physicians review
             everything.</div>
@@ -1481,7 +1488,7 @@
 
         <!-- STEP 6: Lifestyle -->
         <div class="quiz-step" id="step-6">
-          <span class="step-badge">Step 6 of 6</span>
+          <span class="step-badge">Step 6 of 7</span>
           <div class="step-question">How would you describe your <em>lifestyle?</em></div>
           <div class="step-sub">Helps us tailor dosing schedules and delivery formats to fit your routine.</div>
           <div style="margin-bottom:36px;">
@@ -1539,6 +1546,31 @@
           </div>
           <div class="quiz-nav">
             <button class="quiz-back" onclick="nextStep(5)"><svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M13 8H3M7 12l-4-4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg> Back</button>
+            <button class="quiz-next" onclick="nextStep(7)" style="width: 100%; justify-content: center; padding: 18px;">Continue <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-left:8px"><path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg></button>
+          </div>
+        </div>
+
+        <!-- STEP 7: Physician Note (MDI Required) -->
+        <div class="quiz-step" id="step-7">
+          <span class="step-badge">Step 7 of 7</span>
+          <div class="step-question">Anything else for your <em>physician?</em></div>
+          <div class="step-sub">Your responses are reviewed by a licensed, board-certified physician who will evaluate whether treatment is appropriate for you.</div>
+
+          <div style="margin-bottom:24px;">
+            <label class="input-label" for="doctor-message" style="font-size:15px;margin-bottom:12px;display:block;">What else would you like to communicate to the doctor who will be evaluating in addition to the information you have already provided?</label>
+            <textarea id="doctor-message" rows="5" placeholder="Type your message here. If none, type &quot;none&quot;." style="width:100%;padding:16px;border:1.5px solid #d1cfc8;border-radius:12px;font-size:15px;font-family:inherit;resize:vertical;background:#faf9f6;transition:border 0.2s;line-height:1.6;" onfocus="this.style.borderColor='var(--green-light)'" onblur="this.style.borderColor='#d1cfc8'"></textarea>
+          </div>
+
+          <div style="background:rgba(74,108,80,0.06);border:1px solid rgba(74,108,80,0.15);border-radius:12px;padding:20px;margin-bottom:32px;font-size:14px;color:var(--text-muted);line-height:1.7;">
+            <strong style="color:var(--text-main);display:block;margin-bottom:6px;">Important notice</strong>
+            A licensed physician will review your health profile and determine if treatment is medically appropriate. Prescriptions are not guaranteed and may be declined based on your medical history, current medications, or clinical judgment. There is no guarantee that you will be issued a prescription. Each provider reserves the right to deny care if, in their professional judgment, the provision of services is not medically or ethically appropriate.
+          </div>
+
+          <div class="quiz-nav">
+            <button class="quiz-back" onclick="nextStep(6)"><svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <path d="M13 8H3M7 12l-4-4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
                   stroke-linejoin="round" />
               </svg> Back</button>
@@ -1613,12 +1645,12 @@
                   <p id="recPlanDesc" style="font-size: 15px; color: rgba(255,255,255,0.75); line-height: 1.6; margin-bottom: 20px;"></p>
                   
                   <div style="display: flex; align-items: baseline; gap: 8px; margin-bottom: 24px;">
-                    <span id="recPlanPrice" style="font-family: 'Georgia', serif; font-size: 42px; font-weight: 400;"></span>
+                    <span id="recPlanPrice" style="font-family: 'Cormorant Garamond', serif; font-size: 42px; font-weight: 400;"></span>
                     <span style="font-size: 16px; color: rgba(255,255,255,0.5);">/month</span>
                     <span style="background: rgba(236,201,66,0.2); color: #ecc94b; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; margin-left: 8px;">SAVE UP TO 49%</span>
                   </div>
                   
-                  <a id="recPlanCTA" href="#" style="display: inline-flex; align-items: center; gap: 8px; padding: 16px 32px; background: #fff; color: #1b492d; border-radius: 50px; font-size: 15px; font-weight: 600; text-decoration: none; transition: all 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                  <a id="recPlanCTA" href="#" style="display: inline-flex; align-items: center; gap: 8px; padding: 16px 32px; background: #fff; color: var(--forest); border-radius: 50px; font-size: 15px; font-weight: 600; text-decoration: none; transition: all 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
                     Start Your Treatment <i class="ri-arrow-right-line"></i>
                   </a>
                 </div>
@@ -1753,7 +1785,7 @@
   <script src="seo.js"></script>
   <script src="shared.js"></script>
   <script>
-    const TOTAL = 6;
+    const TOTAL = 7;
     let current = 1;
 
     function updateProgress(step) {
@@ -1875,15 +1907,16 @@
       } else {
         quizData = {
           goals: Array.from(document.querySelectorAll('#step-1 .option-card.selected .option-label')).map(el => el.textContent),
-          age: document.querySelectorAll('#step-3 input[type="number"]')[0]?.value || '',
-          sex: document.querySelectorAll('#step-3 select')[0]?.value || '',
-          height: `${document.querySelectorAll('#step-3 input[type="number"]')[1]?.value || 0}'${document.querySelectorAll('#step-3 input[type="number"]')[2]?.value || 0}"`,
-          weight: document.querySelectorAll('#step-3 input[type="number"]')[3]?.value || '',
-          state: document.querySelectorAll('#step-3 select')[1]?.value || '',
-          symptoms: Array.from(document.querySelectorAll('#step-4 .option-card.selected .option-label')).map(el => el.textContent),
-          medicalHistory: Array.from(document.querySelectorAll('#step-5 .option-card.selected .option-label')).map(el => el.textContent),
-          activityLevel: document.querySelector('#step-6 [data-group="activity"].selected .option-label')?.textContent || '',
-          formatPreference: Array.from(document.querySelectorAll('#step-6 .options-2 .option-card.selected .option-label')).map(el => el.textContent),
+          age: document.querySelectorAll('#step-2 input[type="number"]')[0]?.value || '',
+          sex: document.querySelectorAll('#step-2 select')[0]?.value || '',
+          height: `${document.querySelectorAll('#step-2 input[type="number"]')[1]?.value || 0}'${document.querySelectorAll('#step-2 input[type="number"]')[2]?.value || 0}"`,
+          weight: document.querySelectorAll('#step-2 input[type="number"]')[3]?.value || '',
+          state: document.querySelectorAll('#step-2 select')[1]?.value || '',
+          symptoms: Array.from(document.querySelectorAll('#step-3 .option-card.selected .option-label')).map(el => el.textContent),
+          medicalHistory: Array.from(document.querySelectorAll('#step-4 .option-card.selected .option-label')).map(el => el.textContent),
+          activityLevel: document.querySelector('#step-5 [data-group="activity"].selected .option-label')?.textContent || '',
+          formatPreference: Array.from(document.querySelectorAll('#step-5 .options-2 .option-card.selected .option-label')).map(el => el.textContent),
+          doctorMessage: document.getElementById('doctor-message')?.value || '',
           email: document.getElementById('contact-email')?.value || '',
           phone: document.getElementById('contact-phone')?.value || '',
           consent: document.getElementById('contact-consent')?.checked || false

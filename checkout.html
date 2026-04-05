@@ -681,7 +681,7 @@
       </div>
 
       <div class="section-label">Enter Payment Details</div>
-      
+
       <div class="express-checkout" style="margin-bottom: 32px;">
         <div style="text-align: center; font-size: 12px; color: var(--text-muted); margin-bottom: 16px; position: relative; text-transform: uppercase; letter-spacing: 1px; font-weight: 500;">
           <span style="background: var(--bg); padding: 0 16px; position:relative; z-index:2; background:#f9f9f9;">Express Checkout</span>
@@ -876,18 +876,6 @@
           { months: 3, base: 149, overridePrice: 129, recommended: false },
           { months: 6, base: 149, overridePrice: 109, recommended: true },
           { months: 12, base: 149, overridePrice: 99, recommended: false }
-        ]
-      },
-      'hair-loss': {
-        name: 'Hair Restoration',
-        desc: 'Physician-prescribed hair growth treatment',
-        planName: 'Hair Restoration Protocol',
-        image: 'assets/brand/cedar_tablet_transparent.png',
-        plans: [
-          { months: 1, base: 49, overridePrice: 49, recommended: false },
-          { months: 3, base: 49, overridePrice: 39, recommended: false },
-          { months: 6, base: 49, overridePrice: 29, recommended: true },
-          { months: 12, base: 49, overridePrice: 25, recommended: false }
         ]
       }
     };
@@ -1249,7 +1237,8 @@
             { question: 'Current weight (lbs)', answer: quizData.weight || 'Not provided', type: 'string' },
             { question: 'Height', answer: quizData.height || 'Not provided', type: 'string' },
             { question: 'Symptoms', answer: (quizData.symptoms || []).join(', ') || 'None reported', type: 'string' },
-            { question: 'Medical history', answer: (quizData.medicalHistory || []).join(', ') || 'None reported', type: 'string' }
+            { question: 'Medical history', answer: (quizData.medicalHistory || []).join(', ') || 'None reported', type: 'string' },
+            { question: 'What else would you like to communicate to the doctor who will be evaluating in addition to the information you have already provided?', answer: quizData.doctorMessage || 'None', type: 'string', important: true }
           ];
 
           // Submit to MDI via Netlify function
@@ -1282,7 +1271,6 @@
 
           window.location.href = '/hub.html?payment=success&pi=' + paymentIntent.id;
         }
-
       } catch (err) {
         errorEl.textContent = 'Something went wrong. Please try again.';
         errorEl.style.display = 'block';
@@ -1292,9 +1280,6 @@
       }
     });
 
-    // Initialize
-    renderPlans();
-    initStripe();
     // Pre-populate patient fields from quiz sessionStorage
     (function prefillPatientInfo() {
       try {
@@ -1311,6 +1296,9 @@
       } catch(e) {}
     })();
 
+    // Initialize
+    renderPlans();
+    initStripe();
   </script>
 </body>
 </html>
