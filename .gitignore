@@ -3,3 +3,8 @@
 node_modules/
 .venv/
 www/
+
+# Environment secrets — never commit
+.env
+.env.*
+.env.local

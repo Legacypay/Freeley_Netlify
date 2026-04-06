@@ -65,14 +65,31 @@ async function mdiRequest(method, path, body = null) {
 function verifyWebhookSignature(payload, signature) {
   const crypto = require('crypto');
   const secret = process.env.MDI_WEBHOOK_SECRET;
-  if (!secret) { console.warn('[MDI] MDI_WEBHOOK_SECRET not set — skipping signature verification'); return true; }
+  // SECURITY: Fail closed — if no secret is configured, reject all webhooks
+  if (!secret) { console.error('[MDI] CRITICAL: MDI_WEBHOOK_SECRET not set — rejecting all webhooks for safety'); return false; }
+  if (!signature) { console.error('[MDI] Missing webhook signature header'); return false; }
   const expected = crypto.createHmac('sha256', secret).update(payload).digest('hex');
-  return crypto.timingSafeEqual(Buffer.from(signature || '', 'utf8'), Buffer.from(expected, 'utf8'));
+  return crypto.timingSafeEqual(Buffer.from(signature, 'utf8'), Buffer.from(expected, 'utf8'));
 }
 
+// SECURITY: Restrict CORS to production domains only (was wildcard '*')
+const ALLOWED_ORIGINS = ['https://freeley.com', 'https://www.freeley.com'];
+
+function getCorsHeaders(event) {
+  const origin = (event && event.headers && event.headers.origin) || '';
+  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  return {
+    'Access-Control-Allow-Origin': allowedOrigin,
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
+    'Vary': 'Origin'
+  };
+}
+
+// Legacy compat: static CORS_HEADERS for functions that don't pass event
 const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'Content-Type',
+  'Access-Control-Allow-Origin': 'https://freeley.com',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
   'Access-Control-Allow-Methods': 'POST, GET, OPTIONS'
 };
 

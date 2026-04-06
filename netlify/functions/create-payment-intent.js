@@ -46,12 +46,16 @@ const TREATMENT_NAMES = {
 };
 
 exports.handler = async (event) => {
-  // CORS headers
+  // CORS headers — locked to production domain (was wildcard '*')
+  const ALLOWED_ORIGINS = ['https://freeley.com', 'https://www.freeley.com'];
+  const reqOrigin = (event.headers && event.headers.origin) || '';
+  const corsOrigin = ALLOWED_ORIGINS.includes(reqOrigin) ? reqOrigin : ALLOWED_ORIGINS[0];
   const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Origin': corsOrigin,
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    'Vary': 'Origin'
   };
 
   // Handle preflight

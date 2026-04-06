@@ -140,10 +140,10 @@ exports.handler = async (event) => {
 
   } catch (error) {
     console.error('[MDI WEBHOOK] Error processing webhook:', error);
-    // Still return 200 so MDI doesn't keep retrying on parse errors
+    // Return 500 so MDI retries delivery — returning 200 here would silently drop the event
     return {
-      statusCode: 200,
-      body: JSON.stringify({ received: true, error: 'Processing error logged' })
+      statusCode: 500,
+      body: JSON.stringify({ error: 'Processing failed, please retry' })
     };
   }
 };
