@@ -93,4 +93,4 @@ const CORS_HEADERS = {
   'Access-Control-Allow-Methods': 'POST, GET, OPTIONS'
 };
 
-module.exports = { getAccessToken, mdiRequest, verifyWebhookSignature, CORS_HEADERS, BASE_URL };
+module.exports = { getAccessToken, mdiRequest, verifyWebhookSignature, getCorsHeaders, CORS_HEADERS, BASE_URL };
