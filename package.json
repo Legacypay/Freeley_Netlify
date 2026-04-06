@@ -17,6 +17,7 @@
     "@capacitor/core": "^8.3.0",
     "@capacitor/ios": "^8.3.0",
     "@capacitor/push-notifications": "^8.0.3",
+    "@netlify/blobs": "^10.7.4",
     "gray-matter": "^4.0.3",
     "marked": "^17.0.4",
     "stripe": "^20.4.1"

@@ -1266,7 +1266,28 @@
               sessionStorage.setItem('freeley_product', productKey);
             }
           } catch(mdiErr) {
-            console.warn('[Freeley] MDI submission failed (non-critical, payment succeeded):', mdiErr);
+            console.error('[Freeley] MDI submission failed — saving to retry queue:', mdiErr);
+            // CRITICAL: Payment succeeded but MDI failed. Save to durable retry queue.
+            try {
+              const retryPayload = {
+                payment_intent_id: paymentIntent.id,
+                patient: { first_name: firstName, last_name: lastName, email, phone_number: phone,
+                           date_of_birth: dob, gender: parseInt(gender), address, city, state, zip_code: zip },
+                product: productKey,
+                quiz_answers: quizAnswers,
+                allergies: 'None reported',
+                current_medications: 'None reported',
+                medical_conditions: (quizData.medicalHistory || []).join(', ') || 'None reported'
+              };
+              await fetch('/.netlify/functions/savePendingCase', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(retryPayload)
+              });
+              console.log('[Freeley] Pending case saved to retry queue successfully');
+            } catch(retryErr) {
+              console.error('[Freeley] CRITICAL: Failed to save to retry queue:', retryErr);
+            }
           }
 
           window.location.href = '/hub.html?payment=success&pi=' + paymentIntent.id;
