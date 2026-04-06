@@ -1012,9 +1012,23 @@
       document.getElementById('mdi-case-id-badge').textContent = 'Case: ' + caseId.slice(0, 8) + '...';
 
       try {
+        // Get Firebase ID token for authenticated API call (HIPAA requirement)
+        let authToken = '';
+        try {
+          const currentUser = window.firebaseAuth && window.firebaseAuth.currentUser;
+          if (currentUser) {
+            authToken = await currentUser.getIdToken();
+          }
+        } catch(tokenErr) {
+          console.warn('[Hub] Could not get Firebase token:', tokenErr);
+        }
+
         const res = await fetch('/.netlify/functions/caseStatus', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {})
+          },
           body: JSON.stringify({ patient_id: patientId, case_id: caseId })
         });
         const data = await res.json();

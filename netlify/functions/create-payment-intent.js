@@ -10,40 +10,10 @@
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-// Pricing must match frontend exactly
-const PRICING = {
-  'weight-loss': {
-    semaglutide: {
-      1: 194.29, 3: 149.29, 6: 124.29, 12: 99.29
-    },
-    tirzepatide: {
-      1: 274.29, 3: 214.29, 6: 194.29, 12: 174.29
-    }
-  },
-  'ed': {
-    default: {
-      1: 89, 3: 79, 6: 69, 12: 59
-    }
-  },
-  'longevity': {
-    default: {
-      1: 149, 3: 129, 6: 109, 12: 99
-    }
-  },
-  'hair-loss': {
-    default: {
-      1: 49, 3: 39, 6: 34, 12: 29
-    }
-  }
-};
-
-// Human-readable names for Stripe metadata
-const TREATMENT_NAMES = {
-  'weight-loss': 'GLP-1 Weight Loss Program',
-  'ed': 'Sexual Wellness Protocol',
-  'longevity': 'Longevity Optimization Stack',
-  'hair-loss': 'Hair Loss Treatment'
-};
+// Single source of truth — shared with frontend (see pricing.json in repo root)
+const pricingData = require('../../pricing.json');
+const { treatment_names: TREATMENT_NAMES, _meta, ...categories } = pricingData;
+const PRICING = categories;
 
 exports.handler = async (event) => {
   // CORS headers — locked to production domain (was wildcard '*')

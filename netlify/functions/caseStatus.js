@@ -1,9 +1,11 @@
 /**
  * Netlify Function: caseStatus
  * 
- * Allows patients to check the status of their MDI case.
+ * Allows authenticated patients to check the status of their MDI case.
+ * REQUIRES a valid Firebase ID token in the Authorization header.
  * 
  * POST /.netlify/functions/caseStatus
+ * Headers: { Authorization: 'Bearer <firebase-id-token>' }
  * 
  * Request Body:
  * {
@@ -15,6 +17,32 @@
  */
 
 const { mdiRequest, CORS_HEADERS } = require('./lib/mdi-client');
+
+// ── Firebase Admin — verify patient identity ──────────────────
+// Uses lightweight REST verification instead of firebase-admin SDK
+// to avoid adding a heavy dependency. Validates the ID token via
+// Google's tokeninfo endpoint.
+async function verifyFirebaseToken(idToken) {
+  if (!idToken) return null;
+  try {
+    // Verify token with Google's API (works without firebase-admin SDK)
+    const res = await fetch(
+      `https://www.googleapis.com/identitytoolkit/v3/relyingparty/getAccountInfo?key=${process.env.FIREBASE_API_KEY || 'AIzaSyDsNMEVdt5pc67o5xBBEgPvyukoUVGYE88'}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idToken })
+      }
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    const user = data.users && data.users[0];
+    return user ? { email: user.email, uid: user.localId } : null;
+  } catch (e) {
+    console.error('[CASE STATUS] Token verification failed:', e.message);
+    return null;
+  }
+}
 
 // Map MDI internal statuses to patient-friendly messages
 const STATUS_MAP = {
@@ -83,6 +111,23 @@ exports.handler = async (event) => {
   }
 
   try {
+    // ── Step 1: Verify Firebase authentication ──────────────────
+    const authHeader = event.headers.authorization || event.headers.Authorization || '';
+    const idToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
+    
+    const user = await verifyFirebaseToken(idToken);
+    if (!user) {
+      console.warn('[CASE STATUS] Unauthorized access attempt — no valid Firebase token');
+      return {
+        statusCode: 401,
+        headers: CORS_HEADERS,
+        body: JSON.stringify({ error: 'Authentication required. Please sign in.' })
+      };
+    }
+
+    console.log(`[CASE STATUS] Authenticated user: ${user.email}`);
+
+    // ── Step 2: Parse and validate request ──────────────────────
     const { patient_id, case_id } = JSON.parse(event.body);
 
     if (!patient_id || !case_id) {
@@ -93,13 +138,13 @@ exports.handler = async (event) => {
       };
     }
 
-    // Fetch case details from MDI
+    // ── Step 3: Fetch case details from MDI ─────────────────────
     const caseData = await mdiRequest(
       'GET',
       `/v1/patient/patients/${patient_id}/cases/${case_id}`
     );
 
-    // Extract the status
+    // ── Step 4: Extract the status ──────────────────────────────
     const mdiStatus = caseData.case_status?.name?.toLowerCase() || 'created';
     const friendlyStatus = STATUS_MAP[mdiStatus] || STATUS_MAP['created'];
 
