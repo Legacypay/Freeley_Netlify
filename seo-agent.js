@@ -7,120 +7,6 @@ if (!apiKey) {
   process.exit(1);
 }
 
-// ── Image Generation Config ────────────────────────────────────
-const BLOG_IMAGES_DIR = path.join(__dirname, 'assets', 'blog');
-const IMAGE_SIZE = '1536x1024'; // Wide format, perfect for blog heroes
-const IMAGE_QUALITY = 'high'; // GPT Image 1 quality setting
-
-// Brand style guide for consistent image generation
-const BRAND_STYLE = `Photorealistic, clean, modern healthcare aesthetic. 
-Soft natural lighting, warm neutral tones (cream, sage green, soft white). 
-Minimalist composition with shallow depth of field. 
-Premium telehealth brand feel — NOT stock photo looking. 
-No text, no logos, no watermarks, no faces showing full identity. 
-Professional medical/wellness product photography style.`;
-
-/**
- * Generate an image via GPT Image 1 and save it locally.
- * Returns the local file path relative to the project root.
- */
-async function generateBlogImage(title, tag, slug) {
-  console.log(`🎨 Generating GPT Image 1 image for: "${title}" [${tag}]`);
-
-  // Build a category-aware prompt
-  const categoryHints = {
-    'Weight Loss': 'healthy lifestyle, measuring tape, fresh vegetables, fitness, wellness vials, injection pen',
-    'Hair Loss': 'hair care products, scalp treatment, hair growth serum bottle, grooming',
-    "Men's Health": 'men\'s wellness products, supplement bottles, confident male silhouette, health',
-    'ED': 'men\'s health supplement, discreet packaging, pharmacy, wellness',
-    'Sexual Wellness': 'wellness supplements, discreet luxury packaging, health products',
-    'Longevity': 'peptide vials, NAD+ supplements, biohacking, longevity science, anti-aging serum',
-    'Peptides': 'peptide vials, scientific laboratory, medical research, injection supplies',
-    'Telehealth': 'doctor consultation screen, mobile health app, medical technology, stethoscope',
-    'Medical Education': 'medical books, healthcare education, clinical setting, pharmacy'
-  };
-
-  const hints = categoryHints[tag] || categoryHints['Telehealth'];
-
-  const imagePrompt = `A hero image for a medical health blog article titled "${title}". 
-Visual elements: ${hints}. 
-${BRAND_STYLE}`;
-
-  try {
-    const response = await fetch('https://api.openai.com/v1/images/generations', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      },
-      body: JSON.stringify({
-        model: 'gpt-image-1',
-        prompt: imagePrompt,
-        n: 1,
-        size: IMAGE_SIZE,
-        quality: IMAGE_QUALITY
-      })
-    });
-
-    const data = await response.json();
-
-    if (!data.data || !data.data[0]) {
-      console.error('❌ GPT Image API error:', JSON.stringify(data.error || data));
-      return null;
-    }
-
-    // Save the image locally
-    if (!fs.existsSync(BLOG_IMAGES_DIR)) {
-      fs.mkdirSync(BLOG_IMAGES_DIR, { recursive: true });
-    }
-
-    const filename = `${slug}.jpg`;
-    const filepath = path.join(BLOG_IMAGES_DIR, filename);
-
-    // Convert base64 to buffer and save
-    const b64 = data.data[0].b64_json || data.data[0].b64;
-    const imageBuffer = Buffer.from(b64, 'base64');
-    fs.writeFileSync(filepath, imageBuffer);
-
-    const relativePath = `assets/blog/${filename}`;
-    const sizeMB = (imageBuffer.length / (1024 * 1024)).toFixed(2);
-    console.log(`✅ Image saved: ${relativePath} (${sizeMB} MB)`);
-
-    return relativePath;
-
-  } catch (error) {
-    console.error('❌ GPT Image generation failed:', error.message);
-    return null;
-  }
-}
-
-/**
- * Fallback: pick a local category image if GPT Image fails.
- */
-function pickFallbackImage(tag) {
-  const CATEGORY_FALLBACKS = {
-    'Weight Loss': 'assets/blog_cost_semaglutide.png',
-    'Hair Loss': 'assets/blog_hero_finasteride_hair.png',
-    "Men's Health": 'assets/blog_hero_finasteride_hair.png',
-    'ED': 'assets/blog_hero_finasteride_hair.png',
-    'Sexual Wellness': 'assets/blog_hero_finasteride_hair.png',
-    'Longevity': 'assets/blog_hero_semaglutide_delivery.png',
-    'Peptides': 'assets/blog_hero_semaglutide_delivery.png',
-    'Telehealth': 'assets/blog_hero_tirzepatide_cost.png',
-    'Medical Education': 'assets/blog_hero_tirzepatide_cost.png'
-  };
-
-  const fallback = CATEGORY_FALLBACKS[tag] || 'assets/blog_cost_semaglutide.png';
-
-  if (fs.existsSync(path.join(__dirname, fallback))) {
-    console.log(`📂 Using fallback image: ${fallback}`);
-    return fallback;
-  }
-
-  // Last resort
-  return 'assets/brand/new_hero.jpeg';
-}
-
 // ── Main Pipeline ──────────────────────────────────────────────
 
 const keywordsFile = path.join(__dirname, 'content', 'seo-keywords.txt');
@@ -148,7 +34,7 @@ console.log(`\n📝 Working on keyword: "${targetKeyword}"`);
 // The remaining keywords
 const remainingKeywords = keywords.slice(1).join('\n');
 
-// The AI writes the article — images are generated separately
+// The AI writes the article (no image generation)
 const prompt = `You are the Chief Medical Officer at Freeley Health. Write an engaging, highly-researched, SEO-optimized medical article about "${targetKeyword}".
 
 Use bolding, H2s, H3s, and format the output STRICTLY in Markdown.
@@ -158,7 +44,6 @@ Include YAML frontmatter at the top with EXACTLY these fields:
 - "tag": Choose ONE category from: Weight Loss, Hair Loss, Men's Health, Longevity, Peptides, Telehealth, Medical Education
 - "excerpt": A 1-2 sentence compelling summary for search results
 - "date": Today's date in ISO format (e.g. "${new Date().toISOString().split('T')[0]}T10:00:00Z")
-- "image": Set this to exactly "AUTO"
 
 Conclude with a call to action leading readers to our free medical assessment at freeley.com/quiz.html.
 
@@ -202,7 +87,7 @@ async function run() {
       markdown = markdown.slice(0, -3).trim();
     }
 
-    // Extract metadata from the generated article
+    // Extract metadata for logging
     const titleMatch = markdown.match(/^title:\s*"?([^"\n]+)"?/m);
     const tagMatch = markdown.match(/^tag:\s*"?([^"\n]+)"?/m);
     const title = titleMatch ? titleMatch[1].trim() : targetKeyword;
@@ -213,22 +98,7 @@ async function run() {
     console.log(`🏷️  Tag: "${tag}"`);
     console.log(`🔗 Slug: "${slug}"`);
 
-    // ── Step 2: Generate the hero image via GPT Image 1 ──────────
-    let imagePath = await generateBlogImage(title, tag, slug);
-
-    // Fall back to local category image if GPT Image fails
-    if (!imagePath) {
-      console.log('⚠️  GPT Image failed — using local fallback image');
-      imagePath = pickFallbackImage(tag);
-    }
-
-    // ── Step 3: Insert the image path into the article ────────
-    markdown = markdown.replace(
-      /^image:\s*"?.*"?$/m,
-      `image: "${imagePath}"`
-    );
-
-    // ── Step 4: Save the article ──────────────────────────────
+    // ── Step 2: Save the article ──────────────────────────────
     const outputPath = path.join(__dirname, 'content', 'blog', `${slug}.md`);
     const blogDir = path.dirname(outputPath);
     if (!fs.existsSync(blogDir)) {
@@ -238,11 +108,11 @@ async function run() {
     fs.writeFileSync(outputPath, markdown);
     console.log(`\n✅ Article saved: ${outputPath}`);
 
-    // ── Step 5: Update the keyword queue ──────────────────────
+    // ── Step 3: Update the keyword queue ──────────────────────
     fs.writeFileSync(keywordsFile, remainingKeywords);
     console.log(`✅ Removed "${targetKeyword}" from queue (${keywords.length - 1} remaining)`);
 
-    console.log('\n🎉 Done! Article + image generated successfully.');
+    console.log('\n🎉 Done! Article generated successfully.');
 
   } catch (error) {
     console.error('Failed to run SEO agent:', error);
