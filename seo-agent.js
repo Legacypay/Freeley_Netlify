@@ -68,9 +68,15 @@ async function run() {
       })
     });
 
+    if (!response.ok) {
+      const errorBody = await response.text();
+      console.error(`❌ OpenAI API returned HTTP ${response.status}: ${errorBody}`);
+      process.exit(1);
+    }
+
     const data = await response.json();
     if (!data.choices || !data.choices[0]) {
-      console.error('Error from OpenAI API:', JSON.stringify(data));
+      console.error('❌ OpenAI returned no choices:', JSON.stringify(data));
       process.exit(1);
     }
 
