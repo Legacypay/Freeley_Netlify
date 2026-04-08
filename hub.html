@@ -653,7 +653,7 @@
               </div>
               <div style="display:flex; gap:12px;">
                 <button class="req-btn"><i class="ri-focus-3-line"></i> Request Refill / Dosage Change</button>
-                <button class="req-btn req-btn-outline"><i class="ri-customer-service-2-line"></i> Message Care Team</button>
+                <button class="req-btn req-btn-outline" onclick="openMessaging()"><i class="ri-customer-service-2-line"></i> Message Care Team</button>
               </div>
             </div>
 
@@ -1055,6 +1055,75 @@
         }
       } catch(e) {
         document.getElementById('mdi-status-message').textContent = 'Unable to load status. Please try again.';
+      }
+    }
+
+    // ── MDI Secure Messaging ─────────────────────────────────────
+    // Calls getMessagingAuth to generate a one-time authenticated link
+    // for the patient to message their clinician via MDI's platform.
+    async function openMessaging() {
+      const patientId = sessionStorage.getItem('freeley_patient_id');
+      if (!patientId) {
+        alert('Please complete your intake first. No active patient record found.');
+        return;
+      }
+
+      // Show loading state on button
+      const btn = event.currentTarget;
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<i class="ri-loader-4-line ri-spin"></i> Opening secure messaging...';
+      btn.disabled = true;
+
+      try {
+        // Get Firebase ID token for HIPAA-compliant auth
+        let authToken = '';
+        try {
+          const currentUser = window.firebaseAuth && window.firebaseAuth.currentUser;
+          if (currentUser) {
+            authToken = await currentUser.getIdToken();
+          }
+        } catch (tokenErr) {
+          console.warn('[Hub] Could not get Firebase token:', tokenErr);
+        }
+
+        const res = await fetch('/.netlify/functions/getMessagingAuth', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {})
+          },
+          body: JSON.stringify({ patient_id: patientId })
+        });
+
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error || 'Failed to generate messaging link');
+        }
+
+        const data = await res.json();
+
+        if (data.auth_link && data.verification_code) {
+          // Build the full authenticated URL
+          // MDI requires the verification_code to be appended to the auth_link
+          const messagingUrl = data.auth_link.includes('?')
+            ? `${data.auth_link}&verification_code=${data.verification_code}`
+            : `${data.auth_link}?verification_code=${data.verification_code}`;
+
+          // Open in new tab — patient can message their clinician directly
+          window.open(messagingUrl, '_blank', 'noopener,noreferrer');
+        } else if (data.auth_link) {
+          // Some MDI setups return the code pre-embedded in the link
+          window.open(data.auth_link, '_blank', 'noopener,noreferrer');
+        } else {
+          throw new Error('No messaging link received from server');
+        }
+
+      } catch (e) {
+        console.error('[Hub] Messaging auth failed:', e);
+        alert('Unable to open secure messaging right now. Please try again or contact support@freeley.com.');
+      } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
       }
     }
 

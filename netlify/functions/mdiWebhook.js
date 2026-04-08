@@ -16,6 +16,7 @@
  *   - voucher_used       → Patient used a voucher
  *   - patient_created    → Patient record created
  *   - patient_modified   → Patient record updated
+ *   - message_created    → New message in patient-clinician chat (inbound & outbound)
  */
 
 const { verifyWebhookSignature } = require('./lib/mdi-client');
@@ -119,6 +120,31 @@ exports.handler = async (event) => {
       case 'patient_deleted':
         console.log(`[MDI WEBHOOK] 👤 Patient ${event_type}: ${patient_id}`);
         break;
+
+      // ── Message events (inbound & outbound) ─────────────────
+      // MDI fires message_created for BOTH clinician→patient and
+      // patient→clinician messages. Filter by sender_type to avoid
+      // notifying the patient about their own messages.
+      case 'message_created': {
+        const senderType = payload.sender_type || payload.sender || 'unknown';
+        const messagePreview = (payload.message || payload.body || '').slice(0, 100);
+        console.log(`[MDI WEBHOOK] 💬 Message CREATED | Patient: ${patient_id} | Sender: ${senderType}`);
+
+        // Only notify patient when a CLINICIAN sends a message
+        if (senderType === 'clinician' || senderType === 'provider' || senderType === 'doctor') {
+          await notifyInternalWebhook('message_from_clinician', {
+            patient_id,
+            case_id,
+            sender_type: senderType,
+            message_preview: messagePreview,
+            action: 'notify_patient_new_message'
+          });
+        } else {
+          // Patient sent a message — log only, no notification needed
+          console.log(`[MDI WEBHOOK] 💬 Patient message logged (no outbound notification)`);
+        }
+        break;
+      }
 
       // ── Voucher events ──────────────────────────────────────
       case 'voucher_used':
