@@ -93,4 +93,7 @@ async function run() {
   }
 }
 
-run();
+run().catch(err => {
+  console.error('Fatal unhandled error in Keyword Refiller:', err);
+  process.exit(1);
+});

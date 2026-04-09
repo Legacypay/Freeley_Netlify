@@ -357,4 +357,7 @@ async function processBlogs() {
   console.log(`✅ Built sitemap.xml`);
 }
 
-processBlogs();
+processBlogs().catch(err => {
+  console.error('Fatal unhandled error in Blog Builder:', err);
+  process.exit(1);
+});

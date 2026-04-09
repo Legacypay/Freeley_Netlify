@@ -40,9 +40,9 @@ const prompt = `You are the Chief Medical Officer at Freeley Health. Write an en
 Use bolding, H2s, H3s, and format the output STRICTLY in Markdown.
 
 Include YAML frontmatter at the top with EXACTLY these fields:
-- "title": A compelling, SEO-friendly article title
+- "title": A compelling, SEO-friendly article title (wrapped in quotes)
 - "tag": Choose ONE category from: Weight Loss, Hair Loss, Men's Health, Longevity, Peptides, Telehealth, Medical Education
-- "excerpt": A 1-2 sentence compelling summary for search results
+- "excerpt": A 1-2 sentence compelling summary for search results (wrapped in quotes)
 - "date": Today's date in ISO format (e.g. "${new Date().toISOString().split('T')[0]}T10:00:00Z")
 
 Conclude with a call to action leading readers to our free medical assessment at freeley.com/quiz.html.
@@ -126,4 +126,7 @@ async function run() {
   }
 }
 
-run();
+run().catch(err => {
+  console.error('Fatal unhandled error in SEO Agent:', err);
+  process.exit(1);
+});

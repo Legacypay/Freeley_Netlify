@@ -5,8 +5,7 @@ on:
     - cron: '0 12 * * *' # Runs at 12 PM UTC (8 AM EST) every single day
   workflow_dispatch: # Allows you to click "Run workflow" manually on GitHub
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 
 jobs:
   write-article:
