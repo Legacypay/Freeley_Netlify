@@ -1254,11 +1254,11 @@
           <div class="input-row" style="margin-bottom:20px;">
             <div class="input-group">
               <label class="input-label">Age</label>
-              <input class="input-field" type="number" placeholder="e.g. 38" min="18" max="85">
+              <input class="input-field" type="number" id="clin-age" placeholder="e.g. 38" min="18" max="85">
             </div>
             <div class="input-group">
               <label class="input-label">Biological Sex</label>
-              <select class="input-field">
+              <select class="input-field" id="clin-sex">
                 <option value="">Select...</option>
                 <option>Male</option>
                 <option>Female</option>
@@ -1271,21 +1271,21 @@
               <label class="input-label">Height</label>
               <div style="display: flex; gap: 12px;">
                 <div style="flex: 1;">
-                  <input class="input-field" type="number" placeholder="Ft" min="3" max="8">
+                  <input class="input-field" type="number" id="clin-height-ft" placeholder="Ft" min="3" max="8">
                 </div>
                 <div style="flex: 1;">
-                  <input class="input-field" type="number" placeholder="In" min="0" max="11">
+                  <input class="input-field" type="number" id="clin-height-in" placeholder="In" min="0" max="11">
                 </div>
               </div>
             </div>
             <div class="input-group">
               <label class="input-label">Current Weight (lbs)</label>
-              <input class="input-field" type="number" placeholder="e.g. 185">
+              <input class="input-field" type="number" id="clin-weight" placeholder="e.g. 185">
             </div>
           </div>
           <div class="input-group" style="max-width:400px;margin-bottom:20px;">
             <label class="input-label">State of Residence</label>
-            <select class="input-field">
+            <select class="input-field" id="clin-state">
               <option value="">Select your state...</option>
               <option>Alabama</option>
               <option>Alaska</option>
@@ -1422,42 +1422,32 @@
           </div>
         </div>
 
-        <!-- STEP 5: Medical History -->
+        <!-- STEP 5: Medical History (Expanded for MDI Compliance) -->
         <div class="quiz-step" id="step-5">
           <span class="step-badge">Step 5 of 7</span>
-          <div class="step-question">Any relevant <em>medical history?</em></div>
-          <div class="step-sub">This is strictly confidential and helps us ensure your safety. Our physicians review
-            everything.</div>
-          <div class="options-grid options-1">
-            <div class="option-card" onclick="selectSingle(this,'q4', 5)" data-group="q4">
-              <span class="option-icon"><i class="ri-thumb-up-fill"></i></span>
-              <div>
-                <div class="option-label">No known conditions</div>
-                <div class="option-desc">Healthy with no major diagnoses</div>
-              </div>
-            </div>
-            <div class="option-card" onclick="selectSingle(this,'q4', 5)" data-group="q4">
-              <span class="option-icon"><i class="ri-capsule-fill"></i></span>
-              <div>
-                <div class="option-label">Taking medication(s)</div>
-                <div class="option-desc">Prescription or OTC medications daily</div>
-              </div>
-            </div>
-            <div class="option-card" onclick="selectSingle(this,'q4', 5)" data-group="q4">
-              <span class="option-icon"><i class="ri-stethoscope-fill"></i></span>
-              <div>
-                <div class="option-label">Managed condition(s)</div>
-                <div class="option-desc">e.g. diabetes, hypertension, thyroid issues</div>
-              </div>
-            </div>
-            <div class="option-card" onclick="selectSingle(this,'q4', 5)" data-group="q4">
-              <span class="option-icon"><i class="ri-forbid-2-fill"></i></span>
-              <div>
-                <div class="option-label">Prior ED / Heart Meds</div>
-                <div class="option-desc">Previously prescribed similar treatments or nitrates</div>
-              </div>
-            </div>
+          <div class="step-question">Clinical <em>Snapshot</em></div>
+          <div class="step-sub">This information is required for our physicians to safely evaluate your candidacy for treatment.</div>
+          
+          <div class="input-group">
+            <label class="input-label">Known Allergies (Medications, Foods, Latex)</label>
+            <textarea id="clin-allergies" rows="3" class="input-field" placeholder="If none, type 'None'"></textarea>
           </div>
+
+          <div class="input-group">
+            <label class="input-label">Current Medications & Dosages</label>
+            <textarea id="clin-medications" rows="3" class="input-field" placeholder="List all prescriptions and supplements"></textarea>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label">Medical Conditions (Past or Present)</label>
+            <textarea id="clin-conditions" rows="3" class="input-field" placeholder="e.g. Type 2 Diabetes, High Blood Pressure, etc."></textarea>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label">Past Surgeries / Major Procedures</label>
+            <textarea id="clin-surgeries" rows="2" class="input-field" placeholder="List relevant procedures and dates"></textarea>
+          </div>
+
           <div class="quiz-nav">
             <button class="quiz-back" onclick="nextStep(4)"><svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <path d="M13 8H3M7 12l-4-4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
@@ -1489,6 +1479,27 @@
                 style="flex-direction:column;text-align:center;align-items:center;padding:20px 16px;">
                 <span class="option-icon"><i class="ri-run-line"></i></span>
                 <div class="option-label" style="font-size:14px;">Very Active</div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-bottom:36px;">
+            <div class="input-label" style="font-size:15px;margin-bottom:16px;">Social History (Confidential)</div>
+            <div class="input-row" style="margin-bottom:20px;">
+              <div class="input-group">
+                <label class="input-label">Smoking Status</label>
+                <select class="input-field" id="clin-smoking">
+                  <option value="Never">Never Smoked</option>
+                  <option value="Former">Former Smoker</option>
+                  <option value="Current">Current Smoker</option>
+                </select>
+              </div>
+              <div class="input-group">
+                <label class="input-label">Alcohol Consumption</label>
+                <select class="input-field" id="clin-alcohol">
+                  <option value="None">None / Occasional</option>
+                  <option value="Moderate">Moderate (1-2 / day)</option>
+                  <option value="High">Higher than average</option>
+                </select>
               </div>
             </div>
           </div>
@@ -1888,15 +1899,20 @@
       } else {
         quizData = {
           goals: Array.from(document.querySelectorAll('#step-1 .option-card.selected .option-label')).map(el => el.textContent),
-          age: document.querySelectorAll('#step-2 input[type="number"]')[0]?.value || '',
-          sex: document.querySelectorAll('#step-2 select')[0]?.value || '',
-          height: `${document.querySelectorAll('#step-2 input[type="number"]')[1]?.value || 0}'${document.querySelectorAll('#step-2 input[type="number"]')[2]?.value || 0}"`,
-          weight: document.querySelectorAll('#step-2 input[type="number"]')[3]?.value || '',
-          state: document.querySelectorAll('#step-2 select')[1]?.value || '',
-          symptoms: Array.from(document.querySelectorAll('#step-3 .option-card.selected .option-label')).map(el => el.textContent),
-          medicalHistory: Array.from(document.querySelectorAll('#step-4 .option-card.selected .option-label')).map(el => el.textContent),
-          activityLevel: document.querySelector('#step-5 [data-group="activity"].selected .option-label')?.textContent || '',
-          formatPreference: Array.from(document.querySelectorAll('#step-5 .options-2 .option-card.selected .option-label')).map(el => el.textContent),
+          age: document.getElementById('clin-age')?.value || '',
+          sex: document.getElementById('clin-sex')?.value || '',
+          height: `${document.getElementById('clin-height-ft')?.value || 0}'${document.getElementById('clin-height-in')?.value || 0}"`,
+          weight: document.getElementById('clin-weight')?.value || '',
+          state: document.getElementById('clin-state')?.value || '',
+          symptoms: Array.from(document.querySelectorAll('#step-4 .option-card.selected .option-label')).map(el => el.textContent),
+          allergies: document.getElementById('clin-allergies')?.value || '',
+          medications: document.getElementById('clin-medications')?.value || '',
+          conditions: document.getElementById('clin-conditions')?.value || '',
+          surgeries: document.getElementById('clin-surgeries')?.value || '',
+          smoking: document.getElementById('clin-smoking')?.value || '',
+          alcohol: document.getElementById('clin-alcohol')?.value || '',
+          activityLevel: document.querySelector('#step-6 [data-group="activity"].selected .option-label')?.textContent || '',
+          formatPreference: Array.from(document.querySelectorAll('#step-6 .options-2 .option-card.selected .option-label')).map(el => el.textContent),
           doctorMessage: document.getElementById('doctor-message')?.value || '',
           email: document.getElementById('contact-email')?.value || '',
           phone: document.getElementById('contact-phone')?.value || '',
@@ -1988,7 +2004,7 @@
             msgEl.textContent = 'You\'re in the overweight range — an excellent candidate for GLP-1 weight loss therapy. Most patients in this range lose 10-15% body weight.';
           } else {
             catEl.textContent = 'Obese'; catEl.style.background = '#fee2e2'; catEl.style.color = '#991b1b';
-            msgEl.textContent = 'GLP-1 receptor agonists are clinically proven to be most effective in this BMI range. You could see significant health improvements within months.';
+            msgEl.textContent = 'GLP-1 receptor agonists have shown strong results in this BMI range. You could see significant health improvements within months.';
           }
 
           document.getElementById('bmiCard').style.display = 'flex';
@@ -2009,7 +2025,7 @@
       const planMap = {
         'weight-loss': {
           name: 'GLP-1 Weight Loss Protocol',
-          desc: 'Semaglutide compounded with B12 — clinically proven to reduce body weight by 15-20%. Your physician will personalize your titration schedule based on your profile.',
+          desc: 'Semaglutide compounded with B12 — shown to reduce body weight by 15-20%. Your physician will personalize your titration schedule based on your profile.',
           price: '$99.29',
           img: 'assets/brand/semag_transparent.png',
           alt: 'Semaglutide',

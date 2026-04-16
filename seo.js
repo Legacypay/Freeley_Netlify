@@ -34,7 +34,7 @@
     },
     '/hair-loss.html': {
       title: 'Hair Loss Treatment Online — Finasteride & Minoxidil | Freeley',
-      description: 'Clinically proven hair regrowth treatments prescribed online. Oral minoxidil, finasteride, and custom compounded formulas. Results in 3-6 months.',
+      description: 'Physician-prescribed hair regrowth treatments prescribed online. Oral minoxidil, finasteride, and custom compounded formulas. Results in 3-6 months.',
       image: SITE_URL + '/assets/og/og-hair-loss.jpg',
       schema: 'MedicalTherapy',
       schemaName: 'Hair Loss Treatment'
@@ -74,7 +74,7 @@
       image: SITE_URL + '/assets/og/og-ed.jpg'
     },
     '/promo-hair-loss.html': {
-      title: 'Hair Regrowth Treatment — Clinically Proven | Freeley',
+      title: 'Hair Regrowth Treatment — Physician-Prescribed | Freeley',
       description: 'Stop hair loss and regrow with prescription finasteride, minoxidil, and custom formulas. Results in 3-6 months. Plans from $29/mo.',
       image: SITE_URL + '/assets/og/og-hair-loss.jpg'
     },

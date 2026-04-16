@@ -801,6 +801,15 @@
           </div>
         </div>
 
+        <div style="margin-top: 24px; margin-bottom: 24px; padding: 16px; background: rgba(26, 74, 46, 0.05); border-radius: 12px; border: 1px solid rgba(26, 74, 46, 0.1);">
+          <label style="display: flex; gap: 12px; cursor: pointer; align-items: flex-start;">
+            <input type="checkbox" id="consent-check" style="width: 18px; height: 18px; margin-top: 2px; accent-color: var(--forest);">
+            <span style="font-size: 13px; color: var(--charcoal); line-height: 1.5;">
+              I have read and agree to the <strong><a href="/telehealth-consent" target="_blank" style="color: var(--forest); text-decoration: underline;">Telehealth Consent</a></strong> and understand that my treatment may be rejected based on the clinician's medical judgment.
+            </span>
+          </label>
+        </div>
+
         <button class="btn-checkout" id="checkout-btn" type="button" disabled style="position: relative; overflow: hidden;"><i class="ri-lock-2-line" style="margin-right: 8px;"></i><span id="btn-text">Complete Secure Order</span></button>
         <div id="checkout-spinner" style="display: none; text-align: center; margin-top: 12px; font-size: 13px; color: var(--forest);"><i class="ri-loader-4-line" style="font-size: 18px; animation: spin 1s linear infinite; display: inline-block; margin-right: 6px;"></i>Processing your payment...</div>
         <div style="text-align: center; margin-top: 12px; font-size: 11px; color: #999; display: flex; align-items: center; justify-content: center; gap: 6px;"><i class="ri-shield-star-line" style="font-size: 14px; color: var(--forest);"></i>Your information is encrypted and never stored on our servers</div>
@@ -1169,6 +1178,18 @@
       
       btn.disabled = true;
       btn.style.opacity = '0.7';
+      
+      const consentCheck = document.getElementById('consent-check');
+      if (!consentCheck.checked) {
+        errorEl.textContent = 'Please review and agree to the Telehealth Consent before proceeding.';
+        errorEl.style.display = 'block';
+        consentCheck.parentElement.style.border = '1px solid #dc2626';
+        consentCheck.parentElement.style.background = '#fef2f2';
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        return;
+      }
+
       spinner.style.display = 'block';
       errorEl.style.display = 'none';
 
@@ -1254,9 +1275,10 @@
                            date_of_birth: dob, gender: parseInt(gender), address, city, state, zip_code: zip },
                 product: productKey,
                 quiz_answers: quizAnswers,
-                allergies: 'None reported',
-                current_medications: 'None reported',
-                medical_conditions: (quizData.medicalHistory || []).join(', ') || 'None reported'
+                allergies: quizData.allergies || 'None reported',
+                current_medications: quizData.medications || 'None reported',
+                medical_conditions: [quizData.conditions || '', quizData.surgeries ? 'Surgeries: ' + quizData.surgeries : ''].filter(Boolean).join('; ') || 'None reported',
+                social_history: { smoking: quizData.smoking, alcohol: quizData.alcohol }
               })
             });
             const mdiData = await mdiRes.json();
@@ -1275,9 +1297,9 @@
                            date_of_birth: dob, gender: parseInt(gender), address, city, state, zip_code: zip },
                 product: productKey,
                 quiz_answers: quizAnswers,
-                allergies: 'None reported',
-                current_medications: 'None reported',
-                medical_conditions: (quizData.medicalHistory || []).join(', ') || 'None reported'
+                allergies: quizData.allergies || 'None reported',
+                current_medications: quizData.medications || 'None reported',
+                medical_conditions: [quizData.conditions || '', quizData.surgeries ? 'Surgeries: ' + quizData.surgeries : ''].filter(Boolean).join('; ') || 'None reported'
               };
               await fetch('/.netlify/functions/savePendingCase', {
                 method: 'POST',
