@@ -198,19 +198,21 @@ const PRODUCTS = {
     icd10: 'L65.9'
   },
 
-  'hair-topical': {
-    offering_id: process.env.MDI_OFFERING_HAIR_TOPICAL || '0e1e36e3-e390-49e8-9e45-77e39c7231ff',
-    name: 'VitalPeptide Hair Therapy (GHK-Cu Topical)',
-    formula: 'GHK-Cu 0.5-3%',
-    default_directions: 'Apply 1 mL (15-20 drops) to affected scalp areas once daily. Massage into scalp, leave on 4-6 hours before washing.',
-    default_quantity: 50,
-    default_days_supply: 35,
-    default_refills: 11,
-    dispense_unit: 'Milliliter',
-    pharmacy: 'Strive Pharmacy',
-    category: 'hair-loss',
-    icd10: 'L65.9'
-  },
+  // REMOVED: GHK-Cu no longer eligible for 503A compounding per FDA 503A Bulks List update (April 15, 2026)
+  // Effective April 23, 2026 — no allowances for 503A pharmacies to compound GHK-Cu in any route of administration.
+  // 'hair-topical': {
+  //   offering_id: process.env.MDI_OFFERING_HAIR_TOPICAL || '0e1e36e3-e390-49e8-9e45-77e39c7231ff',
+  //   name: 'VitalPeptide Hair Therapy (GHK-Cu Topical)',
+  //   formula: 'GHK-Cu 0.5-3%',
+  //   default_directions: 'Apply 1 mL (15-20 drops) to affected scalp areas once daily.',
+  //   default_quantity: 50,
+  //   default_days_supply: 35,
+  //   default_refills: 11,
+  //   dispense_unit: 'Milliliter',
+  //   pharmacy: 'Strive Pharmacy',
+  //   category: 'hair-loss',
+  //   icd10: 'L65.9'
+  // },
 
   // ── Sexual Wellness ──────────────────────────────────────────
   'tadalafil-daily': {
