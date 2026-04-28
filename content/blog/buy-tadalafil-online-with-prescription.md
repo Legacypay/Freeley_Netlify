@@ -8,7 +8,7 @@ image: "assets/blog/buy-tadalafil-online-with-prescription.jpg"
 
 ## Understanding Tadalafil: A Key Solution for Erectile Dysfunction
 
-**Tadalafil**, commonly known by its brand name Cialis, is a powerful medication used to treat erectile dysfunction (ED) in men. Its effectiveness in improving sexual function makes it a popular choice among those seeking relief from ED symptoms.
+**Tadalafil** is a long-acting PDE5 inhibitor used to treat erectile dysfunction (ED) in men. Its effectiveness in improving sexual function makes it a popular choice among those seeking relief from ED symptoms.
 
 ### What Is Tadalafil?
 

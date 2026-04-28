@@ -20,7 +20,7 @@ ED can be caused by a variety of factors, including:
 
 ### Treatment Options
 
-The primary treatment for ED involves medications that increase blood flow to the penis, facilitating erections. Common medications include Sildenafil (Viagra), Tadalafil (Cialis), and Vardenafil (Levitra).
+The primary treatment for ED involves medications that increase blood flow to the penis, facilitating erections. Common medications include Sildenafil, Tadalafil, and Vardenafil — all PDE5 inhibitors prescribed based on individual patient needs.
 
 ## The Rise of Online ED Medication Subscriptions
 

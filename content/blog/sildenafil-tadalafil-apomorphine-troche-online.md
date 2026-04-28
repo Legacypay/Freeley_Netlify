@@ -14,7 +14,7 @@ In today's fast-paced digital era, **access to effective treatments for men's he
 
 ### Sildenafil: The Pioneer in ED Treatment
 
-**Sildenafil**, commonly known by its brand name Viagra, was the first oral medication approved for the treatment of erectile dysfunction. It works by increasing blood flow to the penis, thereby facilitating an erection in response to sexual stimulation.
+**Sildenafil** is a PDE5 inhibitor and one of the most widely prescribed oral medications for erectile dysfunction. It works by increasing blood flow to the penis, thereby facilitating an erection in response to sexual stimulation.
 
 - **Mechanism of Action**: Sildenafil is a phosphodiesterase type 5 (PDE5) inhibitor that helps relax blood vessels, enhancing blood flow.
 - **Usage**: Typically taken on-demand about an hour before sexual activity.
@@ -22,7 +22,7 @@ In today's fast-paced digital era, **access to effective treatments for men's he
 
 ### Tadalafil: The Long-Lasting Solution
 
-**Tadalafil**, marketed as Cialis, offers a longer duration of action compared to sildenafil. This makes it a popular choice for those seeking more spontaneity in their sexual encounters.
+**Tadalafil** is another PDE5 inhibitor that offers a longer duration of action compared to sildenafil. This makes it a popular choice for those seeking more spontaneity in their sexual encounters.
 
 - **Mechanism of Action**: Similar to sildenafil, tadalafil is also a PDE5 inhibitor, but it has a longer half-life.
 - **Usage**: Can be taken daily or as needed, offering flexibility based on lifestyle.
