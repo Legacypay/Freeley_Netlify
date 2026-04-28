@@ -2,7 +2,7 @@ name: "Broken Link Checker"
 
 on:
   schedule:
-    - cron: '0 0 * * 0' # Runs at midnight every Sunday
+    - cron: '0 2 * * 0' # Runs at 2 AM UTC every Sunday
   workflow_dispatch:
 
 jobs:
@@ -10,14 +10,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
       - name: Run Lychee Link Checker
         id: lychee
         uses: lycheeverse/lychee-action@v2
         with:
-          # Check all html and markdown files in the repo
-          args: --accept=200..204,429,500 --verbose --no-progress './**/*.md' './**/*.html'
+          args: >-
+            --accept 200,201,202,203,204,301,302,307,308
+            --exclude-mail
+            --exclude 'linkedin.com'
+            --exclude 'facebook.com'
+            --exclude 'instagram.com'
+            --exclude 'twitter.com'
+            --exclude 'x.com'
+            --exclude 'tiktok.com'
+            --exclude 'play.google.com'
+            --exclude 'apps.apple.com'
+            --timeout 30
+            --max-retries 3
+            --max-concurrency 5
+            --verbose
+            --no-progress
+            './**/*.html'
+            './**/*.md'
           fail: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
