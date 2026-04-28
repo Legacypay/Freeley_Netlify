@@ -19,7 +19,7 @@ Erectile Dysfunction (ED) is a common condition affecting millions of men worldw
 
 A 3-in-1 ED troche is a compounded medication that combines three active ingredients commonly used to treat ED. These typically include:
 
-- **Sildenafil**: The active ingredient in Viagra, known for improving blood flow.
+- **Sildenafil**: A PDE5 inhibitor clinically shown to improve blood flow and support erectile function.
 - **Tadalafil**: Known for its prolonged effect and flexibility in dosing.
 - **Apomorphine**: Stimulates brain receptors to enhance erectile response.
 
