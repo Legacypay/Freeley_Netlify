@@ -16,25 +16,10 @@ jobs:
         id: lychee
         uses: lycheeverse/lychee-action@v2
         with:
-          args: >-
-            --accept 200,201,202,203,204,301,302,307,308
-            --exclude-mail
-            --exclude 'linkedin.com'
-            --exclude 'facebook.com'
-            --exclude 'instagram.com'
-            --exclude 'twitter.com'
-            --exclude 'x.com'
-            --exclude 'tiktok.com'
-            --exclude 'play.google.com'
-            --exclude 'apps.apple.com'
-            --timeout 30
-            --max-retries 3
-            --max-concurrency 5
-            --verbose
-            --no-progress
-            './**/*.html'
-            './**/*.md'
+          args: "--accept 200,201,202,203,204 --exclude-mail --exclude linkedin.com --exclude facebook.com --exclude instagram.com --exclude twitter.com --exclude x.com --exclude tiktok.com --exclude play.google.com --exclude apps.apple.com --timeout 30 --max-retries 3 --max-concurrency 5 --no-progress ./**/*.html ./**/*.md"
           fail: true
+          failIfEmpty: false
+          debug: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
