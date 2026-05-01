@@ -55,7 +55,11 @@ const FOOTER_HTML = `
       <div style="display:flex; gap:16px; margin-top:32px; align-items:center; opacity:0.8;">
         <img src="assets/usa_badge.png" alt="Made in USA" style="height:36px; width:auto; mix-blend-mode: screen;">
         <img src="assets/hipaa_badge.png" alt="HIPAA Compliant" style="height:36px; width:auto; mix-blend-mode: screen;">
+        <a href="https://www.legitscript.com/websites/?checker_keywords=freeley.com" target="_blank" title="Verify LegitScript Approval for www.freeley.com" style="display:inline-flex; align-items:center;">
+          <img src="https://static.legitscript.com/seals/49921676.png" alt="LegitScript Certified" width="73" height="79" style="mix-blend-mode: screen;" />
+        </a>
       </div>
+      <p style="margin-top: 12px; font-size: 11px; color: rgba(255,255,255,0.4); letter-spacing: 0.5px;">✓ LegitScript Certified Healthcare Platform</p>
       <div style="margin-top: 24px; max-width: 280px;">
         <!-- TrustBox widget - Review Collector -->
         <div class="trustpilot-widget" data-locale="en-US" data-template-id="56278e9abfbbba0bdcd568bc" data-businessunit-id="69c2e98765a7a37ca4e3a6f1" data-style-height="52px" data-style-width="100%" data-token="b465654a-b786-48db-9158-f4d79c3e190a">
@@ -92,7 +96,7 @@ const FOOTER_HTML = `
   </div>
   <div class="footer-bottom">
     <p class="footer-disclaimer">Freeley is a healthcare technology platform that facilitates connections between patients and independently licensed telemedicine providers through our clinical partner <strong><a href="https://mdintegrations.com" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">MD Integrations</a></strong>, and PCAB-accredited 503A compounding pharmacies, including <strong>Strive Pharmacy</strong>, available nationwide across all 50 U.S. states. Freeley does not practice medicine, employ physicians, or dispense medications. All treatment decisions and prescriptions are made solely by board-certified, US-licensed physicians. Compounded medications are not FDA-approved, and are independent of any name-brand medications. Results vary. FSA/HSA eligibility varies.</p>
-    <div class="footer-copy">© 2025 Freeley Health LLC (DBA Freeley)</div>
+    <div class="footer-copy">© 2025 Freeley Health LLC (DBA Freeley) · <a href="https://www.legitscript.com/websites/?checker_keywords=freeley.com" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">LegitScript Certified</a></div>
   </div>
 </footer>
 <script type="text/javascript" src="//widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js" async></script>
