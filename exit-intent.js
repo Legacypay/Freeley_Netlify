@@ -187,11 +187,11 @@
         
         <div class="exit-form-view" id="exit-form-view">
           <div class="exit-emoji">💊</div>
-          <h2 class="exit-title">Wait — don't miss your <em>free consultation</em></h2>
-          <p class="exit-sub">Enter your email and we'll save your progress. Plus, get $15 off your first month.</p>
+          <h2 class="exit-title">Wait — don't leave without <em>saving your progress</em></h2>
+          <p class="exit-sub">Enter your email and we'll save your consultation details so you can pick up right where you left off.</p>
           <form class="exit-form" id="exit-form">
             <input type="email" class="exit-input" placeholder="your@email.com" required id="exit-email" />
-            <button type="submit" class="exit-submit" id="exit-btn">Get $15 Off</button>
+            <button type="submit" class="exit-submit" id="exit-btn">Save Progress</button>
           </form>
           <p class="exit-privacy">No spam • Unsubscribe anytime • HIPAA compliant</p>
         </div>
@@ -199,7 +199,7 @@
         <div class="exit-success" id="exit-success">
           <div class="exit-emoji">🎉</div>
           <h3 class="exit-success-title">You're all set!</h3>
-          <p class="exit-success-sub">Check your inbox for your $15 code. Ready to start now?</p>
+          <p class="exit-success-sub">We've saved your details. Ready to continue your free consultation?</p>
           <a href="/quiz.html" class="exit-success-cta">Start My Free Visit →</a>
         </div>
       </div>
@@ -225,7 +225,7 @@
         await fetch('/.netlify/functions/captureLead', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, source: 'exit-intent', discount: 'WELCOME15' })
+          body: JSON.stringify({ email, source: 'exit-intent' })
         });
       } catch (err) {
         console.warn('Exit capture failed (silent):', err);
