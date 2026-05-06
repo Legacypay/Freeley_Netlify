@@ -54,43 +54,18 @@ exports.handler = async (event) => {
       results['probe_' + p.replace('/v1/partner/', '')] = { status: r.status, keys: r.data && typeof r.data === 'object' ? Object.keys(r.data).slice(0, 10) : null, preview: typeof r.data === 'string' ? r.data.substring(0, 200) : (r.data?.error || r.data?.message || JSON.stringify(r.data).substring(0, 300)) };
     }
 
-    // 3) If test=voucher — try minimal FLAT payload at /v1/partner/vouchers
+    // 3) If test=voucher — try different endpoint paths and payload combos
     if (test === 'voucher') {
       const questionnaire_id = 'c77365a4-2945-41cc-bb4e-aa2f4db3fd2d';
       const offering_id = '69a90f36-2f33-4c25-a07b-7093a85474ab';
 
-      // Extract environment_id from partner data if available
-      const pd = partner.data?.data || partner.data;
-      const env_id = pd?.environment_id || pd?.environment?.id || pd?.default_environment_id || null;
-
-      // Test A: Minimal flat payload WITH environment_id (if found)
+      // Test A: /v1/partner/tests/vouchers/{partner} (old path that might bypass status check)
       const payloadA = {
-        questionnaire_id: questionnaire_id,
-        offerings: [{ id: offering_id }],
-        demo: true
-      };
-      if (env_id) payloadA.environment_id = env_id;
-
-      const resA = await apiCall(token, 'POST', '/v1/partner/vouchers', payloadA);
-      results.voucher_minimal = { payload: payloadA, response: resA };
-
-      // Test B: With a dummy environment_id UUID to see validation error
-      const payloadB = {
-        questionnaire_id: questionnaire_id,
-        environment_id: '00000000-0000-0000-0000-000000000000',
-        offerings: [{ id: offering_id }],
-        demo: true
-      };
-      const resB = await apiCall(token, 'POST', '/v1/partner/vouchers', payloadB);
-      results.voucher_with_dummy_env = { payload: payloadB, response: resB };
-
-      // Test C: Try the original nested structure to compare error
-      const payloadC = {
         questionnaire_id: questionnaire_id,
         completion_time: '12:00:00',
         patient: {
           first_name: 'Test', last_name: 'Patient',
-          email: 'test@test.com', date_of_birth: '1990-01-15',
+          email: 'test@freeley-test.com', date_of_birth: '1990-01-15',
           gender: 1, phone_number: '5551234567', phone_type: '2',
           address: { address: '123 Test St', city_name: 'Miami', state_name: 'FL', zip_code: '33101' }
         },
@@ -101,8 +76,38 @@ exports.handler = async (event) => {
         offerings: [{ id: offering_id }],
         demo: true
       };
+      const resA = await apiCall(token, 'POST', '/v1/partner/tests/vouchers/' + MDI_PARTNER_ID, payloadA);
+      results.test_voucher_old_path = { response: resA };
+
+      // Test B: /v1/partner/vouchers with demo: true (flat payload)
+      const payloadB = {
+        questionnaire_id: questionnaire_id,
+        offerings: [{ id: offering_id }],
+        demo: true
+      };
+      const resB = await apiCall(token, 'POST', '/v1/partner/vouchers', payloadB);
+      results.voucher_flat_demo_true = { payload: payloadB, response: resB };
+
+      // Test C: /v1/partner/vouchers with demo: false (to compare error)
+      const payloadC = { ...payloadB, demo: false };
       const resC = await apiCall(token, 'POST', '/v1/partner/vouchers', payloadC);
-      results.voucher_nested_old = { response: resC };
+      results.voucher_flat_demo_false = { payload: payloadC, response: resC };
+
+      // Test D: /v1/partner/vouchers WITHOUT demo field at all
+      const payloadD = {
+        questionnaire_id: questionnaire_id,
+        offerings: [{ id: offering_id }]
+      };
+      const resD = await apiCall(token, 'POST', '/v1/partner/vouchers', payloadD);
+      results.voucher_flat_no_demo = { payload: payloadD, response: resD };
+
+      // Test E: Try /v1/partner/tests/vouchers (without partner ID in path)
+      const resE = await apiCall(token, 'POST', '/v1/partner/tests/vouchers', payloadA);
+      results.test_voucher_no_id = { response: resE };
+
+      // Test F: Try /v1/partner/demo/vouchers
+      const resF = await apiCall(token, 'POST', '/v1/partner/demo/vouchers', payloadB);
+      results.demo_voucher_path = { response: resF };
     }
 
     return {
