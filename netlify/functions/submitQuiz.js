@@ -5,9 +5,10 @@
  *
  * UPDATED 2026-05-06: Migrated from deprecated two-step flow
  *   (POST /v1/patient/patients → POST /v1/patient/patients/{id}/cases)
- * to single-call endpoint:
- *   POST /v1/partner/tests/vouchers/{partnerId}
- * which creates both the patient and encounter (case) in one request.
+ * to the documented partner voucher endpoint:
+ *   POST /v1/partner/vouchers  (PostPartnerVoucherRequest schema)
+ * Uses the `offerings` array to specify which product, NOT case_prescriptions
+ * (partner_compound_id/partner_medication_id are not registered in MDI).
  *
  * POST /.netlify/functions/submitQuiz
  */
@@ -93,22 +94,18 @@ exports.handler = async (event) => {
     }));
 
     // ── Build case object ──
+    // NOTE: case_prescriptions requires partner_compound_id / partner_medication_id
+    // but MDI offerings don't have these set (all null per API query 2026-05-06).
+    // Instead, we use the top-level `offerings` array with the offering UUID,
+    // which tells MDI which product to prescribe. Prescription details (quantity,
+    // refills, directions, etc.) are configured on the offering in the MDI dashboard.
     const caseObj = {
       metadata: 'freeley|' + resolvedKey + '|' + patientData.email + '|' + Date.now(),
       is_additional_approval_needed: null,
-      case_prescriptions: [
-        {
-          offering_id: product.offering_id,
-          partner_compound_id: product.offering_id,
-          refills: product.default_refills,
-          quantity: product.default_quantity,
-          days_supply: product.default_days_supply,
-          directions: product.default_directions,
-          no_substitutions: true
-        }
-      ],
+      case_prescriptions: [],
       case_questions: caseQuestions,
-      case_files: []
+      case_files: [],
+      diseases: product.icd10 ? [{ icd10_code: product.icd10 }] : []
     };
 
     // ── Build completion_time (HH:MM:SS format, required by MDI) ──
@@ -117,21 +114,24 @@ exports.handler = async (event) => {
                            String(now.getMinutes()).padStart(2, '0') + ':' +
                            String(now.getSeconds()).padStart(2, '0');
 
-    // ── Single API call: POST /v1/partner/tests/vouchers/{partnerId} ──
-    // Creates both the patient and encounter (case) in one request
+    // ── Single API call: POST /v1/partner/vouchers ──
+    // Creates a voucher that generates the encounter (case) with the selected offering.
+    // Per MDI PostPartnerVoucherRequest schema: offerings[] specifies the product,
+    // case_prescriptions[] is left empty (no compounds/medications registered).
     const voucherPayload = {
       questionnaire_id: product.questionnaire_id,
       completion_time: completionTime,
       preferred_pharmacy_id: pharmacyId || null,
       patient: patient,
-      case: caseObj
+      case: caseObj,
+      offerings: [{ id: product.offering_id }]
     };
 
     console.log('[SUBMIT QUIZ] Submitting to MDI voucher endpoint for partner: ' + MDI_PARTNER_ID);
 
     const result = await mdiRequest(
       'POST',
-      '/v1/partner/tests/vouchers/' + MDI_PARTNER_ID,
+      '/v1/partner/vouchers',
       voucherPayload
     );
 

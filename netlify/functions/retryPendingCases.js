@@ -117,18 +117,12 @@ exports.handler = async (event) => {
         }));
 
         // Build case object
+        // NOTE: case_prescriptions left empty — MDI offerings don't have
+        // partner_compound_id set. Use top-level offerings[] array instead.
         const caseObj = {
           metadata: 'freeley|' + productKey + '|' + patientData.email + '|' + Date.now() + '|retry-' + record.retry_count,
           is_additional_approval_needed: null,
-          case_prescriptions: [{
-            offering_id: product.offering_id,
-            partner_compound_id: product.offering_id,
-            refills: product.default_refills,
-            quantity: product.default_quantity,
-            days_supply: product.default_days_supply,
-            directions: product.default_directions,
-            no_substitutions: true
-          }],
+          case_prescriptions: [],
           case_questions: caseQuestions,
           case_files: [],
           diseases: product.icd10 ? [{ icd10_code: product.icd10 }] : []
@@ -140,16 +134,17 @@ exports.handler = async (event) => {
                                String(now2.getMinutes()).padStart(2, '0') + ':' +
                                String(now2.getSeconds()).padStart(2, '0');
 
-        // Single API call: POST /v1/partner/tests/vouchers/{partnerId}
+        // Single API call: POST /v1/partner/vouchers
         const voucherPayload = {
           questionnaire_id: product.questionnaire_id,
           completion_time: completionTime,
           preferred_pharmacy_id: pharmacyId || null,
           patient: patient,
-          case: caseObj
+          case: caseObj,
+          offerings: [{ id: product.offering_id }]
         };
 
-        const result = await mdiRequest('POST', '/v1/partner/tests/vouchers/' + MDI_PARTNER_ID, voucherPayload);
+        const result = await mdiRequest('POST', '/v1/partner/vouchers', voucherPayload);
 
         // ── Success! Mark as completed ─────────────────────────
         record.status = 'completed';
