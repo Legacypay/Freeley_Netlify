@@ -135,13 +135,15 @@ exports.handler = async (event) => {
                                String(now2.getSeconds()).padStart(2, '0');
 
         // Single API call: POST /v1/partner/vouchers
+        const isDemo = process.env.MDI_DEMO_MODE !== 'false';
         const voucherPayload = {
           questionnaire_id: product.questionnaire_id,
           completion_time: completionTime,
           preferred_pharmacy_id: pharmacyId || null,
           patient: patient,
           case: caseObj,
-          offerings: [{ id: product.offering_id }]
+          offerings: [{ id: product.offering_id }],
+          demo: isDemo
         };
 
         const result = await mdiRequest('POST', '/v1/partner/vouchers', voucherPayload);

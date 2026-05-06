@@ -118,13 +118,18 @@ exports.handler = async (event) => {
     // Creates a voucher that generates the encounter (case) with the selected offering.
     // Per MDI PostPartnerVoucherRequest schema: offerings[] specifies the product,
     // case_prescriptions[] is left empty (no compounds/medications registered).
+    // demo flag: set to true while partner is in test/sandbox status,
+    // switch to false (or remove) once MDI activates the partner for live
+    const isDemo = process.env.MDI_DEMO_MODE !== 'false';
+
     const voucherPayload = {
       questionnaire_id: product.questionnaire_id,
       completion_time: completionTime,
       preferred_pharmacy_id: pharmacyId || null,
       patient: patient,
       case: caseObj,
-      offerings: [{ id: product.offering_id }]
+      offerings: [{ id: product.offering_id }],
+      demo: isDemo
     };
 
     console.log('[SUBMIT QUIZ] Submitting to MDI voucher endpoint for partner: ' + MDI_PARTNER_ID);
