@@ -4,7 +4,7 @@
  * Maps Freeley's product keys to MDI offering/compound IDs.
  *
  * Offering UUIDs were extracted from the MDI Partner Portal on 2026-04-04.
- * All 21 offerings are currently IN REVIEW (submitted 2025-04-03).
+ * Intake associations updated from MDI mapping spreadsheet on 2026-05-06.
  * UUIDs are loaded from Netlify env vars with hardcoded fallbacks.
  *     Partner ID: f81508d1-3c53-4849-a636-1e9050a68e00
  *     API Credentials stored in Netlify env vars: MDI_CLIENT_ID, MDI_CLIENT_SECRET
@@ -16,6 +16,8 @@ const PRODUCTS = {
   'tirzepatide': {
     offering_id: process.env.MDI_OFFERING_TIRZEPATIDE || '6831f8a2-fb27-49c5-b0bc-59651481796f',
     name: 'Tirzepatide/Glycine/B12',
+    mdi_offering_name: 'Tirzepatide',
+    intake: 'PERS new / initial tirzep & refill',
     formula: '10 mg/mL',
     default_directions: 'Inject 50 units (5mg) subcutaneously once a week for 4 weeks',
     default_quantity: 6,
@@ -30,6 +32,8 @@ const PRODUCTS = {
   'semaglutide': {
     offering_id: process.env.MDI_OFFERING_SEMAGLUTIDE || '50a46778-befa-4e04-894e-4397885883e0',
     name: 'Semaglutide/Glycine/B12',
+    mdi_offering_name: 'Semaglutide',
+    intake: 'PERS new / initial sema & refill',
     formula: '5/5/1 mg/mL',
     default_directions: 'Inject 4 units (0.04 mL) subcutaneously weekly for 4 weeks, then titrate: 8 units wks 5-8, 18 units wks 9-12, 30 units wks 13-16, 44 units wk 16+',
     default_quantity: 2,
@@ -45,6 +49,8 @@ const PRODUCTS = {
   'nad-plus': {
     offering_id: process.env.MDI_OFFERING_NAD_PLUS || '10ca4e0f-e69d-49cc-bf91-373a722b93eb',
     name: 'NAD+',
+    mdi_offering_name: 'DTP-NAD+',
+    intake: 'NAD+ injection',
     formula: '200 mg/mL',
     default_directions: 'Inject 25 units (50 mg) subcutaneously weekly for 2 weeks, then increase by 25 units every 2 weeks',
     default_quantity: 10,
@@ -59,6 +65,8 @@ const PRODUCTS = {
   'nad-plus-tablet': {
     offering_id: process.env.MDI_OFFERING_NAD_PLUS_TABLET || '34fa8d35-b171-4015-98b3-25432afded7e',
     name: 'NAD+ (Sublingual Tablet)',
+    mdi_offering_name: 'NAD+ (Sublingual Tablet)',
+    intake: null, // Not in MDI intake mapping spreadsheet — confirm with MDI
     formula: '200 mg',
     default_directions: 'Dissolve one-fourth to one tablet sublingually or buccally daily in the morning on an empty stomach',
     default_quantity: 30,
@@ -73,6 +81,8 @@ const PRODUCTS = {
   'sermorelin-injectable': {
     offering_id: process.env.MDI_OFFERING_SERMORELIN_INJ || '41211889-d9ae-466a-9904-47b577df43c8',
     name: 'Sermorelin Acetate (Injectable)',
+    mdi_offering_name: 'DTP-Injectable-Sermorelin Acetate',
+    intake: 'Sermorelin INJECTION Intake Form',
     formula: '1 mg/mL',
     default_directions: 'Inject 15 to 30 units (0.15 to 0.3 mL) subcutaneously nightly on an empty stomach 5 out of 7 days per week',
     default_quantity: 9,
@@ -87,6 +97,8 @@ const PRODUCTS = {
   'sermorelin-troche': {
     offering_id: process.env.MDI_OFFERING_SERMORELIN_TROCHE || 'c6546c6a-048a-425b-a08e-d3eaadf6aabf',
     name: 'Sermorelin Acetate (Troche)',
+    mdi_offering_name: 'Semorelin Troche',
+    intake: 'Semorelin Oral',
     formula: '600 mcg',
     default_directions: 'Dissolve one troche buccally nightly on an empty stomach 5 out of 7 days per week',
     default_quantity: 30,
@@ -101,6 +113,8 @@ const PRODUCTS = {
   'sermorelin-nasal': {
     offering_id: process.env.MDI_OFFERING_SERMORELIN_NASAL || '785deeb3-b537-4729-a866-72f94c99f538',
     name: 'Sermorelin (Nasal Spray)',
+    mdi_offering_name: 'Sermorelin Nasal Spray',
+    intake: 'Sermorelin Nasal Spray',
     formula: '1000 mcg/mL',
     default_directions: 'Instill up to 3 sprays nasally at bedtime on an empty stomach 5 out of 7 days per week',
     default_quantity: 1,
@@ -116,6 +130,8 @@ const PRODUCTS = {
   'glutathione-troche': {
     offering_id: process.env.MDI_OFFERING_GLUT_TROCHE || 'f19be6d3-0b9b-422f-930b-e1a72902762c',
     name: 'Glutathione (Troche)',
+    mdi_offering_name: 'DTP - Glutathione (Troche)',
+    intake: 'Glutathione Medical Form',
     formula: '250 mg',
     default_directions: 'Dissolve one troche under the tongue daily in the morning, separated 15 minutes from food or drink',
     default_quantity: 30,
@@ -130,6 +146,8 @@ const PRODUCTS = {
   'glutathione-nasal': {
     offering_id: process.env.MDI_OFFERING_GLUT_NASAL || 'a164ec04-00ee-49b5-9356-5735958a082c',
     name: 'Glutathione (Nasal Spray)',
+    mdi_offering_name: 'Glutathione Nasal Spray',
+    intake: 'Glut. Nasal Spray',
     formula: '100 mg/mL',
     default_directions: 'Instill one spray in each nostril one to two times daily',
     default_quantity: 1,
@@ -144,6 +162,8 @@ const PRODUCTS = {
   'glutathione-injectable': {
     offering_id: process.env.MDI_OFFERING_GLUT_INJ || 'fde930ec-269d-411f-9140-d5d9c95b8cff',
     name: 'Glutathione (Injectable - 503B)',
+    mdi_offering_name: 'Glutathione Injections',
+    intake: 'Glutathione INJECTION INTAKE form',
     formula: '200 mg/mL',
     default_directions: 'Inject 200 mg (1 mL) intramuscularly or subcutaneously one to two times weekly OR 100 mg (0.5 mL) IM or SC every other day',
     default_quantity: 30,
@@ -159,6 +179,8 @@ const PRODUCTS = {
   'hair-men': {
     offering_id: process.env.MDI_OFFERING_HAIR_MEN || '99261220-0ac4-4833-8cca-ff9a59275953',
     name: 'Cedar Hair Growth Tablet',
+    mdi_offering_name: 'Cedar Hair Growth Tablet',
+    intake: 'Minoxidil / Finasteride /Biotin (Men & Women)',
     formula: 'Biotin 5 mg / Finasteride 1 mg / Minoxidil 2.5 mg',
     default_directions: 'Take one tablet by mouth one time daily with or without food',
     default_quantity: 30,
@@ -170,9 +192,30 @@ const PRODUCTS = {
     icd10: 'L64.9' // Androgenic alopecia, unspecified
   },
 
+  // NEW — from MDI intake mapping (DTP-Biotin / Finasteride / Minoxidil)
+  // TODO: Get offering UUID from MDI portal once session is active
+  'hair-biotin-fin-min': {
+    offering_id: process.env.MDI_OFFERING_HAIR_BIOTIN_FIN_MIN || 'PENDING_UUID',
+    name: 'DTP-Biotin / Finasteride / Minoxidil',
+    mdi_offering_name: 'DTP-Biotin / Finasteride / Minoxidil',
+    intake: 'Minoxidil / Finasteride /Biotin (Men & Women)',
+    formula: 'Biotin / Finasteride / Minoxidil compound',
+    default_directions: 'Take as directed by your provider',
+    default_quantity: 30,
+    default_days_supply: 30,
+    default_refills: 11,
+    dispense_unit: 'Tablet',
+    pharmacy: 'Strive Pharmacy',
+    category: 'hair-loss',
+    icd10: 'L64.9',
+    _pending: true // Flag: needs UUID from MDI portal
+  },
+
   'hair-women-45plus': {
     offering_id: process.env.MDI_OFFERING_HAIR_WOMEN_45 || '0e57a467-2e15-4425-a037-c3d95a4fa45e',
     name: 'Ivy Hair Tablet (Women 45+)',
+    mdi_offering_name: 'Ivy Oral',
+    intake: 'Minoxidil / Dutasteride',
     formula: 'Minoxidil 1 mg / Dutasteride 0.4 mg with Biotin',
     default_directions: 'Take one tablet by mouth one time daily with or without food',
     default_quantity: 30,
@@ -187,6 +230,8 @@ const PRODUCTS = {
   'hair-women-under45': {
     offering_id: process.env.MDI_OFFERING_HAIR_WOMEN_U45 || '33d4987c-4fa8-458f-92ca-a883bccad1a1',
     name: 'Willow Hair Tablet (Women <45)',
+    mdi_offering_name: 'Willow Hair',
+    intake: 'Min / Spiro / Biotin',
     formula: 'Minoxidil 1 mg / Spironolactone 60 mg with Biotin',
     default_directions: 'Take one tablet by mouth one time daily with or without food',
     default_quantity: 30,
@@ -203,6 +248,8 @@ const PRODUCTS = {
   // 'hair-topical': {
   //   offering_id: process.env.MDI_OFFERING_HAIR_TOPICAL || '0e1e36e3-e390-49e8-9e45-77e39c7231ff',
   //   name: 'VitalPeptide Hair Therapy (GHK-Cu Topical)',
+  //   mdi_offering_name: 'VitalPeptide Hair Therapy',
+  //   intake: 'GHK-Cu',
   //   formula: 'GHK-Cu 0.5-3%',
   //   default_directions: 'Apply 1 mL (15-20 drops) to affected scalp areas once daily.',
   //   default_quantity: 50,
@@ -214,10 +261,31 @@ const PRODUCTS = {
   //   icd10: 'L65.9'
   // },
 
+  // NEW — from MDI intake mapping (ARB Topical)
+  // TODO: Get offering UUID from MDI portal once session is active
+  'hair-topical-arb': {
+    offering_id: process.env.MDI_OFFERING_HAIR_TOPICAL_ARB || 'PENDING_UUID',
+    name: 'ARB Topical A5FD (Min/Dut/Fin/Caf/Aden+Niac+Biot/Tret)',
+    mdi_offering_name: 'ARB Topical A5FD: Min/Dut/Fin/Caf/Aden+Niac+Biot/Tret-50/2.5/2.5/2/3/0.125 mg/mL',
+    intake: 'ARB Topical A15FD & A5FD & A15F',
+    formula: 'Min/Dut/Fin/Caf/Aden+Niac+Biot/Tret 50/2.5/2.5/2/3/0.125 mg/mL',
+    default_directions: 'Apply to affected scalp areas as directed by your provider',
+    default_quantity: 50,
+    default_days_supply: 30,
+    default_refills: 11,
+    dispense_unit: 'Milliliter',
+    pharmacy: 'Strive Pharmacy',
+    category: 'hair-loss',
+    icd10: 'L65.9',
+    _pending: true // Flag: needs UUID from MDI portal
+  },
+
   // ── Sexual Wellness ──────────────────────────────────────────
   'tadalafil-daily': {
     offering_id: process.env.MDI_OFFERING_TADALAFIL_DAILY || '260b11b6-3636-4100-a736-526c8a6cd58b',
     name: 'Tadalafil (Daily Use)',
+    mdi_offering_name: 'Tadalafil (oral - tablet) 5mg',
+    intake: 'ED & Refill',
     formula: '5 mg',
     default_directions: 'Dissolve 1/4 to 1 sublingual flex-dose tablet under the tongue daily',
     default_quantity: 30,
@@ -232,6 +300,8 @@ const PRODUCTS = {
   'tadalafil-prn': {
     offering_id: process.env.MDI_OFFERING_TADALAFIL_PRN || 'fdc23a4c-2e06-4e24-a58e-2ea49e802400',
     name: 'Tadalafil (As Needed)',
+    mdi_offering_name: 'Tadalafil',
+    intake: 'Erectile Dysfunction & ED refill',
     formula: '20 mg',
     default_directions: 'Dissolve 1/4 to 1 sublingual flex-dose tablet under the tongue at least 30 minutes before sexual activity',
     default_quantity: 8,
@@ -246,6 +316,8 @@ const PRODUCTS = {
   'olympus-peak': {
     offering_id: process.env.MDI_OFFERING_OLYMPUS_PEAK || 'ec11e954-f9c3-4e36-9f14-9d88bfc1606f',
     name: 'Olympus Peak (Oxytocin/Bremelanotide/Tadalafil)',
+    mdi_offering_name: 'DTP-Olympus Peak-Oxytocin / Bremelanotide / Tadalafil',
+    intake: null, // Not in MDI intake mapping spreadsheet — confirm with MDI
     formula: 'Oxytocin 20 IU / Bremelanotide 1 mg / Tadalafil 20 mg',
     default_directions: 'Dissolve 1/4 to 1 sublingual flex-dose tablet under the tongue 30 minutes prior to sexual activity',
     default_quantity: 8,
@@ -260,6 +332,8 @@ const PRODUCTS = {
   'olympus-max': {
     offering_id: process.env.MDI_OFFERING_OLYMPUS_MAX || 'd723393e-0521-4cfd-a033-7803b4d479f4',
     name: 'Olympus Max Peak (Oxytocin/Bremelanotide/Tadalafil)',
+    mdi_offering_name: 'DTP-Olympus Max Peak-Oxytocin / Bremelanotide / Tadalafil',
+    intake: 'TADALAFIL/OXYTOCIN/PT-141',
     formula: 'Oxytocin 40 IU / Bremelanotide 2 mg / Tadalafil 20 mg',
     default_directions: 'Dissolve 1/4 to 1 sublingual flex-dose tablet under the tongue 30 minutes prior to sexual activity',
     default_quantity: 8,
@@ -274,6 +348,8 @@ const PRODUCTS = {
   'olympus': {
     offering_id: process.env.MDI_OFFERING_OLYMPUS || '313a25f4-05b7-48f1-b677-65ec816e3d8e',
     name: 'Olympus (Oxytocin/Bremelanotide - No Tadalafil)',
+    mdi_offering_name: 'DTP-Olympus Oxytocin / Bremelanotide',
+    intake: 'Oxy / PT-141',
     formula: 'Oxytocin 20 IU / Bremelanotide 1 mg',
     default_directions: 'Dissolve 1/4 to 1 sublingual flex-dose tablet under the tongue 30 minutes prior to sexual activity',
     default_quantity: 8,
@@ -288,6 +364,8 @@ const PRODUCTS = {
   'olympus-plus': {
     offering_id: process.env.MDI_OFFERING_OLYMPUS_PLUS || 'ee7aaa6b-fd3f-4e54-978f-f84d3c22573d',
     name: 'Olympus+ (Oxytocin/Bremelanotide/Tadalafil Low Dose)',
+    mdi_offering_name: 'Olympus Plus (Oxytocin/Bremelanotide/Tadalafil Low Dose)',
+    intake: null, // Not in MDI intake mapping spreadsheet — confirm with MDI
     formula: 'Oxytocin 20 IU / Bremelanotide 1 mg / Tadalafil 5 mg',
     default_directions: 'Dissolve 1/4 to 1 sublingual flex-dose tablet under the tongue 30 minutes prior to sexual activity',
     default_quantity: 8,
@@ -302,6 +380,8 @@ const PRODUCTS = {
   'vast': {
     offering_id: process.env.MDI_OFFERING_VAST || '90bb95bb-c6b6-43ab-ab84-3cca9caf2fd4',
     name: 'Vast (Apomorphine/Tadalafil/Vardenafil)',
+    mdi_offering_name: 'Vast (Apomorphine/Tadalafil/Vardenafil)',
+    intake: null, // Not in MDI intake mapping spreadsheet — confirm with MDI
     formula: 'Apomorphine 3 mg / Tadalafil 20 mg / Vardenafil 15 mg',
     default_directions: 'Dissolve 1/2 to 1 full tablet sublingually or buccally 30-60 minutes prior to sexual activity. Do not exceed one dose in 48 hours.',
     default_quantity: 4,

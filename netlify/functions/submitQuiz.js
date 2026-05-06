@@ -30,6 +30,13 @@ exports.handler = async (event) => {
     }
 
     const product = PRODUCTS[productKey];
+
+    // Guard: block submission for offerings that don't have MDI UUIDs yet
+    if (product._pending || product.offering_id === 'PENDING_UUID') {
+      console.warn('[SUBMIT QUIZ] Blocked submission for pending product: ' + productKey);
+      return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ error: 'This product is not yet available. Please check back soon or contact support.' }) };
+    }
+
     const pharmacyId = getPharmacyId(productKey);
 
     console.log('[SUBMIT QUIZ] Creating patient: ' + patientData.email);
