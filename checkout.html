@@ -854,6 +854,7 @@
       'weight-loss': {
         name: 'Semaglutide',
         desc: 'Compounded w/ B12 (Cyanocobalamin)',
+        planName: 'GLP-1 Weight Loss Protocol',
         priceId: 'price_1Qx5HhPzO8Bw04uohstP7o8Z',
         image: 'assets/brand/semag_transparent.png',
         plans: [
@@ -966,7 +967,7 @@
       
       document.getElementById('summary-treatment-name').innerText = currentConfig.name;
       document.getElementById('summary-treatment-desc').innerText = currentConfig.desc;
-      document.getElementById('summary-plan-name').innerText = currentConfig.planName;
+      document.getElementById('summary-plan-name').innerText = currentConfig.planName || 'Personalized Treatment Plan';
       document.getElementById('checkout-img').src = currentConfig.image;
 
       renderPlans();
@@ -1169,16 +1170,35 @@
     }
 
     // ═══════════════════════════════════════════════════════
+    // TEST MODE BYPASS (skip Stripe when ?testmode=true)
+    // ═══════════════════════════════════════════════════════
+    const IS_TEST_MODE = new URLSearchParams(window.location.search).get('testmode') === 'true';
+    if (IS_TEST_MODE) {
+      // Show test mode banner
+      const banner = document.createElement('div');
+      banner.id = 'test-mode-banner';
+      banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#f59e0b;color:#000;text-align:center;padding:10px 16px;font-weight:700;font-size:14px;letter-spacing:0.5px;box-shadow:0 2px 8px rgba(0,0,0,0.15);';
+      banner.innerHTML = '⚠️ TEST MODE — Payment bypassed. Orders will submit directly to MDI without charging.';
+      document.body.prepend(banner);
+      document.body.style.paddingTop = '44px';
+      // Hide the Stripe payment element since it's not needed
+      const stripeEl = document.getElementById('stripe-payment-element');
+      if (stripeEl) {
+        stripeEl.innerHTML = '<div style="text-align:center;padding:20px;background:#fef3c7;border:2px dashed #f59e0b;border-radius:8px;color:#92400e;font-size:14px;font-weight:600;">💳 Payment Bypassed (Test Mode)</div>';
+      }
+    }
+
+    // ═══════════════════════════════════════════════════════
     // PAYMENT SUBMISSION
     // ═══════════════════════════════════════════════════════
     document.getElementById('checkout-btn').addEventListener('click', async () => {
       const btn = document.getElementById('checkout-btn');
       const spinner = document.getElementById('checkout-spinner');
       const errorEl = document.getElementById('payment-errors');
-      
+
       btn.disabled = true;
       btn.style.opacity = '0.7';
-      
+
       const consentCheck = document.getElementById('consent-check');
       if (!consentCheck.checked) {
         errorEl.textContent = 'Please review and agree to the Telehealth Consent before proceeding.';
@@ -1194,21 +1214,12 @@
       errorEl.style.display = 'none';
 
       try {
-        const { error, paymentIntent } = await stripe.confirmPayment({
-          elements,
-          confirmParams: {
-            return_url: window.location.origin + '/hub.html?payment=success'
-          },
-          redirect: 'if_required'
-        });
-
-        if (error) {
-          errorEl.textContent = error.message;
-          errorEl.style.display = 'block';
-          btn.disabled = false;
-          btn.style.opacity = '1';
-          spinner.style.display = 'none';
-        } else if (paymentIntent && paymentIntent.status === 'succeeded') {
+        // ── TEST MODE: skip Stripe, go straight to MDI submission ──
+        if (IS_TEST_MODE) {
+          console.log('[Freeley] TEST MODE — bypassing Stripe payment, submitting directly to MDI');
+          // Jump straight to patient validation + MDI submission (fake paymentIntent)
+          const paymentIntent = { id: 'pi_test_' + Date.now(), status: 'succeeded' };
+          // Fall through to patient info validation below
           // Payment succeeded — validate patient info before MDI submission
           const ptInfoError = document.getElementById('patient-info-error');
           const firstName = document.getElementById('pt-first-name').value.trim();
@@ -1313,6 +1324,125 @@
           }
 
           window.location.href = '/hub.html?payment=success&pi=' + paymentIntent.id;
+
+        } else {
+          // ── NORMAL MODE: process Stripe payment first ──
+          const { error, paymentIntent } = await stripe.confirmPayment({
+            elements,
+            confirmParams: {
+              return_url: window.location.origin + '/hub.html?payment=success'
+            },
+            redirect: 'if_required'
+          });
+
+          if (error) {
+            errorEl.textContent = error.message;
+            errorEl.style.display = 'block';
+            btn.disabled = false;
+            btn.style.opacity = '1';
+            spinner.style.display = 'none';
+          } else if (paymentIntent && paymentIntent.status === 'succeeded') {
+            // Payment succeeded — validate patient info before MDI submission
+            const ptInfoError = document.getElementById('patient-info-error');
+            const firstName = document.getElementById('pt-first-name').value.trim();
+            const lastName  = document.getElementById('pt-last-name').value.trim();
+            const dob       = document.getElementById('pt-dob').value;
+            const gender    = document.getElementById('pt-gender').value;
+            const address   = document.getElementById('pt-address').value.trim();
+            const city      = document.getElementById('pt-city').value.trim();
+            const state     = document.getElementById('pt-state').value.trim().toUpperCase();
+            const zip       = document.getElementById('pt-zip').value.trim();
+            const email     = document.getElementById('pt-email').value.trim();
+            const phone     = document.getElementById('pt-phone').value.trim();
+
+            if (!firstName || !lastName || !dob || !gender || !address || !city || !state || !zip || !email || !phone) {
+              ptInfoError.textContent = 'Please complete all patient information fields above before submitting.';
+              ptInfoError.style.display = 'block';
+              document.getElementById('patient-info-box').scrollIntoView({ behavior: 'smooth' });
+              btn.disabled = false;
+              btn.style.opacity = '1';
+              spinner.style.display = 'none';
+              return;
+            }
+
+            // Determine MDI product key from URL params
+            const productKeyMap = {
+              'weight-loss-sema':      'semaglutide',
+              'weight-loss-tirz':      'tirzepatide',
+              'weight-loss':           'semaglutide',
+              'ed':                    'tadalafil-prn',
+              'longevity-nad':         'nad-plus',
+              'longevity-sermorelin':  'sermorelin-injectable',
+              'longevity':             'sermorelin-injectable',
+              'hair-loss':             parseInt(gender) === 1 ? 'hair-men' : 'hair-women-under45'
+            };
+            let productKey = productKeyMap[treatmentType + (compoundOverride ? '-' + compoundOverride : '')] || productKeyMap[treatmentType] || 'semaglutide';
+            if (treatmentType === 'hair-loss') {
+              productKey = parseInt(gender) === 1 ? 'hair-men' : 'hair-women-under45';
+            }
+
+            let quizData = {};
+            try { quizData = JSON.parse(sessionStorage.getItem('freeley_quiz_data') || '{}'); } catch(e) {}
+            const quizAnswers = [
+              { question: 'Primary health goals', answer: (quizData.goals || []).join(', '), type: 'string' },
+              { question: 'Activity level', answer: quizData.activityLevel || 'Not provided', type: 'string' },
+              { question: 'Current weight (lbs)', answer: quizData.weight || 'Not provided', type: 'string' },
+              { question: 'Height', answer: quizData.height || 'Not provided', type: 'string' },
+              { question: 'Symptoms', answer: (quizData.symptoms || []).join(', ') || 'None reported', type: 'string' },
+              { question: 'Medical history', answer: (quizData.medicalHistory || []).join(', ') || 'None reported', type: 'string' },
+              { question: 'What else would you like to communicate to the doctor who will be evaluating in addition to the information you have already provided?', answer: quizData.doctorMessage || 'None', type: 'string', important: true }
+            ];
+
+            spinner.style.display = 'block';
+            btn.querySelector('#btn-text').textContent = 'Submitting to physician...';
+
+            try {
+              const mdiRes = await fetch('/.netlify/functions/submitQuiz', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  patient: { first_name: firstName, last_name: lastName, email, phone_number: phone,
+                             date_of_birth: dob, gender: parseInt(gender), address, city, state, zip_code: zip },
+                  product: productKey,
+                  quiz_answers: quizAnswers,
+                  allergies: quizData.allergies || 'None reported',
+                  current_medications: quizData.medications || 'None reported',
+                  medical_conditions: [quizData.conditions || '', quizData.surgeries ? 'Surgeries: ' + quizData.surgeries : ''].filter(Boolean).join('; ') || 'None reported',
+                  social_history: { smoking: quizData.smoking, alcohol: quizData.alcohol }
+                })
+              });
+              const mdiData = await mdiRes.json();
+              if (mdiData.patient_id) {
+                sessionStorage.setItem('freeley_patient_id', mdiData.patient_id);
+                sessionStorage.setItem('freeley_case_id', mdiData.case_id);
+                sessionStorage.setItem('freeley_product', productKey);
+              }
+            } catch(mdiErr) {
+              console.error('[Freeley] MDI submission failed — saving to retry queue:', mdiErr);
+              try {
+                const retryPayload = {
+                  payment_intent_id: paymentIntent.id,
+                  patient: { first_name: firstName, last_name: lastName, email, phone_number: phone,
+                             date_of_birth: dob, gender: parseInt(gender), address, city, state, zip_code: zip },
+                  product: productKey,
+                  quiz_answers: quizAnswers,
+                  allergies: quizData.allergies || 'None reported',
+                  current_medications: quizData.medications || 'None reported',
+                  medical_conditions: [quizData.conditions || '', quizData.surgeries ? 'Surgeries: ' + quizData.surgeries : ''].filter(Boolean).join('; ') || 'None reported'
+                };
+                await fetch('/.netlify/functions/savePendingCase', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(retryPayload)
+                });
+                console.log('[Freeley] Pending case saved to retry queue successfully');
+              } catch(retryErr) {
+                console.error('[Freeley] CRITICAL: Failed to save to retry queue:', retryErr);
+              }
+            }
+
+            window.location.href = '/hub.html?payment=success&pi=' + paymentIntent.id;
+          }
         }
       } catch (err) {
         errorEl.textContent = 'Something went wrong. Please try again.';

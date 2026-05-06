@@ -34,6 +34,13 @@ exports.handler = async (event) => {
     }
 
     const product = PRODUCTS[resolvedKey];
+
+    // Guard: block submission for products on regulatory hold (e.g., GHK-Cu / LegitScript)
+    if (product._hold) {
+      console.warn('[SUBMIT QUIZ] Blocked submission for held product: ' + resolvedKey + ' — ' + (product._hold_reason || 'regulatory hold'));
+      return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ error: 'This product is temporarily unavailable due to regulatory review. Please check back soon or contact support.' }) };
+    }
+
     const pharmacyId = getPharmacyId(resolvedKey);
 
     console.log('[SUBMIT QUIZ] Creating patient: ' + patientData.email + ' | product: ' + resolvedKey + (productKey !== resolvedKey ? ' (from: ' + productKey + ', dose: ' + dose + ')' : ''));
