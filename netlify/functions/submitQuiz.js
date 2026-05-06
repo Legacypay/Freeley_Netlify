@@ -7,7 +7,7 @@
  */
 
 const { mdiRequest, CORS_HEADERS } = require('./lib/mdi-client');
-const { PRODUCTS, getPharmacyId } = require('./lib/products');
+const { PRODUCTS, getPharmacyId, resolveProductKey } = require('./lib/products');
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
@@ -19,27 +19,24 @@ exports.handler = async (event) => {
 
   try {
     const data = JSON.parse(event.body);
-    const { patient: patientData, product: productKey, quiz_answers, allergies, current_medications, medical_conditions } = data;
+    const { patient: patientData, product: productKey, dose, quiz_answers, allergies, current_medications, medical_conditions } = data;
 
     if (!patientData || !patientData.email || !patientData.first_name || !patientData.last_name) {
       return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ error: 'Patient name and email are required.' }) };
     }
 
-    if (!productKey || !PRODUCTS[productKey]) {
+    // Resolve product key — handles legacy 'semaglutide'/'tirzepatide' keys
+    // and dose-tiered lookups (e.g., semaglutide + dose 0.4 → semaglutide-s2)
+    const resolvedKey = resolveProductKey(productKey, dose);
+
+    if (!resolvedKey || !PRODUCTS[resolvedKey]) {
       return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ error: 'Invalid product: "' + productKey + '". Valid options: ' + Object.keys(PRODUCTS).join(', ') }) };
     }
 
-    const product = PRODUCTS[productKey];
+    const product = PRODUCTS[resolvedKey];
+    const pharmacyId = getPharmacyId(resolvedKey);
 
-    // Guard: block submission for offerings that don't have MDI UUIDs yet
-    if (product._pending || product.offering_id === 'PENDING_UUID') {
-      console.warn('[SUBMIT QUIZ] Blocked submission for pending product: ' + productKey);
-      return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ error: 'This product is not yet available. Please check back soon or contact support.' }) };
-    }
-
-    const pharmacyId = getPharmacyId(productKey);
-
-    console.log('[SUBMIT QUIZ] Creating patient: ' + patientData.email);
+    console.log('[SUBMIT QUIZ] Creating patient: ' + patientData.email + ' | product: ' + resolvedKey + (productKey !== resolvedKey ? ' (from: ' + productKey + ', dose: ' + dose + ')' : ''));
 
     const patientPayload = {
       first_name: patientData.first_name,
@@ -75,15 +72,15 @@ exports.handler = async (event) => {
       important: qa.important !== undefined ? qa.important : true,
       display_in_pdf: true,
       label: 'Q' + (idx + 1),
-      metadata: 'freeley-quiz-' + productKey
+      metadata: 'freeley-quiz-' + resolvedKey
     }));
 
-    console.log('[SUBMIT QUIZ] Creating case for product: ' + productKey);
+    console.log('[SUBMIT QUIZ] Creating case for product: ' + resolvedKey);
 
     const casePayload = {
       preferred_pharmacy_id: pharmacyId,
       case: {
-        metadata: 'freeley|' + productKey + '|' + patientData.email + '|' + Date.now(),
+        metadata: 'freeley|' + resolvedKey + '|' + patientData.email + '|' + Date.now(),
         case_prescriptions: [
           {
             partner_compound_id: product.offering_id,
@@ -109,7 +106,7 @@ exports.handler = async (event) => {
         await fetch(WEBHOOK_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: patientData.email, phone: patientData.phone_number, timestamp: new Date().toISOString(), source: 'Freeley_Quiz_MDI_Submission', product: productKey, mdi_patient_id: patientId, mdi_case_id: caseId })
+          body: JSON.stringify({ email: patientData.email, phone: patientData.phone_number, timestamp: new Date().toISOString(), source: 'Freeley_Quiz_MDI_Submission', product: resolvedKey, original_product: productKey !== resolvedKey ? productKey : undefined, dose: dose || undefined, mdi_patient_id: patientId, mdi_case_id: caseId })
         });
       } catch (e) {
         console.warn('[SUBMIT QUIZ] N8N webhook failed (non-critical):', e.message);
@@ -119,7 +116,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 200,
       headers: CORS_HEADERS,
-      body: JSON.stringify({ success: true, message: 'Your information has been submitted to a licensed physician for review.', patient_id: patientId, case_id: caseId, product: productKey, estimated_review: '24-48 hours' })
+      body: JSON.stringify({ success: true, message: 'Your information has been submitted to a licensed physician for review.', patient_id: patientId, case_id: caseId, product: resolvedKey, estimated_review: '24-48 hours' })
     };
 
   } catch (error) {
