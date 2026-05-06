@@ -10,13 +10,24 @@
  * Intake associations from MDI mapping spreadsheet (2026-05-06).
  *     Partner ID: f81508d1-3c53-4849-a636-1e9050a68e00
  *     API Credentials stored in Netlify env vars: MDI_CLIENT_ID, MDI_CLIENT_SECRET
+ *
+ * UPDATED 2026-05-06: Switched from deprecated /v1/patient/patients endpoint
+ * to /v1/partner/tests/vouchers/{partner} (creates patient + encounter in one call).
+ * Each product now carries its MDI questionnaire_id (intake form UUID).
  */
+
+// ── MDI Questionnaire IDs (from Partner Portal → Questionnaires) ──
+const QUESTIONNAIRE_IDS = {
+  'PERS-NEW/INITIAL-Semaglutide':  process.env.MDI_QUESTIONNAIRE_SEMA   || 'c77365a4-2945-41cc-bb4e-aa2f4db3fd2d',
+  'PERS-NEW/INITIAL-Tirzepatide':  process.env.MDI_QUESTIONNAIRE_TIRZ   || '6a2a9f59-da27-495f-8ae6-e1f0203b1693'
+};
 
 const PRODUCTS = {
 
   // ── Weight Loss: Semaglutide (5 dose tiers) ────────────────
   'semaglutide-s1': {
     offering_id: process.env.MDI_OFFERING_SEMA_S1 || '69a90f36-2f33-4c25-a07b-7093a85474ab',
+    questionnaire_id: QUESTIONNAIRE_IDS['PERS-NEW/INITIAL-Semaglutide'],
     name: 'Semaglutide/Glycine/B12 (0.2mg)',
     mdi_offering_name: 'DTP-S1-Semaglutide 5mg/Glycine 5mg/B12 1mg/mL (0.2mg)',
     intake: 'PERS new / initial sema & refill',
@@ -35,6 +46,7 @@ const PRODUCTS = {
 
   'semaglutide-s2': {
     offering_id: process.env.MDI_OFFERING_SEMA_S2 || 'de126388-cb1e-4ce6-89b6-277546c9f74b',
+    questionnaire_id: QUESTIONNAIRE_IDS['PERS-NEW/INITIAL-Semaglutide'],
     name: 'Semaglutide/Glycine/B12 (0.4mg)',
     mdi_offering_name: 'DTP-S2-Semaglutide 5mg/Glycine 5mg/B12 1mg/mL (0.4mg)',
     intake: 'PERS new / initial sema & refill',
@@ -53,6 +65,7 @@ const PRODUCTS = {
 
   'semaglutide-s3': {
     offering_id: process.env.MDI_OFFERING_SEMA_S3 || 'ea72f8dc-30c4-49e0-a1fb-c4c1a9b9428e',
+    questionnaire_id: QUESTIONNAIRE_IDS['PERS-NEW/INITIAL-Semaglutide'],
     name: 'Semaglutide/Glycine/B12 (0.9mg)',
     mdi_offering_name: 'DTP-S3-Semaglutide 5mg/Glycine 5mg/B12 1mg/mL (0.9mg)',
     intake: 'PERS new / initial sema & refill',
@@ -71,6 +84,7 @@ const PRODUCTS = {
 
   'semaglutide-s4': {
     offering_id: process.env.MDI_OFFERING_SEMA_S4 || '6577a457-f7f9-4f28-8962-02fca0300687',
+    questionnaire_id: QUESTIONNAIRE_IDS['PERS-NEW/INITIAL-Semaglutide'],
     name: 'Semaglutide/Glycine/B12 (1.5mg)',
     mdi_offering_name: 'DTP-S4-Semaglutide 5mg/Glycine 5mg/B12 1mg/mL (1.5mg)',
     intake: 'PERS new / initial sema & refill',
@@ -89,6 +103,7 @@ const PRODUCTS = {
 
   'semaglutide-s5': {
     offering_id: process.env.MDI_OFFERING_SEMA_S5 || 'bac909b1-12d2-4d19-bc86-8c2ac83cbada',
+    questionnaire_id: QUESTIONNAIRE_IDS['PERS-NEW/INITIAL-Semaglutide'],
     name: 'Semaglutide/Glycine/B12 (2.2mg)',
     mdi_offering_name: 'DTP-S5-Semaglutide 5mg/Glycine 5mg/B12 1mg/mL (2.2mg)',
     intake: 'PERS new / initial sema & refill',
@@ -108,6 +123,7 @@ const PRODUCTS = {
   // ── Weight Loss: Tirzepatide (6 dose tiers) ────────────────
   'tirzepatide-t1': {
     offering_id: process.env.MDI_OFFERING_TIRZ_T1 || '63e43919-008c-40b9-abcc-1f3473e8fcbe',
+    questionnaire_id: QUESTIONNAIRE_IDS['PERS-NEW/INITIAL-Tirzepatide'],
     name: 'Tirzepatide/Glycine/B12 (2mg)',
     mdi_offering_name: 'DTP- T1 (2mg)Tirzepatide 10mg/Glycine 5mg/B12 500mcg/mL 1mL vial',
     intake: 'PERS new / initial tirzep & refill',
@@ -126,6 +142,7 @@ const PRODUCTS = {
 
   'tirzepatide-t2': {
     offering_id: process.env.MDI_OFFERING_TIRZ_T2 || 'dc3ed2ef-069e-4c70-8ed3-4eeef8008993',
+    questionnaire_id: QUESTIONNAIRE_IDS['PERS-NEW/INITIAL-Tirzepatide'],
     name: 'Tirzepatide/Glycine/B12 (4mg)',
     mdi_offering_name: 'DTP-T2, (4mg) Tirzepatide/Glycine/B12 10mg/5mg/500mcg/ml 2mL Vial',
     intake: 'PERS new / initial tirzep & refill',
@@ -144,6 +161,7 @@ const PRODUCTS = {
 
   'tirzepatide-t3': {
     offering_id: process.env.MDI_OFFERING_TIRZ_T3 || 'd1756e5c-81dc-4578-be8d-fce8374b19b1',
+    questionnaire_id: QUESTIONNAIRE_IDS['PERS-NEW/INITIAL-Tirzepatide'],
     name: 'Tirzepatide/Glycine/B12 (7mg)',
     mdi_offering_name: 'DTP- T3, (7mg) Tirzepatide/Glycine/B12 10mg + 5mg + 500mcg/ml 3ml (vial)',
     intake: 'PERS new / initial tirzep & refill',
@@ -162,6 +180,7 @@ const PRODUCTS = {
 
   'tirzepatide-t4': {
     offering_id: process.env.MDI_OFFERING_TIRZ_T4 || '14a12016-2b9f-47ea-a7df-0d2a5da1c960',
+    questionnaire_id: QUESTIONNAIRE_IDS['PERS-NEW/INITIAL-Tirzepatide'],
     name: 'Tirzepatide/Glycine/B12 (9mg)',
     mdi_offering_name: 'DTP-T4, (9mg) Tirzepatide/Glycine/B12 10mg/5mg/500mcg/ml 4mL Vial',
     intake: 'PERS new / initial tirzep & refill',
@@ -180,6 +199,7 @@ const PRODUCTS = {
 
   'tirzepatide-t5': {
     offering_id: process.env.MDI_OFFERING_TIRZ_T5 || '0ff7325b-f278-47e9-8b2b-88679fbea3e3',
+    questionnaire_id: QUESTIONNAIRE_IDS['PERS-NEW/INITIAL-Tirzepatide'],
     name: 'Tirzepatide/Glycine/B12 (12mg)',
     mdi_offering_name: 'DTP-T5, (12mg)INJ Tirzepatide/Glycine/B12 10mg/5mg/500mcg/ml 3mL Vial',
     intake: 'PERS new / initial tirzep & refill',
@@ -198,6 +218,7 @@ const PRODUCTS = {
 
   'tirzepatide-t6': {
     offering_id: process.env.MDI_OFFERING_TIRZ_T6 || '780818ad-c2f7-4eca-8875-09c3ead9dcc5',
+    questionnaire_id: QUESTIONNAIRE_IDS['PERS-NEW/INITIAL-Tirzepatide'],
     name: 'Tirzepatide/Glycine/B12 (14mg)',
     mdi_offering_name: 'DTP-T6, (14mg) INJ Tirzepatide/Glycine/B12 10mg/5mg/500mcg/ml 3mL Vial',
     intake: 'PERS new / initial tirzep & refill',
@@ -568,4 +589,4 @@ function getPharmacyId(productKey) {
   return PHARMACIES[product.category] || PHARMACIES.default;
 }
 
-module.exports = { PRODUCTS, PHARMACIES, getPharmacyId, resolveProductKey, SEMAGLUTIDE_TIERS, TIRZEPATIDE_TIERS };
+module.exports = { PRODUCTS, PHARMACIES, QUESTIONNAIRE_IDS, getPharmacyId, resolveProductKey, SEMAGLUTIDE_TIERS, TIRZEPATIDE_TIERS };

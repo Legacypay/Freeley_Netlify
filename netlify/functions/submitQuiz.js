@@ -1,13 +1,22 @@
 /**
  * Netlify Function: submitQuiz
  * Called when a patient completes the Freeley checkout.
- * Creates a patient in MDI and submits a case with the selected medication.
+ * Creates a patient + encounter in MDI via the partner voucher endpoint.
+ *
+ * UPDATED 2026-05-06: Migrated from deprecated two-step flow
+ *   (POST /v1/patient/patients → POST /v1/patient/patients/{id}/cases)
+ * to single-call endpoint:
+ *   POST /v1/partner/tests/vouchers/{partnerId}
+ * which creates both the patient and encounter (case) in one request.
  *
  * POST /.netlify/functions/submitQuiz
  */
 
 const { mdiRequest, CORS_HEADERS } = require('./lib/mdi-client');
 const { PRODUCTS, getPharmacyId, resolveProductKey } = require('./lib/products');
+
+// MDI Partner ID — from the partner portal URL
+const MDI_PARTNER_ID = process.env.MDI_PARTNER_ID || 'f81508d1-3c53-4849-a636-1e9050a68e00';
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
@@ -41,37 +50,38 @@ exports.handler = async (event) => {
       return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ error: 'This product is temporarily unavailable due to regulatory review. Please check back soon or contact support.' }) };
     }
 
+    // Require questionnaire_id for MDI submission
+    if (!product.questionnaire_id) {
+      console.error('[SUBMIT QUIZ] Missing questionnaire_id for product: ' + resolvedKey);
+      return { statusCode: 500, headers: CORS_HEADERS, body: JSON.stringify({ error: 'Product configuration error. Please contact support.' }) };
+    }
+
     const pharmacyId = getPharmacyId(resolvedKey);
 
-    console.log('[SUBMIT QUIZ] Creating patient: ' + patientData.email + ' | product: ' + resolvedKey + (productKey !== resolvedKey ? ' (from: ' + productKey + ', dose: ' + dose + ')' : ''));
+    console.log('[SUBMIT QUIZ] Creating patient + encounter: ' + patientData.email + ' | product: ' + resolvedKey + (productKey !== resolvedKey ? ' (from: ' + productKey + ', dose: ' + dose + ')' : ''));
 
-    const patientPayload = {
+    // ── Build patient object per MDI PostVoucherPatientCaseRequest schema ──
+    const patient = {
       first_name: patientData.first_name,
       last_name: patientData.last_name,
       email: patientData.email,
-      date_of_birth: patientData.date_of_birth,
+      date_of_birth: patientData.date_of_birth || null,
       gender: patientData.gender || 0,
-      phone_number: patientData.phone_number,
-      phone_type: 2,
+      phone_number: patientData.phone_number || '',
+      phone_type: '2', // mobile
       address: {
-        address: patientData.address,
-        city_name: patientData.city,
-        state_name: patientData.state,
-        zip_code: patientData.zip_code
-      },
-      allergies: allergies || 'None reported',
-      current_medications: current_medications || 'None reported',
-      medical_conditions: medical_conditions || 'None reported',
-      pregnancy: false
+        address: patientData.address || '',
+        address2: patientData.address2 || null,
+        city_name: patientData.city || '',
+        state_name: patientData.state || '',
+        zip_code: patientData.zip_code || ''
+      }
     };
 
-    if (patientData.weight) patientPayload.weight = patientData.weight;
-    if (patientData.height) patientPayload.height = patientData.height;
+    if (patientData.weight) patient.weight = patientData.weight;
+    if (patientData.height) patient.height = patientData.height;
 
-    const patientResult = await mdiRequest('POST', '/v1/patient/patients', patientPayload);
-    const patientId = patientResult.patient_id;
-    console.log('[SUBMIT QUIZ] Patient created: ' + patientId);
-
+    // ── Build case_questions from quiz answers ──
     const caseQuestions = (quiz_answers || []).map((qa, idx) => ({
       question: qa.question,
       answer: String(qa.answer),
@@ -82,38 +92,61 @@ exports.handler = async (event) => {
       metadata: 'freeley-quiz-' + resolvedKey
     }));
 
-    console.log('[SUBMIT QUIZ] Creating case for product: ' + resolvedKey);
-
-    const casePayload = {
-      preferred_pharmacy_id: pharmacyId,
-      case: {
-        metadata: 'freeley|' + resolvedKey + '|' + patientData.email + '|' + Date.now(),
-        case_prescriptions: [
-          {
-            partner_compound_id: product.offering_id,
-            refills: product.default_refills,
-            quantity: product.default_quantity,
-            days_supply: product.default_days_supply,
-            directions: product.default_directions,
-            no_substitutions: true
-          }
-        ],
-        case_questions: caseQuestions,
-        diseases: product.icd10 ? [{ icd10_code: product.icd10 }] : []
-      }
+    // ── Build case object ──
+    const caseObj = {
+      metadata: 'freeley|' + resolvedKey + '|' + patientData.email + '|' + Date.now(),
+      is_additional_approval_needed: null,
+      case_prescriptions: [
+        {
+          offering_id: product.offering_id,
+          partner_compound_id: product.offering_id,
+          refills: product.default_refills,
+          quantity: product.default_quantity,
+          days_supply: product.default_days_supply,
+          directions: product.default_directions,
+          no_substitutions: true
+        }
+      ],
+      case_questions: caseQuestions,
+      case_files: []
     };
 
-    const caseResult = await mdiRequest('POST', '/v1/patient/patients/' + patientId + '/cases', casePayload);
-    const caseId = caseResult.case_id;
-    console.log('[SUBMIT QUIZ] Case created: ' + caseId);
+    // ── Build completion_time (HH:MM:SS format, required by MDI) ──
+    const now = new Date();
+    const completionTime = String(now.getHours()).padStart(2, '0') + ':' +
+                           String(now.getMinutes()).padStart(2, '0') + ':' +
+                           String(now.getSeconds()).padStart(2, '0');
 
+    // ── Single API call: POST /v1/partner/tests/vouchers/{partnerId} ──
+    // Creates both the patient and encounter (case) in one request
+    const voucherPayload = {
+      questionnaire_id: product.questionnaire_id,
+      completion_time: completionTime,
+      preferred_pharmacy_id: pharmacyId || null,
+      patient: patient,
+      case: caseObj
+    };
+
+    console.log('[SUBMIT QUIZ] Submitting to MDI voucher endpoint for partner: ' + MDI_PARTNER_ID);
+
+    const result = await mdiRequest(
+      'POST',
+      '/v1/partner/tests/vouchers/' + MDI_PARTNER_ID,
+      voucherPayload
+    );
+
+    const encounterId = result.id;
+    const patientId = result.patient_id;
+    console.log('[SUBMIT QUIZ] Encounter created: ' + encounterId + ' | Patient: ' + patientId);
+
+    // ── N8N Webhook (non-critical) ──
     const WEBHOOK_URL = process.env.N8N_WEBHOOK_URL;
     if (WEBHOOK_URL) {
       try {
         await fetch(WEBHOOK_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: patientData.email, phone: patientData.phone_number, timestamp: new Date().toISOString(), source: 'Freeley_Quiz_MDI_Submission', product: resolvedKey, original_product: productKey !== resolvedKey ? productKey : undefined, dose: dose || undefined, mdi_patient_id: patientId, mdi_case_id: caseId })
+          body: JSON.stringify({ email: patientData.email, phone: patientData.phone_number, timestamp: new Date().toISOString(), source: 'Freeley_Quiz_MDI_Submission', product: resolvedKey, original_product: productKey !== resolvedKey ? productKey : undefined, dose: dose || undefined, mdi_patient_id: patientId, mdi_encounter_id: encounterId })
         });
       } catch (e) {
         console.warn('[SUBMIT QUIZ] N8N webhook failed (non-critical):', e.message);
@@ -123,7 +156,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 200,
       headers: CORS_HEADERS,
-      body: JSON.stringify({ success: true, message: 'Your information has been submitted to a licensed physician for review.', patient_id: patientId, case_id: caseId, product: resolvedKey, estimated_review: '24-48 hours' })
+      body: JSON.stringify({ success: true, message: 'Your information has been submitted to a licensed physician for review.', patient_id: patientId, case_id: encounterId, product: resolvedKey, estimated_review: '24-48 hours' })
     };
 
   } catch (error) {
