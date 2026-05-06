@@ -129,7 +129,6 @@ exports.handler = async (event) => {
   } catch (error) {
     console.error('[SUBMIT QUIZ] Error:', error);
     const statusCode = error.statusCode || 500;
-    // Temporarily include error details for debugging (TODO: remove before go-live)
-    return { statusCode, headers: CORS_HEADERS, body: JSON.stringify({ error: 'Unable to submit your information. Please try again or contact support.', debug_details: error.message }) };
+    return { statusCode, headers: CORS_HEADERS, body: JSON.stringify({ error: 'Unable to submit your information. Please try again or contact support.', details: process.env.NODE_ENV === 'development' ? error.message : undefined }) };
   }
 };
