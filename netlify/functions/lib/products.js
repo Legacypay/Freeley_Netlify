@@ -105,7 +105,7 @@ const PRODUCTS = {
     icd10: 'E66.9'
   },
 
-  // ── Weight Loss: Tirzepatide (4 active dose tiers) ─────────
+  // ── Weight Loss: Tirzepatide (6 dose tiers) ────────────────
   'tirzepatide-t1': {
     offering_id: process.env.MDI_OFFERING_TIRZ_T1 || '63e43919-008c-40b9-abcc-1f3473e8fcbe',
     name: 'Tirzepatide/Glycine/B12 (2mg)',
@@ -168,6 +168,42 @@ const PRODUCTS = {
     formula: '10mg/5mg/500mcg/mL',
     dose_tier: 'T4',
     dose_mg: 9,
+    default_directions: 'Inject as directed by your provider once weekly',
+    default_quantity: 1.0,
+    default_days_supply: 30,
+    default_refills: 0,
+    dispense_unit: 'Milliliter',
+    pharmacy: 'Strive Pharmacy',
+    category: 'weight-loss',
+    icd10: 'E66.9'
+  },
+
+  'tirzepatide-t5': {
+    offering_id: process.env.MDI_OFFERING_TIRZ_T5 || '0ff7325b-f278-47e9-8b2b-88679fbea3e3',
+    name: 'Tirzepatide/Glycine/B12 (12mg)',
+    mdi_offering_name: 'DTP-T5, (12mg)INJ Tirzepatide/Glycine/B12 10mg/5mg/500mcg/ml 3mL Vial',
+    intake: 'PERS new / initial tirzep & refill',
+    formula: '10mg/5mg/500mcg/mL',
+    dose_tier: 'T5',
+    dose_mg: 12,
+    default_directions: 'Inject as directed by your provider once weekly',
+    default_quantity: 1.0,
+    default_days_supply: 30,
+    default_refills: 0,
+    dispense_unit: 'Milliliter',
+    pharmacy: 'Strive Pharmacy',
+    category: 'weight-loss',
+    icd10: 'E66.9'
+  },
+
+  'tirzepatide-t6': {
+    offering_id: process.env.MDI_OFFERING_TIRZ_T6 || '780818ad-c2f7-4eca-8875-09c3ead9dcc5',
+    name: 'Tirzepatide/Glycine/B12 (14mg)',
+    mdi_offering_name: 'DTP-T6, (14mg) INJ Tirzepatide/Glycine/B12 10mg/5mg/500mcg/ml 3mL Vial',
+    intake: 'PERS new / initial tirzep & refill',
+    formula: '10mg/5mg/500mcg/mL',
+    dose_tier: 'T6',
+    dose_mg: 14,
     default_directions: 'Inject as directed by your provider once weekly',
     default_quantity: 1.0,
     default_days_supply: 30,
@@ -358,10 +394,12 @@ const PRODUCTS = {
     dispense_unit: 'Milliliter',
     pharmacy: 'Strive Pharmacy',
     category: 'hair-loss',
-    icd10: 'L65.9'
-    // NOTE: GHK-Cu was previously removed per FDA 503A update (April 15, 2026)
-    // but MDI has re-added it as a DTP (Direct-to-Pharmacy) offering via Strive (503B?)
-    // Confirm with MDI/Strive that this is 503B compliant before going live
+    icd10: 'L65.9',
+    // HOLD: GHK-Cu cannot be marketed until cleared by FDA per LegitScript
+    // healthcare merchant certification compliance. Removed from website.
+    // MDI has it as a DTP offering but we block submissions until FDA clears it.
+    _hold: true,
+    _hold_reason: 'GHK-Cu pending FDA clearance — LegitScript compliance hold'
   },
 
   // ── Sexual Wellness ──────────────────────────────────────────
@@ -484,7 +522,9 @@ const TIRZEPATIDE_TIERS = {
   2:  'tirzepatide-t1',
   4:  'tirzepatide-t2',
   7:  'tirzepatide-t3',
-  9:  'tirzepatide-t4'
+  9:  'tirzepatide-t4',
+  12: 'tirzepatide-t5',
+  14: 'tirzepatide-t6'
 };
 
 /**

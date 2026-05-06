@@ -126,14 +126,24 @@ test('All products have mdi_offering_name field', () => {
   }
 });
 
-test('Product count matches expected (26 active DTP offerings)', () => {
+test('Product count matches expected (28 active DTP offerings)', () => {
   const count = Object.keys(PRODUCTS).length;
-  assert(count === 26, `Expected 26 products, found ${count}`);
+  assert(count === 28, `Expected 28 products, found ${count}`);
 });
 
 test('No pending products remain', () => {
   const pending = Object.entries(PRODUCTS).filter(([, p]) => p._pending);
   assert(pending.length === 0, `Found ${pending.length} pending products: ${pending.map(([k]) => k).join(', ')}`);
+});
+
+test('Held products are correctly flagged with reason', () => {
+  const held = Object.entries(PRODUCTS).filter(([, p]) => p._hold);
+  for (const [key, p] of held) {
+    assert(p._hold_reason, `Held product ${key} should have a _hold_reason`);
+  }
+  if (held.length > 0) {
+    console.log(`     (${held.length} on hold: ${held.map(([k, p]) => k + ' — ' + p._hold_reason).join('; ')})`);
+  }
 });
 
 // ── 2. Dose-Tiered Products ────────────────────────────────
@@ -147,10 +157,10 @@ test('Semaglutide has 5 dose tiers (S1-S5)', () => {
   }
 });
 
-test('Tirzepatide has 4 dose tiers (T1-T4)', () => {
+test('Tirzepatide has 6 dose tiers (T1-T6)', () => {
   const tirzTiers = Object.keys(PRODUCTS).filter(k => k.startsWith('tirzepatide-t'));
-  assert(tirzTiers.length === 4, `Expected 4 tirzepatide tiers, found ${tirzTiers.length}: ${tirzTiers.join(', ')}`);
-  for (let i = 1; i <= 4; i++) {
+  assert(tirzTiers.length === 6, `Expected 6 tirzepatide tiers, found ${tirzTiers.length}: ${tirzTiers.join(', ')}`);
+  for (let i = 1; i <= 6; i++) {
     assert(PRODUCTS[`tirzepatide-t${i}`], `Missing tirzepatide-t${i}`);
   }
 });
@@ -170,7 +180,7 @@ test('Semaglutide dose tiers are correctly ordered', () => {
 
 test('Tirzepatide dose tiers are correctly ordered', () => {
   const doses = [];
-  for (let i = 1; i <= 4; i++) {
+  for (let i = 1; i <= 6; i++) {
     const p = PRODUCTS[`tirzepatide-t${i}`];
     assert(p.dose_mg, `tirzepatide-t${i} missing dose_mg`);
     doses.push(p.dose_mg);
@@ -275,7 +285,7 @@ test('Category product counts match expected', () => {
     counts[p.category] = (counts[p.category] || 0) + 1;
   }
   console.log(`     weight-loss: ${counts['weight-loss']}, longevity: ${counts['longevity']}, hair-loss: ${counts['hair-loss']}, sexual-wellness: ${counts['sexual-wellness']}`);
-  assert(counts['weight-loss'] === 9, `Weight loss should have 9 products (5 sema + 4 tirz), got ${counts['weight-loss']}`);
+  assert(counts['weight-loss'] === 11, `Weight loss should have 11 products (5 sema + 6 tirz), got ${counts['weight-loss']}`);
   assert(counts['longevity'] === 6, `Longevity should have 6 products, got ${counts['longevity']}`);
   assert(counts['hair-loss'] === 5, `Hair loss should have 5 products, got ${counts['hair-loss']}`);
   assert(counts['sexual-wellness'] === 6, `Sexual wellness should have 6 products, got ${counts['sexual-wellness']}`);
@@ -409,6 +419,20 @@ test('submitQuiz rejects invalid product key', async () => {
   });
   assert(res.statusCode === 400, `Expected 400, got ${res.statusCode}`);
   assert(JSON.parse(res.body).error.includes('Invalid product'), 'Should say invalid product');
+});
+
+test('submitQuiz blocks held products (GHK-Cu)', async () => {
+  delete require.cache[require.resolve('../netlify/functions/submitQuiz')];
+  const { handler } = require('../netlify/functions/submitQuiz');
+  const res = await handler({
+    httpMethod: 'POST',
+    body: JSON.stringify({
+      patient: { email: 'test@test.com', first_name: 'Test', last_name: 'User' },
+      product: 'hair-topical'
+    })
+  });
+  assert(res.statusCode === 400, `Expected 400, got ${res.statusCode}`);
+  assert(JSON.parse(res.body).error.includes('regulatory'), 'Should mention regulatory hold');
 });
 
 test('submitQuiz accepts legacy "semaglutide" key with dose', async () => {
