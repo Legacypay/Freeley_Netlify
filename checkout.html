@@ -1181,10 +1181,21 @@
       banner.innerHTML = '⚠️ TEST MODE — Payment bypassed. Orders will submit directly to MDI without charging.';
       document.body.prepend(banner);
       document.body.style.paddingTop = '44px';
-      // Hide the Stripe payment element since it's not needed
+      // Hide the entire payment section since it's not needed in test mode
       const stripeEl = document.getElementById('stripe-payment-element');
       if (stripeEl) {
-        stripeEl.innerHTML = '<div style="text-align:center;padding:20px;background:#fef3c7;border:2px dashed #f59e0b;border-radius:8px;color:#92400e;font-size:14px;font-weight:600;">💳 Payment Bypassed (Test Mode)</div>';
+        // Hide the Stripe element, payment box, express checkout, and payment header
+        const paymentBox = stripeEl.closest('.payment-box');
+        if (paymentBox) paymentBox.style.display = 'none';
+        const expressCheckout = document.querySelector('.express-checkout');
+        if (expressCheckout) expressCheckout.style.display = 'none';
+        // Replace the "Enter Payment Details" label with a bypass notice
+        const sectionLabels = document.querySelectorAll('.section-label');
+        sectionLabels.forEach(label => {
+          if (label.textContent.trim() === 'Enter Payment Details') {
+            label.innerHTML = '<div style="text-align:center;padding:20px;background:#fef3c7;border:2px dashed #f59e0b;border-radius:12px;color:#92400e;font-size:15px;font-weight:600;">💳 Payment Bypassed — Test Mode Active<div style="font-size:12px;font-weight:400;margin-top:6px;color:#a16207;">Click "Complete Secure Order" to submit directly to MDI without payment.</div></div>';
+          }
+        });
       }
     }
 
@@ -1471,7 +1482,7 @@
 
     // Initialize
     renderPlans();
-    initStripe();
+    if (!IS_TEST_MODE) { initStripe(); }
   </script>
 </body>
 </html>
