@@ -13,6 +13,7 @@
  *
  * UPDATED 2026-05-06: Switched from deprecated /v1/patient/patients endpoint
  * to /v1/partner/tests/vouchers/{partner} (creates patient + encounter in one call).
+ * Auth endpoint: POST /v1/partner/auth/token (NOT /oauth/token). Requires scope.
  * Each product now carries its MDI questionnaire_id (intake form UUID).
  */
 

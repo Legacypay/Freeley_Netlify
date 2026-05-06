@@ -81,32 +81,29 @@ exports.handler = async (event) => {
         const product = PRODUCTS[productKey];
         const pharmacyId = getPharmacyId(productKey);
 
-        // Create patient in MDI
-        const patientPayload = {
+        // MDI Partner ID
+        const MDI_PARTNER_ID = process.env.MDI_PARTNER_ID || 'f81508d1-3c53-4849-a636-1e9050a68e00';
+
+        // Build patient object for voucher endpoint
+        const patient = {
           first_name: patientData.first_name,
           last_name: patientData.last_name,
           email: patientData.email,
-          date_of_birth: patientData.date_of_birth,
+          date_of_birth: patientData.date_of_birth || null,
           gender: patientData.gender || 0,
-          phone_number: patientData.phone_number,
-          phone_type: 2,
+          phone_number: patientData.phone_number || '',
+          phone_type: '2',
           address: {
-            address: patientData.address,
-            city_name: patientData.city,
-            state_name: patientData.state,
-            zip_code: patientData.zip_code
-          },
-          allergies: allergies || 'None reported',
-          current_medications: current_medications || 'None reported',
-          medical_conditions: medical_conditions || 'None reported',
-          pregnancy: false
+            address: patientData.address || '',
+            address2: patientData.address2 || null,
+            city_name: patientData.city || '',
+            state_name: patientData.state || '',
+            zip_code: patientData.zip_code || ''
+          }
         };
 
-        if (patientData.weight) patientPayload.weight = patientData.weight;
-        if (patientData.height) patientPayload.height = patientData.height;
-
-        const patientResult = await mdiRequest('POST', '/v1/patient/patients', patientPayload);
-        const patientId = patientResult.patient_id;
+        if (patientData.weight) patient.weight = patientData.weight;
+        if (patientData.height) patient.height = patientData.height;
 
         // Build case questions from quiz answers
         const caseQuestions = (quiz_answers || []).map((qa, idx) => ({
@@ -119,34 +116,49 @@ exports.handler = async (event) => {
           metadata: 'freeley-quiz-' + productKey
         }));
 
-        // Create case
-        const casePayload = {
-          preferred_pharmacy_id: pharmacyId,
-          case: {
-            metadata: 'freeley|' + productKey + '|' + patientData.email + '|' + Date.now() + '|retry-' + record.retry_count,
-            case_prescriptions: [{
-              partner_compound_id: product.offering_id,
-              refills: product.default_refills,
-              quantity: product.default_quantity,
-              days_supply: product.default_days_supply,
-              directions: product.default_directions,
-              no_substitutions: true
-            }],
-            case_questions: caseQuestions,
-            diseases: product.icd10 ? [{ icd10_code: product.icd10 }] : []
-          }
+        // Build case object
+        const caseObj = {
+          metadata: 'freeley|' + productKey + '|' + patientData.email + '|' + Date.now() + '|retry-' + record.retry_count,
+          is_additional_approval_needed: null,
+          case_prescriptions: [{
+            offering_id: product.offering_id,
+            partner_compound_id: product.offering_id,
+            refills: product.default_refills,
+            quantity: product.default_quantity,
+            days_supply: product.default_days_supply,
+            directions: product.default_directions,
+            no_substitutions: true
+          }],
+          case_questions: caseQuestions,
+          case_files: [],
+          diseases: product.icd10 ? [{ icd10_code: product.icd10 }] : []
         };
 
-        const caseResult = await mdiRequest('POST', '/v1/patient/patients/' + patientId + '/cases', casePayload);
+        // Build completion_time (HH:MM:SS format, required by MDI)
+        const now2 = new Date();
+        const completionTime = String(now2.getHours()).padStart(2, '0') + ':' +
+                               String(now2.getMinutes()).padStart(2, '0') + ':' +
+                               String(now2.getSeconds()).padStart(2, '0');
+
+        // Single API call: POST /v1/partner/tests/vouchers/{partnerId}
+        const voucherPayload = {
+          questionnaire_id: product.questionnaire_id,
+          completion_time: completionTime,
+          preferred_pharmacy_id: pharmacyId || null,
+          patient: patient,
+          case: caseObj
+        };
+
+        const result = await mdiRequest('POST', '/v1/partner/tests/vouchers/' + MDI_PARTNER_ID, voucherPayload);
 
         // ── Success! Mark as completed ─────────────────────────
         record.status = 'completed';
         record.completed_at = new Date().toISOString();
-        record.mdi_patient_id = patientId;
-        record.mdi_case_id = caseResult.case_id;
+        record.mdi_patient_id = result.patient_id;
+        record.mdi_case_id = result.id;
         await store.setJSON(key, record);
 
-        console.log(`[RETRY MDI] ✅ SUCCESS: ${key} → Patient: ${patientId}, Case: ${caseResult.case_id} (retry #${record.retry_count})`);
+        console.log(`[RETRY MDI] ✅ SUCCESS: ${key} → Patient: ${result.patient_id}, Case: ${result.id} (retry #${record.retry_count})`);
 
         // Notify team of successful recovery
         await alertTeam(key, record, 'recovered');

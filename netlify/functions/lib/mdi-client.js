@@ -27,20 +27,33 @@ async function getAccessToken() {
   if (!clientId || !clientSecret) {
     throw new Error('Missing MDI_CLIENT_ID or MDI_CLIENT_SECRET. Set these in Netlify Dashboard > Site Settings > Environment Variables.');
   }
-  // MDI uses OAuth2 client_credentials grant at /oauth/token
-  const response = await fetch(BASE_URL + '/oauth/token', {
+  // MDI Partner OAuth2 — POST /v1/partner/auth/token (NOT /oauth/token)
+  // Requires scope parameter per API docs (PostPartnerAuthRequest schema)
+  const scope = process.env.MDI_AUTH_SCOPE || '*';
+  const response = await fetch(BASE_URL + '/v1/partner/auth/token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-    body: JSON.stringify({ grant_type: 'client_credentials', client_id: clientId, client_secret: clientSecret })
+    body: JSON.stringify({ grant_type: 'client_credentials', client_id: clientId, client_secret: clientSecret, scope: scope })
   });
   if (!response.ok) {
     const err = await response.text();
     throw new Error('MDI auth failed (' + response.status + '): ' + err);
   }
-  const data = await response.json();
-  cachedToken = data.access_token;
-  const expiresIn = data.expires_in || 3600;
-  tokenExpiresAt = now + (expiresIn * 1000);
+  const text = await response.text();
+  let data;
+  try { data = JSON.parse(text); } catch (e) { data = null; }
+  // MDI may return { access_token, expires_in, ... } or just a token string
+  if (data && data.access_token) {
+    cachedToken = data.access_token;
+    const expiresIn = data.expires_in || 3600;
+    tokenExpiresAt = now + (expiresIn * 1000);
+  } else if (typeof text === 'string' && text.length > 20) {
+    // Raw token string returned
+    cachedToken = text.replace(/^"|"$/g, ''); // strip wrapping quotes if any
+    tokenExpiresAt = now + (3600 * 1000); // default 1hr
+  } else {
+    throw new Error('MDI auth returned unexpected response: ' + text.slice(0, 200));
+  }
   return cachedToken;
 }
 
