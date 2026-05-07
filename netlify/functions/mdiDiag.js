@@ -1,19 +1,14 @@
 /**
  * Netlify Function: mdiDiag (TEMPORARY — DELETE AFTER TESTING)
- * Phase 5: Test sandbox voucher creation with correct environment_id.
- *
- * GET /.netlify/functions/mdiDiag              — basic probe + list environments
- * GET /.netlify/functions/mdiDiag?test=sandbox — test sandbox voucher creation with environment_id
+ * Phase 7: Deep-dive on /v1/partner/tests/vouchers/{partner} which now
+ * returns ErrorException (sandbox IS provisioned) instead of "no sandbox".
  */
 
 const { getAccessToken, CORS_HEADERS, BASE_URL } = require('./lib/mdi-client');
 
 const MDI_PARTNER_ID = process.env.MDI_PARTNER_ID || 'f81508d1-3c53-4849-a636-1e9050a68e00';
-
-// Discovered from portal Test Bench → Create Voucher → Sandbox
 const SANDBOX_ENVIRONMENT_ID = '6ab0181e-d52a-488f-a161-d64d576b2eba';
 const SEMA_QUESTIONNAIRE_ID = 'c77365a4-2945-41cc-bb4e-aa2f4db3fd2d';
-// Semaglutide S1 offering
 const SEMA_S1_OFFERING_ID = '69a90f36-2f33-4c25-a07b-7093a85474ab';
 
 async function apiCall(token, method, path, body) {
@@ -42,54 +37,86 @@ exports.handler = async (event) => {
     results.auth = 'ok';
 
     if (test === 'sandbox') {
-      const minimalPayload = {
+      const testEndpoint = '/v1/partner/tests/vouchers/' + MDI_PARTNER_ID;
+
+      // ── Test 1: Minimal with just questionnaire_id + environment_id ──
+      const res1 = await apiCall(token, 'POST', testEndpoint, {
         questionnaire_id: SEMA_QUESTIONNAIRE_ID,
         environment_id: SANDBOX_ENVIRONMENT_ID
-      };
+      });
+      results.test1_minimal = res1;
 
-      // ── Test 1: /v1/partner/tests/vouchers (no partner ID) ──
-      const res1 = await apiCall(token, 'POST', '/v1/partner/tests/vouchers', minimalPayload);
-      results.test1_tests_vouchers = { response: res1 };
-
-      // ── Test 2: /v1/partner/tests/vouchers/{partner_id} ──
-      const res2 = await apiCall(token, 'POST', '/v1/partner/tests/vouchers/' + MDI_PARTNER_ID, minimalPayload);
-      results.test2_tests_vouchers_with_id = { response: res2 };
-
-      // ── Test 3: Original /v1/partner/vouchers with environment_id (control) ──
-      const res3 = await apiCall(token, 'POST', '/v1/partner/vouchers', minimalPayload);
-      results.test3_partner_vouchers = { response: res3 };
-
-      // ── Test 4: Try demo:true flag with environment_id ──
-      const res4 = await apiCall(token, 'POST', '/v1/partner/vouchers', { ...minimalPayload, demo: true });
-      results.test4_demo_true = { response: res4 };
-
-      // ── Test 5: Try /api/ prefix path (portal may use this) ──
-      const res5 = await apiCall(token, 'POST', '/api/partners/' + MDI_PARTNER_ID + '/vouchers', minimalPayload);
-      results.test5_api_prefix = { response: res5 };
-
-      // ── Test 6: /v1/partner/vouchers with hold_status (matches portal payload exactly) ──
-      const portalPayload = {
+      // ── Test 2: With offerings ──
+      const res2 = await apiCall(token, 'POST', testEndpoint, {
         questionnaire_id: SEMA_QUESTIONNAIRE_ID,
         environment_id: SANDBOX_ENVIRONMENT_ID,
+        offerings: [{ id: SEMA_S1_OFFERING_ID }]
+      });
+      results.test2_with_offerings = res2;
+
+      // ── Test 3: Full payload (patient + case + offerings) ──
+      const ts = Date.now();
+      const res3 = await apiCall(token, 'POST', testEndpoint, {
+        questionnaire_id: SEMA_QUESTIONNAIRE_ID,
+        environment_id: SANDBOX_ENVIRONMENT_ID,
+        completion_time: '12:00:00',
+        patient: {
+          first_name: 'Test', last_name: 'Patient',
+          email: 'sandbox-' + ts + '@freeley-test.com',
+          date_of_birth: '1990-01-15',
+          gender: 1, phone_number: '5551234567', phone_type: '2',
+          address: {
+            address: '123 Test Street',
+            city_name: 'Miami', state_name: 'FL', zip_code: '33101'
+          }
+        },
+        case: {
+          metadata: 'freeley|semaglutide-s1|test|' + ts,
+          case_questions: [
+            { question: 'Weight?', answer: '200 lbs', type: 'string', important: true, display_in_pdf: true, label: 'Q1', metadata: 'test' }
+          ],
+          case_files: [],
+          diseases: [{ icd10_code: 'E66.9' }]
+        },
+        offerings: [{ id: SEMA_S1_OFFERING_ID }],
+        demo: true
+      });
+      results.test3_full = res3;
+
+      // ── Test 4: With hold_status false ──
+      const res4 = await apiCall(token, 'POST', testEndpoint, {
+        questionnaire_id: SEMA_QUESTIONNAIRE_ID,
+        environment_id: SANDBOX_ENVIRONMENT_ID,
+        offerings: [{ id: SEMA_S1_OFFERING_ID }],
         hold_status: false
+      });
+      results.test4_hold_status = res4;
+
+      // ── Test 5: GET the vouchers we created via portal to see their structure ──
+      const vouchers = await apiCall(token, 'GET', '/v1/partner/vouchers?environment_id=' + SANDBOX_ENVIRONMENT_ID);
+      results.test5_list_sandbox_vouchers = {
+        status: vouchers.status,
+        count: vouchers.data?.data?.length || 0,
+        first_voucher: vouchers.data?.data?.[0] || null
       };
-      const res6 = await apiCall(token, 'POST', '/v1/partner/vouchers', portalPayload);
-      results.test6_portal_match = { response: res6 };
+
+      // ── Test 6: Also try listing all vouchers and see if sandbox ones appear ──
+      const allVouchers = await apiCall(token, 'GET', '/v1/partner/vouchers');
+      if (allVouchers.data?.data) {
+        results.test6_all_vouchers = allVouchers.data.data.slice(0, 3).map(v => ({
+          id: v.id, status: v.status, environment_id: v.environment_id,
+          environment: v.environment, questionnaire_id: v.questionnaire_id,
+          created_at: v.created_at
+        }));
+      }
 
     } else {
-      // Basic probe — list partner info and vouchers
+      // Basic probe
       const partner = await apiCall(token, 'GET', '/v1/partner');
-      results.partner = partner;
+      results.partner = { status: partner.status, partner_status: partner.data?.data?.status, partner_name: partner.data?.data?.name };
 
       const vouchers = await apiCall(token, 'GET', '/v1/partner/vouchers');
       results.vouchers = { status: vouchers.status, count: vouchers.data?.data?.length || 0 };
-
-      // Try to list first few voucher IDs to see sandbox ones
-      if (vouchers.data?.data?.length > 0) {
-        results.recent_vouchers = vouchers.data.data.slice(0, 5).map(v => ({
-          id: v.id, environment: v.environment, status: v.status, created_at: v.created_at
-        }));
-      }
     }
 
     return {
