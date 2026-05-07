@@ -81,8 +81,10 @@ exports.handler = async (event) => {
         const product = PRODUCTS[productKey];
         const pharmacyId = getPharmacyId(productKey);
 
-        // MDI Partner ID
+        // MDI Partner ID + Environment ID
         const MDI_PARTNER_ID = process.env.MDI_PARTNER_ID || 'f81508d1-3c53-4849-a636-1e9050a68e00';
+        const MDI_SANDBOX_ENV_ID = '6ab0181e-d52a-488f-a161-d64d576b2eba';
+        const MDI_ENVIRONMENT_ID = process.env.MDI_ENVIRONMENT_ID || MDI_SANDBOX_ENV_ID;
 
         // Build patient object for voucher endpoint
         const patient = {
@@ -138,11 +140,13 @@ exports.handler = async (event) => {
         const isDemo = process.env.MDI_DEMO_MODE !== 'false';
         const voucherPayload = {
           questionnaire_id: product.questionnaire_id,
+          environment_id: MDI_ENVIRONMENT_ID,
           completion_time: completionTime,
           preferred_pharmacy_id: pharmacyId || null,
           patient: patient,
           case: caseObj,
           offerings: [{ id: product.offering_id }],
+          hold_status: false,
           demo: isDemo
         };
 
@@ -159,7 +163,7 @@ exports.handler = async (event) => {
 
         // Notify team of successful recovery
         await alertTeam(key, record, 'recovered');
-        results.push({ key, status: 'completed', case_id: caseResult.case_id });
+        results.push({ key, status: 'completed', case_id: result.id });
 
       } catch (mdiError) {
         // ── Failed — increment retry count ─────────────────────

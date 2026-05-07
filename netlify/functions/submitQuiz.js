@@ -19,6 +19,12 @@ const { PRODUCTS, getPharmacyId, resolveProductKey } = require('./lib/products')
 // MDI Partner ID — from the partner portal URL
 const MDI_PARTNER_ID = process.env.MDI_PARTNER_ID || 'f81508d1-3c53-4849-a636-1e9050a68e00';
 
+// MDI Environment IDs — discovered from portal Test Bench → Create Voucher
+// The environment_id is REQUIRED for voucher creation per PostPartnerVoucherRequest schema.
+// Switch to live environment once MDI moves partner status from "Integrating" to "Active".
+const MDI_SANDBOX_ENV_ID = '6ab0181e-d52a-488f-a161-d64d576b2eba';
+const MDI_ENVIRONMENT_ID = process.env.MDI_ENVIRONMENT_ID || MDI_SANDBOX_ENV_ID;
+
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 204, headers: CORS_HEADERS, body: '' };
@@ -124,11 +130,13 @@ exports.handler = async (event) => {
 
     const voucherPayload = {
       questionnaire_id: product.questionnaire_id,
+      environment_id: MDI_ENVIRONMENT_ID,
       completion_time: completionTime,
       preferred_pharmacy_id: pharmacyId || null,
       patient: patient,
       case: caseObj,
       offerings: [{ id: product.offering_id }],
+      hold_status: false,
       demo: isDemo
     };
 
