@@ -42,55 +42,39 @@ exports.handler = async (event) => {
     results.auth = 'ok';
 
     if (test === 'sandbox') {
-      // ── Test 1: Minimal voucher with just questionnaire_id + environment_id ──
       const minimalPayload = {
         questionnaire_id: SEMA_QUESTIONNAIRE_ID,
         environment_id: SANDBOX_ENVIRONMENT_ID
       };
-      const res1 = await apiCall(token, 'POST', '/v1/partner/vouchers', minimalPayload);
-      results.test1_minimal = { payload: minimalPayload, response: res1 };
 
-      // ── Test 2: With offerings array ──
-      const withOfferings = {
+      // ── Test 1: /v1/partner/tests/vouchers (no partner ID) ──
+      const res1 = await apiCall(token, 'POST', '/v1/partner/tests/vouchers', minimalPayload);
+      results.test1_tests_vouchers = { response: res1 };
+
+      // ── Test 2: /v1/partner/tests/vouchers/{partner_id} ──
+      const res2 = await apiCall(token, 'POST', '/v1/partner/tests/vouchers/' + MDI_PARTNER_ID, minimalPayload);
+      results.test2_tests_vouchers_with_id = { response: res2 };
+
+      // ── Test 3: Original /v1/partner/vouchers with environment_id (control) ──
+      const res3 = await apiCall(token, 'POST', '/v1/partner/vouchers', minimalPayload);
+      results.test3_partner_vouchers = { response: res3 };
+
+      // ── Test 4: Try demo:true flag with environment_id ──
+      const res4 = await apiCall(token, 'POST', '/v1/partner/vouchers', { ...minimalPayload, demo: true });
+      results.test4_demo_true = { response: res4 };
+
+      // ── Test 5: Try /api/ prefix path (portal may use this) ──
+      const res5 = await apiCall(token, 'POST', '/api/partners/' + MDI_PARTNER_ID + '/vouchers', minimalPayload);
+      results.test5_api_prefix = { response: res5 };
+
+      // ── Test 6: /v1/partner/vouchers with hold_status (matches portal payload exactly) ──
+      const portalPayload = {
         questionnaire_id: SEMA_QUESTIONNAIRE_ID,
         environment_id: SANDBOX_ENVIRONMENT_ID,
-        offerings: [{ id: SEMA_S1_OFFERING_ID }]
-      };
-      const res2 = await apiCall(token, 'POST', '/v1/partner/vouchers', withOfferings);
-      results.test2_with_offerings = { payload: withOfferings, response: res2 };
-
-      // ── Test 3: Full payload matching what submitQuiz.js will send ──
-      const fullPayload = {
-        questionnaire_id: SEMA_QUESTIONNAIRE_ID,
-        environment_id: SANDBOX_ENVIRONMENT_ID,
-        offerings: [{ id: SEMA_S1_OFFERING_ID }],
-        patient: {
-          first_name: 'Test',
-          last_name: 'Patient',
-          email: 'sandbox-test-' + Date.now() + '@freeley-test.com',
-          date_of_birth: '1990-01-15',
-          gender: 1,
-          phone_number: '5551234567',
-          phone_type: '2',
-          address: {
-            address: '123 Test Street',
-            city_name: 'Miami',
-            state_name: 'FL',
-            zip_code: '33101'
-          }
-        },
-        case: {
-          metadata: 'freeley|semaglutide-s1|sandbox-test|' + Date.now(),
-          case_questions: [
-            { question: 'Current weight?', answer: '200 lbs', type: 'string', important: true, display_in_pdf: true, label: 'Q1', metadata: 'freeley-quiz-semaglutide-s1' }
-          ],
-          case_files: [],
-          diseases: [{ icd10_code: 'E66.9' }]
-        },
         hold_status: false
       };
-      const res3 = await apiCall(token, 'POST', '/v1/partner/vouchers', fullPayload);
-      results.test3_full_payload = { response: res3 };
+      const res6 = await apiCall(token, 'POST', '/v1/partner/vouchers', portalPayload);
+      results.test6_portal_match = { response: res6 };
 
     } else {
       // Basic probe — list partner info and vouchers
