@@ -12,6 +12,11 @@
       "1": 89, "3": 79, "6": 69, "12": 59
     }
   },
+  "sexual-wellness": {
+    "default": {
+      "1": 89, "3": 79, "6": 69, "12": 59
+    }
+  },
   "longevity": {
     "default": {
       "1": 149, "3": 129, "6": 109, "12": 99
@@ -30,6 +35,7 @@
   "treatment_names": {
     "weight-loss": "GLP-1 Weight Loss Program",
     "ed": "Sexual Wellness Protocol",
+    "sexual-wellness": "Sexual Wellness Protocol",
     "longevity": "Longevity Optimization Stack",
     "hair-loss": "Hair Loss Treatment"
   }

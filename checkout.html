@@ -865,10 +865,22 @@
         ]
       },
       'ed': {
-        name: 'Sildenafil',
-        desc: 'Custom compounded daily treatment',
+        name: 'Tadalafil',
+        desc: 'Sublingual flex-dose tablet',
         planName: 'Sexual Wellness Protocol',
-        image: 'assets/brand/freeley_troche_transparent.png', 
+        image: 'assets/brand/freeley_troche_transparent.png',
+        plans: [
+          { months: 1, base: 89, overridePrice: 89, recommended: false },
+          { months: 3, base: 89, overridePrice: 79, recommended: false },
+          { months: 6, base: 89, overridePrice: 69, recommended: true },
+          { months: 12, base: 89, overridePrice: 59, recommended: false }
+        ]
+      },
+      'sexual-wellness': {
+        name: 'Tadalafil',
+        desc: 'Sublingual flex-dose tablet',
+        planName: 'Sexual Wellness Protocol',
+        image: 'assets/brand/freeley_troche_transparent.png',
         plans: [
           { months: 1, base: 89, overridePrice: 89, recommended: false },
           { months: 3, base: 89, overridePrice: 79, recommended: false },
@@ -886,6 +898,18 @@
           { months: 3, base: 149, overridePrice: 129, recommended: false },
           { months: 6, base: 149, overridePrice: 109, recommended: true },
           { months: 12, base: 149, overridePrice: 99, recommended: false }
+        ]
+      },
+      'hair-loss': {
+        name: 'Hair Growth Tablet',
+        desc: 'Biotin + Finasteride + Minoxidil compound',
+        planName: 'Hair Restoration Protocol',
+        image: 'assets/brand/freeley_troche_transparent.png',
+        plans: [
+          { months: 1, base: 49, overridePrice: 49, recommended: false },
+          { months: 3, base: 49, overridePrice: 39, recommended: false },
+          { months: 6, base: 49, overridePrice: 34, recommended: true },
+          { months: 12, base: 49, overridePrice: 29, recommended: false }
         ]
       }
     };
@@ -962,6 +986,39 @@
           currentConfig.name = 'NAD+';
           currentConfig.desc = 'Cellular energy & DNA repair';
           currentConfig.image = 'assets/brand/nad_vial.png';
+        }
+      } else if ((treatmentType === 'ed' || treatmentType === 'sexual-wellness') && compoundOverride) {
+        const cmp = compoundOverride.toLowerCase();
+        if (cmp === 'tadalafil-daily') {
+          currentConfig.name = 'Tadalafil (Daily)';
+          currentConfig.desc = '5mg sublingual flex-dose — daily use';
+        } else if (cmp === 'tadalafil-prn' || cmp === 'tadalafil') {
+          currentConfig.name = 'Tadalafil (As Needed)';
+          currentConfig.desc = '20mg sublingual flex-dose — as needed';
+        } else if (cmp === 'olympus-peak') {
+          currentConfig.name = 'Olympus Peak';
+          currentConfig.desc = 'Oxytocin / Bremelanotide / Tadalafil';
+        } else if (cmp === 'olympus-max') {
+          currentConfig.name = 'Olympus Max Peak';
+          currentConfig.desc = 'Oxytocin 40 IU / Bremelanotide 2 mg / Tadalafil 20 mg';
+        } else if (cmp === 'olympus') {
+          currentConfig.name = 'Olympus';
+          currentConfig.desc = 'Oxytocin / Bremelanotide — No Tadalafil';
+        } else if (cmp === 'olympus-plus') {
+          currentConfig.name = 'Olympus Plus';
+          currentConfig.desc = 'Oxytocin / Bremelanotide / Tadalafil (Low Dose)';
+        }
+      } else if (treatmentType === 'hair-loss' && compoundOverride) {
+        const cmp = compoundOverride.toLowerCase();
+        if (cmp === 'women-45plus' || cmp === 'ivy') {
+          currentConfig.name = 'Ivy Hair Tablet (Women 45+)';
+          currentConfig.desc = 'Minoxidil / Dutasteride with Biotin';
+        } else if (cmp === 'women-under45' || cmp === 'willow') {
+          currentConfig.name = 'Willow Hair Tablet (Women <45)';
+          currentConfig.desc = 'Minoxidil / Spironolactone with Biotin';
+        } else if (cmp === 'men' || cmp === 'cedar') {
+          currentConfig.name = 'Cedar Hair Growth Tablet';
+          currentConfig.desc = 'Biotin / Finasteride / Minoxidil';
         }
       }
       
@@ -1256,18 +1313,48 @@
 
           // Determine MDI product key from URL params
           const productKeyMap = {
-            'weight-loss-sema':      'semaglutide',
-            'weight-loss-tirz':      'tirzepatide',
-            'weight-loss':           'semaglutide',
-            'ed':                    'tadalafil-prn',
-            'longevity-nad':         'nad-plus',
-            'longevity-sermorelin':  'sermorelin-injectable',
-            'longevity':             'sermorelin-injectable',
-            'hair-loss':             parseInt(gender) === 1 ? 'hair-men' : 'hair-women-under45'
+            // Weight Loss
+            'weight-loss-sema':           'semaglutide',
+            'weight-loss-semaglutide':    'semaglutide',
+            'weight-loss-tirz':           'tirzepatide',
+            'weight-loss-tirzepatide':    'tirzepatide',
+            'weight-loss':                'semaglutide',
+            // Sexual Wellness
+            'ed':                         'tadalafil-daily',
+            'ed-tadalafil':               'tadalafil-daily',
+            'ed-tadalafil-daily':         'tadalafil-daily',
+            'ed-tadalafil-prn':           'tadalafil-prn',
+            'ed-olympus-peak':            'olympus-peak',
+            'ed-olympus-max':             'olympus-max',
+            'ed-olympus':                 'olympus',
+            'ed-olympus-plus':            'olympus-plus',
+            'sexual-wellness':            'tadalafil-daily',
+            'sexual-wellness-tadalafil':          'tadalafil-daily',
+            'sexual-wellness-tadalafil-daily':    'tadalafil-daily',
+            'sexual-wellness-tadalafil-prn':      'tadalafil-prn',
+            'sexual-wellness-olympus-peak':       'olympus-peak',
+            'sexual-wellness-olympus-max':        'olympus-max',
+            'sexual-wellness-olympus':            'olympus',
+            'sexual-wellness-olympus-plus':       'olympus-plus',
+            // Longevity
+            'longevity-nad':              'nad-plus',
+            'longevity-nad+':             'nad-plus',
+            'longevity-sermorelin':        'sermorelin-injectable',
+            'longevity-glutathione':       'glutathione-injectable',
+            'longevity-gluta':             'glutathione-injectable',
+            'longevity':                   'sermorelin-injectable',
+            // Hair Loss (gender-based default handled below)
+            'hair-loss-men':               'hair-men',
+            'hair-loss-cedar':             'hair-men',
+            'hair-loss-women-45plus':      'hair-women-45plus',
+            'hair-loss-ivy':               'hair-women-45plus',
+            'hair-loss-women-under45':     'hair-women-under45',
+            'hair-loss-willow':            'hair-women-under45',
+            'hair-loss':                   'hair-men'
           };
           let productKey = productKeyMap[treatmentType + (compoundOverride ? '-' + compoundOverride : '')] || productKeyMap[treatmentType] || 'semaglutide';
-          // Special case: hair gender
-          if (treatmentType === 'hair-loss') {
+          // Special case: hair defaults by gender if no compound override
+          if (treatmentType === 'hair-loss' && !compoundOverride) {
             productKey = parseInt(gender) === 1 ? 'hair-men' : 'hair-women-under45';
           }
 
@@ -1378,17 +1465,48 @@
 
             // Determine MDI product key from URL params
             const productKeyMap = {
-              'weight-loss-sema':      'semaglutide',
-              'weight-loss-tirz':      'tirzepatide',
-              'weight-loss':           'semaglutide',
-              'ed':                    'tadalafil-prn',
-              'longevity-nad':         'nad-plus',
-              'longevity-sermorelin':  'sermorelin-injectable',
-              'longevity':             'sermorelin-injectable',
-              'hair-loss':             parseInt(gender) === 1 ? 'hair-men' : 'hair-women-under45'
+              // Weight Loss
+              'weight-loss-sema':           'semaglutide',
+              'weight-loss-semaglutide':    'semaglutide',
+              'weight-loss-tirz':           'tirzepatide',
+              'weight-loss-tirzepatide':    'tirzepatide',
+              'weight-loss':                'semaglutide',
+              // Sexual Wellness
+              'ed':                         'tadalafil-daily',
+              'ed-tadalafil':               'tadalafil-daily',
+              'ed-tadalafil-daily':         'tadalafil-daily',
+              'ed-tadalafil-prn':           'tadalafil-prn',
+              'ed-olympus-peak':            'olympus-peak',
+              'ed-olympus-max':             'olympus-max',
+              'ed-olympus':                 'olympus',
+              'ed-olympus-plus':            'olympus-plus',
+              'sexual-wellness':            'tadalafil-daily',
+              'sexual-wellness-tadalafil':          'tadalafil-daily',
+              'sexual-wellness-tadalafil-daily':    'tadalafil-daily',
+              'sexual-wellness-tadalafil-prn':      'tadalafil-prn',
+              'sexual-wellness-olympus-peak':       'olympus-peak',
+              'sexual-wellness-olympus-max':        'olympus-max',
+              'sexual-wellness-olympus':            'olympus',
+              'sexual-wellness-olympus-plus':       'olympus-plus',
+              // Longevity
+              'longevity-nad':              'nad-plus',
+              'longevity-nad+':             'nad-plus',
+              'longevity-sermorelin':        'sermorelin-injectable',
+              'longevity-glutathione':       'glutathione-injectable',
+              'longevity-gluta':             'glutathione-injectable',
+              'longevity':                   'sermorelin-injectable',
+              // Hair Loss (gender-based default handled below)
+              'hair-loss-men':               'hair-men',
+              'hair-loss-cedar':             'hair-men',
+              'hair-loss-women-45plus':      'hair-women-45plus',
+              'hair-loss-ivy':               'hair-women-45plus',
+              'hair-loss-women-under45':     'hair-women-under45',
+              'hair-loss-willow':            'hair-women-under45',
+              'hair-loss':                   'hair-men'
             };
             let productKey = productKeyMap[treatmentType + (compoundOverride ? '-' + compoundOverride : '')] || productKeyMap[treatmentType] || 'semaglutide';
-            if (treatmentType === 'hair-loss') {
+            // Special case: hair defaults by gender if no compound override
+            if (treatmentType === 'hair-loss' && !compoundOverride) {
               productKey = parseInt(gender) === 1 ? 'hair-men' : 'hair-women-under45';
             }
 

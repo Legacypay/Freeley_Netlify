@@ -18,9 +18,27 @@
  */
 
 // ── MDI Questionnaire IDs (from Partner Portal → Questionnaires) ──
+// Retrieved via GET /v1/partner/questionnaires on 2026-05-07
 const QUESTIONNAIRE_IDS = {
-  'PERS-NEW/INITIAL-Semaglutide':  process.env.MDI_QUESTIONNAIRE_SEMA   || 'c77365a4-2945-41cc-bb4e-aa2f4db3fd2d',
-  'PERS-NEW/INITIAL-Tirzepatide':  process.env.MDI_QUESTIONNAIRE_TIRZ   || '6a2a9f59-da27-495f-8ae6-e1f0203b1693'
+  // Weight Loss
+  'PERS-NEW/INITIAL-Semaglutide':      process.env.MDI_QUESTIONNAIRE_SEMA              || 'c77365a4-2945-41cc-bb4e-aa2f4db3fd2d',
+  'PERS-NEW/INITIAL-Tirzepatide':      process.env.MDI_QUESTIONNAIRE_TIRZ              || '6a2a9f59-da27-495f-8ae6-e1f0203b1693',
+  // Longevity
+  'NAD+ Injection':                    process.env.MDI_QUESTIONNAIRE_NAD_INJ            || 'f3c247d5-9c9a-473b-a813-46e8d96dcfcc',
+  'Sermorelin INJECTION':              process.env.MDI_QUESTIONNAIRE_SERMORELIN_INJ     || '0c7cc2e5-3cab-4d00-861b-a185c8c7534d',
+  'Sermorelin Oral':                   process.env.MDI_QUESTIONNAIRE_SERMORELIN_ORAL    || '6c017f64-2003-43f5-a9e2-70edc45a9779',
+  'Sermorelin Nasal Spray':            process.env.MDI_QUESTIONNAIRE_SERMORELIN_NASAL   || '15347393-f6ac-4de8-9df9-d17668688334',
+  'Glutathione Medical Form':          process.env.MDI_QUESTIONNAIRE_GLUT_TROCHE        || '46b72995-1283-437f-b1c6-88e39bb75769',
+  'Glutathione INJECTION INTAKE':      process.env.MDI_QUESTIONNAIRE_GLUT_INJ           || '909332c3-8d98-4d51-83de-6876c2b21e09',
+  // Hair Loss
+  'Minoxidil/Finasteride/Biotin':      process.env.MDI_QUESTIONNAIRE_HAIR_MEN           || '41b11b51-e34a-44ca-8c5e-ef55143b489b',
+  'Minoxidil/Dutasteride':             process.env.MDI_QUESTIONNAIRE_HAIR_WOMEN_45      || '216e49e4-09b5-4cb6-b1c2-93375d75dcac',
+  'Min/Spiro/Biotin':                  process.env.MDI_QUESTIONNAIRE_HAIR_WOMEN_U45     || '57cdb9de-d40f-40a6-8eea-603f238fd1e3',
+  'GHK-Cu':                           process.env.MDI_QUESTIONNAIRE_GHK_CU             || 'e79bf378-05a9-47e5-bff6-cf92a9199785',
+  // Sexual Wellness
+  'ED Initial':                        process.env.MDI_QUESTIONNAIRE_ED_INITIAL         || 'd384fb1d-4217-4f87-9877-40c283e34f48',
+  'TADALAFIL/OXYTOCIN/PT-141':         process.env.MDI_QUESTIONNAIRE_OLYMPUS            || '0ce92a4d-d479-4e01-82ec-03c364cdad1f',
+  'OXYTOCIN/PT-141':                   process.env.MDI_QUESTIONNAIRE_OLYMPUS_NO_TAD     || '38f85c79-7d25-46f4-afd1-eae54d91b446'
 };
 
 const PRODUCTS = {
@@ -239,6 +257,7 @@ const PRODUCTS = {
   // ── Longevity / Cellular Health ──────────────────────────────
   'nad-plus': {
     offering_id: process.env.MDI_OFFERING_NAD_PLUS || 'aeda6ba0-0cbd-4526-9867-5de58f3bb9fa',
+    questionnaire_id: QUESTIONNAIRE_IDS['NAD+ Injection'],
     name: 'NAD+',
     mdi_offering_name: 'DTP-NAD+',
     intake: 'NAD+ injection',
@@ -257,6 +276,7 @@ const PRODUCTS = {
 
   'sermorelin-injectable': {
     offering_id: process.env.MDI_OFFERING_SERMORELIN_INJ || '550a9bc4-262b-4fd0-8268-45893c9cabba',
+    questionnaire_id: QUESTIONNAIRE_IDS['Sermorelin INJECTION'],
     name: 'Sermorelin Acetate (Injectable)',
     mdi_offering_name: 'DTP-Injectable-Sermorelin Acetate 1 MG/ML 9ML VIAL',
     intake: 'Sermorelin INJECTION Intake Form',
@@ -273,6 +293,7 @@ const PRODUCTS = {
 
   'sermorelin-troche': {
     offering_id: process.env.MDI_OFFERING_SERMORELIN_TROCHE || 'ac4f703d-8f10-4166-b598-2ef1d78185e1',
+    questionnaire_id: QUESTIONNAIRE_IDS['Sermorelin Oral'],
     name: 'Sermorelin Acetate (Troche)',
     mdi_offering_name: 'DTP-Sermorelin Acetate (Troche) 600mcg',
     intake: 'Semorelin Oral',
@@ -289,6 +310,7 @@ const PRODUCTS = {
 
   'sermorelin-nasal': {
     offering_id: process.env.MDI_OFFERING_SERMORELIN_NASAL || 'd7a5f026-3612-45bc-940c-45fa7035ed56',
+    questionnaire_id: QUESTIONNAIRE_IDS['Sermorelin Nasal Spray'],
     name: 'Sermorelin (Nasal Spray)',
     mdi_offering_name: 'DTP-Sermorelin (Nasal Spray) 1000 mcg/mL',
     intake: 'Sermorelin Nasal Spray',
@@ -306,6 +328,7 @@ const PRODUCTS = {
   // ── Longevity / Detox ───────────────────────────────────────
   'glutathione-troche': {
     offering_id: process.env.MDI_OFFERING_GLUT_TROCHE || '72125ba1-3d8d-4b27-a868-808ea5841f70',
+    questionnaire_id: QUESTIONNAIRE_IDS['Glutathione Medical Form'],
     name: 'Glutathione (Troche)',
     mdi_offering_name: 'DTP - Glutathione (Troche) 250 mg',
     intake: 'Glutathione Medical Form',
@@ -324,6 +347,7 @@ const PRODUCTS = {
 
   'glutathione-injectable': {
     offering_id: process.env.MDI_OFFERING_GLUT_INJ || '241b8f33-95cb-435c-a216-fced87e1e523',
+    questionnaire_id: QUESTIONNAIRE_IDS['Glutathione INJECTION INTAKE'],
     name: 'Glutathione (Injectable) 90-day',
     mdi_offering_name: 'DTP - 90d, Glutathione (Injectable) 200mg/mL',
     intake: 'Glutathione INJECTION INTAKE form',
@@ -341,6 +365,7 @@ const PRODUCTS = {
   // ── Hair Loss ────────────────────────────────────────────────
   'hair-men': {
     offering_id: process.env.MDI_OFFERING_HAIR_MEN || '6e13b10b-4bb5-4731-9a79-380989afc602',
+    questionnaire_id: QUESTIONNAIRE_IDS['Minoxidil/Finasteride/Biotin'],
     name: 'Cedar Hair Growth Tablet',
     mdi_offering_name: 'DTP-Cedar Hair Growth Tablet',
     intake: 'Minoxidil / Finasteride /Biotin (Men & Women)',
@@ -357,6 +382,7 @@ const PRODUCTS = {
 
   'hair-biotin-fin-min': {
     offering_id: process.env.MDI_OFFERING_HAIR_BIOTIN_FIN_MIN || '6f3fb361-018c-4d48-a659-00150a97e614',
+    questionnaire_id: QUESTIONNAIRE_IDS['Minoxidil/Finasteride/Biotin'],
     name: 'Biotin 5 mg / Finasteride 1 mg / Minoxidil 2.5 mg',
     mdi_offering_name: 'DTP-Biotin 5 mg / Finasteride 1 mg / Minoxidil 2.5 mg',
     intake: 'Minoxidil / Finasteride /Biotin (Men & Women)',
@@ -373,6 +399,7 @@ const PRODUCTS = {
 
   'hair-women-45plus': {
     offering_id: process.env.MDI_OFFERING_HAIR_WOMEN_45 || '1915c667-0b83-4ab8-861a-04ae01ead32a',
+    questionnaire_id: QUESTIONNAIRE_IDS['Minoxidil/Dutasteride'],
     name: 'Ivy Hair Tablet (Women 45+)',
     mdi_offering_name: 'DTP- Ivy Hair Tablet (Women 45+)-Minoxidil 1 mg / Dutasteride 0.4 mg with Biotin',
     intake: 'Minoxidil / Dutasteride',
@@ -389,6 +416,7 @@ const PRODUCTS = {
 
   'hair-women-under45': {
     offering_id: process.env.MDI_OFFERING_HAIR_WOMEN_U45 || '6cdd8faa-6345-4e79-bc76-5e3149064ec5',
+    questionnaire_id: QUESTIONNAIRE_IDS['Min/Spiro/Biotin'],
     name: 'Willow Hair Tablet (Women <45)',
     mdi_offering_name: 'DTP- Willow Hair Tablet Minoxidil 1 mg / Spironolactone 60 mg with Biotin (Women less than 45)',
     intake: 'Min / Spiro / Biotin',
@@ -405,6 +433,7 @@ const PRODUCTS = {
 
   'hair-topical': {
     offering_id: process.env.MDI_OFFERING_HAIR_TOPICAL || 'f1eaec3f-e48a-4ff7-a676-0c6bbc6f1d0a',
+    questionnaire_id: QUESTIONNAIRE_IDS['GHK-Cu'],
     name: 'VitalPeptide Hair Therapy (GHK-Cu 3%)',
     mdi_offering_name: 'DTP- VitalPeptide Hair Therapy -GHK-Cu-3%',
     intake: 'GHK-Cu',
@@ -427,6 +456,7 @@ const PRODUCTS = {
   // ── Sexual Wellness ──────────────────────────────────────────
   'tadalafil-daily': {
     offering_id: process.env.MDI_OFFERING_TADALAFIL_DAILY || '8f1f73f5-c404-4269-abb7-68cb7ce16b08',
+    questionnaire_id: QUESTIONNAIRE_IDS['ED Initial'],
     name: 'Tadalafil (Daily Use)',
     mdi_offering_name: 'DTP Tadalafil 5 mg Sublingual Flex Dose',
     intake: 'ED & Refill',
@@ -443,6 +473,7 @@ const PRODUCTS = {
 
   'tadalafil-prn': {
     offering_id: process.env.MDI_OFFERING_TADALAFIL_PRN || '80fff5cb-f591-4972-beca-eb693dbc232f',
+    questionnaire_id: QUESTIONNAIRE_IDS['ED Initial'],
     name: 'Tadalafil (As Needed)',
     mdi_offering_name: 'DTP - Tadalafil 20mg',
     intake: 'Erectile Dysfunction & ED refill',
@@ -459,6 +490,7 @@ const PRODUCTS = {
 
   'olympus-peak': {
     offering_id: process.env.MDI_OFFERING_OLYMPUS_PEAK || '88fa7fa8-b02d-43af-b5c4-c4e302136e47',
+    questionnaire_id: QUESTIONNAIRE_IDS['TADALAFIL/OXYTOCIN/PT-141'],
     name: 'Olympus Peak (Oxytocin/Bremelanotide/Tadalafil)',
     mdi_offering_name: 'DTP-Olympus Peak Oxytocin -20 IU / Bremelanotide 1 mg / Tadalafil 20 mg',
     intake: 'TADALAFIL/OXYTOCIN/PT-141',
@@ -475,6 +507,7 @@ const PRODUCTS = {
 
   'olympus-max': {
     offering_id: process.env.MDI_OFFERING_OLYMPUS_MAX || '24781eca-51fc-4074-98b8-bfca6a8156ef',
+    questionnaire_id: QUESTIONNAIRE_IDS['TADALAFIL/OXYTOCIN/PT-141'],
     name: 'Olympus Max Peak (Oxytocin/Bremelanotide/Tadalafil)',
     mdi_offering_name: 'DTP-Olympus Max Peak-Oxytocin 40 IU / Bremelanotide 2 mg / Tadalafil 20 mg',
     intake: 'TADALAFIL/OXYTOCIN/PT-141',
@@ -491,6 +524,7 @@ const PRODUCTS = {
 
   'olympus': {
     offering_id: process.env.MDI_OFFERING_OLYMPUS || 'b0dbfffc-6bfe-4e68-963b-f199e2e1c0e0',
+    questionnaire_id: QUESTIONNAIRE_IDS['OXYTOCIN/PT-141'],
     name: 'Olympus (Oxytocin/Bremelanotide - No Tadalafil)',
     mdi_offering_name: 'DTP-Olympus Oxytocin- 20 IU / Bremelanotide 1 mg',
     intake: 'Oxy / PT-141',
@@ -507,6 +541,7 @@ const PRODUCTS = {
 
   'olympus-plus': {
     offering_id: process.env.MDI_OFFERING_OLYMPUS_PLUS || 'a82a42c8-08d0-4030-85b3-871ef0917f51',
+    questionnaire_id: QUESTIONNAIRE_IDS['TADALAFIL/OXYTOCIN/PT-141'],
     name: 'Olympus Plus (Oxytocin/Bremelanotide/Tadalafil Low Dose)',
     mdi_offering_name: 'DTP-Olympus Plus Oxytocin 20 IU / Bremelanotide 1 mg / Tadalafil 5 mg',
     intake: 'TADALAFIL/OXYTOCIN/PT-141',
