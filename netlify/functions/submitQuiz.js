@@ -148,9 +148,12 @@ exports.handler = async (event) => {
       voucherPayload
     );
 
-    const encounterId = result.id;
+    // result.id from POST /v1/partner/vouchers is the VOUCHER token (not encounter).
+    // The encounter is auto-created when the patient completes MDI onboarding.
+    const voucherId = result.id;
     const patientId = result.patient_id;
-    console.log('[SUBMIT QUIZ] Encounter created: ' + encounterId + ' | Patient: ' + patientId);
+    const onboardingUrl = 'https://patient.mdintegrations.com?token=' + voucherId;
+    console.log('[SUBMIT QUIZ] Voucher created: ' + voucherId + ' | Patient: ' + patientId + ' | Onboarding: ' + onboardingUrl);
 
     // ── N8N Webhook (non-critical) ──
     const WEBHOOK_URL = process.env.N8N_WEBHOOK_URL;
@@ -159,7 +162,7 @@ exports.handler = async (event) => {
         await fetch(WEBHOOK_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: patientData.email, phone: patientData.phone_number, timestamp: new Date().toISOString(), source: 'Freeley_Quiz_MDI_Submission', product: resolvedKey, original_product: productKey !== resolvedKey ? productKey : undefined, dose: dose || undefined, mdi_patient_id: patientId, mdi_encounter_id: encounterId })
+          body: JSON.stringify({ email: patientData.email, phone: patientData.phone_number, timestamp: new Date().toISOString(), source: 'Freeley_Quiz_MDI_Submission', product: resolvedKey, original_product: productKey !== resolvedKey ? productKey : undefined, dose: dose || undefined, mdi_patient_id: patientId, mdi_voucher_id: voucherId })
         });
       } catch (e) {
         console.warn('[SUBMIT QUIZ] N8N webhook failed (non-critical):', e.message);
@@ -169,7 +172,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 200,
       headers: CORS_HEADERS,
-      body: JSON.stringify({ success: true, message: 'Your information has been submitted to a licensed physician for review.', patient_id: patientId, case_id: encounterId, product: resolvedKey, estimated_review: '24-48 hours' })
+      body: JSON.stringify({ success: true, message: 'Your information has been submitted to a licensed physician for review.', patient_id: patientId, voucher_id: voucherId, onboarding_url: onboardingUrl, product: resolvedKey, estimated_review: '24-48 hours' })
     };
 
   } catch (error) {

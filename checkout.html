@@ -1396,8 +1396,14 @@
             const mdiData = await mdiRes.json();
             if (mdiData.patient_id) {
               sessionStorage.setItem('freeley_patient_id', mdiData.patient_id);
-              sessionStorage.setItem('freeley_case_id', mdiData.case_id);
+              sessionStorage.setItem('freeley_voucher_id', mdiData.voucher_id);
               sessionStorage.setItem('freeley_product', productKey);
+            }
+            // Redirect to MDI patient onboarding questionnaire
+            if (mdiData.onboarding_url) {
+              console.log('[Freeley] Redirecting to MDI onboarding:', mdiData.onboarding_url);
+              window.location.href = mdiData.onboarding_url;
+              return;
             }
           } catch(mdiErr) {
             console.error('[Freeley] MDI submission failed — saving to retry queue:', mdiErr);
@@ -1424,6 +1430,7 @@
             }
           }
 
+          // Fallback: if MDI redirect didn't happen (MDI error), go to hub
           window.location.href = '/hub.html?payment=success&pi=' + paymentIntent.id;
 
         } else {
@@ -1546,8 +1553,14 @@
               const mdiData = await mdiRes.json();
               if (mdiData.patient_id) {
                 sessionStorage.setItem('freeley_patient_id', mdiData.patient_id);
-                sessionStorage.setItem('freeley_case_id', mdiData.case_id);
+                sessionStorage.setItem('freeley_voucher_id', mdiData.voucher_id);
                 sessionStorage.setItem('freeley_product', productKey);
+              }
+              // Redirect to MDI patient onboarding questionnaire
+              if (mdiData.onboarding_url) {
+                console.log('[Freeley] Redirecting to MDI onboarding:', mdiData.onboarding_url);
+                window.location.href = mdiData.onboarding_url;
+                return;
               }
             } catch(mdiErr) {
               console.error('[Freeley] MDI submission failed — saving to retry queue:', mdiErr);
@@ -1573,6 +1586,7 @@
               }
             }
 
+            // Fallback: if MDI redirect didn't happen (MDI error), go to hub
             window.location.href = '/hub.html?payment=success&pi=' + paymentIntent.id;
           }
         }
