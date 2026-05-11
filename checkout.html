@@ -1403,7 +1403,9 @@
               errorEl.style.display = 'block';
               btn.disabled = false;
               btn.style.opacity = '1';
+              btn.querySelector('#btn-text').textContent = 'Complete Secure Order — ' + document.getElementById('totals-total').textContent;
               spinner.style.display = 'none';
+              window.scrollTo({ top: errorEl.offsetTop - 120, behavior: 'smooth' });
               return;
             }
             if (mdiData.patient_id) {
