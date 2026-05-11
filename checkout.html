@@ -719,10 +719,6 @@
           </div>
         </div>
 
-        <!-- Payment Error Messages -->
-        <div id="payment-errors" role="alert" style="display: none; background: #fee2e2; border: 1px solid #fca5a5; color: #991b1b; padding: 12px 16px; border-radius: 8px; font-size: 13px; margin-top: 12px;">
-        </div>
-
         <!-- Security Trust Signals -->
         <div style="display: flex; align-items: center; gap: 16px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border);">
           <div style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: #888;"><i class="ri-lock-2-fill" style="color: var(--forest); font-size: 14px;"></i>256-bit SSL</div>
@@ -808,6 +804,10 @@
               I have read and agree to the <strong><a href="/telehealth-consent" target="_blank" style="color: var(--forest); text-decoration: underline;">Telehealth Consent</a></strong> and understand that my treatment may be rejected based on the clinician's medical judgment.
             </span>
           </label>
+        </div>
+
+        <!-- Payment / Submission Error Messages (outside payment-box so visible in test mode) -->
+        <div id="payment-errors" role="alert" style="display: none; background: #fee2e2; border: 1px solid #fca5a5; color: #991b1b; padding: 12px 16px; border-radius: 8px; font-size: 13px; margin-bottom: 12px;">
         </div>
 
         <button class="btn-checkout" id="checkout-btn" type="button" disabled style="position: relative; overflow: hidden;"><i class="ri-lock-2-line" style="margin-right: 8px;"></i><span id="btn-text">Complete Secure Order</span></button>
@@ -1396,16 +1396,29 @@
             const mdiData = await mdiRes.json();
             console.log('[Freeley] MDI response status:', mdiRes.status, 'data:', JSON.stringify(mdiData));
             if (!mdiRes.ok) {
-              // MDI returned an error — show it instead of silently redirecting
+              // MDI returned an error — save to retry queue and redirect to hub
               const mdiError = mdiData.details || mdiData.error || 'MDI submission failed (HTTP ' + mdiRes.status + ')';
               console.error('[Freeley] MDI error:', mdiError);
-              errorEl.textContent = 'Physician submission error: ' + mdiError;
-              errorEl.style.display = 'block';
-              btn.disabled = false;
-              btn.style.opacity = '1';
-              btn.querySelector('#btn-text').textContent = 'Complete Secure Order — ' + document.getElementById('totals-total').textContent;
-              spinner.style.display = 'none';
-              window.scrollTo({ top: errorEl.offsetTop - 120, behavior: 'smooth' });
+              // Save to retry queue so retryPendingCases can pick it up
+              try {
+                await fetch('/.netlify/functions/savePendingCase', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    payment_intent_id: paymentIntent.id,
+                    patient: { first_name: firstName, last_name: lastName, email, phone_number: phone,
+                               date_of_birth: dob, gender: parseInt(gender), address, city, state, zip_code: zip },
+                    product: productKey,
+                    quiz_answers: quizAnswers,
+                    allergies: quizData.allergies || 'None reported',
+                    current_medications: quizData.medications || 'None reported',
+                    medical_conditions: [quizData.conditions || '', quizData.surgeries ? 'Surgeries: ' + quizData.surgeries : ''].filter(Boolean).join('; ') || 'None reported'
+                  })
+                });
+                console.log('[Freeley] Pending case saved to retry queue');
+              } catch(retryErr) { console.error('[Freeley] Failed to save to retry queue:', retryErr); }
+              // Redirect to hub with error flag (matches normal Stripe flow behavior)
+              window.location.href = '/hub.html?payment=success&pi=' + paymentIntent.id + '&mdi_error=1';
               return;
             }
             if (mdiData.patient_id) {
@@ -1446,12 +1459,8 @@
             } catch(retryErr) {
               console.error('[Freeley] CRITICAL: Failed to save to retry queue:', retryErr);
             }
-            // In test mode, show the error instead of redirecting to hub
-            errorEl.textContent = 'MDI submission failed: ' + mdiErr.message + '. Your case has been queued for retry.';
-            errorEl.style.display = 'block';
-            btn.disabled = false;
-            btn.style.opacity = '1';
-            spinner.style.display = 'none';
+            // Redirect to hub with error flag (case is queued for auto-retry)
+            window.location.href = '/hub.html?payment=success&pi=' + paymentIntent.id + '&mdi_error=1';
             return;
           }
 
