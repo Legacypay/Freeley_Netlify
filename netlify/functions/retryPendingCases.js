@@ -8,7 +8,7 @@
  * 
  * To schedule automatic retries, add to netlify.toml:
  *   [functions."retryPendingCases"]
- *     schedule = "*/15 * * * *"
+ *     schedule = "every 15 minutes" (cron: 0/15 * * * *)
  */
 
 const { getStore } = require('@netlify/blobs');
