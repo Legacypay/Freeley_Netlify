@@ -140,7 +140,7 @@ exports.handler = async (event) => {
       demo: isDemo
     };
 
-    console.log('[SUBMIT QUIZ] Submitting to MDI voucher endpoint for partner: ' + MDI_PARTNER_ID);
+    console.log('[SUBMIT QUIZ] Submitting to MDI voucher endpoint for partner: ' + MDI_PARTNER_ID + ' | demo: ' + isDemo + ' | MDI_DEMO_MODE env: ' + process.env.MDI_DEMO_MODE + ' | offering: ' + product.offering_id + ' | questionnaire: ' + product.questionnaire_id);
 
     const result = await mdiRequest(
       'POST',
@@ -178,6 +178,6 @@ exports.handler = async (event) => {
   } catch (error) {
     console.error('[SUBMIT QUIZ] Error:', error);
     const statusCode = error.statusCode || 500;
-    return { statusCode, headers: CORS_HEADERS, body: JSON.stringify({ error: 'Unable to submit your information. Please try again or contact support.', details: error.message, debug_status: statusCode }) };
+    return { statusCode, headers: CORS_HEADERS, body: JSON.stringify({ error: 'Unable to submit your information. Please try again or contact support.', details: error.message, debug_status: statusCode, debug_demo: process.env.MDI_DEMO_MODE, debug_demo_flag: (process.env.MDI_DEMO_MODE !== 'false') }) };
   }
 };
