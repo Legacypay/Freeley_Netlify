@@ -19,9 +19,12 @@ const { PRODUCTS, resolveProductKey } = require('./lib/products');
 // MDI Partner ID — from the partner portal URL
 const MDI_PARTNER_ID = process.env.MDI_PARTNER_ID || 'f81508d1-3c53-4849-a636-1e9050a68e00';
 
-// NOTE: environment_id was removed from the voucher payload — it's not part of
-// the documented PostPartnerVoucherRequest schema. The MDI environment is determined
-// by the partner's configuration in the MDI dashboard.
+// MDI Environment IDs — discovered from portal Test Bench "Create Voucher" form.
+// The portal sends environment_id to route vouchers to sandbox vs. live.
+// While not in the documented PostPartnerVoucherRequest schema, the portal
+// clearly uses it and it appears to be required for sandbox/demo voucher creation.
+const MDI_SANDBOX_ENV_ID = '6ab0181e-d52a-488f-a161-d64d576b2eba';
+const MDI_LIVE_ENV_ID = 'b374c499-638d-4e72-b844-4c68fcda2eff';
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
@@ -67,22 +70,19 @@ exports.handler = async (event) => {
     // Switch to false once MDI activates the partner for live production
     const isDemo = process.env.MDI_DEMO_MODE !== 'false';
 
-    // ── Build payload per DOCUMENTED PostPartnerVoucherRequest schema ──
-    // The schema has exactly 9 fields: case_prescriptions, case_services,
-    // demo, diseases, expires_at, hold_status, offerings, patient_id, questionnaire_id.
-    // Previously we sent undocumented fields (patient, case, environment_id,
-    // completion_time, preferred_pharmacy_id, is_demo) which may have caused
-    // MDI to mishandle the demo flag → 422 "Can't create live voucher".
-    //
-    // patient_id: null → MDI creates the patient from the voucher onboarding flow.
-    // The patient fills in their details when they open the onboarding URL.
-    // offerings[]: specifies which product to prescribe (configured in MDI dashboard).
-    // case_prescriptions[]: empty (no partner_compound_id/partner_medication_id registered).
-    // diseases[]: ICD-10 codes from product config.
+    // ── Build voucher payload ──
+    // Uses the 9 documented PostPartnerVoucherRequest fields PLUS environment_id.
+    // environment_id is not in the documented schema but IS sent by the MDI portal's
+    // own "Create Voucher" Test Bench tool. Without it, the API returns 422
+    // "Can't create live voucher under the current partner status" even with demo:true.
+    // The portal maps Environment="Sandbox" → environment_id=6ab0181e-...
+    const environmentId = isDemo ? MDI_SANDBOX_ENV_ID : MDI_LIVE_ENV_ID;
+
     const voucherPayload = {
       patient_id: null,
       questionnaire_id: product.questionnaire_id,
       demo: isDemo,
+      environment_id: environmentId,
       offerings: [{ id: product.offering_id }],
       hold_status: false,
       diseases: product.icd10 ? [{ icd10_code: product.icd10 }] : [],
@@ -91,7 +91,7 @@ exports.handler = async (event) => {
       expires_at: null
     };
 
-    console.log('[SUBMIT QUIZ] Submitting to MDI /v1/partner/vouchers | partner: ' + MDI_PARTNER_ID + ' | demo: ' + isDemo + ' | offering: ' + product.offering_id + ' | questionnaire: ' + product.questionnaire_id);
+    console.log('[SUBMIT QUIZ] Submitting to MDI /v1/partner/vouchers | partner: ' + MDI_PARTNER_ID + ' | demo: ' + isDemo + ' | env: ' + environmentId + ' | offering: ' + product.offering_id + ' | questionnaire: ' + product.questionnaire_id);
     console.log('[SUBMIT QUIZ] Full payload:', JSON.stringify(voucherPayload, null, 2));
 
     const result = await mdiRequest(

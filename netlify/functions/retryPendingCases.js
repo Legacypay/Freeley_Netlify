@@ -80,13 +80,16 @@ exports.handler = async (event) => {
 
         const product = PRODUCTS[productKey];
 
-        // Build payload per DOCUMENTED PostPartnerVoucherRequest schema
-        // Only the 9 documented fields — no undocumented extras
+        // Build voucher payload — includes environment_id (discovered from portal Test Bench)
         const isDemo = process.env.MDI_DEMO_MODE !== 'false';
+        const MDI_SANDBOX_ENV_ID = '6ab0181e-d52a-488f-a161-d64d576b2eba';
+        const MDI_LIVE_ENV_ID = 'b374c499-638d-4e72-b844-4c68fcda2eff';
+        const environmentId = isDemo ? MDI_SANDBOX_ENV_ID : MDI_LIVE_ENV_ID;
         const voucherPayload = {
           patient_id: null,
           questionnaire_id: product.questionnaire_id,
           demo: isDemo,
+          environment_id: environmentId,
           offerings: [{ id: product.offering_id }],
           hold_status: false,
           diseases: product.icd10 ? [{ icd10_code: product.icd10 }] : [],
@@ -95,7 +98,7 @@ exports.handler = async (event) => {
           expires_at: null
         };
 
-        console.log(`[RETRY MDI] Submitting voucher for ${key} | demo: ${isDemo} | offering: ${product.offering_id}`);
+        console.log(`[RETRY MDI] Submitting voucher for ${key} | demo: ${isDemo} | env: ${environmentId} | offering: ${product.offering_id}`);
         const result = await mdiRequest('POST', '/v1/partner/vouchers', voucherPayload);
 
         // ── Success! Mark as completed ─────────────────────────
