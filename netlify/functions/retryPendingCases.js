@@ -80,11 +80,14 @@ exports.handler = async (event) => {
 
         const product = PRODUCTS[productKey];
 
-        // Build voucher payload — uses /web/ endpoint discovered from portal Test Bench
+        // Build voucher payload — uses /v1/partner/vouchers (public API)
+        // Note: Partners in "Integrating" status get 422 from this endpoint.
+        // The portal Test Bench uses /web/partners/{id}/vouchers (session auth only,
+        // returns 401 with OAuth2 Bearer tokens). Once partner status is "Active",
+        // the /v1/ endpoint should work.
         const isDemo = process.env.MDI_DEMO_MODE !== 'false';
         const MDI_SANDBOX_ENV_ID = '6ab0181e-d52a-488f-a161-d64d576b2eba';
         const MDI_LIVE_ENV_ID = 'b374c499-638d-4e72-b844-4c68fcda2eff';
-        const MDI_PARTNER_ID = process.env.MDI_PARTNER_ID || 'f81508d1-3c53-4849-a636-1e9050a68e00';
         const environmentId = isDemo ? MDI_SANDBOX_ENV_ID : MDI_LIVE_ENV_ID;
         const voucherPayload = {
           questionnaire_id: product.questionnaire_id,
@@ -92,9 +95,8 @@ exports.handler = async (event) => {
           hold_status: false
         };
 
-        const voucherEndpoint = '/web/partners/' + MDI_PARTNER_ID + '/vouchers';
-        console.log(`[RETRY MDI] Submitting voucher for ${key} | demo: ${isDemo} | env: ${environmentId} | endpoint: ${voucherEndpoint}`);
-        const result = await mdiRequest('POST', voucherEndpoint, voucherPayload);
+        console.log(`[RETRY MDI] Submitting voucher for ${key} | demo: ${isDemo} | env: ${environmentId}`);
+        const result = await mdiRequest('POST', '/v1/partner/vouchers', voucherPayload);
 
         // ── Success! Mark as completed ─────────────────────────
         record.status = 'completed';
