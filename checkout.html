@@ -1394,6 +1394,18 @@
               })
             });
             const mdiData = await mdiRes.json();
+            console.log('[Freeley] MDI response status:', mdiRes.status, 'data:', JSON.stringify(mdiData));
+            if (!mdiRes.ok) {
+              // MDI returned an error — show it instead of silently redirecting
+              const mdiError = mdiData.details || mdiData.error || 'MDI submission failed (HTTP ' + mdiRes.status + ')';
+              console.error('[Freeley] MDI error:', mdiError);
+              errorEl.textContent = 'Physician submission error: ' + mdiError;
+              errorEl.style.display = 'block';
+              btn.disabled = false;
+              btn.style.opacity = '1';
+              spinner.style.display = 'none';
+              return;
+            }
             if (mdiData.patient_id) {
               sessionStorage.setItem('freeley_patient_id', mdiData.patient_id);
               sessionStorage.setItem('freeley_voucher_id', mdiData.voucher_id);
@@ -1405,6 +1417,10 @@
               window.location.href = mdiData.onboarding_url;
               return;
             }
+            // MDI succeeded but no onboarding URL — unusual, go to hub as fallback
+            console.warn('[Freeley] MDI succeeded but no onboarding_url returned');
+            window.location.href = '/hub.html?payment=success&pi=' + paymentIntent.id;
+            return;
           } catch(mdiErr) {
             console.error('[Freeley] MDI submission failed — saving to retry queue:', mdiErr);
             // CRITICAL: Payment succeeded but MDI failed. Save to durable retry queue.
@@ -1428,10 +1444,14 @@
             } catch(retryErr) {
               console.error('[Freeley] CRITICAL: Failed to save to retry queue:', retryErr);
             }
+            // In test mode, show the error instead of redirecting to hub
+            errorEl.textContent = 'MDI submission failed: ' + mdiErr.message + '. Your case has been queued for retry.';
+            errorEl.style.display = 'block';
+            btn.disabled = false;
+            btn.style.opacity = '1';
+            spinner.style.display = 'none';
+            return;
           }
-
-          // Fallback: if MDI redirect didn't happen (MDI error), go to hub
-          window.location.href = '/hub.html?payment=success&pi=' + paymentIntent.id;
 
         } else {
           // ── NORMAL MODE: process Stripe payment first ──
@@ -1551,6 +1571,31 @@
                 })
               });
               const mdiData = await mdiRes.json();
+              console.log('[Freeley] MDI response status:', mdiRes.status, 'data:', JSON.stringify(mdiData));
+              if (!mdiRes.ok) {
+                // MDI returned an error — log it but still redirect to hub (payment already charged)
+                const mdiError = mdiData.details || mdiData.error || 'MDI submission failed (HTTP ' + mdiRes.status + ')';
+                console.error('[Freeley] MDI error after payment:', mdiError);
+                // Save to retry queue since payment succeeded
+                try {
+                  await fetch('/.netlify/functions/savePendingCase', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      payment_intent_id: paymentIntent.id,
+                      patient: { first_name: firstName, last_name: lastName, email, phone_number: phone,
+                                 date_of_birth: dob, gender: parseInt(gender), address, city, state, zip_code: zip },
+                      product: productKey, quiz_answers: quizAnswers,
+                      allergies: quizData.allergies || 'None reported',
+                      current_medications: quizData.medications || 'None reported',
+                      medical_conditions: [quizData.conditions || '', quizData.surgeries ? 'Surgeries: ' + quizData.surgeries : ''].filter(Boolean).join('; ') || 'None reported'
+                    })
+                  });
+                } catch(retryErr) { console.error('[Freeley] Failed to save retry:', retryErr); }
+                // Redirect to hub with error flag so hub can show a notice
+                window.location.href = '/hub.html?payment=success&pi=' + paymentIntent.id + '&mdi_error=1';
+                return;
+              }
               if (mdiData.patient_id) {
                 sessionStorage.setItem('freeley_patient_id', mdiData.patient_id);
                 sessionStorage.setItem('freeley_voucher_id', mdiData.voucher_id);
@@ -1562,6 +1607,9 @@
                 window.location.href = mdiData.onboarding_url;
                 return;
               }
+              // Success but no onboarding URL — go to hub
+              window.location.href = '/hub.html?payment=success&pi=' + paymentIntent.id;
+              return;
             } catch(mdiErr) {
               console.error('[Freeley] MDI submission failed — saving to retry queue:', mdiErr);
               try {
@@ -1584,10 +1632,9 @@
               } catch(retryErr) {
                 console.error('[Freeley] CRITICAL: Failed to save to retry queue:', retryErr);
               }
+              // Redirect to hub with error flag
+              window.location.href = '/hub.html?payment=success&pi=' + paymentIntent.id + '&mdi_error=1';
             }
-
-            // Fallback: if MDI redirect didn't happen (MDI error), go to hub
-            window.location.href = '/hub.html?payment=success&pi=' + paymentIntent.id;
           }
         }
       } catch (err) {
