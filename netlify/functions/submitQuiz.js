@@ -1,7 +1,7 @@
 /**
  * Netlify Function: submitQuiz
  * Called when a patient completes the Freeley checkout.
- * Creates a patient + encounter in MDI via the partner voucher endpoint.
+ * Creates a voucher in MDI via the partner voucher endpoint.
  *
  * UPDATED 2026-05-06: Migrated from deprecated two-step flow
  *   (POST /v1/patient/patients → POST /v1/patient/patients/{id}/cases)
@@ -14,16 +14,14 @@
  */
 
 const { mdiRequest, CORS_HEADERS } = require('./lib/mdi-client');
-const { PRODUCTS, getPharmacyId, resolveProductKey } = require('./lib/products');
+const { PRODUCTS, resolveProductKey } = require('./lib/products');
 
 // MDI Partner ID — from the partner portal URL
 const MDI_PARTNER_ID = process.env.MDI_PARTNER_ID || 'f81508d1-3c53-4849-a636-1e9050a68e00';
 
-// MDI Environment IDs — discovered from portal Test Bench → Create Voucher
-// The environment_id is REQUIRED for voucher creation per PostPartnerVoucherRequest schema.
-// Switch to live environment once MDI moves partner status from "Integrating" to "Active".
-const MDI_SANDBOX_ENV_ID = '6ab0181e-d52a-488f-a161-d64d576b2eba';
-const MDI_ENVIRONMENT_ID = process.env.MDI_ENVIRONMENT_ID || MDI_SANDBOX_ENV_ID;
+// NOTE: environment_id was removed from the voucher payload — it's not part of
+// the documented PostPartnerVoucherRequest schema. The MDI environment is determined
+// by the partner's configuration in the MDI dashboard.
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
@@ -63,104 +61,52 @@ exports.handler = async (event) => {
       return { statusCode: 500, headers: CORS_HEADERS, body: JSON.stringify({ error: 'Product configuration error. Please contact support.' }) };
     }
 
-    const pharmacyId = getPharmacyId(resolvedKey);
+    console.log('[SUBMIT QUIZ] Creating voucher: ' + patientData.email + ' | product: ' + resolvedKey + (productKey !== resolvedKey ? ' (from: ' + productKey + ', dose: ' + dose + ')' : ''));
 
-    console.log('[SUBMIT QUIZ] Creating patient + encounter: ' + patientData.email + ' | product: ' + resolvedKey + (productKey !== resolvedKey ? ' (from: ' + productKey + ', dose: ' + dose + ')' : ''));
-
-    // ── Build patient object per MDI PostVoucherPatientCaseRequest schema ──
-    const patient = {
-      first_name: patientData.first_name,
-      last_name: patientData.last_name,
-      email: patientData.email,
-      date_of_birth: patientData.date_of_birth || null,
-      gender: patientData.gender || 0,
-      phone_number: patientData.phone_number || '',
-      phone_type: '2', // mobile
-      address: {
-        address: patientData.address || '',
-        address2: patientData.address2 || null,
-        city_name: patientData.city || '',
-        state_name: patientData.state || '',
-        zip_code: patientData.zip_code || ''
-      }
-    };
-
-    if (patientData.weight) patient.weight = patientData.weight;
-    if (patientData.height) patient.height = patientData.height;
-
-    // ── Build case_questions from quiz answers ──
-    const caseQuestions = (quiz_answers || []).map((qa, idx) => ({
-      question: qa.question,
-      answer: String(qa.answer),
-      type: qa.type || 'string',
-      important: qa.important !== undefined ? qa.important : true,
-      display_in_pdf: true,
-      label: 'Q' + (idx + 1),
-      metadata: 'freeley-quiz-' + resolvedKey
-    }));
-
-    // ── Build case object ──
-    // NOTE: case_prescriptions requires partner_compound_id / partner_medication_id
-    // but MDI offerings don't have these set (all null per API query 2026-05-06).
-    // Instead, we use the top-level `offerings` array with the offering UUID,
-    // which tells MDI which product to prescribe. Prescription details (quantity,
-    // refills, directions, etc.) are configured on the offering in the MDI dashboard.
-    const caseObj = {
-      metadata: 'freeley|' + resolvedKey + '|' + patientData.email + '|' + Date.now(),
-      is_additional_approval_needed: null,
-      case_prescriptions: [],
-      case_questions: caseQuestions,
-      case_files: [],
-      diseases: product.icd10 ? [{ icd10_code: product.icd10 }] : []
-    };
-
-    // ── Build completion_time (HH:MM:SS format, required by MDI) ──
-    const now = new Date();
-    const completionTime = String(now.getHours()).padStart(2, '0') + ':' +
-                           String(now.getMinutes()).padStart(2, '0') + ':' +
-                           String(now.getSeconds()).padStart(2, '0');
-
-    // ── Single API call: POST /v1/partner/vouchers ──
-    // Creates a voucher that generates the encounter (case) with the selected offering.
-    // Per MDI PostPartnerVoucherRequest schema: offerings[] specifies the product,
-    // case_prescriptions[] is left empty (no compounds/medications registered).
-    // demo flag: set to true while partner is in test/sandbox status,
-    // switch to false (or remove) once MDI activates the partner for live
+    // ── demo flag: true while partner is in "Integrating" status ──
+    // Switch to false once MDI activates the partner for live production
     const isDemo = process.env.MDI_DEMO_MODE !== 'false';
 
+    // ── Build payload per DOCUMENTED PostPartnerVoucherRequest schema ──
+    // The schema has exactly 9 fields: case_prescriptions, case_services,
+    // demo, diseases, expires_at, hold_status, offerings, patient_id, questionnaire_id.
+    // Previously we sent undocumented fields (patient, case, environment_id,
+    // completion_time, preferred_pharmacy_id, is_demo) which may have caused
+    // MDI to mishandle the demo flag → 422 "Can't create live voucher".
+    //
+    // patient_id: null → MDI creates the patient from the voucher onboarding flow.
+    // The patient fills in their details when they open the onboarding URL.
+    // offerings[]: specifies which product to prescribe (configured in MDI dashboard).
+    // case_prescriptions[]: empty (no partner_compound_id/partner_medication_id registered).
+    // diseases[]: ICD-10 codes from product config.
     const voucherPayload = {
+      patient_id: null,
       questionnaire_id: product.questionnaire_id,
-      environment_id: MDI_ENVIRONMENT_ID,
-      completion_time: completionTime,
-      preferred_pharmacy_id: pharmacyId || null,
-      patient: patient,
-      case: caseObj,
+      demo: isDemo,
       offerings: [{ id: product.offering_id }],
       hold_status: false,
-      demo: isDemo,
-      is_demo: isDemo
+      diseases: product.icd10 ? [{ icd10_code: product.icd10 }] : [],
+      case_prescriptions: [],
+      case_services: [],
+      expires_at: null
     };
 
-    // MDI uses SEPARATE endpoints for live vs. test vouchers:
-    //   Live:  POST /v1/partner/vouchers           (requires "Active" partner status)
-    //   Test:  POST /v1/partner/tests/vouchers      (works with "Integrating" partner status)
-    // While partner status is "Integrating", we MUST use the test endpoint.
-    const voucherEndpoint = isDemo ? '/v1/partner/tests/vouchers' : '/v1/partner/vouchers';
-
-    console.log('[SUBMIT QUIZ] Submitting to MDI ' + (isDemo ? 'TEST' : 'LIVE') + ' voucher endpoint: ' + voucherEndpoint + ' | partner: ' + MDI_PARTNER_ID + ' | offering: ' + product.offering_id + ' | questionnaire: ' + product.questionnaire_id);
+    console.log('[SUBMIT QUIZ] Submitting to MDI /v1/partner/vouchers | partner: ' + MDI_PARTNER_ID + ' | demo: ' + isDemo + ' | offering: ' + product.offering_id + ' | questionnaire: ' + product.questionnaire_id);
+    console.log('[SUBMIT QUIZ] Full payload:', JSON.stringify(voucherPayload, null, 2));
 
     const result = await mdiRequest(
       'POST',
-      voucherEndpoint,
+      '/v1/partner/vouchers',
       voucherPayload
     );
 
-    // result.id from POST /v1/partner/vouchers is the VOUCHER token (not encounter).
-    // The encounter is auto-created when the patient completes MDI onboarding.
+    // result.id is the VOUCHER token. Patient creates their account during onboarding.
+    // patient_id may be null if we sent patient_id: null (patient created at onboarding).
     const voucherId = result.id;
-    const patientId = result.patient_id;
+    const patientId = result.patient_id || null;
     const onboardingUrl = 'https://patient.mdintegrations.com?token=' + voucherId;
-    console.log('[SUBMIT QUIZ] Voucher created: ' + voucherId + ' | Patient: ' + patientId + ' | Onboarding: ' + onboardingUrl);
+    console.log('[SUBMIT QUIZ] Voucher created: ' + voucherId + ' | Patient: ' + (patientId || 'pending-onboarding') + ' | Onboarding: ' + onboardingUrl);
+    console.log('[SUBMIT QUIZ] Full MDI response:', JSON.stringify(result, null, 2));
 
     // ── N8N Webhook (non-critical) ──
     const WEBHOOK_URL = process.env.N8N_WEBHOOK_URL;

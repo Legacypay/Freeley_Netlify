@@ -13,7 +13,7 @@
 
 const { getStore } = require('@netlify/blobs');
 const { mdiRequest } = require('./lib/mdi-client');
-const { PRODUCTS, getPharmacyId } = require('./lib/products');
+const { PRODUCTS } = require('./lib/products');
 
 const MAX_RETRIES = 10;
 
@@ -79,77 +79,23 @@ exports.handler = async (event) => {
         }
 
         const product = PRODUCTS[productKey];
-        const pharmacyId = getPharmacyId(productKey);
 
-        // MDI Partner ID + Environment ID
-        const MDI_PARTNER_ID = process.env.MDI_PARTNER_ID || 'f81508d1-3c53-4849-a636-1e9050a68e00';
-        const MDI_SANDBOX_ENV_ID = '6ab0181e-d52a-488f-a161-d64d576b2eba';
-        const MDI_ENVIRONMENT_ID = process.env.MDI_ENVIRONMENT_ID || MDI_SANDBOX_ENV_ID;
-
-        // Build patient object for voucher endpoint
-        const patient = {
-          first_name: patientData.first_name,
-          last_name: patientData.last_name,
-          email: patientData.email,
-          date_of_birth: patientData.date_of_birth || null,
-          gender: patientData.gender || 0,
-          phone_number: patientData.phone_number || '',
-          phone_type: '2',
-          address: {
-            address: patientData.address || '',
-            address2: patientData.address2 || null,
-            city_name: patientData.city || '',
-            state_name: patientData.state || '',
-            zip_code: patientData.zip_code || ''
-          }
-        };
-
-        if (patientData.weight) patient.weight = patientData.weight;
-        if (patientData.height) patient.height = patientData.height;
-
-        // Build case questions from quiz answers
-        const caseQuestions = (quiz_answers || []).map((qa, idx) => ({
-          question: qa.question,
-          answer: String(qa.answer),
-          type: qa.type || 'string',
-          important: qa.important !== undefined ? qa.important : true,
-          display_in_pdf: true,
-          label: 'Q' + (idx + 1),
-          metadata: 'freeley-quiz-' + productKey
-        }));
-
-        // Build case object
-        // NOTE: case_prescriptions left empty — MDI offerings don't have
-        // partner_compound_id set. Use top-level offerings[] array instead.
-        const caseObj = {
-          metadata: 'freeley|' + productKey + '|' + patientData.email + '|' + Date.now() + '|retry-' + record.retry_count,
-          is_additional_approval_needed: null,
-          case_prescriptions: [],
-          case_questions: caseQuestions,
-          case_files: [],
-          diseases: product.icd10 ? [{ icd10_code: product.icd10 }] : []
-        };
-
-        // Build completion_time (HH:MM:SS format, required by MDI)
-        const now2 = new Date();
-        const completionTime = String(now2.getHours()).padStart(2, '0') + ':' +
-                               String(now2.getMinutes()).padStart(2, '0') + ':' +
-                               String(now2.getSeconds()).padStart(2, '0');
-
-        // Single API call: POST /v1/partner/vouchers
+        // Build payload per DOCUMENTED PostPartnerVoucherRequest schema
+        // Only the 9 documented fields — no undocumented extras
         const isDemo = process.env.MDI_DEMO_MODE !== 'false';
         const voucherPayload = {
+          patient_id: null,
           questionnaire_id: product.questionnaire_id,
-          environment_id: MDI_ENVIRONMENT_ID,
-          completion_time: completionTime,
-          preferred_pharmacy_id: pharmacyId || null,
-          patient: patient,
-          case: caseObj,
+          demo: isDemo,
           offerings: [{ id: product.offering_id }],
           hold_status: false,
-          demo: isDemo
+          diseases: product.icd10 ? [{ icd10_code: product.icd10 }] : [],
+          case_prescriptions: [],
+          case_services: [],
+          expires_at: null
         };
 
+        console.log(`[RETRY MDI] Submitting voucher for ${key} | demo: ${isDemo} | offering: ${product.offering_id}`);
         const result = await mdiRequest('POST', '/v1/partner/vouchers', voucherPayload);
 
         // ── Success! Mark as completed ─────────────────────────
