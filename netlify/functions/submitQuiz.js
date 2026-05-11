@@ -71,32 +71,26 @@ exports.handler = async (event) => {
     const isDemo = process.env.MDI_DEMO_MODE !== 'false';
 
     // ── Build voucher payload ──
-    // Uses the 9 documented PostPartnerVoucherRequest fields PLUS environment_id.
-    // environment_id is not in the documented schema but IS sent by the MDI portal's
-    // own "Create Voucher" Test Bench tool. Without it, the API returns 422
-    // "Can't create live voucher under the current partner status" even with demo:true.
-    // The portal maps Environment="Sandbox" → environment_id=6ab0181e-...
+    // UPDATED 2026-05-11: Switched from /v1/partner/vouchers to /web/partners/{id}/vouchers
+    // The documented /v1/ endpoint returns 422 "Can't create live voucher under the
+    // current partner status" for partners in "Integrating" status, regardless of demo flag.
+    // The portal's own Test Bench uses /web/partners/{id}/vouchers with a minimal payload
+    // (only questionnaire_id, environment_id, hold_status) — captured via network intercept.
     const environmentId = isDemo ? MDI_SANDBOX_ENV_ID : MDI_LIVE_ENV_ID;
 
     const voucherPayload = {
-      patient_id: null,
       questionnaire_id: product.questionnaire_id,
-      demo: isDemo,
       environment_id: environmentId,
-      offerings: [{ id: product.offering_id }],
-      hold_status: false,
-      diseases: product.icd10 ? [{ icd10_code: product.icd10 }] : [],
-      case_prescriptions: [],
-      case_services: [],
-      expires_at: null
+      hold_status: false
     };
 
-    console.log('[SUBMIT QUIZ] Submitting to MDI /v1/partner/vouchers | partner: ' + MDI_PARTNER_ID + ' | demo: ' + isDemo + ' | env: ' + environmentId + ' | offering: ' + product.offering_id + ' | questionnaire: ' + product.questionnaire_id);
+    const voucherEndpoint = '/web/partners/' + MDI_PARTNER_ID + '/vouchers';
+    console.log('[SUBMIT QUIZ] Submitting to MDI ' + voucherEndpoint + ' | partner: ' + MDI_PARTNER_ID + ' | demo: ' + isDemo + ' | env: ' + environmentId + ' | questionnaire: ' + product.questionnaire_id);
     console.log('[SUBMIT QUIZ] Full payload:', JSON.stringify(voucherPayload, null, 2));
 
     const result = await mdiRequest(
       'POST',
-      '/v1/partner/vouchers',
+      voucherEndpoint,
       voucherPayload
     );
 
