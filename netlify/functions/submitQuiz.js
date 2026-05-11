@@ -137,14 +137,21 @@ exports.handler = async (event) => {
       case: caseObj,
       offerings: [{ id: product.offering_id }],
       hold_status: false,
-      demo: isDemo
+      demo: isDemo,
+      is_demo: isDemo
     };
 
-    console.log('[SUBMIT QUIZ] Submitting to MDI voucher endpoint for partner: ' + MDI_PARTNER_ID + ' | demo: ' + isDemo + ' | MDI_DEMO_MODE env: ' + process.env.MDI_DEMO_MODE + ' | offering: ' + product.offering_id + ' | questionnaire: ' + product.questionnaire_id);
+    // MDI uses SEPARATE endpoints for live vs. test vouchers:
+    //   Live:  POST /v1/partner/vouchers           (requires "Active" partner status)
+    //   Test:  POST /v1/partner/tests/vouchers      (works with "Integrating" partner status)
+    // While partner status is "Integrating", we MUST use the test endpoint.
+    const voucherEndpoint = isDemo ? '/v1/partner/tests/vouchers' : '/v1/partner/vouchers';
+
+    console.log('[SUBMIT QUIZ] Submitting to MDI ' + (isDemo ? 'TEST' : 'LIVE') + ' voucher endpoint: ' + voucherEndpoint + ' | partner: ' + MDI_PARTNER_ID + ' | offering: ' + product.offering_id + ' | questionnaire: ' + product.questionnaire_id);
 
     const result = await mdiRequest(
       'POST',
-      '/v1/partner/vouchers',
+      voucherEndpoint,
       voucherPayload
     );
 
