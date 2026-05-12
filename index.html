@@ -386,7 +386,7 @@
     .ticker-track {
       display: flex;
       align-items: center;
-      padding: 16px 0;
+      padding: 20px 0;
       animation: tickerScroll 30s linear infinite;
       width: max-content;
     }
@@ -405,19 +405,20 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      color: rgba(255, 255, 255, 0.35);
-      font-size: 12px;
-      letter-spacing: 1.8px;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 13px;
+      letter-spacing: 1.5px;
       text-transform: uppercase;
       padding: 0 36px;
       white-space: nowrap;
+      font-weight: 500;
     }
 
     .ticker-dot {
-      width: 4px;
-      height: 4px;
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
-      background: var(--green-light);
+      background: #7dba96;
       flex-shrink: 0;
     }
 
@@ -458,33 +459,21 @@
     }
 
     .treatment-card-visual {
-      height: 280px;
+      height: 300px;
       position: relative;
       overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(180deg, #f8faf9 0%, #eef3f0 100%);
+      background: #fff;
     }
 
     .treatment-card-visual img.product-photo {
-      height: 80%;
+      height: 85%;
       width: auto;
       object-fit: contain;
-      filter: drop-shadow(0 12px 28px rgba(0,0,0,0.10));
+      mix-blend-mode: multiply;
       transition: transform 0.4s ease;
-    }
-
-    /* Vial images: studio photography look — fill edge to edge */
-    .treatment-card-visual.vial-photo {
-      height: 320px;
-      background: #8a8a8c;
-    }
-    .treatment-card-visual.vial-photo img.product-photo {
-      height: 100%;
-      width: 100%;
-      object-fit: contain;
-      filter: none;
     }
 
     .treatment-card:hover .product-photo {
@@ -614,22 +603,24 @@
     }
 
     .step-number {
-      font-family: "Georgia", serif;
-      font-size: 100px;
-      font-weight: 700;
-      color: rgba(255, 255, 255, 0.04);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
       line-height: 1;
-      position: absolute;
-      top: -16px;
-      right: -16px;
-      margin: 0;
-      display: block;
+      position: relative;
+      margin: 0 0 20px;
+      display: inline-block;
       pointer-events: none;
-      transition: color 0.3s;
+      background: var(--green, #1a4a2e);
+      padding: 6px 16px;
+      border-radius: 100px;
+      letter-spacing: 0.5px;
+      z-index: 2;
     }
 
     .step-item:hover .step-number {
-      color: rgba(106, 153, 132, 0.15);
+      background: var(--green-light, #3d8c5e);
     }
 
     .step-icon-wrap {
@@ -662,8 +653,8 @@
     .step-desc {
       font-family: 'DM Sans', sans-serif;
       font-size: 15px;
-      color: rgba(255, 255, 255, 0.65);
-      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.75);
+      line-height: 1.65;
       font-weight: 300;
       position: relative;
       z-index: 2;
@@ -801,6 +792,52 @@
       color: var(--text-muted);
       line-height: 1.65;
       font-weight: 300;
+    }
+
+    /* ── WHY FREELEY LIFESTYLE CARDS ── */
+    .why-lifestyle-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 56px;
+    }
+    .why-lifestyle-card {
+      position: relative;
+      border-radius: 20px;
+      overflow: hidden;
+      aspect-ratio: 3/4;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+    }
+    .why-lifestyle-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    .why-lifestyle-card:hover img {
+      transform: scale(1.05);
+    }
+    .why-lifestyle-card-label {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 24px 20px 20px;
+      background: linear-gradient(0deg, rgba(0,0,0,0.6) 0%, transparent 100%);
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+    @media (max-width: 768px) {
+      .why-lifestyle-cards {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      .why-lifestyle-card {
+        aspect-ratio: 16/9;
+      }
     }
 
     /* ── TESTIMONIALS ── */
@@ -1134,7 +1171,7 @@
       
       <!-- Mobile Hero Image -->
       <div class="hero-visual-mobile" style="border-radius: 20px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
-        <img src="assets/brand/freeley-hero-lifestyle.png" alt="Confident woman living healthy with Freeley" style="width: 100%; height: auto; display: block;  max-height: 400px;">
+        <img src="assets/brand/hero_lifestyle.png" alt="Confident woman living healthy with Freeley" style="width: 100%; height: auto; display: block;  max-height: 400px;">
       </div>
       <p class="hero-desc" style="margin-bottom: 24px;">Freeley pairs you with a licensed provider who treats the root cause &mdash; hormones, metabolism, and all &mdash; so the weight actually stays off.<br><br>Lose the weight. Ditch the guesswork. <em>Live Freeley.</em></p>
 
@@ -1146,12 +1183,20 @@
               stroke-linejoin="round" />
           </svg></a>
       </div>
-      <div style="font-size: 14px; font-weight: 500; color: rgba(255, 255, 255, 0.6); margin-bottom: 40px; display: flex; align-items: center; justify-content: flex-start; gap: 20px; flex-wrap: wrap;">
+      <div style="font-size: 14px; font-weight: 500; color: rgba(255, 255, 255, 0.6); margin-bottom: 24px; display: flex; align-items: center; justify-content: flex-start; gap: 20px; flex-wrap: wrap;">
         <span><i class="ri-check-line" style="color: #7dba96; margin-right: 4px; font-size:16px;"></i>No credit card required</span>
         <span><i class="ri-check-line" style="color: #7dba96; margin-right: 4px; font-size:16px;"></i>Takes 2 minutes</span>
         <span><i class="ri-check-line" style="color: #7dba96; margin-right: 4px; font-size:16px;"></i>Cancel anytime</span>
       </div>
-      
+
+      <!-- TrustBox widget - Review Collector -->
+      <div style="margin-bottom: 40px; display: flex; justify-content: flex-start;">
+        <div class="trustpilot-widget" data-locale="en-US" data-template-id="56278e9abfbbba0bdcd568bc" data-businessunit-id="69c2e98765a7a37ca4e3a6f1" data-style-height="52px" data-style-width="100%" data-token="207ca074-50ef-444e-ada0-9943fa514c6a">
+          <a href="https://www.trustpilot.com/review/freeley.com" target="_blank" rel="noopener">Trustpilot</a>
+        </div>
+      </div>
+      <!-- End TrustBox widget -->
+
       <!-- Risk Free Guarantee -->
       <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px; margin-bottom: 56px; max-width: 500px; text-align: left; backdrop-filter: blur(8px); box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
         <div style="display: flex; align-items: center; justify-content: flex-start; gap: 12px; margin-bottom: 12px;">
@@ -1181,18 +1226,10 @@
         </div>
       </div>
 
-      <!-- TrustBox widget - Review Collector -->
-      <div style="margin-top: 48px; display: flex; justify-content: flex-start;">
-        <div class="trustpilot-widget" data-locale="en-US" data-template-id="56278e9abfbbba0bdcd568bc" data-businessunit-id="69c2e98765a7a37ca4e3a6f1" data-style-height="52px" data-style-width="100%" data-token="207ca074-50ef-444e-ada0-9943fa514c6a">
-          <a href="https://www.trustpilot.com/review/freeley.com" target="_blank" rel="noopener">Trustpilot</a>
-        </div>
-      </div>
-      <!-- End TrustBox widget -->
-
     </div>
     <div class="hero-visual">
       <!-- Hero Lifestyle Photo -->
-      <img src="assets/brand/freeley-hero-lifestyle.png" alt="Confident woman living healthy with Freeley" style="width: 100%; height: 100%;  display: block;">
+      <img src="assets/brand/hero_lifestyle.png" alt="Confident woman living healthy with Freeley" style="width: 100%; height: 100%; object-fit: cover; display: block;">
     </div>
   </section>
 
@@ -1254,7 +1291,7 @@
       </div>
       <div class="treatments-grid">
         <a href="weight-loss.html" class="treatment-card reveal reveal-delay-1">
-          <div class="treatment-card-visual vial-photo">
+          <div class="treatment-card-visual">
             <img src="assets/brand/freeley-vial-semaglutide.png" class="product-photo" alt="GLP-1 Weight Loss">
           </div>
           <div class="treatment-card-body">
@@ -1292,7 +1329,7 @@
           </div>
         </a>
         <a href="longevity.html" class="treatment-card reveal reveal-delay-4">
-          <div class="treatment-card-visual vial-photo">
+          <div class="treatment-card-visual">
             <img src="assets/brand/freeley-vial-sermorelin.png" class="product-photo" alt="Longevity & Peptides">
           </div>
           <div class="treatment-card-body">
@@ -1412,7 +1449,7 @@
       </div>
       <div class="steps-row">
         <div class="step-item reveal reveal-delay-1">
-          <span class="step-number">01</span>
+          <span class="step-number">Step 1</span>
           <div class="step-icon-wrap"><i class="ri-clipboard-line"></i></div>
           <div class="step-title">Complete Intake</div>
           <div class="step-desc">A quick, secure health questionnaire. Takes 5 minutes from your phone. No appointment
@@ -1420,7 +1457,7 @@
           <div class="step-connector"></div>
         </div>
         <div class="step-item reveal reveal-delay-2">
-          <span class="step-number">02</span>
+          <span class="step-number">Step 2</span>
           <div class="step-icon-wrap"><i class="ri-stethoscope-fill"></i></div>
           <div class="step-title">Doctor Review</div>
           <div class="step-desc">A board-certified physician reviews your profile within 24 hours and writes your
@@ -1428,7 +1465,7 @@
           <div class="step-connector"></div>
         </div>
         <div class="step-item reveal reveal-delay-3">
-          <span class="step-number">03</span>
+          <span class="step-number">Step 3</span>
           <div class="step-icon-wrap"><i class="ri-microscope-fill"></i></div>
           <div class="step-title">Pharmacy Compounds</div>
           <div class="step-desc">Your prescription is sent to a 503A-licensed compounding pharmacy for precise
@@ -1436,7 +1473,7 @@
           <div class="step-connector"></div>
         </div>
         <div class="step-item reveal reveal-delay-4">
-          <span class="step-number">04</span>
+          <span class="step-number">Step 4</span>
           <div class="step-icon-wrap"><i class="ri-box-3-fill"></i></div>
           <div class="step-title">Delivered to You</div>
           <div class="step-desc">Discreet, climate-controlled packaging shipped directly to your door. Refills are
@@ -1494,6 +1531,22 @@
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- Lifestyle Image Cards -->
+      <div class="why-lifestyle-cards reveal">
+        <div class="why-lifestyle-card">
+          <img src="assets/brand/why_delivery.png" alt="Discreet home delivery">
+          <div class="why-lifestyle-card-label">Discreet Home Delivery</div>
+        </div>
+        <div class="why-lifestyle-card">
+          <img src="assets/brand/why_telehealth.png" alt="Physician consultation via telehealth">
+          <div class="why-lifestyle-card-label">Licensed Physician Care</div>
+        </div>
+        <div class="why-lifestyle-card">
+          <img src="assets/brand/why_lifestyle.png" alt="Active lifestyle outcomes">
+          <div class="why-lifestyle-card-label">Real Results, Real Life</div>
         </div>
       </div>
     </div>
