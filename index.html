@@ -475,6 +475,17 @@
       transition: transform 0.4s ease;
     }
 
+    /* Vial images: fill the entire visual area to cover gray bg seamlessly */
+    .treatment-card-visual.vial-photo {
+      background: linear-gradient(160deg, #5a5a5c 0%, #9a9899 50%, #b5b0b1 100%);
+    }
+    .treatment-card-visual.vial-photo img.product-photo {
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+      filter: none;
+    }
+
     .treatment-card:hover .product-photo {
       transform: scale(1.04);
     }
@@ -1242,7 +1253,7 @@
       </div>
       <div class="treatments-grid">
         <a href="weight-loss.html" class="treatment-card reveal reveal-delay-1">
-          <div class="treatment-card-visual">
+          <div class="treatment-card-visual vial-photo">
             <img src="assets/brand/freeley-vial-semaglutide.png" class="product-photo" alt="GLP-1 Weight Loss">
           </div>
           <div class="treatment-card-body">
@@ -1280,7 +1291,7 @@
           </div>
         </a>
         <a href="longevity.html" class="treatment-card reveal reveal-delay-4">
-          <div class="treatment-card-visual">
+          <div class="treatment-card-visual vial-photo">
             <img src="assets/brand/freeley-vial-sermorelin.png" class="product-photo" alt="Longevity & Peptides">
           </div>
           <div class="treatment-card-body">
