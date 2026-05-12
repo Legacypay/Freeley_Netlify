@@ -93,7 +93,7 @@
       position: relative;
       z-index: 2;
       animation: fadeUp 0.9s ease both;
-      text-align: center;
+      text-align: left;
     }
 
     .hero-badge {
@@ -140,7 +140,7 @@
       font-size: 17px;
       line-height: 1.7;
       max-width: 520px;
-      margin: 0 auto 44px;
+      margin: 0 0 44px;
       font-weight: 300;
     }
 
@@ -148,7 +148,7 @@
       display: flex;
       gap: 14px;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       flex-wrap: wrap;
       margin-bottom: 56px;
     }
@@ -179,11 +179,11 @@
       display: flex;
       gap: 40px;
       flex-wrap: wrap;
-      justify-content: center;
+      justify-content: flex-start;
       padding-top: 36px;
       border-top: 1px solid rgba(255, 255, 255, 0.1);
       max-width: 600px;
-      margin: 0 auto;
+      margin: 0;
     }
 
     .hero-stat-val {
@@ -213,6 +213,10 @@
       align-items: center;
       justify-content: center;
       animation: fadeUp 1s ease 0.2s both;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.06);
+      max-height: 85vh;
     }
 
     .hero-card-stack {
@@ -906,6 +910,19 @@
         padding: 80px 24px 72px;
       }
 
+      .hero-content {
+        text-align: center;
+      }
+
+      .hero-content .hero-actions {
+        justify-content: center;
+      }
+
+      .hero-content .hero-stats {
+        justify-content: center;
+        margin: 0 auto;
+      }
+
       .hero-visual {
         display: none;
       }
@@ -1088,8 +1105,8 @@
       <h1>Your Last Diet Didn't Fail.<br><em>Your Biology Did.</em></h1>
       
       <!-- Mobile Hero Image -->
-      <div class="hero-visual-mobile" style="position: relative; animation: float 6s ease-in-out infinite;">
-        <img src="assets/brand/New_hero2_transparent.png" alt="Freeley" style="width: 110%; margin-left: -5%; height: auto; display: block; object-fit: contain;">
+      <div class="hero-visual-mobile" style="border-radius: 20px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
+        <img src="assets/brand/freeley-hero-lifestyle.png" alt="Confident woman living healthy with Freeley" style="width: 100%; height: auto; display: block; object-fit: cover; max-height: 400px;">
       </div>
       <p class="hero-desc" style="margin-bottom: 24px;">Freeley pairs you with a licensed provider who treats the root cause &mdash; hormones, metabolism, and all &mdash; so the weight actually stays off.<br><br>Lose the weight. Ditch the guesswork. <em>Live Freeley.</em></p>
 
@@ -1101,15 +1118,15 @@
               stroke-linejoin="round" />
           </svg></a>
       </div>
-      <div style="font-size: 14px; font-weight: 500; color: rgba(255, 255, 255, 0.6); margin-bottom: 40px; display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap;">
+      <div style="font-size: 14px; font-weight: 500; color: rgba(255, 255, 255, 0.6); margin-bottom: 40px; display: flex; align-items: center; justify-content: flex-start; gap: 20px; flex-wrap: wrap;">
         <span><i class="ri-check-line" style="color: #7dba96; margin-right: 4px; font-size:16px;"></i>No credit card required</span>
         <span><i class="ri-check-line" style="color: #7dba96; margin-right: 4px; font-size:16px;"></i>Takes 2 minutes</span>
         <span><i class="ri-check-line" style="color: #7dba96; margin-right: 4px; font-size:16px;"></i>Cancel anytime</span>
       </div>
       
       <!-- Risk Free Guarantee -->
-      <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px; margin-bottom: 56px; max-width: 500px; margin-left: auto; margin-right: auto; text-align: center; backdrop-filter: blur(8px); box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
-        <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 12px;">
+      <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px; margin-bottom: 56px; max-width: 500px; text-align: left; backdrop-filter: blur(8px); box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
+        <div style="display: flex; align-items: center; justify-content: flex-start; gap: 12px; margin-bottom: 12px;">
           <i class="ri-shield-star-fill" style="color: #F7CB45; font-size: 28px;"></i>
           <span style="font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 2px; color: rgba(255,255,255,0.9); text-transform: uppercase;">Risk-Free Guarantee</span>
         </div>
@@ -1137,7 +1154,7 @@
       </div>
 
       <!-- TrustBox widget - Review Collector -->
-      <div style="margin-top: 48px; display: flex; justify-content: center;">
+      <div style="margin-top: 48px; display: flex; justify-content: flex-start;">
         <div class="trustpilot-widget" data-locale="en-US" data-template-id="56278e9abfbbba0bdcd568bc" data-businessunit-id="69c2e98765a7a37ca4e3a6f1" data-style-height="52px" data-style-width="100%" data-token="207ca074-50ef-444e-ada0-9943fa514c6a">
           <a href="https://www.trustpilot.com/review/freeley.com" target="_blank" rel="noopener">Trustpilot</a>
         </div>
@@ -1146,10 +1163,8 @@
 
     </div>
     <div class="hero-visual">
-      <!-- New Hero Image -->
-      <div style="position: relative; animation: float 6s ease-in-out infinite;">
-        <img src="assets/brand/New_hero2_transparent.png" alt="Freeley" style="width: 120%; margin-left: -10%; height: auto; display: block; object-fit: contain;">
-      </div>
+      <!-- Hero Lifestyle Photo -->
+      <img src="assets/brand/freeley-hero-lifestyle.png" alt="Confident woman living healthy with Freeley" style="width: 100%; height: 100%; object-fit: cover; display: block;">
     </div>
   </section>
 
