@@ -13,6 +13,7 @@
  * POST /.netlify/functions/submitQuiz
  */
 
+const { getStore } = require('@netlify/blobs');
 const { mdiRequest, CORS_HEADERS } = require('./lib/mdi-client');
 const { PRODUCTS, resolveProductKey } = require('./lib/products');
 
@@ -66,9 +67,10 @@ exports.handler = async (event) => {
 
     console.log('[SUBMIT QUIZ] Creating voucher: ' + patientData.email + ' | product: ' + resolvedKey + (productKey !== resolvedKey ? ' (from: ' + productKey + ', dose: ' + dose + ')' : ''));
 
-    // ── demo flag: true while partner is in "Integrating" status ──
-    // Switch to false once MDI activates the partner for live production
-    const isDemo = process.env.MDI_DEMO_MODE !== 'false';
+    // ── Sandbox vs. Live ──
+    // Defaults to LIVE (production). Set MDI_DEMO_MODE=true in Netlify env
+    // vars ONLY for sandbox/integration testing.
+    const isDemo = process.env.MDI_DEMO_MODE === 'true';
 
     // ── Build voucher payload ──
     // The /v1/partner/vouchers endpoint is the documented public API.
@@ -89,7 +91,9 @@ exports.handler = async (event) => {
     const voucherPayload = {
       questionnaire_id: product.questionnaire_id,
       environment_id: environmentId,
-      hold_status: false
+      hold_status: false,
+      // Include offering_id so clinicians know which specific product/dose was ordered
+      offering_id: product.offering_id || undefined
     };
 
     console.log('[SUBMIT QUIZ] Submitting to MDI /v1/partner/vouchers | partner: ' + MDI_PARTNER_ID + ' | demo: ' + isDemo + ' | env: ' + environmentId + ' | questionnaire: ' + product.questionnaire_id);
@@ -108,6 +112,32 @@ exports.handler = async (event) => {
     const onboardingUrl = 'https://patient.mdintegrations.com?token=' + voucherId;
     console.log('[SUBMIT QUIZ] Voucher created: ' + voucherId + ' | Patient: ' + (patientId || 'pending-onboarding') + ' | Onboarding: ' + onboardingUrl);
     console.log('[SUBMIT QUIZ] Full MDI response:', JSON.stringify(result, null, 2));
+
+    // ── Persist order↔encounter link for support lookups ──
+    try {
+      const orderStore = getStore('mdi-orders');
+      await orderStore.setJSON(voucherId, {
+        voucher_id: voucherId,
+        patient_id: patientId,
+        email: patientData.email,
+        first_name: patientData.first_name,
+        last_name: patientData.last_name,
+        phone: patientData.phone_number || null,
+        product_key: resolvedKey,
+        original_product_key: productKey !== resolvedKey ? productKey : undefined,
+        dose: dose || null,
+        offering_id: product.offering_id,
+        questionnaire_id: product.questionnaire_id,
+        category: product.category,
+        onboarding_url: onboardingUrl,
+        environment: isDemo ? 'sandbox' : 'live',
+        created_at: new Date().toISOString()
+      });
+      console.log('[SUBMIT QUIZ] Order record saved: ' + voucherId);
+    } catch (storeErr) {
+      // Non-critical — log but don't fail the response
+      console.warn('[SUBMIT QUIZ] Failed to save order record (non-critical):', storeErr.message);
+    }
 
     // ── N8N Webhook (non-critical) ──
     const WEBHOOK_URL = process.env.N8N_WEBHOOK_URL;
@@ -132,6 +162,41 @@ exports.handler = async (event) => {
   } catch (error) {
     console.error('[SUBMIT QUIZ] Error:', error);
     const statusCode = error.statusCode || 500;
-    return { statusCode, headers: CORS_HEADERS, body: JSON.stringify({ error: 'Unable to submit your information. Please try again or contact support.', details: error.message, debug_status: statusCode, debug_demo: process.env.MDI_DEMO_MODE, debug_demo_flag: (process.env.MDI_DEMO_MODE !== 'false') }) };
+
+    // ── Partner status detection ──
+    // MDI returns 422 when the partner is still in "Integrating" status.
+    // The /v1/partner/vouchers endpoint requires "Active" partner status.
+    if (statusCode === 422 && error.message && error.message.includes('partner status')) {
+      console.error('[SUBMIT QUIZ] ⚠️  Partner is still in "Integrating" status. Contact MDI to activate for live voucher creation.');
+      return { statusCode: 503, headers: CORS_HEADERS, body: JSON.stringify({ error: 'Our telehealth service is being activated. Please try again shortly or contact support.', internal_note: 'MDI partner status is "Integrating" — needs activation for live API voucher creation' }) };
+    }
+
+    // ── Queue for retry on transient failures (5xx, network errors) ──
+    // Don't retry 4xx (client errors like bad payload) — those won't self-heal.
+    if (statusCode >= 500 || statusCode === 0) {
+      try {
+        const data = JSON.parse(event.body);
+        const retryStore = getStore('pending-mdi-cases');
+        const retryKey = 'quiz-' + Date.now() + '-' + (data.patient?.email || 'unknown').replace(/[^a-zA-Z0-9]/g, '_');
+        await retryStore.setJSON(retryKey, {
+          patient: data.patient,
+          product: data.product,
+          dose: data.dose || null,
+          quiz_answers: data.quiz_answers || null,
+          allergies: data.allergies || null,
+          current_medications: data.current_medications || null,
+          medical_conditions: data.medical_conditions || null,
+          status: 'pending',
+          retry_count: 0,
+          original_error: error.message,
+          queued_at: new Date().toISOString()
+        });
+        console.log('[SUBMIT QUIZ] Queued for retry: ' + retryKey);
+      } catch (storeErr) {
+        console.error('[SUBMIT QUIZ] Failed to queue for retry:', storeErr.message);
+      }
+    }
+
+    return { statusCode, headers: CORS_HEADERS, body: JSON.stringify({ error: 'Unable to submit your information. Please try again or contact support.', details: error.message }) };
   }
 };

@@ -13,7 +13,7 @@
 
 const { getStore } = require('@netlify/blobs');
 const { mdiRequest } = require('./lib/mdi-client');
-const { PRODUCTS } = require('./lib/products');
+const { PRODUCTS, resolveProductKey } = require('./lib/products');
 
 const MAX_RETRIES = 10;
 
@@ -68,31 +68,32 @@ exports.handler = async (event) => {
 
       // ── Attempt MDI submission ───────────────────────────────
       try {
-        const { patient: patientData, product: productKey, quiz_answers, allergies, current_medications, medical_conditions } = record;
+        const { patient: patientData, product: productKey, dose, quiz_answers, allergies, current_medications, medical_conditions } = record;
 
-        if (!patientData || !productKey || !PRODUCTS[productKey]) {
-          console.error(`[RETRY MDI] Invalid record for ${key}: missing patient or product`);
+        // Resolve product key — handles legacy 'semaglutide'/'tirzepatide' keys
+        const resolvedKey = resolveProductKey(productKey, dose);
+
+        if (!patientData || !resolvedKey || !PRODUCTS[resolvedKey]) {
+          console.error(`[RETRY MDI] Invalid record for ${key}: missing patient or product (key: ${productKey}, resolved: ${resolvedKey})`);
           record.status = 'invalid';
           await store.setJSON(key, record);
           results.push({ key, status: 'invalid' });
           continue;
         }
 
-        const product = PRODUCTS[productKey];
+        const product = PRODUCTS[resolvedKey];
 
         // Build voucher payload — uses /v1/partner/vouchers (public API)
-        // Note: Partners in "Integrating" status get 422 from this endpoint.
-        // The portal Test Bench uses /web/partners/{id}/vouchers (session auth only,
-        // returns 401 with OAuth2 Bearer tokens). Once partner status is "Active",
-        // the /v1/ endpoint should work.
-        const isDemo = process.env.MDI_DEMO_MODE !== 'false';
+        // Defaults to LIVE. Set MDI_DEMO_MODE=true for sandbox testing only.
+        const isDemo = process.env.MDI_DEMO_MODE === 'true';
         const MDI_SANDBOX_ENV_ID = '6ab0181e-d52a-488f-a161-d64d576b2eba';
         const MDI_LIVE_ENV_ID = 'b374c499-638d-4e72-b844-4c68fcda2eff';
         const environmentId = isDemo ? MDI_SANDBOX_ENV_ID : MDI_LIVE_ENV_ID;
         const voucherPayload = {
           questionnaire_id: product.questionnaire_id,
           environment_id: environmentId,
-          hold_status: false
+          hold_status: false,
+          offering_id: product.offering_id || undefined
         };
 
         console.log(`[RETRY MDI] Submitting voucher for ${key} | demo: ${isDemo} | env: ${environmentId}`);
@@ -106,6 +107,29 @@ exports.handler = async (event) => {
         await store.setJSON(key, record);
 
         console.log(`[RETRY MDI] ✅ SUCCESS: ${key} → Patient: ${result.patient_id}, Case: ${result.id} (retry #${record.retry_count})`);
+
+        // Store order↔encounter link for support lookups
+        try {
+          const orderStore = getStore('mdi-orders');
+          await orderStore.setJSON(result.id, {
+            voucher_id: result.id,
+            patient_id: result.patient_id,
+            email: patientData.email,
+            first_name: patientData.first_name,
+            last_name: patientData.last_name,
+            product_key: resolvedKey,
+            original_product_key: productKey !== resolvedKey ? productKey : undefined,
+            dose: dose || null,
+            offering_id: product.offering_id,
+            category: product.category,
+            environment: isDemo ? 'sandbox' : 'live',
+            created_at: new Date().toISOString(),
+            retry_count: record.retry_count,
+            source: 'retry'
+          });
+        } catch (orderErr) {
+          console.warn(`[RETRY MDI] Failed to save order record (non-critical):`, orderErr.message);
+        }
 
         // Notify team of successful recovery
         await alertTeam(key, record, 'recovered');
