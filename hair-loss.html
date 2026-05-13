@@ -248,6 +248,95 @@
       background: var(--green-bright);
     }
 
+    /* Thumbnail Gallery Strip */
+    .hero-product-wrapper {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .hero-thumb-strip {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex-shrink: 0;
+      width: 72px;
+    }
+    .thumb-item {
+      width: 72px;
+      height: 72px;
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 2px solid rgba(255,255,255,0.15);
+      transition: all 0.2s;
+      background: rgba(255,255,255,0.06);
+    }
+    .thumb-item:hover {
+      border-color: rgba(125,186,150,0.6);
+    }
+    .thumb-item.active {
+      border-color: #7dba96;
+      box-shadow: 0 0 12px rgba(125,186,150,0.3);
+    }
+    .thumb-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .gallery-overlay {
+      display: none;
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 20;
+      border-radius: 28px;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .gallery-overlay.active {
+      display: flex;
+    }
+    .gallery-overlay img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 12px;
+    }
+    .gallery-overlay-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: #fff;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 21;
+    }
+    @media(max-width:1024px) {
+      .hero-product-wrapper {
+        flex-direction: column-reverse;
+      }
+      .hero-thumb-strip {
+        flex-direction: row;
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 4px;
+      }
+      .thumb-item {
+        width: 60px;
+        height: 60px;
+        flex-shrink: 0;
+      }
+    }
+
     /* Medication comparison */
     .meds-section {
       padding: 100px 0;
@@ -714,25 +803,49 @@
           </div>
         </div>
         <div class="reveal">
-          <div class="hero-product-card">
-            <div class="hpc-badge">✦ Most Popular</div>
-            <div class="vial-carousel" id="wlCarousel">
-              <div class="vial-carousel-track">
-                <img src="assets/brand/cedar_tablet_transparent.png" alt="Cedar Tablet" class="vial-slide floating-vial active">
-                <img src="assets/brand/ivy_tablet_transparent.png" alt="Ivy Tablet" class="vial-slide floating-vial" style="transform: scale(2.0);">
+          <div class="hero-product-wrapper">
+            <div class="hero-product-card">
+              <div class="hpc-badge">✦ Most Popular</div>
+              <div class="vial-carousel" id="wlCarousel">
+                <div class="vial-carousel-track">
+                  <img src="assets/brand/cedar_tablet_transparent.png" alt="Cedar Tablet" class="vial-slide floating-vial active">
+                  <img src="assets/brand/ivy_tablet_transparent.png" alt="Ivy Tablet" class="vial-slide floating-vial" style="transform: scale(2.0);">
+                </div>
+                <div class="vial-arrow vial-arrow-left" onclick="slideDrug(-1)"><i class="ri-arrow-left-s-line"></i></div>
+                <div class="vial-arrow vial-arrow-right" onclick="slideDrug(1)"><i class="ri-arrow-right-s-line"></i></div>
               </div>
-              <div class="vial-arrow vial-arrow-left" onclick="slideDrug(-1)"><i class="ri-arrow-left-s-line"></i></div>
-              <div class="vial-arrow vial-arrow-right" onclick="slideDrug(1)"><i class="ri-arrow-right-s-line"></i></div>
+              <!-- Gallery overlay for info slides -->
+              <div class="gallery-overlay" id="galleryOverlay">
+                <button class="gallery-overlay-close" onclick="closeGallery()">✕</button>
+                <img id="galleryFullImg" src="" alt="Gallery image">
+              </div>
+              <div class="hpc-title">Choose your Treatment</div>
+              <div class="hpc-sub">Simple flat rate pricing</div>
+              <div class="drug-pills">
+                <div class="drug-pill active" onclick="selectDrug(0)">Cedar Tablet (Men)</div>
+                <div class="drug-pill" onclick="selectDrug(1)">Ivy Tablet (Women)</div>
+              </div>
+              <div class="hpc-price"><sup>$</sup>39</div>
+              <div class="hpc-price-note">per month · pause or cancel anytime</div>
+              <a href="quiz.html" class="hpc-cta">See if you Qualify</a>
             </div>
-            <div class="hpc-title">Choose your Treatment</div>
-            <div class="hpc-sub">Simple flat rate pricing</div>
-            <div class="drug-pills">
-              <div class="drug-pill active" onclick="selectDrug(0)">Cedar Tablet (Men)</div>
-              <div class="drug-pill" onclick="selectDrug(1)">Ivy Tablet (Women)</div>
+            <div class="hero-thumb-strip">
+              <div class="thumb-item active" onclick="showThumb(this, 'product')" data-type="product">
+                <img src="assets/brand/cedar_tablet_transparent.png" alt="Cedar Tablet">
+              </div>
+              <div class="thumb-item" onclick="showThumb(this, 'assets/brand/hair_loss_kit.png')" data-type="gallery">
+                <img src="assets/brand/hair_loss_kit.png" alt="Hair Loss Kit">
+              </div>
+              <div class="thumb-item" onclick="showThumb(this, 'assets/brand/slide_hl_whats_included.png')" data-type="gallery">
+                <img src="assets/brand/slide_hl_whats_included.png" alt="What's Included">
+              </div>
+              <div class="thumb-item" onclick="showThumb(this, 'assets/brand/slide_hl_results.png')" data-type="gallery">
+                <img src="assets/brand/slide_hl_results.png" alt="Results">
+              </div>
+              <div class="thumb-item" onclick="showThumb(this, 'assets/brand/slide_discreet_shipping.png')" data-type="gallery">
+                <img src="assets/brand/slide_discreet_shipping.png" alt="Discreet Shipping">
+              </div>
             </div>
-            <div class="hpc-price"><sup>$</sup>39</div>
-            <div class="hpc-price-note">per month · pause or cancel anytime</div>
-            <a href="quiz.html" class="hpc-cta">See if you Qualify</a>
           </div>
         </div>
       </div>
@@ -1015,8 +1128,27 @@
   <script src="ab-test.js"></script>
   <script src="shared.js"></script>
   <script>
+    // Thumbnail gallery interaction
+    function showThumb(el, src) {
+      document.querySelectorAll('.thumb-item').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+      const overlay = document.getElementById('galleryOverlay');
+      const fullImg = document.getElementById('galleryFullImg');
+      if (el.dataset.type === 'product') {
+        overlay.classList.remove('active');
+      } else {
+        fullImg.src = src;
+        overlay.classList.add('active');
+      }
+    }
+    function closeGallery() {
+      document.getElementById('galleryOverlay').classList.remove('active');
+      document.querySelectorAll('.thumb-item').forEach(t => t.classList.remove('active'));
+      document.querySelector('.thumb-item[data-type="product"]').classList.add('active');
+    }
+
     let currentDrugIndex = 0;
-    
+
     function selectDrug(index) {
       currentDrugIndex = index;
       

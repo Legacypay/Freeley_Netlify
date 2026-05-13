@@ -106,6 +106,8 @@
       border-radius: 28px;
       padding: 40px;
       backdrop-filter: blur(10px);
+      position: relative;
+      overflow: hidden;
     }
 
     .ps-title {
@@ -193,6 +195,95 @@
 
     .ps-cta:hover {
       background: rgba(120, 200, 70, 0.9);
+    }
+
+    /* Thumbnail Gallery Strip */
+    .hero-product-wrapper {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .hero-thumb-strip {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex-shrink: 0;
+      width: 72px;
+    }
+    .thumb-item {
+      width: 72px;
+      height: 72px;
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 2px solid rgba(255,255,255,0.15);
+      transition: all 0.2s;
+      background: rgba(255,255,255,0.06);
+    }
+    .thumb-item:hover {
+      border-color: rgba(125,186,150,0.6);
+    }
+    .thumb-item.active {
+      border-color: #7dba96;
+      box-shadow: 0 0 12px rgba(125,186,150,0.3);
+    }
+    .thumb-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .gallery-overlay {
+      display: none;
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 20;
+      border-radius: 28px;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .gallery-overlay.active {
+      display: flex;
+    }
+    .gallery-overlay img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 12px;
+    }
+    .gallery-overlay-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: #fff;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 21;
+    }
+    @media(max-width:1024px) {
+      .hero-product-wrapper {
+        flex-direction: column-reverse;
+      }
+      .hero-thumb-strip {
+        flex-direction: row;
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 4px;
+      }
+      .thumb-item {
+        width: 60px;
+        height: 60px;
+        flex-shrink: 0;
+      }
     }
 
     /* Peptide deep dive */
@@ -456,91 +547,115 @@
           </div>
         </div>
         <div class="reveal">
-          <div class="peptide-selector">
-            <div class="peptide-carousel-container" style="position:relative; width:100%; height:260px; background:radial-gradient(circle at center, rgba(80,140,222,0.1) 0%, transparent 70%); border-radius:12px; margin-bottom:24px; overflow:hidden; touch-action:pan-y;">
-                <div class="peptide-slides" style="display:flex; width:300%; height:100%; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);" id="pepSlider">
-                    <div class="pep-slide" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;">
-                        <img src="assets/brand/sermorelin_vial.png" style="height: 400px; width: 280px; object-fit: contain; border-radius: 10px;" alt="Sermorelin">
-                        <div style="text-align:center; transform:translateY(12px);">
-                            <div style="color:#fff; font-weight:700; font-size:18px;">Sermorelin</div>
-                            <div style="color:rgba(255,255,255,0.6); font-size:13px; font-weight:500;">Growth factors &middot; Anti-aging</div>
-                        </div>
-                    </div>
-                    <div class="pep-slide" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;">
-                        <img src="assets/brand/glutathione_vial.png" style="height: 400px; width: 280px; object-fit: contain; border-radius: 10px;" alt="Glutathione">
-                        <div style="text-align:center; transform:translateY(12px);">
-                            <div style="color:#fff; font-weight:700; font-size:18px;">Glutathione</div>
-                            <div style="color:rgba(255,255,255,0.6); font-size:13px; font-weight:500;">Detox &middot; Immunity</div>
-                        </div>
-                    </div>
-                    <div class="pep-slide" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;">
-                        <img src="assets/brand/nad_vial.png" style="height: 400px; width: 280px; object-fit: contain; border-radius: 10px;" alt="NAD+">
-                        <div style="text-align:center; transform:translateY(12px);">
-                            <div style="color:#fff; font-weight:700; font-size:18px;">NAD+</div>
-                            <div style="color:rgba(255,255,255,0.6); font-size:13px; font-weight:500;">Cellular energy &middot; DNA repair</div>
-                        </div>
-                    </div>
-                </div>
-                <div style="position:absolute; bottom:12px; left:0; right:0; display:flex; justify-content:center; gap:8px;" id="pepDots">
-                    <div class="pep-dot active" data-index="0" style="width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,0.8); cursor:pointer;"></div>
-                    <div class="pep-dot" data-index="1" style="width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,0.3); cursor:pointer;"></div>
-                    <div class="pep-dot" data-index="2" style="width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,0.3); cursor:pointer;"></div>
-                </div>
-            </div>
-            <script>
-                let pepIdx = 0;
-                const sld = document.getElementById('pepSlider');
-                const dts = document.querySelectorAll('.pep-dot');
-                function updPep() {
-                    sld.style.transform = `translateX(-${pepIdx * 33.333}%)`;
-                    dts.forEach((d, i) => d.style.background = (i === pepIdx) ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.3)');
-                }
-                dts.forEach(d => d.addEventListener('click', e => { pepIdx = parseInt(e.target.dataset.index); updPep(); }));
-                let tx=0;
-                sld.addEventListener('touchstart', e => tx = e.changedTouches[0].screenX, {passive:true});
-                sld.addEventListener('touchend', e => {
-                    let nx = e.changedTouches[0].screenX;
-                    if (nx < tx - 30) { pepIdx = pepIdx < 2 ? pepIdx + 1 : 0; updPep(); }
-                    if (nx > tx + 30) { pepIdx = pepIdx > 0 ? pepIdx - 1 : 2; updPep(); }
-                }, {passive:true});
-            </script>
-            <div class="ps-title">Build your stack</div>
-            <div class="ps-sub">Select the peptides you're interested in — your physician will finalize what's
-              appropriate for you.</div>
-            <div class="peptide-list">
-              <div class="peptide-item selected" onclick="this.classList.toggle('selected')">
-                <div>
-                  <div class="pi-name">Sermorelin</div>
-                  <div class="pi-benefit">Growth factors · Anti-aging</div>
-                </div>
-                <div class="pi-check">✓</div>
+          <div class="hero-product-wrapper">
+            <div class="peptide-selector">
+              <div class="peptide-carousel-container" style="position:relative; width:100%; height:260px; background:radial-gradient(circle at center, rgba(80,140,222,0.1) 0%, transparent 70%); border-radius:12px; margin-bottom:24px; overflow:hidden; touch-action:pan-y;">
+                  <div class="peptide-slides" style="display:flex; width:300%; height:100%; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);" id="pepSlider">
+                      <div class="pep-slide" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                          <img src="assets/brand/sermorelin_vial.png" style="height: 400px; width: 280px; object-fit: contain; border-radius: 10px;" alt="Sermorelin">
+                          <div style="text-align:center; transform:translateY(12px);">
+                              <div style="color:#fff; font-weight:700; font-size:18px;">Sermorelin</div>
+                              <div style="color:rgba(255,255,255,0.6); font-size:13px; font-weight:500;">Growth factors &middot; Anti-aging</div>
+                          </div>
+                      </div>
+                      <div class="pep-slide" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                          <img src="assets/brand/glutathione_vial.png" style="height: 400px; width: 280px; object-fit: contain; border-radius: 10px;" alt="Glutathione">
+                          <div style="text-align:center; transform:translateY(12px);">
+                              <div style="color:#fff; font-weight:700; font-size:18px;">Glutathione</div>
+                              <div style="color:rgba(255,255,255,0.6); font-size:13px; font-weight:500;">Detox &middot; Immunity</div>
+                          </div>
+                      </div>
+                      <div class="pep-slide" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                          <img src="assets/brand/nad_vial.png" style="height: 400px; width: 280px; object-fit: contain; border-radius: 10px;" alt="NAD+">
+                          <div style="text-align:center; transform:translateY(12px);">
+                              <div style="color:#fff; font-weight:700; font-size:18px;">NAD+</div>
+                              <div style="color:rgba(255,255,255,0.6); font-size:13px; font-weight:500;">Cellular energy &middot; DNA repair</div>
+                          </div>
+                      </div>
+                  </div>
+                  <div style="position:absolute; bottom:12px; left:0; right:0; display:flex; justify-content:center; gap:8px;" id="pepDots">
+                      <div class="pep-dot active" data-index="0" style="width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,0.8); cursor:pointer;"></div>
+                      <div class="pep-dot" data-index="1" style="width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,0.3); cursor:pointer;"></div>
+                      <div class="pep-dot" data-index="2" style="width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,0.3); cursor:pointer;"></div>
+                  </div>
               </div>
-              <!-- BPC-157 hidden - not yet prescribable
-              <div class="peptide-item selected" onclick="this.classList.toggle('selected')">
-                <div>
-                  <div class="pi-name">BPC-157</div>
-                  <div class="pi-benefit">Recovery · Joint healing</div>
-                </div>
-                <div class="pi-check">✓</div>
+              <script>
+                  let pepIdx = 0;
+                  const sld = document.getElementById('pepSlider');
+                  const dts = document.querySelectorAll('.pep-dot');
+                  function updPep() {
+                      sld.style.transform = `translateX(-${pepIdx * 33.333}%)`;
+                      dts.forEach((d, i) => d.style.background = (i === pepIdx) ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.3)');
+                  }
+                  dts.forEach(d => d.addEventListener('click', e => { pepIdx = parseInt(e.target.dataset.index); updPep(); }));
+                  let tx=0;
+                  sld.addEventListener('touchstart', e => tx = e.changedTouches[0].screenX, {passive:true});
+                  sld.addEventListener('touchend', e => {
+                      let nx = e.changedTouches[0].screenX;
+                      if (nx < tx - 30) { pepIdx = pepIdx < 2 ? pepIdx + 1 : 0; updPep(); }
+                      if (nx > tx + 30) { pepIdx = pepIdx > 0 ? pepIdx - 1 : 2; updPep(); }
+                  }, {passive:true});
+              </script>
+              <!-- Gallery overlay for info slides -->
+              <div class="gallery-overlay" id="galleryOverlay">
+                <button class="gallery-overlay-close" onclick="closeGallery()">✕</button>
+                <img id="galleryFullImg" src="" alt="Gallery image">
               </div>
-              -->
-              <div class="peptide-item" onclick="this.classList.toggle('selected')">
-                <div>
-                  <div class="pi-name">NAD+</div>
-                  <div class="pi-benefit">Energy · Neuroprotection · Anti-aging</div>
+              <div class="ps-title">Build your stack</div>
+              <div class="ps-sub">Select the peptides you're interested in — your physician will finalize what's
+                appropriate for you.</div>
+              <div class="peptide-list">
+                <div class="peptide-item selected" onclick="this.classList.toggle('selected')">
+                  <div>
+                    <div class="pi-name">Sermorelin</div>
+                    <div class="pi-benefit">Growth factors · Anti-aging</div>
+                  </div>
+                  <div class="pi-check">✓</div>
                 </div>
-                <div class="pi-check">✓</div>
-              </div>
+                <!-- BPC-157 hidden - not yet prescribable
+                <div class="peptide-item selected" onclick="this.classList.toggle('selected')">
+                  <div>
+                    <div class="pi-name">BPC-157</div>
+                    <div class="pi-benefit">Recovery · Joint healing</div>
+                  </div>
+                  <div class="pi-check">✓</div>
+                </div>
+                -->
+                <div class="peptide-item" onclick="this.classList.toggle('selected')">
+                  <div>
+                    <div class="pi-name">NAD+</div>
+                    <div class="pi-benefit">Energy · Neuroprotection · Anti-aging</div>
+                  </div>
+                  <div class="pi-check">✓</div>
+                </div>
 
-              <div class="peptide-item" onclick="this.classList.toggle('selected')">
-                <div>
-                  <div class="pi-name">Glutathione</div>
-                  <div class="pi-benefit">Antioxidant · Detox · Cellular recovery</div>
+                <div class="peptide-item" onclick="this.classList.toggle('selected')">
+                  <div>
+                    <div class="pi-name">Glutathione</div>
+                    <div class="pi-benefit">Antioxidant · Detox · Cellular recovery</div>
+                  </div>
+                  <div class="pi-check">✓</div>
                 </div>
-                <div class="pi-check">✓</div>
+              </div>
+              <button class="ps-cta" onclick="window.location='quiz.html'">Build My Protocol →</button>
+            </div>
+            <div class="hero-thumb-strip">
+              <div class="thumb-item active" onclick="showThumb(this, 'product')" data-type="product">
+                <img src="assets/brand/sermorelin_vial.png" alt="Sermorelin">
+              </div>
+              <div class="thumb-item" onclick="showThumb(this, 'assets/brand/nad_vial.png')" data-type="gallery">
+                <img src="assets/brand/nad_vial.png" alt="NAD+">
+              </div>
+              <div class="thumb-item" onclick="showThumb(this, 'assets/brand/glutathione_vial.png')" data-type="gallery">
+                <img src="assets/brand/glutathione_vial.png" alt="Glutathione">
+              </div>
+              <div class="thumb-item" onclick="showThumb(this, 'assets/brand/slide_lg_whats_included.png')" data-type="gallery">
+                <img src="assets/brand/slide_lg_whats_included.png" alt="What's Included">
+              </div>
+              <div class="thumb-item" onclick="showThumb(this, 'assets/brand/slide_lg_benefits.png')" data-type="gallery">
+                <img src="assets/brand/slide_lg_benefits.png" alt="Benefits">
               </div>
             </div>
-            <button class="ps-cta" onclick="window.location='quiz.html'">Build My Protocol →</button>
           </div>
         </div>
       </div>
@@ -735,6 +850,25 @@
   <script src="ab-test.js"></script>
   <script src="shared.js"></script>
   <script>
+    // Thumbnail gallery interaction
+    function showThumb(el, src) {
+      document.querySelectorAll('.thumb-item').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+      const overlay = document.getElementById('galleryOverlay');
+      const fullImg = document.getElementById('galleryFullImg');
+      if (el.dataset.type === 'product') {
+        overlay.classList.remove('active');
+      } else {
+        fullImg.src = src;
+        overlay.classList.add('active');
+      }
+    }
+    function closeGallery() {
+      document.getElementById('galleryOverlay').classList.remove('active');
+      document.querySelectorAll('.thumb-item').forEach(t => t.classList.remove('active'));
+      document.querySelector('.thumb-item[data-type="product"]').classList.add('active');
+    }
+
     initPage('longevity');
     // Sticky CTA
     const stickyCta = document.getElementById('stickyCta');
