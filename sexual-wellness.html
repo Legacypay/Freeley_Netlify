@@ -4,25 +4,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Online ED Treatments | Sublingual Troche | Freeley</title>
-  <meta name="description" content="Fast-acting sublingual ED troche combining Tadalafil, Vardenafil, and Apomorphine. Physician-prescribed, discreet delivery. Starting at $59/month. Take your free assessment.">
+  <title>Online ED Treatments | 3-in-1 Sublingual Troche | Freeley</title>
+  <meta name="description" content="Get treated for Erectile Dysfunction online. Fast-acting, physician-prescribed Vast 3-in-1 sublingual tablet (Vardenafil, Tadalafil, Apomorphine) prescribed by a board-certified physician.">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "MedicalWebPage",
-    "name": "Online ED Treatments",
-    "description": "Physician-prescribed sublingual ED troche combining Tadalafil, Vardenafil, and Apomorphine for erectile dysfunction treatment.",
+    "name": "Sexual Wellness and ED Treatments",
+    "description": "Compounded sublingual treatments for Erectile Dysfunction.",
     "about": {
       "@type": "MedicalCondition",
-      "name": "Erectile Dysfunction",
-      "associatedAnatomy": {
-        "@type": "AnatomicalStructure",
-        "name": "Reproductive System"
-      }
+      "name": "Erectile Dysfunction"
     },
     "mainEntity": {
       "@type": "MedicalTherapy",
-      "name": "Compounded Sublingual ED Troche",
+      "name": "Compounded ED Medication",
       "indication": "Erectile Dysfunction"
     }
   }
@@ -33,1194 +29,834 @@
     rel="stylesheet">
   <link rel="stylesheet" href="shared.css">
   <style>
-    /* ── PRODUCT PAGE STYLES ── */
-
-    /* Product Hero — two-column layout */
-    .product-hero {
-      padding: 100px 0 60px;
-      background: var(--cream);
-    }
-    .product-hero-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 60px;
-      align-items: flex-start;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 24px;
-    }
-
-    /* Image Gallery */
-    .gallery {
-      display: grid;
-      grid-template-columns: 80px 1fr;
-      gap: 12px;
-      position: sticky;
-      top: 100px;
-    }
-    .gallery-thumbs {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .gallery-thumb {
-      width: 80px;
-      height: 80px;
-      border-radius: 10px;
-      border: 2px solid transparent;
-      overflow: hidden;
-      cursor: pointer;
-      transition: all 0.2s;
-      background: #fff;
-    }
-    .gallery-thumb.active {
-      border-color: var(--green-light);
-      box-shadow: 0 0 0 2px rgba(61,140,94,0.15);
-    }
-    .gallery-thumb img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .gallery-thumb-card {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 9px;
-      font-weight: 600;
-      color: var(--green);
-      text-align: center;
-      padding: 6px;
-      line-height: 1.2;
-      letter-spacing: 0.3px;
-    }
-    .gallery-main {
-      border-radius: 16px;
-      overflow: hidden;
-      background: #fff;
-      aspect-ratio: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .treatment-hero {
+      padding: 140px 0 100px;
+      background: linear-gradient(155deg, #1b2745 0%, #293f6e 45%, #355394 100%), url("assets/brand/freeley_pattern_dark.jpg");
+      background-size: cover; background-position: center; background-blend-mode: overlay;
       position: relative;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+      overflow-x: hidden;
     }
-    .gallery-main img {
-      max-width: 85%;
-      max-height: 85%;
-      object-fit: contain;
-      transition: opacity 0.3s;
-    }
-    /* Info card slides */
-    .gallery-slide { display: none; }
-    .gallery-slide.active { display: flex; }
 
-    .gallery-info-card {
-      width: 100%;
-      height: 100%;
-      padding: 40px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      background: linear-gradient(135deg, #1b3d32 0%, #2b5949 100%);
-      color: #fff;
-    }
-    .gallery-info-card h3 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 28px;
-      font-weight: 400;
-      margin-bottom: 20px;
-      line-height: 1.2;
-    }
-    .gallery-info-card ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    .gallery-info-card ul li {
-      font-size: 14px;
-      padding: 8px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: rgba(255,255,255,0.85);
-    }
-    .gallery-info-card ul li:last-child { border-bottom: none; }
-    .gallery-info-card .check-icon {
-      width: 18px;
-      height: 18px;
+    .treatment-hero::before {
+      content: '';
+      position: absolute;
+      top: -80px;
+      right: -80px;
+      width: 450px;
+      height: 450px;
       border-radius: 50%;
-      background: rgba(125,186,150,0.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      color: #7dba96;
-      font-size: 11px;
+      background: radial-gradient(circle, rgba(80, 140, 200, 0.15), transparent 65%);
     }
 
-    .gallery-steps-card {
-      width: 100%;
-      height: 100%;
-      padding: 36px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      background: var(--cream);
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 80px;
+      align-items: center;
     }
-    .gallery-steps-card h3 {
+
+    .treatment-eyebrow {
+      color: #9fccff;
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      font-weight: 500;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .treatment-hero h1 {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 26px;
-      font-weight: 400;
-      color: var(--charcoal);
+      font-size: clamp(46px, 5.5vw, 72px);
+      font-weight: 300;
+      line-height: 1.08;
+      color: #fff;
       margin-bottom: 24px;
-    }
-    .gallery-step {
-      display: flex;
-      align-items: flex-start;
-      gap: 14px;
-      margin-bottom: 16px;
-    }
-    .gallery-step-num {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: var(--green-light);
-      color: #fff;
-      font-size: 13px;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-    .gallery-step-text {
-      font-size: 14px;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
-    .gallery-step-text strong {
-      color: var(--charcoal);
-      display: block;
-      font-size: 15px;
-      margin-bottom: 2px;
+      letter-spacing: -0.5px;
     }
 
-    /* Product Info Column */
-    .product-info {
-      padding-top: 8px;
-    }
-    .product-eyebrow {
-      font-size: 11px;
-      letter-spacing: 2.5px;
-      text-transform: uppercase;
-      color: var(--green-light);
-      font-weight: 600;
-      margin-bottom: 12px;
-    }
-    .product-info h1 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(36px, 4vw, 52px);
-      font-weight: 300;
-      color: var(--charcoal);
-      line-height: 1.1;
-      margin-bottom: 4px;
-    }
-    .product-price-line {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(28px, 3vw, 40px);
-      font-weight: 400;
-      color: var(--green);
-      margin-bottom: 16px;
-    }
-    .product-trustpilot {
-      margin-bottom: 20px;
-    }
-    .product-desc {
-      font-size: 16px;
-      color: var(--text-muted);
-      line-height: 1.7;
-      margin-bottom: 32px;
-      font-weight: 300;
-    }
-
-    /* What's Included */
-    .whats-included {
-      background: var(--off-white);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 28px;
-      margin-bottom: 28px;
-    }
-    .whats-included h3 {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--charcoal);
-      margin-bottom: 16px;
-    }
-    .included-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      padding: 10px 0;
-    }
-    .included-check {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: rgba(61,140,94,0.12);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      margin-top: 1px;
-    }
-    .included-check svg {
-      width: 12px;
-      height: 12px;
-      color: var(--green-light);
-    }
-    .included-text {
-      font-size: 14px;
-      color: var(--text);
-      line-height: 1.5;
-    }
-
-    /* Medication Selector */
-    .med-selector {
-      margin-bottom: 28px;
-    }
-    .med-selector h3 {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--charcoal);
-      margin-bottom: 12px;
-    }
-    .med-options {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    .med-option {
-      padding: 14px 24px;
-      border: 2px solid var(--border);
-      border-radius: 12px;
-      background: #fff;
-      cursor: pointer;
-      transition: all 0.2s;
-      text-align: center;
-      flex: 1;
-      min-width: 140px;
-    }
-    .med-option:hover {
-      border-color: var(--green-light);
-    }
-    .med-option.active {
-      border-color: var(--green-light);
-      background: rgba(61,140,94,0.04);
-    }
-    .med-option-name {
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--charcoal);
-      margin-bottom: 2px;
-    }
-    .med-option-price {
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-    .med-option-tag {
-      display: inline-block;
-      background: var(--green-light);
-      color: #fff;
-      font-size: 10px;
-      padding: 2px 8px;
-      border-radius: 10px;
-      margin-bottom: 6px;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      font-weight: 600;
-    }
-
-    /* CTA Button */
-    .product-cta {
-      display: block;
-      width: 100%;
-      padding: 18px;
-      background: var(--green-light);
-      border: none;
-      border-radius: 50px;
-      color: #fff;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.25s;
-      text-align: center;
-      text-decoration: none;
-      margin-bottom: 12px;
-    }
-    .product-cta:hover {
-      background: var(--green-bright);
-      transform: translateY(-1px);
-      box-shadow: 0 8px 24px rgba(61,140,94,0.25);
-    }
-    .product-cta-note {
-      font-size: 12px;
-      color: var(--text-faint);
-      text-align: center;
-      line-height: 1.5;
-    }
-
-    /* Medical Disclaimer */
-    .product-disclaimer {
-      margin-top: 24px;
-      padding: 16px;
-      background: rgba(0,0,0,0.02);
-      border-radius: 10px;
-      font-size: 11px;
-      color: var(--text-faint);
-      line-height: 1.6;
-    }
-
-    /* ── SOCIAL PROOF SECTION ── */
-    .social-proof-section {
-      padding: 80px 0;
-      background-image: url("assets/brand/freeley_pattern_dark.jpg");
-      background-size: cover;
-      background-position: center;
-      text-align: center;
-      color: #fff;
-    }
-    .social-proof-section h2 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(32px, 4vw, 48px);
-      font-weight: 300;
-      margin-bottom: 48px;
-    }
-    .social-proof-section h2 em {
+    .treatment-hero h1 em {
       font-style: italic;
-      color: #7dba96;
-    }
-    .testimonial-cards {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 24px;
-    }
-    .testimonial-card {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 20px;
-      padding: 32px;
-      text-align: left;
-      backdrop-filter: blur(8px);
-    }
-    .testimonial-stars {
-      color: #F7CB45;
-      font-size: 16px;
-      margin-bottom: 16px;
-      letter-spacing: 2px;
-    }
-    .testimonial-card h4 {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 12px;
-    }
-    .testimonial-card p {
-      font-size: 14px;
-      color: rgba(255,255,255,0.6);
-      line-height: 1.7;
-      font-weight: 300;
-      margin-bottom: 16px;
-    }
-    .testimonial-author {
-      font-size: 13px;
-      color: rgba(255,255,255,0.4);
-      font-style: italic;
+      color: #9fccff;
     }
 
-    /* ── DEEP LOOK SECTION ── */
-    .deep-look-section {
-      padding: 100px 0;
-      background: #fff;
-    }
-    .deep-look-header {
-      text-align: center;
-      margin-bottom: 64px;
-    }
-    .deep-look-header h2 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(32px, 4vw, 48px);
-      font-weight: 300;
-      color: var(--charcoal);
-    }
-    .deep-look-header h2 em {
-      font-style: italic;
-      color: var(--green);
-    }
-    .deep-look-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 64px;
-      align-items: center;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 24px;
-    }
-    .deep-look-content h3 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 32px;
-      font-weight: 400;
-      color: var(--charcoal);
-      margin-bottom: 20px;
-    }
-    .deep-look-content p {
-      font-size: 16px;
-      color: var(--text-muted);
-      line-height: 1.8;
-      margin-bottom: 16px;
-      font-weight: 300;
-    }
-    .deep-look-content p strong {
-      color: var(--charcoal);
-      font-weight: 500;
-    }
-    .deep-look-image {
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.08);
-    }
-    .deep-look-image img {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
-
-    /* Benefits List */
-    .benefits-section {
-      padding: 80px 0;
-      background: var(--cream);
-    }
-    .benefits-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 64px;
-      align-items: center;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 24px;
-    }
-    .benefits-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    .benefits-list li {
-      display: flex;
-      align-items: flex-start;
-      gap: 14px;
-      padding: 16px 0;
-      border-bottom: 1px solid var(--border-light);
-    }
-    .benefits-list li:last-child { border-bottom: none; }
-    .benefit-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      background: rgba(61,140,94,0.1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      color: var(--green-light);
-    }
-    .benefit-text strong {
-      display: block;
-      font-size: 15px;
-      color: var(--charcoal);
-      margin-bottom: 4px;
-    }
-    .benefit-text span {
-      font-size: 13px;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
-
-    /* ── HOW IT WORKS ── */
-    .hiw-section {
-      padding: 100px 0;
-      background: #fff;
-    }
-    .hiw-header {
-      text-align: center;
-      margin-bottom: 64px;
-    }
-    .hiw-header h2 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(32px, 4vw, 48px);
-      font-weight: 300;
-      color: var(--charcoal);
-    }
-    .hiw-steps {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 32px;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 24px;
-    }
-    .hiw-step {
-      text-align: center;
-    }
-    .hiw-step-icon {
-      width: 72px;
-      height: 72px;
-      border-radius: 50%;
-      background: var(--green-mist);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 20px;
-      font-size: 28px;
-    }
-    .hiw-step-num {
-      font-size: 12px;
-      color: var(--green-light);
-      font-weight: 600;
-      letter-spacing: 1px;
-      margin-bottom: 10px;
-    }
-    .hiw-step h4 {
-      font-family: 'DM Sans', sans-serif;
+    .treatment-hero p {
+      color: rgba(255, 255, 255, 0.55);
       font-size: 17px;
-      font-weight: 600;
-      color: var(--charcoal);
-      margin-bottom: 8px;
-    }
-    .hiw-step p {
-      font-size: 14px;
-      color: var(--text-muted);
-      line-height: 1.6;
-      font-weight: 300;
-    }
-    .hiw-cta {
-      text-align: center;
-      margin-top: 48px;
-    }
-    .hiw-cta a {
-      display: inline-block;
-      padding: 16px 48px;
-      background: var(--green-light);
-      color: #fff;
-      border-radius: 50px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 15px;
-      font-weight: 600;
-      text-decoration: none;
-      transition: all 0.25s;
-    }
-    .hiw-cta a:hover {
-      background: var(--green-bright);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(61,140,94,0.25);
-    }
-
-    /* ── FAQ ── */
-    .faq-section {
-      padding: 100px 0;
-      background: var(--cream);
-    }
-    .faq-layout {
-      display: grid;
-      grid-template-columns: 1fr 2fr;
-      gap: 64px;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 24px;
-      align-items: flex-start;
-    }
-    .faq-title h2 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(36px, 4vw, 56px);
-      font-weight: 300;
-      color: var(--charcoal);
-      line-height: 1.15;
-    }
-    .faq-title h2 em {
-      font-style: italic;
-      color: var(--green);
-      display: block;
-    }
-    .faq-items {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .faq-item {
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      overflow: hidden;
-    }
-    .faq-question {
-      width: 100%;
-      padding: 20px 24px;
-      background: none;
-      border: none;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 15px;
-      font-weight: 500;
-      color: var(--text);
-      cursor: pointer;
-      text-align: left;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-    }
-    .faq-chevron {
-      width: 20px;
-      height: 20px;
-      flex-shrink: 0;
-      transition: transform 0.3s;
-      color: var(--text-faint);
-    }
-    .faq-item.open .faq-chevron { transform: rotate(180deg); }
-    .faq-answer {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.4s ease;
-    }
-    .faq-answer-inner {
-      padding: 0 24px 20px;
-      font-size: 14px;
-      color: var(--text-muted);
       line-height: 1.7;
-      font-weight: 300;
-    }
-    .faq-item.open .faq-answer { max-height: 300px; }
-
-    /* ── FINAL CTA ── */
-    .final-cta {
-      background-image: url("assets/brand/freeley_pattern_dark.jpg");
-      background-size: cover;
-      background-position: center;
-      padding: 100px 0;
-      text-align: center;
-    }
-    .final-cta h2 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(36px, 5vw, 60px);
-      font-weight: 300;
-      color: #fff;
-      margin-bottom: 16px;
-    }
-    .final-cta h2 em {
-      font-style: italic;
-      color: #7dba96;
-    }
-    .final-cta p {
-      color: rgba(255,255,255,0.5);
-      font-size: 16px;
+      max-width: 480px;
       margin-bottom: 40px;
       font-weight: 300;
     }
-    .final-cta a {
-      display: inline-block;
-      padding: 18px 56px;
-      background: var(--green-light);
-      color: #fff;
-      border-radius: 50px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 16px;
-      font-weight: 600;
-      text-decoration: none;
-      transition: all 0.25s;
-    }
-    .final-cta a:hover {
-      background: var(--green-bright);
-      transform: translateY(-2px);
-      box-shadow: 0 12px 32px rgba(61,140,94,0.3);
+
+    .hero-proof {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+      margin-top: 16px;
     }
 
-    /* ── STICKY CTA BAR ── */
-    .sticky-cta-bar {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: rgba(26,74,46,0.97);
-      backdrop-filter: blur(12px);
+    .hero-proof-val {
+      font-family: "Georgia", serif;
+      font-size: 34px;
+      color: #fff;
+      font-weight: 400;
+    }
+
+    .hero-proof-label {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.4);
+      margin-top: 2px;
+    }
+
+    /* Product card */
+    .product-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 28px;
+      padding: 40px;
+      backdrop-filter: blur(10px);
+    }
+
+    .gp-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px;
+      color: #fff;
+      font-weight: 400;
+      margin-bottom: 6px;
+    }
+
+    .gp-sub {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.45);
+      margin-bottom: 20px;
+    }
+
+    .gp-med-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .gp-med {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 12px 16px;
+    }
+
+    .gp-med-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: #fff;
+    }
+
+    .gp-med-form {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .gp-price {
+      font-family: "Georgia", serif;
+      font-size: 48px;
+      color: #fff;
+      font-weight: 300;
+    }
+
+    .gp-price sub {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.4);
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .gp-note {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.3);
+      margin-bottom: 20px;
+    }
+
+    .gp-cta {
+      width: 100%;
+      padding: 15px;
+      border-radius: 50px;
+      border: none;
+      background: rgba(120, 180, 255, 0.7);
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .gp-cta:hover {
+      background: rgba(120, 180, 255, 0.9);
+    }
+
+    /* Symptoms */
+    .symptoms-section {
+      padding: 100px 0;
+    }
+
+    .symptoms-split {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 48px;
+      margin-top: 56px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .symptom-group {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 44px;
+    }
+
+    .symptom-group h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      font-weight: 400;
+      margin-bottom: 8px;
+    }
+
+    .symptom-group .sg-sub {
+      font-size: 16px;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+
+    .symptom-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .symptom-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
       padding: 14px 0;
-      z-index: 900;
-      transform: translateY(100%);
-      transition: transform 0.4s ease;
+      border-bottom: 1px solid var(--border-light);
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .symptom-item:last-child {
+      border-bottom: none;
+    }
+
+    .symptom-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .symptom-text strong {
+      color: var(--text);
+      font-weight: 500;
+      display: block;
+      font-size: 14px;
+      margin-bottom: 2px;
+    }
+
+    /* Delivery formats */
+    .formats-section {
+      padding: 100px 0;
+      background: var(--off-white);
+    }
+
+    .formats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 56px;
+    }
+
+    .format-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 32px 24px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+
+    .format-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .format-icon {
+      font-size: 40px;
+      margin-bottom: 16px;
+    }
+
+    .format-name {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .format-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      font-weight: 300;
+    }
+
+    .format-best {
+      display: inline-block;
+      margin-top: 12px;
+      background: rgba(120, 180, 255, 0.15);
+      color: #2a5a8a;
+      font-size: 11px;
+      padding: 3px 12px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+
+    /* Lab process */
+    .lab-section {
+      padding: 100px 0;
+      background-image: url("assets/brand/freeley_pattern_dark.jpg"); background-size: cover; background-position: center; color: white;
+    }
+
+    .lab-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 56px;
+    }
+
+    .lab-step {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 22px;
+      padding: 36px 28px;
+    }
+
+    .lab-step-num {
+      font-family: "Georgia", serif;
+      font-size: 52px;
+      font-weight: 300;
+      color: rgba(255, 255, 255, 0.08);
+      margin-bottom: 16px;
+      display: block;
+      line-height: 1;
+    }
+
+    .lab-step-icon {
+      font-size: 28px;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .lab-step-title {
+      font-size: 16px;
+      font-weight: 500;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .lab-step-desc {
+      font-size: 13.5px;
+      color: rgba(255, 255, 255, 0.4);
+      line-height: 1.65;
+      font-weight: 300;
+    }
+
+    .treatment-cta {
+      background: linear-gradient(135deg, #050a16, #0d1a2e, #122a45), url("assets/brand/freeley_pattern_dark.jpg");
+      background-size: cover; background-position: center; background-blend-mode: multiply;
+      padding: 100px 0;
+      text-align: center;
+    }
+
+    .treatment-cta h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(38px, 5vw, 64px);
+      font-weight: 300;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+
+    .treatment-cta h2 em {
+      font-style: italic;
+      color: #9fccff;
+    }
+
+    .treatment-cta p {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 16px;
+      margin-bottom: 40px;
+    }
+
+    .btn-blue {
+      background: rgba(80, 140, 220, 0.8);
+    }
+
+    .btn-blue:hover {
+      background: rgba(80, 140, 220, 1);
+    }
+
+    /* Sticky CTA Bar */
+    .sticky-cta-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: rgba(13,26,46,0.97); backdrop-filter: blur(12px);
+      padding: 14px 0; z-index: 900;
+      transform: translateY(100%); transition: transform 0.4s ease;
       border-top: 1px solid rgba(255,255,255,0.08);
     }
     .sticky-cta-bar.visible { transform: translateY(0); }
     .sticky-cta-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
+      max-width: 1200px; margin: 0 auto; padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
     }
-    .sticky-cta-text {
-      color: #fff;
-      font-size: 15px;
-      font-weight: 500;
-    }
-    .sticky-cta-text span {
-      color: #7dba96;
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 22px;
-      font-weight: 400;
-      margin-right: 12px;
-    }
+    .sticky-cta-text { color: #fff; font-size: 15px; font-weight: 500; }
+    .sticky-cta-text span { color: #9fccff; font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 400; margin-right: 12px; }
     .sticky-cta-btn {
-      background: var(--green-light);
-      color: #fff;
-      padding: 12px 32px;
-      border-radius: 50px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      font-weight: 600;
-      text-decoration: none;
-      white-space: nowrap;
-      transition: all 0.2s;
+      background: rgba(80,140,220,0.8); color: #fff; padding: 12px 32px;
+      border-radius: 50px; font-family: 'DM Sans', sans-serif; font-size: 14px;
+      font-weight: 600; text-decoration: none; white-space: nowrap; transition: all 0.2s;
     }
-    .sticky-cta-btn:hover {
-      background: var(--green-bright);
-      transform: translateY(-1px);
+    .sticky-cta-btn:hover { background: rgba(80,140,220,1); transform: translateY(-1px); }
+    @media(max-width:640px) { .sticky-cta-text span { display: block; font-size: 18px; } .sticky-cta-inner { flex-direction: column; text-align: center; } }
+
+    @media(max-width:1024px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .formats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .lab-steps {
+        grid-template-columns: 1fr;
+      }
     }
 
-    /* ── RESPONSIVE ── */
-    @media(max-width:1024px) {
-      .product-hero-grid {
-        grid-template-columns: 1fr;
-        gap: 40px;
-      }
-      .gallery {
-        position: static;
-        grid-template-columns: 1fr;
-      }
-      .gallery-thumbs {
-        flex-direction: row;
-        overflow-x: auto;
-        order: 2;
-      }
-      .gallery-thumb {
-        width: 60px;
-        height: 60px;
-        flex-shrink: 0;
-      }
-      .gallery-main { order: 1; aspect-ratio: 4/3; }
-      .testimonial-cards { grid-template-columns: 1fr; max-width: 500px; }
-      .deep-look-grid { grid-template-columns: 1fr; }
-      .benefits-grid { grid-template-columns: 1fr; }
-      .hiw-steps { grid-template-columns: 1fr 1fr; }
-      .faq-layout { grid-template-columns: 1fr; gap: 32px; }
+    #fireworksCanvas {
+      position: absolute; 
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 60%; 
+      z-index: 0; 
+      pointer-events: none; 
+      mix-blend-mode: screen; 
+      opacity: 0.8; 
+      mask-image: linear-gradient(to bottom, black 0%, black 60%, transparent 100%); 
+      -webkit-mask-image: linear-gradient(to bottom, black 0%, black 60%, transparent 100%);
     }
-    @media(max-width:640px) {
-      .product-hero { padding-top: 80px; }
-      .hiw-steps { grid-template-columns: 1fr; }
-      .sticky-cta-text span { display: block; font-size: 18px; }
-      .sticky-cta-inner { flex-direction: column; text-align: center; }
+
+    @media(max-width: 768px) {
+      #fireworksCanvas {
+        height: 30%;
+      }
     }
   </style>
-  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="assets/brand/freeley_icon_128.png">
-  <link rel="canonical" href="https://freeley.com/sexual-wellness.html" />
-  <!-- Trustpilot TrustBox script -->
-  <script type="text/javascript" src="//widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js" async></script>
+  <link rel="icon" type="image/png" href="favicon.png?v=2">
+  <link rel="canonical" href="https://freeley.com/sexual-wellness">
 </head>
 
 <body>
-  <!-- NAV (shared via shared.js) -->
-  <nav id="main-nav"></nav>
 
-  <!-- ══════════════════════════════════════════ -->
-  <!-- PRODUCT HERO -->
-  <!-- ══════════════════════════════════════════ -->
-  <section class="product-hero">
-    <div class="product-hero-grid">
-
-      <!-- LEFT: Image Gallery -->
-      <div class="gallery">
-        <div class="gallery-thumbs">
-          <div class="gallery-thumb active" onclick="showSlide(0)">
-            <img src="assets/brand/freeley_troche_transparent.png" alt="Sublingual ED troche">
+  <section class="treatment-hero" style="position: relative; overflow: hidden;">
+    <!-- Fireworks Canvas Background -->
+    <canvas id="fireworksCanvas"></canvas>
+    <div class="container" style="position: relative; z-index: 2;">
+      <div class="hero-grid">
+        <div class="reveal">
+          <span class="treatment-eyebrow">Peak Performance</span>
+          <h1>Bring the fireworks back to the<br><em>bedroom</em></h1>
+          <p>A physician-prescribed 3-in-1 ED sublingual compound (Vast). 3x stronger than generics, primes the brain and body for
+            arousal, works in 15 minutes, lasts up to 36 hours. Live Freeley.</p>
+          
+          <div class="hero-proof" style="margin-top:48px; margin-bottom: 40px;">
+            <div>
+              <div class="hero-proof-val">3x</div>
+              <div class="hero-proof-label">Stronger formulation</div>
+            </div>
+            <div>
+              <div class="hero-proof-val">15m</div>
+              <div class="hero-proof-label">Fast average onset</div>
+            </div>
+            <div>
+              <div class="hero-proof-val">36h</div>
+              <div class="hero-proof-label">Lasts up to 36 hours</div>
+            </div>
           </div>
-          <div class="gallery-thumb" onclick="showSlide(1)">
-            <img src="assets/brand/loving_couple.png" alt="Couple lifestyle">
+          
+          <div class="hero-actions" style="margin-bottom: 24px; display: flex; align-items: center; gap: 32px; flex-wrap: wrap;">
+            <a href="quiz.html" class="hero-cta-pulse">See if you Qualify</a>
+            <a href="how-it-works.html" class="hero-arrow-link" style="font-size: 16px; color: #fff; text-decoration: none; display: flex; align-items: center; gap: 8px;">See what's included <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" /></svg></a>
           </div>
-          <div class="gallery-thumb" onclick="showSlide(2)">
-            <img src="assets/brand/ed_fireworks.png" alt="Fireworks illustration">
-          </div>
-          <div class="gallery-thumb" onclick="showSlide(3)">
-            <div class="gallery-thumb-card">WHAT'S<br>INCLUDED</div>
-          </div>
-          <div class="gallery-thumb" onclick="showSlide(4)">
-            <div class="gallery-thumb-card">HOW IT<br>WORKS</div>
-          </div>
-          <div class="gallery-thumb" onclick="showSlide(5)">
-            <img src="assets/brand/New_hero2_transparent.png" alt="Freeley app">
+          <div style="font-size: 14px; font-weight: 500; color: rgba(255, 255, 255, 0.6); display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+            <span><i class="ri-check-line" style="color: #7dba96; margin-right: 4px; font-size:16px;"></i>No credit card required</span>
+            <span><i class="ri-check-line" style="color: #7dba96; margin-right: 4px; font-size:16px;"></i>Takes 2 minutes</span>
+            <span><i class="ri-check-line" style="color: #7dba96; margin-right: 4px; font-size:16px;"></i>Cancel anytime</span>
           </div>
         </div>
-
-        <div class="gallery-main">
-          <!-- Slide 0: Sublingual Troche -->
-          <div class="gallery-slide active" data-slide="0">
-            <img src="assets/brand/freeley_troche_transparent.png" alt="Compounded sublingual ED troche">
-          </div>
-          <!-- Slide 1: Lifestyle -->
-          <div class="gallery-slide" data-slide="1">
-            <img src="assets/brand/loving_couple.png" alt="Couple enjoying life together">
-          </div>
-          <!-- Slide 2: Fireworks -->
-          <div class="gallery-slide" data-slide="2">
-            <img src="assets/brand/ed_fireworks.png" alt="Fireworks illustration">
-          </div>
-          <!-- Slide 3: What's Included Info Card -->
-          <div class="gallery-slide" data-slide="3">
-            <div class="gallery-info-card">
-              <h3>What's In Your<br>Monthly Kit</h3>
-              <ul>
-                <li><div class="check-icon">&#10003;</div> Sublingual troches (30-day supply)</li>
-                <li><div class="check-icon">&#10003;</div> Prescription from licensed physician</li>
-                <li><div class="check-icon">&#10003;</div> Ongoing provider support</li>
-                <li><div class="check-icon">&#10003;</div> Discreet packaging</li>
-              </ul>
+        <div class="reveal">
+          <div class="product-card">
+            <img src="assets/brand/freeley_troche_transparent.png" alt="Freeley 3-in-1 ED Troche" class="floating-vial"
+              style="width: 100%; height: 240px; object-fit: contain; border-radius: 12px; margin-bottom: 24px; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.15)); transform: scale(1.3);">
+            <div class="gp-title">Vast 3-in-1 Tablet</div>
+            <div class="gp-sub">Three medications, one powerful formula. Dissolves under the tongue.</div>
+            <div class="gp-med-list">
+              <div class="gp-med"><span class="gp-med-name">Vardenafil</span><span class="gp-med-form">Fast
+                  onset (15 min)</span></div>
+              <div class="gp-med"><span class="gp-med-name">Tadalafil</span><span class="gp-med-form">Lasts
+                  36 hours</span></div>
+              <div class="gp-med"><span class="gp-med-name">Apomorphine</span><span class="gp-med-form">Primes arousal
+                  pathways</span></div>
             </div>
-          </div>
-          <!-- Slide 4: How It Works Info Card -->
-          <div class="gallery-slide" data-slide="4">
-            <div class="gallery-steps-card">
-              <h3>How It Works</h3>
-              <div class="gallery-step">
-                <div class="gallery-step-num">1</div>
-                <div class="gallery-step-text"><strong>Take a Free Assessment</strong>Complete a quick online health questionnaire.</div>
-              </div>
-              <div class="gallery-step">
-                <div class="gallery-step-num">2</div>
-                <div class="gallery-step-text"><strong>Provider Review</strong>A licensed physician reviews your information.</div>
-              </div>
-              <div class="gallery-step">
-                <div class="gallery-step-num">3</div>
-                <div class="gallery-step-text"><strong>Delivered to Your Door</strong>If approved, medication ships directly to you.</div>
-              </div>
-              <div class="gallery-step">
-                <div class="gallery-step-num">4</div>
-                <div class="gallery-step-text"><strong>Ongoing Support</strong>Your provider is always available for guidance.</div>
-              </div>
-            </div>
-          </div>
-          <!-- Slide 5: App Mockup -->
-          <div class="gallery-slide" data-slide="5">
-            <img src="assets/brand/New_hero2_transparent.png" alt="Freeley app and treatment" style="max-width: 95%; max-height: 95%;">
+            <div class="gp-price">$89<sub>/month</sub></div>
+            <div class="gp-note">Physician consultation and expedited shipping included</div>
+            <button class="gp-cta" onclick="window.location='quiz.html'">Get Started Free →</button>
           </div>
         </div>
       </div>
-
-      <!-- RIGHT: Product Info -->
-      <div class="product-info">
-        <div class="product-eyebrow">Sexual Wellness</div>
-        <h1>Compounded Sublingual ED Troche</h1>
-        <div class="product-price-line">Starting at $59/month</div>
-
-        <!-- TrustBox widget -->
-        <div class="product-trustpilot">
-          <div class="trustpilot-widget" data-locale="en-US" data-template-id="56278e9abfbbba0bdcd568bc" data-businessunit-id="69c2e98765a7a37ca4e3a6f1" data-style-height="52px" data-style-width="100%" data-token="207ca074-50ef-444e-ada0-9943fa514c6a">
-            <a href="https://www.trustpilot.com/review/freeley.com" target="_blank" rel="noopener">Trustpilot</a>
-          </div>
-        </div>
-
-        <p class="product-desc">Fast-acting, physician-prescribed sublingual troche combining Tadalafil, Vardenafil, and Apomorphine in a single convenient tablet. Dissolves under the tongue for rapid absorption &mdash; no pills to swallow, no waiting. Prescribed by a licensed provider and shipped discreetly.</p>
-
-        <!-- What's Included -->
-        <div class="whats-included">
-          <h3>What's Included?</h3>
-          <div class="included-item">
-            <div class="included-check"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-            <div class="included-text">Compounded sublingual troche (30-day supply)</div>
-          </div>
-          <div class="included-item">
-            <div class="included-check"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-            <div class="included-text">Licensed physician consultation &amp; ongoing care</div>
-          </div>
-          <div class="included-item">
-            <div class="included-check"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-            <div class="included-text">Fast, discreet shipping to your door</div>
-          </div>
-          <div class="included-item">
-            <div class="included-check"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-            <div class="included-text">30-day risk-free guarantee</div>
-          </div>
-        </div>
-
-        <!-- Medication Selector (single product) -->
-        <div class="med-selector">
-          <h3>Your Treatment:</h3>
-          <div class="med-options">
-            <div class="med-option active">
-              <div class="med-option-tag">3-in-1 Formula</div>
-              <div class="med-option-name">3-in-1 Troche</div>
-              <div class="med-option-price">From $59/mo</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- CTA -->
-        <a href="checkout.html?treatment=sexual-wellness" class="product-cta" id="product-cta-btn">See If You Qualify &rarr;</a>
-        <div class="product-cta-note">No credit card required &bull; Takes 2 minutes &bull; Cancel anytime</div>
-
-        <!-- Disclaimer -->
-        <div class="product-disclaimer">
-          Any information provided on this webpage is for informational purposes only and should not be construed as medical advice. All patients must consult with a healthcare provider prior to the prescription or dispensing of any medication. Compounded drug products are not FDA-approved.
-        </div>
-      </div>
-
     </div>
   </section>
 
-  <!-- ══════════════════════════════════════════ -->
-  <!-- SOCIAL PROOF -->
-  <!-- ══════════════════════════════════════════ -->
-  <section class="social-proof-section">
+  <!-- COMPLIANCE DISCLAIMER -->
+  <div style="text-align: center; padding: 24px 24px 0; background: var(--cream, #f9f7f3);">
+    <p style="font-size: 12px; color: var(--text-faint, #999); line-height: 1.6; max-width: 700px; margin: 0 auto;">*Medications only issued when clinically appropriate after provider evaluation.<br>Freeley does not manufacture compounded medications. Actual product appearance and labeling of the medication you receive will differ from website images.</p>
+  </div>
+
+  <!-- SYMPTOMS -->
+  <section class="symptoms-section">
     <div class="container">
-      <h2>Why Patients Choose <em>Freeley</em></h2>
-      <!-- TrustBox widget -->
-      <div style="margin-bottom: 40px;">
-        <div class="trustpilot-widget" data-locale="en-US" data-template-id="56278e9abfbbba0bdcd568bc" data-businessunit-id="69c2e98765a7a37ca4e3a6f1" data-style-height="52px" data-style-width="100%" data-theme="dark" data-token="207ca074-50ef-444e-ada0-9943fa514c6a">
-          <a href="https://www.trustpilot.com/review/freeley.com" target="_blank" rel="noopener">Trustpilot</a>
+      <div class="reveal">
+        <span class="eyebrow">Who This Is For</span>
+        <h2 class="display" style="font-size:clamp(34px,4.5vw,52px);">Great sex starts<br>in the <em>brain</em></h2>
+        <p style="color:var(--text-muted);font-size:16px;max-width:580px;margin-top:12px;font-weight:300;">Generic
+          little blue pills only treat the physical aspect of ED. Our sublingual combination targets both the mental and
+          physical arousal pathways for maximum confidence.</p>
+      </div>
+      <div class="symptoms-split" style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; margin-top: 40px;">
+        <div class="symptom-group reveal reveal-delay-1">
+          <h3>Fast onset, results that last</h3>
+          <div class="sg-sub">Our 3-in-1 formula delivers stronger, more reliable results than sildenafil or tadalafil
+            alone. Stop planning around pills.</div>
+          <div class="symptom-list">
+            <div class="symptom-item"><span class="symptom-icon"><i class="ri-flashlight-fill"></i></span>
+              <div><strong>Targeted Absorption</strong>Dissolves under the tongue, entering the bloodstream directly for
+                reliable results.</div>
+            </div>
+            <div class="symptom-item"><span class="symptom-icon"><i class="ri-rocket-line"></i></span>
+              <div><strong>Faster Onset</strong>Active ingredients reach your bloodstream in as fast as 15 minutes, not
+                hours.</div>
+            </div>
+            <div class="symptom-item"><span class="symptom-icon"><i class="ri-leaf-fill"></i></span>
+              <div><strong>Mild Taste</strong>Minty fresh finish, powerful ED treatment.</div>
+            </div>
+            <div class="symptom-item"><span class="symptom-icon"><i class="ri-shield-check-fill"></i></span>
+              <div><strong>Control & Confidence</strong>Tadalafil supports sustained blood flow for up to 36 hours of
+                readiness.</div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-    <div class="testimonial-cards">
-      <div class="testimonial-card">
-        <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-        <h4>Works Faster Than Anything I've Tried</h4>
-        <p>The sublingual troche kicks in so much faster than pills I used before. It's been a confidence game-changer.</p>
-        <div class="testimonial-author">&ndash; James T.</div>
-      </div>
-      <div class="testimonial-card">
-        <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-        <h4>Discreet &amp; Easy</h4>
-        <p>Love that it's just a small troche that dissolves. No water needed, no planning around meals. My wife noticed the difference immediately.</p>
-        <div class="testimonial-author">&ndash; Chris M.</div>
-      </div>
-      <div class="testimonial-card">
-        <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-        <h4>Great Medical Support</h4>
-        <p>I was embarrassed to see a doctor in person about this. The online process was private, professional, and my provider actually answered all my questions.</p>
-        <div class="testimonial-author">&ndash; Brian L.</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ══════════════════════════════════════════ -->
-  <!-- A DEEPER LOOK -->
-  <!-- ══════════════════════════════════════════ -->
-  <section class="deep-look-section">
-    <div class="deep-look-header">
-      <h2>A Deeper Look <em>Inside ED Treatment</em></h2>
-    </div>
-    <div class="deep-look-grid">
-      <div class="deep-look-content">
-        <h3>How Sublingual Troches Work</h3>
-        <p>Unlike traditional oral medications that must pass through the digestive system, sublingual troches dissolve under the tongue for direct absorption into the bloodstream. This can mean faster onset and more consistent results.</p>
-        <p><strong>Our compounded 3-in-1 formula combines Tadalafil (for long-lasting effect), Vardenafil (for rapid onset), and Apomorphine (which works on brain pathways to enhance arousal).</strong> When prescribed by a licensed provider, this combination approach addresses ED from multiple angles.</p>
-      </div>
-      <div class="deep-look-image">
-        <img src="assets/brand/loving_couple.png" alt="Couple enjoying life together">
-      </div>
-    </div>
-  </section>
-
-  <!-- ══════════════════════════════════════════ -->
-  <!-- BENEFITS -->
-  <!-- ══════════════════════════════════════════ -->
-  <section class="benefits-section">
-    <div class="benefits-grid">
-      <div>
-        <h2 style="font-family: 'Cormorant Garamond', serif; font-size: clamp(32px, 4vw, 48px); font-weight: 300; color: var(--charcoal); margin-bottom: 12px;">Potential Benefits of<br><em style="color: var(--green); font-style: italic;">Sublingual ED Therapy</em></h2>
-        <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6;">When appropriately prescribed and dosed under provider guidance, patients may experience:</p>
-      </div>
-      <ul class="benefits-list">
-        <li>
-          <div class="benefit-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
-          <div class="benefit-text"><strong>Fast-Acting Formula</strong><span>Sublingual absorption bypasses the digestive system, allowing for quicker onset compared to traditional oral ED medications.</span></div>
-        </li>
-        <li>
-          <div class="benefit-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v20M2 12h20"/></svg></div>
-          <div class="benefit-text"><strong>Triple-Action Approach</strong><span>Combines three active ingredients targeting different pathways for more comprehensive support.</span></div>
-        </li>
-        <li>
-          <div class="benefit-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-          <div class="benefit-text"><strong>Discreet &amp; Convenient</strong><span>No pills to swallow. Dissolves quickly and discreetly under the tongue whenever you need it.</span></div>
-        </li>
-        <li>
-          <div class="benefit-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/></svg></div>
-          <div class="benefit-text"><strong>Provider-Guided Care</strong><span>Your prescribing physician monitors your treatment and adjusts dosing based on your response and needs.</span></div>
-        </li>
-      </ul>
-    </div>
-  </section>
-
-  <!-- ══════════════════════════════════════════ -->
-  <!-- HOW IT WORKS -->
-  <!-- ══════════════════════════════════════════ -->
-  <section class="hiw-section">
-    <div class="hiw-header">
-      <h2>A Straightforward Path to Care</h2>
-    </div>
-    <div class="hiw-steps">
-      <div class="hiw-step">
-        <div class="hiw-step-icon">&#128221;</div>
-        <div class="hiw-step-num">01</div>
-        <h4>Take the Assessment</h4>
-        <p>Complete a quick online health questionnaire &mdash; it takes about 2 minutes.</p>
-      </div>
-      <div class="hiw-step">
-        <div class="hiw-step-icon">&#129657;</div>
-        <div class="hiw-step-num">02</div>
-        <h4>Provider Review</h4>
-        <p>A licensed physician reviews your information to determine if you qualify.</p>
-      </div>
-      <div class="hiw-step">
-        <div class="hiw-step-icon">&#128230;</div>
-        <div class="hiw-step-num">03</div>
-        <h4>Delivered to Your Door</h4>
-        <p>If approved, your medication ships directly from our partner pharmacy.</p>
-      </div>
-      <div class="hiw-step">
-        <div class="hiw-step-icon">&#128172;</div>
-        <div class="hiw-step-num">04</div>
-        <h4>Ongoing Support</h4>
-        <p>Your provider is always available for questions, dose adjustments, and guidance.</p>
-      </div>
-    </div>
-    <div class="hiw-cta">
-      <a href="checkout.html?treatment=sexual-wellness">See If You Qualify &rarr;</a>
-    </div>
-  </section>
-
-  <!-- ══════════════════════════════════════════ -->
-  <!-- FAQ -->
-  <!-- ══════════════════════════════════════════ -->
-  <section class="faq-section">
-    <div class="faq-layout">
-      <div class="faq-title">
-        <h2><em>Frequently</em> Asked Questions</h2>
-      </div>
-      <div class="faq-items">
-        <div class="faq-item">
-          <button class="faq-question" onclick="toggleFaq(this)">
-            What is a sublingual troche?
-            <svg class="faq-chevron" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-          </button>
-          <div class="faq-answer"><div class="faq-answer-inner">A sublingual troche is a small, dissolvable tablet placed under the tongue. It's absorbed directly into the bloodstream through the oral mucosa, bypassing the digestive system for faster, more consistent absorption.</div></div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-question" onclick="toggleFaq(this)">
-            What's in the 3-in-1 formula?
-            <svg class="faq-chevron" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-          </button>
-          <div class="faq-answer"><div class="faq-answer-inner">Our compounded troche contains Tadalafil (long-acting PDE5 inhibitor), Vardenafil (fast-acting PDE5 inhibitor), and Apomorphine (dopamine agonist that works on brain pathways). This combination is prescribed by your physician based on your health profile.</div></div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-question" onclick="toggleFaq(this)">
-            How quickly does it work?
-            <svg class="faq-chevron" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-          </button>
-          <div class="faq-answer"><div class="faq-answer-inner">Most patients report onset within 15-30 minutes due to sublingual absorption. Effects can last several hours depending on the active ingredients and individual response.</div></div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-question" onclick="toggleFaq(this)">
-            Are there side effects?
-            <svg class="faq-chevron" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-          </button>
-          <div class="faq-answer"><div class="faq-answer-inner">Common side effects may include mild headache, flushing, or nasal congestion. These are typically mild and temporary. Your provider starts with an appropriate dose and adjusts as needed.</div></div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-question" onclick="toggleFaq(this)">
-            Is this discreet?
-            <svg class="faq-chevron" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-          </button>
-          <div class="faq-answer"><div class="faq-answer-inner">Yes. All medications ship in plain, unmarked packaging. The troche itself is small and can be taken discreetly without water.</div></div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-question" onclick="toggleFaq(this)">
-            Can I cancel anytime?
-            <svg class="faq-chevron" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-          </button>
-          <div class="faq-answer"><div class="faq-answer-inner">Yes, no long-term commitments or contracts. Pause or cancel anytime through your patient portal or support team.</div></div>
+        <div class="reveal reveal-delay-2">
+          <img src="assets/brand/ed_brain.png" alt="Great sex starts with the brain" style="width: 100%; height: auto; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.08);">
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ══════════════════════════════════════════ -->
-  <!-- FINAL CTA -->
-  <!-- ══════════════════════════════════════════ -->
-  <section class="final-cta">
+  <!-- DELIVERY FORMATS -->
+  <section class="formats-section">
     <div class="container">
-      <h2>Ready to Reclaim Your<br><em>Confidence?</em></h2>
-      <p>Take a free 2-minute assessment and see if you qualify for physician-prescribed ED treatment.</p>
-      <a href="checkout.html?treatment=sexual-wellness">See If You Qualify &rarr;</a>
+      <div class="reveal">
+        <span class="eyebrow">The Formula</span>
+        <h2 class="display" style="font-size:clamp(34px,4.5vw,52px);">Three medications,<br><em>one formula</em></h2>
+      </div>
+      <div class="formats-grid">
+        <div class="format-card reveal reveal-delay-1">
+          <div class="format-icon"><i class="ri-drop-fill"></i></div>
+          <div class="format-name">Vardenafil</div>
+          <div class="format-desc">Increases blood flow for stronger, firmer erections in as fast as 15 minutes on
+            average.</div>
+          <span class="format-best">The Starter</span>
+        </div>
+        <div class="format-card reveal reveal-delay-2">
+          <div class="format-icon"><i class="ri-battery-charge-fill"></i></div>
+          <div class="format-name">Tadalafil</div>
+          <div class="format-desc">Helps sustain blood flow, supporting both control and readiness for up to 36 hours.
+          </div>
+          <span class="format-best">The Sustainer</span>
+        </div>
+        <div class="format-card reveal reveal-delay-3">
+          <div class="format-icon"><i class="ri-brain-line"></i></div>
+          <div class="format-name">Apomorphine</div>
+          <div class="format-desc">Activates dopamine arousal pathways in your brain. Primes you mentally before the
+            physical kicks in.</div>
+          <span class="format-best">The Primer</span>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- FOOTER (shared via shared.js) -->
-  <footer id="main-footer"></footer>
+  <!-- LAB PROCESS -->
+  <section class="lab-section">
+    <div class="container">
+      <div class="reveal">
+        <span class="eyebrow" style="color:#9fccff">The Process</span>
+        <h2 class="display display-white" style="font-size:clamp(34px,4.5vw,52px);color:#fff;">From
+          consultation<br><em>to confidence</em></h2>
+        <p style="color:rgba(255,255,255,0.4);font-size:16px;max-width:480px;margin-top:12px;font-weight:300;">
+          Everything happens on your schedule, entirely online.</p>
+      </div>
+      <div class="lab-steps">
+        <div class="lab-step reveal reveal-delay-1">
+          <span class="lab-step-num">01</span>
+          <span class="lab-step-icon"><i class="ri-clipboard-line"></i></span>
+          <div class="lab-step-title">Complete Assessment</div>
+          <div class="lab-step-desc">Answer a few questions about your medical history from your phone. It takes 3
+            minutes and is completely secure.</div>
+        </div>
+        <div class="lab-step reveal reveal-delay-2">
+          <span class="lab-step-num">02</span>
+          <span class="lab-step-icon"><i class="ri-stethoscope-fill"></i></span>
+          <div class="lab-step-title">Doctor Review</div>
+          <div class="lab-step-desc">A board-certified physician reviews your profile to determine if the 3-in-1 ED compound
+            is appropriate for you.</div>
+        </div>
+        <div class="lab-step reveal reveal-delay-3">
+          <span class="lab-step-num">03</span>
+          <span class="lab-step-icon"><i class="ri-box-3-fill"></i></span>
+          <div class="lab-step-title">Fast & Discreet Shipping</div>
+          <div class="lab-step-desc">Your prescription is compounded at our licensed pharmacy and shipped free in
+            discreet packaging straight to your door.</div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-  <!-- Sticky CTA Bar -->
-  <div class="sticky-cta-bar" id="sticky-cta">
+  <!-- PATIENT STORIES -->
+  <section style="padding: 80px 0; background: var(--off-white);">
+    <div class="container">
+      <div class="reveal" style="text-align: center; margin-bottom: 40px;">
+        <span class="eyebrow">Real Results</span>
+        <h2 class="display" style="font-size:clamp(34px,4.5vw,52px); margin-top:12px;">Why men choose<br><em>Vast</em></h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 1000px; margin: 0 auto;">
+        <div class="reveal reveal-delay-1" style="background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 32px; transition: all 0.3s;">
+          <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(80,140,220,0.08); border: 1px solid rgba(80,140,220,0.2); border-radius: 10px; padding: 8px 16px; margin-bottom: 16px;">
+            <strong style="font-family: 'Cormorant Garamond', serif; font-size: 22px; color: #2a5a8a;">15 min</strong>
+            <span style="font-size: 12px; color: var(--text-muted);">onset time</span>
+          </div>
+          <p style="font-size: 15px; color: var(--text-muted); line-height: 1.7; margin-bottom: 20px; font-weight: 300;">"I ditched the blue pill. This troche works faster, lasts way longer, and there's no 'planning ahead' anymore. Complete game changer."</p>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(80,140,220,0.1); display: flex; align-items: center; justify-content: center; font-weight: 600; color: #2a5a8a; font-size: 14px;">DM</div>
+            <div><div style="font-weight: 600; font-size: 14px;">David M.</div><div style="font-size: 12px; color: var(--text-faint);">Age 42 · NYC</div></div>
+          </div>
+        </div>
+        <div class="reveal reveal-delay-2" style="background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 32px; transition: all 0.3s;">
+          <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(80,140,220,0.08); border: 1px solid rgba(80,140,220,0.2); border-radius: 10px; padding: 8px 16px; margin-bottom: 16px;">
+            <strong style="font-family: 'Cormorant Garamond', serif; font-size: 22px; color: #2a5a8a;">36 hrs</strong>
+            <span style="font-size: 12px; color: var(--text-muted);">duration</span>
+          </div>
+          <p style="font-size: 15px; color: var(--text-muted); line-height: 1.7; margin-bottom: 20px; font-weight: 300;">"The fact that it lasts the entire weekend is huge. No more awkward timing. My confidence is completely back and my partner noticed immediately."</p>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(80,140,220,0.1); display: flex; align-items: center; justify-content: center; font-weight: 600; color: #2a5a8a; font-size: 14px;">SK</div>
+            <div><div style="font-weight: 600; font-size: 14px;">Sean K.</div><div style="font-size: 12px; color: var(--text-faint);">Age 38 · LA</div></div>
+          </div>
+        </div>
+        <div class="reveal reveal-delay-3" style="background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 32px; transition: all 0.3s;">
+          <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(80,140,220,0.08); border: 1px solid rgba(80,140,220,0.2); border-radius: 10px; padding: 8px 16px; margin-bottom: 16px;">
+            <strong style="font-family: 'Cormorant Garamond', serif; font-size: 22px; color: #2a5a8a;">$89</strong>
+            <span style="font-size: 12px; color: var(--text-muted);">per month</span>
+          </div>
+          <p style="font-size: 15px; color: var(--text-muted); line-height: 1.7; margin-bottom: 20px; font-weight: 300;">"I was paying way too much for pills that barely worked. The Freeley troche works faster and honestly more effective. Wish I'd found this sooner."</p>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(80,140,220,0.1); display: flex; align-items: center; justify-content: center; font-weight: 600; color: #2a5a8a; font-size: 14px;">RH</div>
+            <div><div style="font-weight: 600; font-size: 14px;">Robert H.</div><div style="font-size: 12px; color: var(--text-faint);">Age 51 · Chicago</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STICKY CTA BAR -->
+  <div class="sticky-cta-bar" id="stickyCta">
     <div class="sticky-cta-inner">
-      <div class="sticky-cta-text"><span>ED Troche</span> Starting at $59/mo</div>
-      <a href="checkout.html?treatment=sexual-wellness" class="sticky-cta-btn">Get Started &rarr;</a>
+      <div class="sticky-cta-text"><span>$89/mo</span> Vast 3-in-1 tablet · Free physician consult · Discreet delivery</div>
+      <a href="quiz.html" class="sticky-cta-btn">See if you Qualify</a>
     </div>
   </div>
 
+  <!-- LIFESTYLE EDITORIAL -->
+  <section style="padding: 0; overflow: hidden; position: relative; min-height: 500px;">
+    <img src="assets/brand/loving_couple.png" alt="Loving couple exploring sexual wellness" 
+      style="width: 100%; height: 500px; object-fit: cover; display: block;" loading="lazy">
+    <div style="position: absolute; inset: 0; background: linear-gradient(135deg, rgba(0,0,0,0.55), rgba(0,0,0,0.2)); display: flex; align-items: center; justify-content: center;">
+      <div style="text-align: center; padding: 40px; max-width: 640px;">
+        <span style="display: inline-block; background: rgba(255,255,255,0.12); backdrop-filter: blur(6px); padding: 6px 16px; border-radius: 50px; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #fff; margin-bottom: 20px;">Confidence, Restored</span>
+        <h2 style="font-family: 'Cormorant Garamond', serif; font-size: clamp(32px, 4vw, 48px); color: #fff; font-weight: 400; line-height: 1.15; margin: 0 0 20px 0;">
+          Performance is personal.<br><em>Treatment should be too.</em>
+        </h2>
+        <a href="quiz.html" style="display: inline-flex; align-items: center; gap: 8px; padding: 16px 32px; background: #fff; color: #1a1a2e; border-radius: 50px; font-size: 15px; font-weight: 600; text-decoration: none; transition: all 0.3s;">
+          Get Your Personalized Plan <i class="ri-arrow-right-line"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="treatment-cta">
+    <div class="container">
+      <div class="reveal">
+        <h2>Feel the difference<br><em>Cancel anytime, no commitment</em></h2>
+        <p>Free physician visit · Discreet delivery · Cancel anytime</p>
+        <a href="quiz.html" class="btn btn-primary btn-lg btn-blue" style="background:rgba(80,140,220,0.8);">Complete
+          Your Free Assessment →</a>
+      </div>
+    </div>
+  </section>
+
+  <script src="analytics.js"></script>
+  <script src="seo.js"></script>
+  <script src="social-proof.js"></script>
+  <script src="mobile-features.js"></script>
+  <script src="exit-intent.js"></script>
+  <script src="ab-test.js"></script>
   <script src="shared.js"></script>
   <script>
-    // ── Gallery Slider ──
-    function showSlide(index) {
-      document.querySelectorAll('.gallery-slide').forEach(s => s.classList.remove('active'));
-      document.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
-      const slide = document.querySelector(`.gallery-slide[data-slide="${index}"]`);
-      if (slide) slide.classList.add('active');
-      const thumbs = document.querySelectorAll('.gallery-thumb');
-      if (thumbs[index]) thumbs[index].classList.add('active');
+    initPage('sexual-wellness');
+    // Sticky CTA
+    const stickyCta = document.getElementById('stickyCta');
+    if (stickyCta) {
+      const hero = document.querySelector('.treatment-hero');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => stickyCta.classList.toggle('visible', !e.isIntersecting));
+      }, { threshold: 0 });
+      if (hero) observer.observe(hero);
     }
-
-    // ── FAQ Toggle ──
-    function toggleFaq(btn) {
-      const item = btn.parentElement;
-      const wasOpen = item.classList.contains('open');
-      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
-      if (!wasOpen) item.classList.add('open');
-    }
-
-    // ── Sticky CTA Bar ──
-    window.addEventListener('scroll', function() {
-      const bar = document.getElementById('sticky-cta');
-      if (window.scrollY > 600) {
-        bar.classList.add('visible');
-      } else {
-        bar.classList.remove('visible');
-      }
-    });
   </script>
+
+  <script>
+    // Fireworks Canvas Background Animation
+    const fireworksCanvas = document.getElementById('fireworksCanvas');
+    if (fireworksCanvas) {
+      const ctx = fireworksCanvas.getContext('2d');
+      let w, h;
+      const particles = [];
+      const colors = ['#f39c12', '#e74c3c', '#f1c40f', '#e67e22', '#3498db', '#9b59b6'];
+
+      function resize() {
+        w = fireworksCanvas.width = fireworksCanvas.offsetWidth;
+        h = fireworksCanvas.height = fireworksCanvas.offsetHeight;
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      let lastLaunchTime = -99999;
+      let cycleStartTime = performance.now();
+
+      class Particle {
+        constructor(x, y, isFirework) {
+          this.x = x;
+          this.y = y;
+          this.isFirework = isFirework;
+          
+          if (isFirework) {
+            // Target a specific altitude
+            this.vx = (Math.random() - 0.5) * 1; // Keep straighter
+            this.vy = -(Math.random() * 2 + 5);
+            this.life = Math.random() * 60 + 50; 
+            this.size = 2.5;
+          } else {
+            // Half the size explosion spread
+            const angle = Math.random() * Math.PI * 2;
+            const speed = Math.random() * 10 + 2; 
+            this.vx = Math.cos(angle) * speed;
+            this.vy = Math.sin(angle) * speed;
+            this.life = Math.random() * 100 + 70;
+            this.size = Math.random() * 3 + 1; // Thinner particles
+          }
+          
+          this.baseLife = this.life;
+          this.color = colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        update() {
+          if (!this.isFirework) {
+            this.vy += 0.02; // Very gentle gravity
+            this.vx *= 0.92; // High friction
+            this.vy *= 0.92;
+            this.size *= 0.985;
+          }
+          this.x += this.vx;
+          this.y += this.vy;
+          this.life--;
+        }
+
+        draw() {
+          ctx.globalAlpha = Math.max(0, this.life / this.baseLife);
+          ctx.fillStyle = this.color;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      function explode(x, y) {
+        // Less particles for half size
+        for (let i = 0; i < 150; i++) {
+          particles.push(new Particle(x, y, false));
+        }
+      }
+
+      function loop() {
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
+        ctx.fillRect(0, 0, w, h);
+        ctx.globalCompositeOperation = 'lighter';
+        
+        ctx.globalAlpha = 1;
+
+        const now = performance.now();
+        const cycleElapsed = (now - cycleStartTime) % 60000;
+        
+        // Active for 30s, Off for 30s
+        if (cycleElapsed < 30000) {
+          // Launch exactly every 5 seconds
+          if (now - lastLaunchTime > 5000) {
+            lastLaunchTime = now;
+            // Fire 3 simultaneous fireworks in different locations within the blank space
+            for (let f = 0; f < 3; f++) {
+              // Target the empty space primarily on the left behind the text (10% to 50% width)
+              const targetX = (Math.random() * (w * 0.4)) + (w * 0.1);
+              particles.push(new Particle(targetX, h, true));
+            }
+          }
+        }
+
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i];
+          p.update();
+          p.draw();
+          if (p.life <= 0) {
+            if (p.isFirework) explode(p.x, p.y);
+            particles.splice(i, 1);
+          }
+        }
+        requestAnimationFrame(loop);
+      }
+      loop();
+    }
+  </script>
+
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
 </body>
+
 </html>
