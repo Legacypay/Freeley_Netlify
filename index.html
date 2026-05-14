@@ -400,10 +400,14 @@
     .cert-track {
       display: flex;
       align-items: center;
-      gap: clamp(40px, 6vw, 72px);
       width: max-content;
       animation: certScroll 28s linear infinite;
     }
+    /* Each badge gets equal trailing margin instead of CSS `gap`. With
+       gap, translateX(-50%) lands mid-gap and produces a visible jump
+       on every loop. Per-item margin makes the duplicate set align
+       exactly with the original. */
+    .cert-track > * { margin-right: clamp(40px, 6vw, 72px); flex-shrink: 0; }
     .cert-marquee:hover .cert-track { animation-play-state: paused; }
     @keyframes certScroll {
       from { transform: translate3d(0, 0, 0); }
