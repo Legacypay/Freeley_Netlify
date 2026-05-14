@@ -3,9 +3,11 @@
  * Caches core pages and assets for fast repeat visits.
  */
 
-// Bumped to v2 to invalidate the old cache that returned undefined
-// from the fetch handler and broke favicon + dynamic requests.
-const CACHE_NAME = 'freeley-v2';
+// v3: bypass media (mp4/webm/mov/m4v/m3u8/ts/ogg/wav/mp3) so the
+// browser handles HTTP 206 range requests directly. The SW returning
+// a cached 200 in response to a Range: request breaks <video>
+// playback (especially Safari/iOS).
+const CACHE_NAME = 'freeley-v3';
 const CORE_ASSETS = [
   '/',
   '/index.html',
@@ -53,15 +55,27 @@ self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
   if (!event.request.url.startsWith(self.location.origin)) return;
 
-  // Let Firebase Auth iframes / .map source maps and other dynamic
-  // bytes pass straight to the network without SW interference.
+  // Let Firebase Auth iframes / .map source maps / media (range
+  // requests) / range-requesting clients bypass the SW so the
+  // browser gets a proper 206 Partial Content response.
   const url = new URL(event.request.url);
-  if (url.pathname.endsWith('.map') || url.pathname.startsWith('/__/auth/')) return;
+  const isMedia = /\.(mp4|webm|mov|m4v|m3u8|ts|ogg|ogv|wav|mp3|aac|flac)(\?|$)/i.test(url.pathname);
+  if (
+    url.pathname.endsWith('.map') ||
+    url.pathname.startsWith('/__/auth/') ||
+    url.pathname.startsWith('/assets/videos/') ||
+    isMedia ||
+    event.request.headers.has('range')
+  ) {
+    return;
+  }
 
   event.respondWith((async () => {
     try {
       const response = await fetch(event.request);
-      if (response && response.ok) {
+      // Only cache full 200 responses. Skip 206 (partial), redirects,
+      // errors, opaque, and non-basic responses to avoid corrupt cache.
+      if (response && response.status === 200 && response.type === 'basic') {
         const clone = response.clone();
         caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone)).catch(() => {});
       }
