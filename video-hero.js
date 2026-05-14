@@ -55,7 +55,7 @@
       video.style.opacity = '1';
       hero.classList.add('video-loaded');
       // Helpful breadcrumb in case we need to diagnose later.
-      try { console.debug('[video-hero] revealed:', videoSrc, 'via', reason); } catch (e) {}
+      try { console.log('[video-hero] revealed:', videoSrc, 'via', reason); } catch (e) {}
     }
 
     function tryPlay(reason) {
@@ -64,7 +64,7 @@
         p.catch(function(err) {
           // Autoplay blocked is normal on first interaction; muted+playsinline
           // usually wins, but if not, the poster image will keep the hero alive.
-          try { console.debug('[video-hero] play() rejected', reason, err && err.name); } catch (e) {}
+          try { console.log('[video-hero] play() rejected', reason, err && err.name); } catch (e) {}
         });
       }
     }
@@ -116,6 +116,7 @@
 
   function initVideoHeroes() {
     var heroes = document.querySelectorAll('.video-hero[data-video]');
+    try { console.log('[video-hero] init — found ' + heroes.length + ' hero(es)'); } catch (e) {}
     Array.prototype.forEach.call(heroes, initOne);
   }
 
