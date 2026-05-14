@@ -1181,29 +1181,30 @@
           width="1024" height="600" fetchpriority="high" decoding="async"
           style="width: 100%; height: auto; display: block; aspect-ratio: 1024 / 600;">
       </div>
-      <p class="hero-desc" style="margin-bottom: 24px;">Freeley pairs you with a licensed provider who treats the root cause &mdash; hormones, metabolism, and all &mdash; so the weight actually stays off.<br><br>Lose the weight. Ditch the guesswork. <em>Live Freeley.</em></p>
+      <!-- Tight subline: trust + value anchor in one sentence. -->
+      <p class="hero-desc" style="margin-bottom: 32px;">Real doctors. Real Rx. Delivered to your door &mdash; from <strong>$99/month*</strong>.</p>
 
-      <div class="hero-actions" style="margin-bottom: 24px; align-items: center; gap: 32px;">
+      <!-- Single primary CTA + small secondary text link beneath it. -->
+      <div class="hero-actions" style="margin-bottom: 16px; align-items: center; gap: 16px;">
         <a href="quiz.html" class="hero-cta-pulse">See if you Qualify</a>
-        <a href="how-it-works.html" class="hero-arrow-link" style="font-size: 16px;">See what's included <svg width="16" height="16" viewBox="0 0 16 16"
-            fill="none">
-            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-              stroke-linejoin="round" />
-          </svg></a>
       </div>
-      <div style="font-size: 14px; font-weight: 500; color: rgba(255, 255, 255, 0.6); margin-bottom: 24px; display: flex; align-items: center; justify-content: flex-start; gap: 20px; flex-wrap: wrap;">
+      <a href="how-it-works.html" class="hero-arrow-link" style="font-size: 14px; margin-bottom: 24px; display: inline-flex; align-items: center; gap: 6px; opacity: 0.85;">See what's included
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+          <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </a>
+
+      <!-- Micro-trust strip directly under CTA — high-converting CTA proximity. -->
+      <div style="font-size: 14px; font-weight: 500; color: rgba(255, 255, 255, 0.75); margin-top: 20px; margin-bottom: 24px; display: flex; align-items: center; justify-content: flex-start; gap: 20px; flex-wrap: wrap;">
         <span><i class="ri-check-line" style="color: #7dba96; margin-right: 4px; font-size:16px;"></i>No credit card required</span>
         <span><i class="ri-check-line" style="color: #7dba96; margin-right: 4px; font-size:16px;"></i>Takes 2 minutes</span>
         <span><i class="ri-check-line" style="color: #7dba96; margin-right: 4px; font-size:16px;"></i>Cancel anytime</span>
       </div>
 
-      <!-- Trustpilot link (review collector widget intentionally removed —
-           account exists but has 0 published reviews yet, so we point
-           visitors at the profile to read/leave reviews instead of
-           displaying a star rating we can't substantiate). -->
-      <div style="margin-bottom: 40px; display: flex; justify-content: flex-start;">
+      <!-- Trustpilot link -->
+      <div style="margin-bottom: 0; display: flex; justify-content: flex-start;">
         <a href="https://www.trustpilot.com/review/freeley.com" target="_blank" rel="noopener"
-           style="display: inline-flex; align-items: center; gap: 10px; padding: 12px 20px;
+           style="display: inline-flex; align-items: center; gap: 10px; padding: 10px 18px;
                   background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.18);
                   border-radius: 999px; color: #fff; text-decoration: none; font-size: 13px;
                   font-weight: 500; letter-spacing: 0.3px; backdrop-filter: blur(8px);
@@ -1214,35 +1215,6 @@
           See us on Trustpilot
           <span aria-hidden="true" style="opacity: 0.6;">→</span>
         </a>
-      </div>
-
-      <!-- Risk Free Guarantee -->
-      <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px; margin-bottom: 56px; max-width: 500px; text-align: left; backdrop-filter: blur(8px); box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
-        <div style="display: flex; align-items: center; justify-content: flex-start; gap: 12px; margin-bottom: 12px;">
-          <i class="ri-shield-star-fill" style="color: #F7CB45; font-size: 28px;"></i>
-          <span style="font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 2px; color: rgba(255,255,255,0.9); text-transform: uppercase;">Risk-Free Guarantee</span>
-        </div>
-        <div style="font-family: 'DM Sans', sans-serif; font-size: 24px; color: #fff; font-weight: 600; line-height: 1.4;">
-          See results in <span style="color: #6A9984; font-weight: 700;">30 days</span> or<br>you don't pay.
-        </div>
-      </div>
-      <div class="hero-stats">
-        <div>
-          <div class="hero-stat-val">All 50</div>
-          <div class="hero-stat-label">States Covered</div>
-        </div>
-        <div>
-          <div class="hero-stat-val">48hr</div>
-          <div class="hero-stat-label">Avg. Delivery</div>
-        </div>
-        <div>
-          <div class="hero-stat-val">100%</div>
-          <div class="hero-stat-label">Online Process</div>
-        </div>
-        <div>
-          <div class="hero-stat-val">Zero</div>
-          <div class="hero-stat-label">Hidden Fees</div>
-        </div>
       </div>
 
     </div>
@@ -1277,6 +1249,43 @@
   <!-- Trust ticker removed — duplicated the static "Verified & Certified"
        badge row directly above, which uses real LegitScript / HIPAA /
        Made-in-USA imagery and is the stronger trust signal. -->
+
+  <!-- GUARANTEE + STATS BAND
+       Moved out of the hero (was creating visual clutter / competing
+       focal points). Sits just below the fold for users who scroll. -->
+  <section style="background: linear-gradient(180deg, var(--cream) 0%, #f0e9da 100%); padding: 56px 24px; border-bottom: 1px solid var(--border);">
+    <div class="container" style="max-width: 1100px; display: grid; grid-template-columns: 1fr auto; gap: 48px; align-items: center;">
+      <!-- Risk-Free Guarantee -->
+      <div style="background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 24px 28px; display: flex; align-items: center; gap: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.04);">
+        <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(125,186,150,0.15); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+          <i class="ri-shield-star-fill" style="color: #3d8c5e; font-size: 24px;"></i>
+        </div>
+        <div>
+          <div style="font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 11px; letter-spacing: 1.8px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Risk-Free Guarantee</div>
+          <div style="font-family: 'DM Sans', sans-serif; font-size: 18px; color: var(--charcoal); font-weight: 600; line-height: 1.4;">See results in <span style="color: #3d8c5e;">30 days</span> or you don't pay.</div>
+        </div>
+      </div>
+      <!-- Four-stat trust strip -->
+      <div style="display: flex; gap: 32px; flex-wrap: wrap; justify-content: center;">
+        <div style="text-align: center;">
+          <div style="font-family: 'Cormorant Garamond', serif; font-size: 28px; color: var(--charcoal); font-weight: 400; line-height: 1;">All 50</div>
+          <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px;">States Covered</div>
+        </div>
+        <div style="text-align: center;">
+          <div style="font-family: 'Cormorant Garamond', serif; font-size: 28px; color: var(--charcoal); font-weight: 400; line-height: 1;">48hr</div>
+          <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px;">Avg. Delivery</div>
+        </div>
+        <div style="text-align: center;">
+          <div style="font-family: 'Cormorant Garamond', serif; font-size: 28px; color: var(--charcoal); font-weight: 400; line-height: 1;">100%</div>
+          <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px;">Online Process</div>
+        </div>
+        <div style="text-align: center;">
+          <div style="font-family: 'Cormorant Garamond', serif; font-size: 28px; color: var(--charcoal); font-weight: 400; line-height: 1;">Zero</div>
+          <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px;">Hidden Fees</div>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- TREATMENTS -->
   <section class="treatments-section">

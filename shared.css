@@ -148,6 +148,26 @@ body {
   box-shadow: 0 20px 40px rgba(106, 153, 132, 0.3);
 }
 
+/* CRO playbook rec #4: mobile CTAs must be full-width and thumb-friendly.
+   48×48 minimum touch target, generous padding so the tap zone is honest. */
+@media (max-width: 768px) {
+  .hero-cta-pulse {
+    display: flex;
+    width: 100%;
+    max-width: 360px;
+    padding: 18px 32px;
+    font-size: 18px;
+    min-height: 56px;
+  }
+  /* Generic .hero-btn / .hpc-cta / .gp-cta across treatment pages too. */
+  .hero-btn, .hpc-cta, .gp-cta {
+    width: 100%;
+    min-height: 56px;
+    padding: 18px 28px !important;
+    font-size: 16px !important;
+  }
+}
+
 /* ── TYPOGRAPHY ── */
 .display {
   font-family: 'Cormorant Garamond', serif;
