@@ -9,6 +9,7 @@
  */
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const { allow } = require('./lib/rate-limit');
 
 // Single source of truth — shared with frontend (see pricing.json in repo root)
 const pricingData = require('../../pricing.json');
@@ -35,6 +36,13 @@ exports.handler = async (event) => {
 
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
+  }
+
+  // Rate limit: 10 payment intents / minute / IP. Stripe charges per attempt,
+  // and unauthenticated callers shouldn't be able to spin up unlimited intents.
+  const allowed = await allow(event, { key: 'create-payment-intent', limit: 10, windowSec: 60 });
+  if (!allowed) {
+    return { statusCode: 429, headers, body: JSON.stringify({ error: 'Too many requests. Please wait a moment and try again.' }) };
   }
 
   try {
@@ -109,11 +117,13 @@ exports.handler = async (event) => {
 
   } catch (error) {
     console.error('Stripe error:', error);
+    // Don't leak Stripe/internal error messages to the client. Full
+    // error is logged server-side; client gets a generic message.
     return {
       statusCode: 500,
       headers,
       body: JSON.stringify({
-        error: error.message || 'Payment processing failed'
+        error: 'Unable to process payment. Please try again or contact support.'
       })
     };
   }

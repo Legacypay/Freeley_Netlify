@@ -37,7 +37,8 @@ exports.handler = async (event) => {
     stripeEvent = stripe.webhooks.constructEvent(event.body, sig, webhookSecret);
   } catch (err) {
     console.error('[STRIPE WEBHOOK] Signature verification failed:', err.message);
-    return { statusCode: 400, body: JSON.stringify({ error: `Webhook signature verification failed: ${err.message}` }) };
+    // Don't echo back Stripe internal error detail — bare 400 is enough.
+    return { statusCode: 400, body: JSON.stringify({ error: 'Invalid webhook signature' }) };
   }
 
   // ── Step 2: Log event receipt ─────────────────────────────────

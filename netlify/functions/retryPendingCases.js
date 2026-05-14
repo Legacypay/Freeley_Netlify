@@ -14,6 +14,7 @@
 const { getStore } = require('@netlify/blobs');
 const { mdiRequest } = require('./lib/mdi-client');
 const { PRODUCTS, resolveProductKey } = require('./lib/products');
+const { encryptRecord, decryptRecord } = require('./lib/phi-crypto');
 
 const MAX_RETRIES = 10;
 
@@ -38,12 +39,14 @@ exports.handler = async (event) => {
 
     for (const blob of blobs) {
       const key = blob.key;
+      let storedRaw;
       let record;
 
       try {
-        record = await store.get(key, { type: 'json' });
+        storedRaw = await store.get(key, { type: 'json' });
+        record = decryptRecord(storedRaw);
       } catch (e) {
-        console.error(`[RETRY MDI] Failed to read blob ${key}:`, e.message);
+        console.error(`[RETRY MDI] Failed to read/decrypt blob ${key}:`, e.message);
         results.push({ key, status: 'read_error' });
         continue;
       }
@@ -58,7 +61,7 @@ exports.handler = async (event) => {
         console.error(`[RETRY MDI] ❌ Max retries (${MAX_RETRIES}) reached for ${key}. Marking as failed.`);
         record.status = 'permanently_failed';
         record.failed_at = new Date().toISOString();
-        await store.setJSON(key, record);
+        await store.setJSON(key, encryptRecord(record));
 
         // Alert team about permanent failure
         await alertTeam(key, record, 'permanently_failed');
@@ -76,7 +79,7 @@ exports.handler = async (event) => {
         if (!patientData || !resolvedKey || !PRODUCTS[resolvedKey]) {
           console.error(`[RETRY MDI] Invalid record for ${key}: missing patient or product (key: ${productKey}, resolved: ${resolvedKey})`);
           record.status = 'invalid';
-          await store.setJSON(key, record);
+          await store.setJSON(key, encryptRecord(record));
           results.push({ key, status: 'invalid' });
           continue;
         }
@@ -104,7 +107,7 @@ exports.handler = async (event) => {
         record.completed_at = new Date().toISOString();
         record.mdi_patient_id = result.patient_id;
         record.mdi_case_id = result.id;
-        await store.setJSON(key, record);
+        await store.setJSON(key, encryptRecord(record));
 
         console.log(`[RETRY MDI] ✅ SUCCESS: ${key} → Patient: ${result.patient_id}, Case: ${result.id} (retry #${record.retry_count})`);
 
@@ -140,7 +143,7 @@ exports.handler = async (event) => {
         record.retry_count = (record.retry_count || 0) + 1;
         record.last_error = mdiError.message;
         record.last_retry_at = new Date().toISOString();
-        await store.setJSON(key, record);
+        await store.setJSON(key, encryptRecord(record));
 
         console.error(`[RETRY MDI] ❌ Retry #${record.retry_count} failed for ${key}: ${mdiError.message}`);
         results.push({ key, status: 'retry_failed', retry_count: record.retry_count, error: mdiError.message });
@@ -158,7 +161,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ error: 'Retry processor failed: ' + error.message })
+      body: JSON.stringify({ error: 'Retry processor failed' })
     };
   }
 };

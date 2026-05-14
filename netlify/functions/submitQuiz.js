@@ -16,6 +16,8 @@
 const { getStore } = require('@netlify/blobs');
 const { mdiRequest, CORS_HEADERS } = require('./lib/mdi-client');
 const { PRODUCTS, resolveProductKey } = require('./lib/products');
+const { encryptRecord } = require('./lib/phi-crypto');
+const { validateQuizSubmission } = require('./lib/validate-quiz');
 
 // MDI Partner ID — from the partner portal URL
 const MDI_PARTNER_ID = process.env.MDI_PARTNER_ID || 'f81508d1-3c53-4849-a636-1e9050a68e00';
@@ -36,12 +38,18 @@ exports.handler = async (event) => {
   }
 
   try {
-    const data = JSON.parse(event.body);
-    const { patient: patientData, product: productKey, dose, quiz_answers, allergies, current_medications, medical_conditions } = data;
-
-    if (!patientData || !patientData.email || !patientData.first_name || !patientData.last_name) {
-      return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ error: 'Patient name and email are required.' }) };
+    let data;
+    try {
+      data = JSON.parse(event.body || '{}');
+    } catch {
+      return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ error: 'Invalid JSON' }) };
     }
+    const v = validateQuizSubmission(data);
+    if (!v.ok) {
+      console.warn('[SUBMIT QUIZ] Validation failed:', v.error);
+      return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ error: 'Invalid submission. Please check your inputs and try again.' }) };
+    }
+    const { patient: patientData, product: productKey, dose, quiz_answers, allergies, current_medications, medical_conditions } = data;
 
     // Resolve product key — handles legacy 'semaglutide'/'tirzepatide' keys
     // and dose-tiered lookups (e.g., semaglutide + dose 0.4 → semaglutide-s2)
@@ -178,7 +186,7 @@ exports.handler = async (event) => {
         const data = JSON.parse(event.body);
         const retryStore = getStore('pending-mdi-cases');
         const retryKey = 'quiz-' + Date.now() + '-' + (data.patient?.email || 'unknown').replace(/[^a-zA-Z0-9]/g, '_');
-        await retryStore.setJSON(retryKey, {
+        const retryRecord = {
           patient: data.patient,
           product: data.product,
           dose: data.dose || null,
@@ -190,13 +198,14 @@ exports.handler = async (event) => {
           retry_count: 0,
           original_error: error.message,
           queued_at: new Date().toISOString()
-        });
+        };
+        await retryStore.setJSON(retryKey, encryptRecord(retryRecord));
         console.log('[SUBMIT QUIZ] Queued for retry: ' + retryKey);
       } catch (storeErr) {
         console.error('[SUBMIT QUIZ] Failed to queue for retry:', storeErr.message);
       }
     }
 
-    return { statusCode, headers: CORS_HEADERS, body: JSON.stringify({ error: 'Unable to submit your information. Please try again or contact support.', details: error.message }) };
+    return { statusCode, headers: CORS_HEADERS, body: JSON.stringify({ error: 'Unable to submit your information. Please try again or contact support.' }) };
   }
 };

@@ -17,32 +17,7 @@
  */
 
 const { mdiRequest, CORS_HEADERS } = require('./lib/mdi-client');
-
-// ── Firebase Admin — verify patient identity ──────────────────
-// Uses lightweight REST verification instead of firebase-admin SDK
-// to avoid adding a heavy dependency. Validates the ID token via
-// Google's tokeninfo endpoint.
-async function verifyFirebaseToken(idToken) {
-  if (!idToken) return null;
-  try {
-    // Verify token with Google's API (works without firebase-admin SDK)
-    const res = await fetch(
-      `https://www.googleapis.com/identitytoolkit/v3/relyingparty/getAccountInfo?key=${process.env.FIREBASE_API_KEY || 'AIzaSyDsNMEVdt5pc67o5xBBEgPvyukoUVGYE88'}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ idToken })
-      }
-    );
-    if (!res.ok) return null;
-    const data = await res.json();
-    const user = data.users && data.users[0];
-    return user ? { email: user.email, uid: user.localId } : null;
-  } catch (e) {
-    console.error('[CASE STATUS] Token verification failed:', e.message);
-    return null;
-  }
-}
+const { verifyFirebaseToken } = require('./lib/verify-firebase-token');
 
 // Map MDI internal statuses to patient-friendly messages
 const STATUS_MAP = {
@@ -195,3 +170,5 @@ exports.handler = async (event) => {
     };
   }
 };
+
+exports.verifyFirebaseToken = verifyFirebaseToken;

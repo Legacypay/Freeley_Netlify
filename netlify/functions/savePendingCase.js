@@ -10,14 +10,12 @@
  */
 
 const { getStore } = require('@netlify/blobs');
+const { encryptRecord } = require('./lib/phi-crypto');
+const { getCorsHeaders } = require('./lib/mdi-client');
+const { validateQuizSubmission } = require('./lib/validate-quiz');
 
 exports.handler = async (event) => {
-  const headers = {
-    'Access-Control-Allow-Origin': 'https://freeley.com',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Content-Type': 'application/json'
-  };
+  const headers = { ...getCorsHeaders(event), 'Content-Type': 'application/json' };
 
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 204, headers, body: '' };
@@ -28,14 +26,26 @@ exports.handler = async (event) => {
   }
 
   try {
-    const data = JSON.parse(event.body);
+    let data;
+    try {
+      data = JSON.parse(event.body || '{}');
+    } catch {
+      return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid JSON' }) };
+    }
     const { payment_intent_id } = data;
 
-    if (!payment_intent_id) {
+    if (!payment_intent_id || typeof payment_intent_id !== 'string' || payment_intent_id.length > 200) {
       return { statusCode: 400, headers, body: JSON.stringify({ error: 'payment_intent_id is required' }) };
     }
 
-    // ── Save to Netlify Blobs ─────────────────────────────────
+    // Same validation as submitQuiz — reject malformed PHI before persisting.
+    const v = validateQuizSubmission(data);
+    if (!v.ok) {
+      console.warn('[PENDING CASE] Validation failed:', v.error);
+      return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid submission.' }) };
+    }
+
+    // ── Save to Netlify Blobs (PHI encrypted at rest) ─────────
     const store = getStore('pending-mdi-cases');
     const record = {
       ...data,
@@ -44,7 +54,15 @@ exports.handler = async (event) => {
       status: 'pending'
     };
 
-    await store.setJSON(payment_intent_id, record);
+    let encrypted;
+    try {
+      encrypted = encryptRecord(record);
+    } catch (e) {
+      console.error('[PENDING CASE] CRITICAL: PHI encryption failed:', e.message);
+      return { statusCode: 500, headers, body: JSON.stringify({ error: 'Failed to save pending case' }) };
+    }
+
+    await store.setJSON(payment_intent_id, encrypted);
     console.log(`[PENDING CASE] ⚠️ Saved pending case for payment: ${payment_intent_id}`);
 
     // ── URGENT alert to internal webhook ──────────────────────
@@ -81,7 +99,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ error: 'Failed to save pending case' })
+      body: JSON.stringify({ error: 'Unable to save pending case. Please contact support.' })
     };
   }
 };

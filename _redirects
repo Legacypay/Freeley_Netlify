@@ -41,3 +41,9 @@
 /promo-ed.html /promo-ed 301!
 /promo-hair-loss.html /promo-hair-loss 301!
 /promo-longevity.html /promo-longevity 301!
+
+# Block server-side: never expose build tooling or archived artifacts
+/scripts/*  /404.html  404
+/.venv*     /404.html  404
+/*.py       /404.html  404
+/*.zip      /404.html  404

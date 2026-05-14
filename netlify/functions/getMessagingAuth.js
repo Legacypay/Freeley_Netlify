@@ -26,28 +26,7 @@
  */
 
 const { mdiRequest, getCorsHeaders } = require('./lib/mdi-client');
-
-// ── Firebase Auth — verify patient identity ─────────────────────
-async function verifyFirebaseToken(idToken) {
-  if (!idToken) return null;
-  try {
-    const res = await fetch(
-      `https://www.googleapis.com/identitytoolkit/v3/relyingparty/getAccountInfo?key=${process.env.FIREBASE_API_KEY || 'AIzaSyDsNMEVdt5pc67o5xBBEgPvyukoUVGYE88'}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ idToken })
-      }
-    );
-    if (!res.ok) return null;
-    const data = await res.json();
-    const user = data.users && data.users[0];
-    return user ? { email: user.email, uid: user.localId } : null;
-  } catch (e) {
-    console.error('[MESSAGING AUTH] Token verification failed:', e.message);
-    return null;
-  }
-}
+const { verifyFirebaseToken } = require('./lib/verify-firebase-token');
 
 exports.handler = async (event) => {
   const cors = getCorsHeaders(event);

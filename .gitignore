@@ -2,7 +2,10 @@
 .netlify
 node_modules/
 .venv/
+.venv_imgtools/
 www/
+_process_product_images.py
+assets/brand/_originals_pre_bgremove/
 
 # Environment secrets — never commit
 .env
