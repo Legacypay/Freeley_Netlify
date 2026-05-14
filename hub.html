@@ -560,6 +560,93 @@
 
 <body>
 
+  <!-- Post-payment branded banner — visible only when ?payment=success is
+       in the URL. Reassures the patient that they're still inside
+       Freeley after the Stripe handoff, and previews the next steps
+       (doctor review → ship) so they don't feel like the flow just
+       ended. Inserted via inline JS so it sits ABOVE the auth screen. -->
+  <style>
+    .post-payment-banner {
+      background: linear-gradient(135deg, #0d2818 0%, #1B492D 60%, #2c6e49 100%);
+      color: #fff;
+      padding: 28px 32px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .post-payment-banner::after {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 80% at 50% 0%, rgba(125,186,150,0.18), transparent 70%);
+      pointer-events: none;
+    }
+    .post-payment-banner-inner {
+      max-width: 640px; margin: 0 auto; position: relative; z-index: 1;
+    }
+    .post-payment-banner .ppb-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(125,186,150,0.18); border: 1px solid rgba(125,186,150,0.35);
+      color: #a4db7f; font-size: 11px; font-weight: 600; letter-spacing: 2px;
+      text-transform: uppercase; padding: 6px 14px; border-radius: 999px;
+      margin-bottom: 14px;
+    }
+    .post-payment-banner h2 {
+      font-family: 'Cormorant Garamond', serif; font-weight: 400;
+      font-size: 28px; line-height: 1.25; margin: 0 0 8px;
+    }
+    .post-payment-banner p {
+      font-size: 14px; line-height: 1.6; color: rgba(255,255,255,0.75);
+      margin: 0 0 18px; max-width: 520px; margin-left: auto; margin-right: auto;
+    }
+    .ppb-steps {
+      display: inline-flex; align-items: center; gap: 12px; flex-wrap: wrap;
+      justify-content: center; font-size: 12px; font-weight: 500;
+      color: rgba(255,255,255,0.85);
+    }
+    .ppb-step { display: inline-flex; align-items: center; gap: 6px; }
+    .ppb-step-dot {
+      width: 18px; height: 18px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 700;
+    }
+    .ppb-step.done .ppb-step-dot { background: #a4db7f; color: #1B492D; }
+    .ppb-step.active .ppb-step-dot { background: #fff; color: #1B492D; box-shadow: 0 0 0 4px rgba(255,255,255,0.18); }
+    .ppb-step.upcoming { color: rgba(255,255,255,0.5); }
+    .ppb-step.upcoming .ppb-step-dot { background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.6); }
+    .ppb-arrow { color: rgba(255,255,255,0.3); }
+    @media (max-width: 600px) {
+      .post-payment-banner h2 { font-size: 22px; }
+      .ppb-steps { font-size: 11px; gap: 8px; }
+    }
+  </style>
+  <div id="postPaymentBanner" class="post-payment-banner" style="display: none;">
+    <div class="post-payment-banner-inner">
+      <span class="ppb-eyebrow">✓ Payment Confirmed</span>
+      <h2>You're in. A licensed physician is reviewing your case now.</h2>
+      <p>You'll get an email update within <strong>24–48 hours</strong> with your prescription details and shipping timeline. Check below for your case status.</p>
+      <div class="ppb-steps" role="list" aria-label="Order progress">
+        <span class="ppb-step done" role="listitem"><span class="ppb-step-dot">✓</span> Health Quiz</span>
+        <i class="ri-arrow-right-s-line ppb-arrow" aria-hidden="true"></i>
+        <span class="ppb-step done" role="listitem"><span class="ppb-step-dot">✓</span> Checkout</span>
+        <i class="ri-arrow-right-s-line ppb-arrow" aria-hidden="true"></i>
+        <span class="ppb-step active" role="listitem" aria-current="step"><span class="ppb-step-dot">3</span> Doctor Review</span>
+        <i class="ri-arrow-right-s-line ppb-arrow" aria-hidden="true"></i>
+        <span class="ppb-step upcoming" role="listitem"><span class="ppb-step-dot">4</span> Shipped</span>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function() {
+      try {
+        var params = new URLSearchParams(window.location.search);
+        if (params.get('payment') === 'success') {
+          var el = document.getElementById('postPaymentBanner');
+          if (el) el.style.display = 'block';
+        }
+      } catch (e) {}
+    })();
+  </script>
+
   <!-- Auth Screen (Visible by default) -->
   <div id="auth-screen">
     <div class="auth-card">

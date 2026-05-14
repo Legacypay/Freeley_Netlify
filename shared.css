@@ -228,6 +228,109 @@ body {
   }
 }
 
+/* ── FAQ ACCORDION (rec #14) ──
+   Auto-binds to any .faq-q / .faq-a pattern. Answers are collapsed by
+   default; clicking the question (or pressing Enter/Space) toggles
+   the parent .faq-item's .open state. Reduces mobile scroll fatigue
+   and gives users control over what they read. */
+.faq-q {
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.faq-q i,
+.faq-q svg {
+  transition: transform 0.25s ease;
+}
+.faq-a {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.3s ease, opacity 0.25s ease, margin 0.25s ease;
+  margin-top: 0;
+}
+.faq-item.open .faq-a {
+  max-height: 600px;
+  opacity: 1;
+  margin-top: 8px;
+}
+.faq-item.open .faq-q i.ri-add-line { transform: rotate(45deg); }
+.faq-item.open .faq-q svg { transform: rotate(180deg); }
+
+/* ── MICRO-INTERACTIONS (rec #17) ──
+   Subtle polish that makes the site feel premium without distracting
+   from the conversion flow. Honors prefers-reduced-motion for the
+   interactions that involve translation (the gentle decorative
+   marquee is the only exception). */
+
+/* Card lift on hover — applies to common card patterns. */
+.treatment-card,
+.benefit-item,
+.faq-item,
+.med-card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.2s ease;
+}
+@media (hover: hover) {
+  .treatment-card:hover,
+  .med-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.08);
+  }
+  .benefit-item:hover {
+    transform: translateY(-2px);
+  }
+}
+
+/* Smooth scroll on anchor jumps (already in html { scroll-behavior }
+   but enforced again here for older Safari). */
+html { scroll-behavior: smooth; }
+
+/* Premium focus ring — replace dotted browser default for keyboard users
+   without taking it away (accessibility regression risk). */
+:focus-visible {
+  outline: 2px solid var(--green-light, #7dba96);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+button:focus-visible,
+a:focus-visible {
+  outline-offset: 4px;
+}
+
+/* Image hover zoom for treatment/product cards. */
+@media (hover: hover) {
+  .treatment-card-visual img,
+  .product-photo {
+    transition: transform 0.4s ease;
+  }
+  .treatment-card:hover .treatment-card-visual img,
+  .treatment-card:hover .product-photo {
+    transform: scale(1.04);
+  }
+}
+
+/* Soft-pulse for primary attention-grabbing badges. */
+@keyframes soft-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(125, 186, 150, 0.35); }
+  50%      { box-shadow: 0 0 0 10px rgba(125, 186, 150, 0); }
+}
+.attention-pulse { animation: soft-pulse 2.4s ease-in-out infinite; }
+
+/* Respect reduce-motion for the transform-based interactions
+   (keyboard focus rings stay unaffected). */
+@media (prefers-reduced-motion: reduce) {
+  .treatment-card, .benefit-item, .faq-item, .med-card,
+  .treatment-card-visual img, .product-photo {
+    transition: none;
+  }
+  .treatment-card:hover, .med-card:hover, .benefit-item:hover,
+  .treatment-card:hover .treatment-card-visual img,
+  .treatment-card:hover .product-photo {
+    transform: none;
+  }
+  .attention-pulse { animation: none; }
+}
+
 /* ── TYPOGRAPHY ── */
 .display {
   font-family: 'Cormorant Garamond', serif;

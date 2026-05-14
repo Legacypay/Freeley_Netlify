@@ -181,6 +181,31 @@ function initPage(activePage) {
   }, { threshold: 0.08 });
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
+  // FAQ accordion (rec #14) — delegated handler so it works for
+  // any .faq-q / .faq-a pair on the page, including ones inserted later.
+  document.addEventListener('click', function (e) {
+    const q = e.target.closest('.faq-q');
+    if (!q) return;
+    const item = q.closest('.faq-item');
+    if (!item) return;
+    item.classList.toggle('open');
+    q.setAttribute('aria-expanded', item.classList.contains('open') ? 'true' : 'false');
+  });
+  // Keyboard support — Enter/Space on a focused .faq-q toggles it.
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const q = e.target.closest && e.target.closest('.faq-q');
+    if (!q) return;
+    e.preventDefault();
+    q.click();
+  });
+  // Make .faq-q tabbable + announce as buttons.
+  document.querySelectorAll('.faq-q').forEach(function (q) {
+    if (!q.hasAttribute('tabindex')) q.setAttribute('tabindex', '0');
+    if (!q.hasAttribute('role')) q.setAttribute('role', 'button');
+    if (!q.hasAttribute('aria-expanded')) q.setAttribute('aria-expanded', 'false');
+  });
+
   // Nav scroll effect & Sticky Mobile CTA visibility
   window.addEventListener('scroll', () => {
     const nav = document.getElementById('nav');

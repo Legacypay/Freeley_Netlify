@@ -83,25 +83,48 @@
       color: var(--forest);
       font-weight: 600;
     }
+    .step.done {
+      color: #6a8e7a;
+    }
+    .step.upcoming {
+      color: #c8c8c8;
+    }
 
     .step-icon {
-      width: 20px;
-      height: 20px;
+      width: 22px;
+      height: 22px;
       border-radius: 50%;
       background: #eee;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 10px;
+      font-size: 11px;
+      font-weight: 600;
+      flex-shrink: 0;
     }
 
     .step.active .step-icon {
       background: var(--forest);
       color: var(--white);
+      box-shadow: 0 0 0 4px rgba(28, 73, 44, 0.12);
+    }
+    .step.done .step-icon {
+      background: #6a8e7a;
+      color: var(--white);
+    }
+    .step.upcoming .step-icon {
+      background: #f1f1ee;
+      color: #b6b6b6;
     }
 
     .step i {
-      font-size: 14px;
+      font-size: 12px;
+    }
+
+    @media (max-width: 768px) {
+      .step-indicator { gap: 8px; font-size: 11px; flex-wrap: wrap; }
+      .step span.step-label { display: none; }
+      .step.active span.step-label { display: inline; }
     }
 
     /* Main Grid */
@@ -577,12 +600,26 @@
   <!-- Minimal Nav -->
   <nav class="checkout-nav">
     <a href="/"><img src="assets/brand/freeley_wordmark_dark.png" alt="Freeley" onerror="this.src='assets/brand/freeley_logo_primary.png'" loading="lazy" decoding="async"></a>
-    <div class="step-indicator">
-      <div class="step"><div class="step-icon"><i class="ri-check-line"></i></div> Assessment</div>
-      <i class="ri-arrow-right-s-line" style="color: #ccc;"></i>
-      <div class="step"><div class="step-icon"><i class="ri-check-line"></i></div> Doctor Review</div>
-      <i class="ri-arrow-right-s-line" style="color: #ccc;"></i>
-      <div class="step active"><div class="step-icon">3</div> Checkout</div>
+    <div class="step-indicator" role="list" aria-label="Order progress">
+      <div class="step done" role="listitem">
+        <div class="step-icon" aria-hidden="true"><i class="ri-check-line"></i></div>
+        <span class="step-label">Health Quiz</span>
+      </div>
+      <i class="ri-arrow-right-s-line" style="color: #ccc;" aria-hidden="true"></i>
+      <div class="step active" role="listitem" aria-current="step">
+        <div class="step-icon" aria-hidden="true">2</div>
+        <span class="step-label">Checkout</span>
+      </div>
+      <i class="ri-arrow-right-s-line" style="color: #ccc;" aria-hidden="true"></i>
+      <div class="step upcoming" role="listitem">
+        <div class="step-icon" aria-hidden="true">3</div>
+        <span class="step-label">Doctor Review</span>
+      </div>
+      <i class="ri-arrow-right-s-line" style="color: #ccc;" aria-hidden="true"></i>
+      <div class="step upcoming" role="listitem">
+        <div class="step-icon" aria-hidden="true">4</div>
+        <span class="step-label">Shipped</span>
+      </div>
     </div>
   </nav>
 
