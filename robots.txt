@@ -12,8 +12,11 @@ Disallow: /models/
 Disallow: /generate-*.js
 Disallow: /netlify/
 
-# Block .html versions (redirected to clean URLs via 301)
-Disallow: /*.html$
+# IMPORTANT: We intentionally DO NOT block /*.html$. Googlebot needs to
+# crawl those URLs so it can follow the 301 redirects to the clean
+# canonicals and consolidate authority. Blocking them stopped Google
+# from seeing the redirects, which is why ~25 indexed pages dropped
+# to ~10 in late April 2026. Fixed 2026-05-14.
 
 # Block asset internals
 Disallow: /assets/videos/
