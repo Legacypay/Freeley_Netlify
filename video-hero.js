@@ -60,14 +60,30 @@
 
     function tryPlay(reason) {
       var p = video.play();
-      if (p && typeof p.catch === 'function') {
-        p.catch(function(err) {
+      if (p && typeof p.then === 'function') {
+        p.then(function() {
+          try { console.log('[video-hero] play() OK via ' + reason + ' | readyState=' + video.readyState + ' paused=' + video.paused); } catch (e) {}
+        }).catch(function(err) {
           // Autoplay blocked is normal on first interaction; muted+playsinline
           // usually wins, but if not, the poster image will keep the hero alive.
-          try { console.log('[video-hero] play() rejected', reason, err && err.name); } catch (e) {}
+          try { console.log('[video-hero] play() REJECTED via ' + reason + ' | ' + (err && err.name) + ': ' + (err && err.message)); } catch (e) {}
         });
       }
     }
+
+    // High-signal events for diagnosing "is it actually playing?"
+    video.addEventListener('playing', function() {
+      try { console.log('[video-hero] PLAYING | readyState=' + video.readyState + ' videoWidth=' + video.videoWidth + ' videoHeight=' + video.videoHeight); } catch (e) {}
+    });
+    video.addEventListener('stalled', function() {
+      try { console.log('[video-hero] stalled (network/buffer issue)'); } catch (e) {}
+    });
+    video.addEventListener('suspend', function() {
+      try { console.log('[video-hero] suspend (browser paused fetching data)'); } catch (e) {}
+    });
+    video.addEventListener('waiting', function() {
+      try { console.log('[video-hero] waiting (buffering)'); } catch (e) {}
+    });
 
     // Reveal on ANY of these — first one to fire wins. loadeddata alone is
     // unreliable for cached videos and Safari.
