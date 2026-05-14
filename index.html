@@ -391,6 +391,30 @@
       width: max-content;
     }
 
+    /* ── VERIFIED & CERTIFIED MARQUEE ── */
+    .cert-marquee {
+      overflow: hidden;
+      mask-image: linear-gradient(90deg, transparent 0, #000 80px, #000 calc(100% - 80px), transparent 100%);
+      -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 80px, #000 calc(100% - 80px), transparent 100%);
+    }
+    .cert-track {
+      display: flex;
+      align-items: center;
+      gap: clamp(40px, 6vw, 72px);
+      width: max-content;
+      animation: certScroll 28s linear infinite;
+    }
+    .cert-marquee:hover .cert-track { animation-play-state: paused; }
+    @keyframes certScroll {
+      from { transform: translate3d(0, 0, 0); }
+      to   { transform: translate3d(-50%, 0, 0); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      /* Pause animation but keep badges visible (lesson learned: never
+         display:none on motion-respecting users). */
+      .cert-track { animation: none; }
+    }
+
     @keyframes tickerScroll {
       from {
         transform: translateX(0);
@@ -1238,20 +1262,40 @@
   </section>
 
   <div class="press-badges" style="background: var(--off-white); padding: 40px 0; border-bottom: 1px solid var(--border);">
-    <div class="container" style="text-align: center;">
+    <div style="text-align: center;">
       <p style="text-transform: uppercase; font-size: 11px; letter-spacing: 2px; color: var(--text-muted); margin-bottom: 24px; font-weight: 500;">Verified & Certified</p>
-      <div style="display: flex; justify-content: center; gap: clamp(30px, 6vw, 60px); flex-wrap: wrap; align-items: center;">
-        <a href="https://www.legitscript.com/websites/?checker_keywords=freeley.com" target="_blank" title="Verify LegitScript Approval for www.freeley.com" style="display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: var(--charcoal);">
-          <img src="https://static.legitscript.com/seals/49921676.png" alt="LegitScript Certified" width="73" height="79"  loading="lazy" decoding="async">
-          <span style="font-size: 14px; font-weight: 600; letter-spacing: -0.3px;">LegitScript<br><span style="font-size: 11px; font-weight: 400; color: var(--text-muted);">Certified</span></span>
-        </a>
-        <div style="display: flex; align-items: center; gap: 10px; opacity: 0.7;">
-          <img src="assets/hipaa_badge.png" alt="HIPAA Compliant" style="height: 40px; width: auto;" loading="lazy" decoding="async">
-          <span style="font-size: 13px; font-weight: 500; color: var(--charcoal);">HIPAA<br><span style="font-size: 11px; font-weight: 400; color: var(--text-muted);">Compliant</span></span>
-        </div>
-        <div style="display: flex; align-items: center; gap: 10px; opacity: 0.7;">
-          <img src="assets/usa_badge.png" alt="Made in USA" style="height: 40px; width: auto;" loading="lazy" decoding="async">
-          <span style="font-size: 13px; font-weight: 500; color: var(--charcoal);">Made in<br><span style="font-size: 11px; font-weight: 400; color: var(--text-muted);">USA</span></span>
+      <!-- Right-to-left infinite marquee. The badge set is duplicated so
+           translateX(-50%) loops seamlessly. Pauses on hover and when
+           prefers-reduced-motion is set. aria-hidden on the duplicate
+           set so screen readers don't read the same content twice. -->
+      <div class="cert-marquee" role="region" aria-label="Verified and certified by">
+        <div class="cert-track">
+          <!-- Set 1 -->
+          <a href="https://www.legitscript.com/websites/?checker_keywords=freeley.com" target="_blank" title="Verify LegitScript Approval for www.freeley.com" style="display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: var(--charcoal); flex-shrink: 0;">
+            <img src="https://static.legitscript.com/seals/49921676.png" alt="LegitScript Certified" width="73" height="79" loading="lazy" decoding="async">
+            <span style="font-size: 14px; font-weight: 600; letter-spacing: -0.3px; white-space: nowrap;">LegitScript<br><span style="font-size: 11px; font-weight: 400; color: var(--text-muted);">Certified</span></span>
+          </a>
+          <div style="display: inline-flex; align-items: center; gap: 10px; opacity: 0.7; flex-shrink: 0;">
+            <img src="assets/hipaa_badge.png" alt="HIPAA Compliant" style="height: 40px; width: auto;" loading="lazy" decoding="async">
+            <span style="font-size: 13px; font-weight: 500; color: var(--charcoal); white-space: nowrap;">HIPAA<br><span style="font-size: 11px; font-weight: 400; color: var(--text-muted);">Compliant</span></span>
+          </div>
+          <div style="display: inline-flex; align-items: center; gap: 10px; opacity: 0.7; flex-shrink: 0;">
+            <img src="assets/usa_badge.png" alt="Made in USA" style="height: 40px; width: auto;" loading="lazy" decoding="async">
+            <span style="font-size: 13px; font-weight: 500; color: var(--charcoal); white-space: nowrap;">Made in<br><span style="font-size: 11px; font-weight: 400; color: var(--text-muted);">USA</span></span>
+          </div>
+          <!-- Set 2 (duplicate, aria-hidden) -->
+          <a href="https://www.legitscript.com/websites/?checker_keywords=freeley.com" target="_blank" tabindex="-1" aria-hidden="true" style="display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: var(--charcoal); flex-shrink: 0;">
+            <img src="https://static.legitscript.com/seals/49921676.png" alt="" width="73" height="79" loading="lazy" decoding="async">
+            <span style="font-size: 14px; font-weight: 600; letter-spacing: -0.3px; white-space: nowrap;">LegitScript<br><span style="font-size: 11px; font-weight: 400; color: var(--text-muted);">Certified</span></span>
+          </a>
+          <div aria-hidden="true" style="display: inline-flex; align-items: center; gap: 10px; opacity: 0.7; flex-shrink: 0;">
+            <img src="assets/hipaa_badge.png" alt="" style="height: 40px; width: auto;" loading="lazy" decoding="async">
+            <span style="font-size: 13px; font-weight: 500; color: var(--charcoal); white-space: nowrap;">HIPAA<br><span style="font-size: 11px; font-weight: 400; color: var(--text-muted);">Compliant</span></span>
+          </div>
+          <div aria-hidden="true" style="display: inline-flex; align-items: center; gap: 10px; opacity: 0.7; flex-shrink: 0;">
+            <img src="assets/usa_badge.png" alt="" style="height: 40px; width: auto;" loading="lazy" decoding="async">
+            <span style="font-size: 13px; font-weight: 500; color: var(--charcoal); white-space: nowrap;">Made in<br><span style="font-size: 11px; font-weight: 400; color: var(--text-muted);">USA</span></span>
+          </div>
         </div>
       </div>
     </div>
