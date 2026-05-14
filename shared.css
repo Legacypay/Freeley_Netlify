@@ -315,7 +315,11 @@ footer {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .video-hero-bg { display: none; }
+  /* For users who prefer reduced motion: pause the video instead of
+     hiding it entirely. The poster image still shows; we just don't
+     loop. (display:none here previously caused blank heroes for any
+     visitor whose OS had Reduce Motion enabled.) */
+  .video-hero-bg { animation: none; }
 }
 
 /* ─── Mobile Tap Target Improvements ─── */

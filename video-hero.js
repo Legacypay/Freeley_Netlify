@@ -116,6 +116,22 @@
     // Insert into DOM as first child so overlay/content stay on top.
     hero.insertBefore(video, hero.firstChild);
 
+    // One-shot visibility diagnostic so we can see if CSS is hiding the
+    // video element even though JS thinks it inserted fine.
+    setTimeout(function() {
+      try {
+        var cs = window.getComputedStyle(video);
+        var rect = video.getBoundingClientRect();
+        console.log(
+          '[video-hero] DOM check | inDOM=' + document.body.contains(video) +
+          ' display=' + cs.display + ' visibility=' + cs.visibility +
+          ' opacity=' + cs.opacity + ' zIndex=' + cs.zIndex +
+          ' size=' + Math.round(rect.width) + 'x' + Math.round(rect.height) +
+          ' reducedMotion=' + (window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+        );
+      } catch (e) {}
+    }, 200);
+
     // If the browser already cached this video, no event will fire. Check
     // readyState now and on the next tick.
     if (video.readyState >= 2) reveal('readyState');
