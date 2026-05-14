@@ -53,6 +53,7 @@ body {
   color: var(--text);
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  line-height: 1.65; /* CRO playbook rec: readability — was browser default ~1.5 */
 }
 
 /* ── NAV ── */
@@ -163,6 +164,15 @@ body {
 /* ── LAYOUT ── */
 .container { max-width: 1200px; margin: 0 auto; padding: 0 48px; }
 .section { padding: 100px 0; }
+
+/* CRO playbook rec: any <section> without its own padding gets a
+   sensible default (80px desktop / 60px mobile). Sections that
+   intentionally set inline padding still win — this is a floor for
+   un-styled sections, not a forced override. */
+section:not([style*="padding"]) { padding-top: 80px; padding-bottom: 80px; }
+@media (max-width: 768px) {
+  section:not([style*="padding"]) { padding-top: 60px; padding-bottom: 60px; }
+}
 
 /* ── FOOTER ── */
 footer {
