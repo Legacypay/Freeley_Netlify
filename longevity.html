@@ -232,42 +232,10 @@
       height: 100%;
       object-fit: cover;
     }
-    .gallery-overlay {
-      display: none;
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.85);
-      z-index: 20;
-      border-radius: 28px;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-    .gallery-overlay.active {
-      display: flex;
-    }
-    .gallery-overlay img {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-      border-radius: 12px;
-    }
-    .gallery-overlay-close {
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      background: rgba(255,255,255,0.2);
-      border: none;
-      color: #fff;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      cursor: pointer;
-      font-size: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 21;
+    /* Ensure carousel area has relative positioning for inline gallery img */
+    .vial-carousel,
+    .peptide-selector {
+      position: relative;
     }
     @media(max-width:1024px) {
       .hero-product-wrapper {
@@ -596,11 +564,8 @@
                       if (nx > tx + 30) { pepIdx = pepIdx > 0 ? pepIdx - 1 : 2; updPep(); }
                   }, {passive:true});
               </script>
-              <!-- Gallery overlay for info slides -->
-              <div class="gallery-overlay" id="galleryOverlay">
-                <button class="gallery-overlay-close" onclick="closeGallery()">✕</button>
-                <img id="galleryFullImg" src="" alt="Gallery image">
-              </div>
+              <!-- Inline gallery image (replaces carousel when thumbnail clicked) -->
+              <img id="galleryInlineImg" src="" alt="Gallery image" style="display:none; width:100%; height:100%; object-fit:contain; position:absolute; top:0; left:0; z-index:10; padding:16px; box-sizing:border-box;">
               <div class="ps-title">Build your stack</div>
               <div class="ps-sub">Select the peptides you're interested in — your physician will finalize what's
                 appropriate for you.</div>
@@ -850,23 +815,39 @@
   <script src="ab-test.js"></script>
   <script src="shared.js"></script>
   <script>
-    // Thumbnail gallery interaction
+    // Thumbnail gallery interaction — swaps image inline in carousel
     function showThumb(el, src) {
       document.querySelectorAll('.thumb-item').forEach(t => t.classList.remove('active'));
       el.classList.add('active');
-      const overlay = document.getElementById('galleryOverlay');
-      const fullImg = document.getElementById('galleryFullImg');
+      const inlineImg = document.getElementById('galleryInlineImg');
+      const track = document.querySelector('.vial-carousel-track');
+      const arrows = document.querySelectorAll('.vial-arrow');
+      const dots = document.querySelector('.vial-dots');
       if (el.dataset.type === 'product') {
-        overlay.classList.remove('active');
+        inlineImg.style.display = 'none';
+        if (track) track.style.display = '';
+        arrows.forEach(a => a.style.display = '');
+        if (dots) dots.style.display = '';
       } else {
-        fullImg.src = src;
-        overlay.classList.add('active');
+        inlineImg.src = src;
+        inlineImg.style.display = 'block';
+        if (track) track.style.display = 'none';
+        arrows.forEach(a => a.style.display = 'none');
+        if (dots) dots.style.display = 'none';
       }
     }
     function closeGallery() {
-      document.getElementById('galleryOverlay').classList.remove('active');
+      const inlineImg = document.getElementById('galleryInlineImg');
+      const track = document.querySelector('.vial-carousel-track');
+      const arrows = document.querySelectorAll('.vial-arrow');
+      const dots = document.querySelector('.vial-dots');
+      inlineImg.style.display = 'none';
+      if (track) track.style.display = '';
+      arrows.forEach(a => a.style.display = '');
+      if (dots) dots.style.display = '';
       document.querySelectorAll('.thumb-item').forEach(t => t.classList.remove('active'));
-      document.querySelector('.thumb-item[data-type="product"]').classList.add('active');
+      const productThumb = document.querySelector('.thumb-item[data-type="product"]');
+      if (productThumb) productThumb.classList.add('active');
     }
 
     initPage('longevity');
