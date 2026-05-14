@@ -314,11 +314,16 @@ footer {
   font-weight: 300; line-height: 1.6;
 }
 
+/* ⚠️ DO NOT change this rule to `display: none`. The previous version
+   was `.video-hero-bg { display: none }` which removed the entire
+   video element from layout for ANY visitor whose OS had Reduce
+   Motion enabled (macOS Accessibility, Windows Animation effects,
+   battery-saver modes, some screen recorders, certain extensions).
+   The video kept decoding internally; CSS just hid it — looked like
+   a black hero with no playback. Spent a full debugging cycle on
+   this 2026-05-14. The poster image (data-fallback) is the proper
+   fallback for reduced-motion users. */
 @media (prefers-reduced-motion: reduce) {
-  /* For users who prefer reduced motion: pause the video instead of
-     hiding it entirely. The poster image still shows; we just don't
-     loop. (display:none here previously caused blank heroes for any
-     visitor whose OS had Reduce Motion enabled.) */
   .video-hero-bg { animation: none; }
 }
 
