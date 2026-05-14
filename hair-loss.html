@@ -808,8 +808,8 @@
               <div class="hpc-badge">✦ Most Popular</div>
               <div class="vial-carousel" id="wlCarousel">
                 <div class="vial-carousel-track">
-                  <img src="assets/brand/freeley-vial-transparent.png" alt="Cedar Tablet" class="vial-slide floating-vial active">
-
+                  <img src="assets/brand/cedar_hair1.png" alt="Cedar Tablet – Finasteride, Minoxidil, Biotin" class="vial-slide floating-vial active">
+                  <img src="assets/brand/willow_hair1.png" alt="Willow Tablet – Spironolactone, Minoxidil, Biotin" class="vial-slide floating-vial">
                 </div>
                 <div class="vial-arrow vial-arrow-left" onclick="slideDrug(-1)"><i class="ri-arrow-left-s-line"></i></div>
                 <div class="vial-arrow vial-arrow-right" onclick="slideDrug(1)"><i class="ri-arrow-right-s-line"></i></div>
@@ -822,19 +822,22 @@
               <div class="hpc-title">Choose your Treatment</div>
               <div class="hpc-sub">Simple flat rate pricing</div>
               <div class="drug-pills">
-                <div class="drug-pill active" onclick="selectDrug(0)">Cedar Tablet (Men)</div>
-                <div class="drug-pill" onclick="selectDrug(1)">Ivy Tablet (Women)</div>
+                <div class="drug-pill active" onclick="selectDrug(0)">Cedar (Men)</div>
+                <div class="drug-pill" onclick="selectDrug(1)">Willow (Women)</div>
               </div>
               <div class="hpc-price"><sup>$</sup>39</div>
               <div class="hpc-price-note">per month · pause or cancel anytime</div>
               <a href="quiz.html" class="hpc-cta">See if you Qualify</a>
             </div>
-            <div class="hero-thumb-strip">
+            <div class="hero-thumb-strip" id="thumbStrip">
               <div class="thumb-item active" onclick="showThumb(this, 'product')" data-type="product">
-                <img src="assets/brand/freeley-vial-transparent.png" alt="Cedar Tablet">
+                <img src="assets/brand/cedar_hair1.png" alt="Cedar Tablet" class="thumb-product-img">
               </div>
-              <div class="thumb-item" onclick="showThumb(this, 'assets/brand/freeley_monthly_kit.png')" data-type="gallery">
-                <img src="assets/brand/freeley_monthly_kit.png" alt="Hair Loss Kit">
+              <div class="thumb-item" onclick="showThumb(this, 'assets/brand/cedar_hair2.png')" data-type="gallery" data-cedar="assets/brand/cedar_hair2.png" data-willow="assets/brand/willow_hair2.png">
+                <img src="assets/brand/cedar_hair2.png" alt="Tilted bottle" class="thumb-swap-img">
+              </div>
+              <div class="thumb-item" onclick="showThumb(this, 'assets/brand/cedar_hair3.png')" data-type="gallery" data-cedar="assets/brand/cedar_hair3.png" data-willow="assets/brand/willow_hair3.png">
+                <img src="assets/brand/cedar_hair3.png" alt="Tablets" class="thumb-swap-img">
               </div>
               <div class="thumb-item" onclick="showThumb(this, 'assets/brand/slide_hl_whats_included.png')" data-type="gallery">
                 <img src="assets/brand/slide_hl_whats_included.png" alt="What's Included">
@@ -882,11 +885,11 @@
       </div>
       <div class="meds-grid">
         <div class="med-card reveal reveal-delay-1">
-          <img src="assets/brand/freeley-vial-transparent.png" alt="Oral Protocol" class="floating-vial"
+          <img src="assets/brand/cedar_hair1.png" alt="Oral Protocol" class="floating-vial"
             style="width: 100%; height: 240px; object-fit: contain; margin-bottom: 24px; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.1)); transform: scale(1.5);">
-          <h3>Oral Regrowth (Cedar & Ivy)</h3>
+          <h3>Oral Regrowth (Cedar & Willow)</h3>
           <div class="generic">Comprehensive tablet formulas for men & women</div>
-          <div class="mechanism">Combines powerful ingredients like Minoxidil, Finasteride, Spironolactone, and Biotin into a simple daily oral tablet to tackle hair loss from the inside out. 'Cedar' is formulated for men, and 'Ivy' is formulated for women.</div>
+          <div class="mechanism">Combines powerful ingredients like Minoxidil, Finasteride, Spironolactone, and Biotin into a simple daily oral tablet to tackle hair loss from the inside out. 'Cedar' is formulated for men, and 'Willow' is formulated for women.</div>
           <div class="med-stat"><span class="med-stat-label">Stimulates Regrowth</span><span class="med-stat-val">Physician-prescribed</span></div>
           <div class="med-stat"><span class="med-stat-label">Format</span><span class="med-stat-val">Once daily pill</span></div>
           <div class="med-stat"><span class="med-stat-label">Goal</span><span class="med-stat-val">Systemic Hair Restoration</span></div>
@@ -1151,16 +1154,36 @@
 
     function selectDrug(index) {
       currentDrugIndex = index;
-      
+      const variant = index === 0 ? 'cedar' : 'willow';
+
       const pills = document.querySelectorAll('.drug-pill');
       if (pills.length) {
         pills.forEach((p, i) => p.classList.toggle('active', i === index));
       }
-      
+
       const slides = document.querySelectorAll('.vial-slide');
       if (slides.length) {
         slides.forEach((s, i) => s.classList.toggle('active', i === index));
       }
+
+      // Swap product thumbnail to match selected variant
+      const productThumb = document.querySelector('.thumb-product-img');
+      if (productThumb) {
+        productThumb.src = index === 0 ? 'assets/brand/cedar_hair1.png' : 'assets/brand/willow_hair1.png';
+      }
+
+      // Swap gallery thumbnails that have variant data attributes
+      document.querySelectorAll('.thumb-swap-img').forEach(img => {
+        const thumb = img.closest('.thumb-item');
+        const newSrc = thumb.dataset[variant];
+        if (newSrc) {
+          img.src = newSrc;
+          thumb.setAttribute('onclick', `showThumb(this, '${newSrc}')`);
+        }
+      });
+
+      // Close gallery overlay and reset to product view
+      closeGallery();
     }
     
     function slideDrug(dir) {
