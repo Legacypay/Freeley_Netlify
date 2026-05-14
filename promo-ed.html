@@ -131,15 +131,30 @@
 
     /* 4. UGC */
     .ugc { padding: 0 24px 48px; }
-    .ugc-video {
-      position: relative; border-radius: 16px; overflow: hidden; background: #000; height: 400px;
+    .results-card {
+      position: relative; border-radius: 16px; overflow: hidden; aspect-ratio: 3 / 2;
+      background-size: cover; background-position: center; display: flex; align-items: center;
     }
-    .ugc-video img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
-    .play-btn {
-      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      width: 64px; height: 64px; background: rgba(255,255,255,0.9); border-radius: 50%;
-      display: flex; align-items: center; justify-content: center; font-size: 24px; color: var(--charcoal);
-      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    .results-card::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(10,15,25,0.6), rgba(10,15,25,0.4) 50%, rgba(10,15,25,0.65));
+    }
+    .results-grid {
+      position: relative; z-index: 1; display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 16px; padding: 24px; width: 100%; text-align: center; color: #fff;
+    }
+    .results-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(28px, 5.5vw, 52px); font-weight: 400; line-height: 1; margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+    .results-label {
+      font-size: 11px; opacity: 0.85; line-height: 1.4;
+      letter-spacing: 0.3px; text-transform: uppercase;
+    }
+    .results-caption {
+      text-align: center; font-size: 13px; color: var(--text-muted);
+      margin-top: 16px; line-height: 1.5;
     }
 
     /* 5. STATS */
@@ -275,11 +290,23 @@
 
     <!-- 4. UGC -->
     <section class="ugc">
-      <div class="ugc-video">
-        <img src="assets/promo/ed-product.jpg" alt="Premium sublingual troche and amber pharmacy bottle" loading="lazy" decoding="async">
-        <div class="play-btn"><i class="ri-play-fill"></i></div>
+      <div class="results-card" style="background-image: url('assets/promo/ed-results-bg.png');">
+        <div class="results-grid">
+          <div class="stat">
+            <div class="results-num">87%</div>
+            <div class="results-label">See results in 30 days</div>
+          </div>
+          <div class="stat">
+            <div class="results-num">15 min</div>
+            <div class="results-label">Average onset</div>
+          </div>
+          <div class="stat">
+            <div class="results-num">4.9★</div>
+            <div class="results-label">Trustpilot rating</div>
+          </div>
+        </div>
       </div>
-      <p style="text-align: center; font-size: 14px; font-weight: 500; margin-top: 16px;">Watch real guys share what happened after they switched to the 3-in-1 Troche.</p>
+      <p class="results-caption">Based on aggregated patient self-reports. Individual results vary.</p>
     </section>
 
     <!-- 5. STATS -->

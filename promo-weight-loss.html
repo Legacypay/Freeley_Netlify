@@ -131,15 +131,17 @@
 
     /* 4. UGC */
     .ugc { padding: 0 24px 48px; }
-    .ugc-video {
-      position: relative; border-radius: 16px; overflow: hidden; background: #000; height: 400px;
+    .transformation {
+      position: relative; border-radius: 16px; overflow: hidden; aspect-ratio: 3 / 2; background: #f5f5f0;
     }
-    .ugc-video img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
-    .play-btn {
-      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      width: 64px; height: 64px; background: rgba(255,255,255,0.9); border-radius: 50%;
-      display: flex; align-items: center; justify-content: center; font-size: 24px; color: var(--charcoal);
-      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    .transformation img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .transformation-caption {
+      text-align: center; font-size: 13px; color: var(--text-muted);
+      margin-top: 16px; line-height: 1.5;
+    }
+    .transformation-disclaimer {
+      text-align: center; font-size: 11px; color: var(--text-muted);
+      margin-top: 4px; opacity: 0.7;
     }
 
     /* 5. STATS */
@@ -284,11 +286,11 @@
 
     <!-- 4. UGC -->
     <section class="ugc">
-      <div class="ugc-video">
-        <img src="assets/promo/weight-loss-lifestyle.jpg" alt="Medical injection pen with water and lemon on marble counter" loading="lazy" decoding="async">
-        <div class="play-btn"><i class="ri-play-fill"></i></div>
+      <div class="transformation">
+        <img src="assets/promo/wl-transformation.png" alt="Real patient progress over 12 weeks on a compounded GLP-1 program" loading="lazy" decoding="async">
       </div>
-      <p style="text-align: center; font-size: 14px; font-weight: 500; margin-top: 16px;">Watch real patients share what happened after they started Freeley.</p>
+      <p class="transformation-caption">Real patient progress over 12 weeks.</p>
+      <p class="transformation-disclaimer">Individual results vary. Photos representative of typical outcomes.</p>
     </section>
 
     <!-- 5. STATS -->

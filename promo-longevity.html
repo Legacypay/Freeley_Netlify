@@ -130,15 +130,24 @@
 
     /* 4. UGC */
     .ugc { padding: 0 24px 48px; }
-    .ugc-video {
-      position: relative; border-radius: 16px; overflow: hidden; background: #000; height: 400px;
+    .doctor-strip {
+      position: relative; border-radius: 16px; overflow: hidden; aspect-ratio: 3 / 2;
+      background: #f5f5f0;
     }
-    .ugc-video img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
-    .play-btn {
-      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      width: 64px; height: 64px; background: rgba(255,255,255,0.9); border-radius: 50%;
-      display: flex; align-items: center; justify-content: center; font-size: 24px; color: var(--charcoal);
-      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    .doctor-strip img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .doctor-eyebrow {
+      text-align: center; font-size: 11px; color: var(--text-muted);
+      letter-spacing: 2px; text-transform: uppercase; font-weight: 500;
+      margin-bottom: 16px; opacity: 0.7;
+    }
+    .doctor-caption {
+      text-align: center; font-family: 'Cormorant Garamond', serif;
+      font-size: 22px; font-weight: 400; line-height: 1.4;
+      color: var(--charcoal); margin-top: 20px;
+    }
+    .doctor-meta {
+      text-align: center; font-size: 12px; color: var(--text-muted);
+      margin-top: 8px; opacity: 0.8;
     }
 
     /* 5. STATS */
@@ -282,11 +291,12 @@
 
     <!-- 4. UGC -->
     <section class="ugc">
-      <div class="ugc-video">
-        <img src="assets/promo/longevity-product.jpg" alt="Medical-grade peptide vials and syringe" loading="lazy" decoding="async">
-        <div class="play-btn"><i class="ri-play-fill"></i></div>
+      <p class="doctor-eyebrow">Your Care Team</p>
+      <div class="doctor-strip">
+        <img src="assets/promo/dr-team.png" alt="Freeley's board-certified physicians" loading="lazy" decoding="async">
       </div>
-      <p style="text-align: center; font-size: 14px; font-weight: 500; margin-top: 16px;">Watch members talk about how Sermorelin changed their recovery.</p>
+      <p class="doctor-caption">Reviewed by board-certified physicians.</p>
+      <p class="doctor-meta">Licensed in all 50 states · Average 12+ years in practice</p>
     </section>
 
     <!-- 5. STATS -->
