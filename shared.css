@@ -168,6 +168,66 @@ body {
   }
 }
 
+/* ── CTA BUTTON HIERARCHY ──
+   CRO playbook rec: clear primary vs. secondary vs. tertiary actions.
+   Use .btn-primary for the single most-important action per viewport.
+   Use .btn-secondary for parallel options ("Learn more"). Use
+   .btn-text for tertiary text-link actions. */
+.btn,
+.btn-primary,
+.btn-secondary,
+.btn-text {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px; font-weight: 600;
+  text-decoration: none; cursor: pointer;
+  border-radius: 999px;
+  transition: transform 0.15s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+  white-space: nowrap;
+}
+.btn-primary {
+  padding: 14px 28px;
+  background: var(--green-dark, #1B492D);
+  color: #fff;
+  border: 1px solid var(--green-dark, #1B492D);
+  box-shadow: 0 4px 16px rgba(13, 40, 24, 0.15);
+}
+.btn-primary:hover {
+  background: var(--green-mid, #2c6e49);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(13, 40, 24, 0.25);
+}
+.btn-secondary {
+  padding: 13px 26px;
+  background: transparent;
+  color: var(--green-dark, #1B492D);
+  border: 1.5px solid var(--green-dark, #1B492D);
+}
+.btn-secondary:hover {
+  background: var(--green-dark, #1B492D);
+  color: #fff;
+  transform: translateY(-2px);
+}
+.btn-text {
+  padding: 8px 4px;
+  background: transparent;
+  color: var(--text);
+  border: none;
+  border-radius: 0;
+  font-size: 14px;
+}
+.btn-text:hover { color: var(--green-dark, #1B492D); }
+.btn-text::after { content: "→"; transition: transform 0.2s ease; }
+.btn-text:hover::after { transform: translateX(3px); }
+
+/* Mobile: any .btn-* in mobile becomes full-width like the older CTAs. */
+@media (max-width: 768px) {
+  .btn-primary, .btn-secondary {
+    width: 100%; min-height: 56px; padding: 18px 28px; font-size: 16px;
+  }
+}
+
 /* ── TYPOGRAPHY ── */
 .display {
   font-family: 'Cormorant Garamond', serif;
@@ -180,6 +240,33 @@ body {
   font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
   color: var(--green-light); font-weight: 500; display: block; margin-bottom: 12px;
 }
+
+/* CRO playbook rec #8: stronger heading hierarchy. Most pages don't
+   set explicit h1/h2/h3 sizes — they rely on browser defaults which
+   make h1 and h2 feel too similar. These defaults apply only when a
+   heading hasn't been given an explicit class or inline style. */
+h1:not([class]):not([style*="font-size"]) {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(40px, 5vw, 64px);
+  font-weight: 300; line-height: 1.08; letter-spacing: -0.5px;
+  margin-bottom: 20px;
+}
+h2:not([class]):not([style*="font-size"]) {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(28px, 3.4vw, 42px);
+  font-weight: 400; line-height: 1.18; letter-spacing: -0.3px;
+  margin-bottom: 16px;
+}
+h3:not([class]):not([style*="font-size"]) {
+  font-family: 'DM Sans', sans-serif;
+  font-size: clamp(18px, 2vw, 22px);
+  font-weight: 600; line-height: 1.35;
+  margin-bottom: 12px;
+}
+/* Secondary / supporting text: visually quieter so the primary
+   content carries the eye toward CTAs. */
+.text-muted, .secondary-text { color: var(--text-muted); font-size: 14px; line-height: 1.65; }
+small { color: var(--text-muted); font-size: 12px; line-height: 1.5; }
 
 /* ── LAYOUT ── */
 .container { max-width: 1200px; margin: 0 auto; padding: 0 48px; }
