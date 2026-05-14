@@ -17,6 +17,27 @@ const BASE_URL = process.env.MDI_BASE_URL || 'https://api.mdintegrations.com';
 let cachedToken = null;
 let tokenExpiresAt = 0;
 
+// Redacted preview of a secret/ID for log diagnostics: first 4 + last 4 chars.
+function preview(value) {
+  if (!value) return '<unset>';
+  const s = String(value);
+  if (s.length <= 10) return s.slice(0, 2) + '…' + s.slice(-2);
+  return s.slice(0, 4) + '…' + s.slice(-4);
+}
+
+// One-shot cold-start log so we can verify which credentials Netlify
+// actually injected at function boot. Never logs the secret itself.
+const _envSummary = {
+  base_url: BASE_URL,
+  demo_mode: process.env.MDI_DEMO_MODE === 'true',
+  client_id: preview(process.env.MDI_CLIENT_ID),
+  client_secret: process.env.MDI_CLIENT_SECRET ? 'set' : '<missing>',
+  partner_id: preview(process.env.MDI_PARTNER_ID),
+  scope: process.env.MDI_AUTH_SCOPE || '*',
+  webhook_secret: process.env.MDI_WEBHOOK_SECRET ? 'set' : '<missing>'
+};
+console.log('[MDI CLIENT] env on cold-start:', JSON.stringify(_envSummary));
+
 async function getAccessToken() {
   const now = Date.now();
   if (cachedToken && tokenExpiresAt > now + 60000) {
@@ -30,6 +51,7 @@ async function getAccessToken() {
   // MDI Partner OAuth2 — POST /v1/partner/auth/token (NOT /oauth/token)
   // Requires scope parameter per API docs (PostPartnerAuthRequest schema)
   const scope = process.env.MDI_AUTH_SCOPE || '*';
+  console.log('[MDI CLIENT] requesting token | base: ' + BASE_URL + ' | client_id: ' + preview(clientId) + ' | scope: ' + scope);
   const response = await fetch(BASE_URL + '/v1/partner/auth/token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
