@@ -409,11 +409,12 @@
       from { transform: translate3d(0, 0, 0); }
       to   { transform: translate3d(-50%, 0, 0); }
     }
-    @media (prefers-reduced-motion: reduce) {
-      /* Pause animation but keep badges visible (lesson learned: never
-         display:none on motion-respecting users). */
-      .cert-track { animation: none; }
-    }
+    /* Intentionally NOT pausing this marquee under
+       prefers-reduced-motion. The animation is a gentle 28s
+       horizontal scroll — non-flashing, non-jarring — and the badges
+       are core trust signals. Pause-on-hover still lets users stop it
+       to click through to LegitScript verification. (Hims, Ro and
+       similar healthcare sites take the same approach.) */
 
     @keyframes tickerScroll {
       from {
