@@ -76,9 +76,9 @@ exports.handler = async (event) => {
     console.log('[SUBMIT QUIZ] Creating voucher: ' + patientData.email + ' | product: ' + resolvedKey + (productKey !== resolvedKey ? ' (from: ' + productKey + ', dose: ' + dose + ')' : ''));
 
     // ── Sandbox vs. Live ──
-    // Defaults to LIVE (production). Set MDI_DEMO_MODE=true in Netlify env
-    // vars ONLY for sandbox/integration testing.
-    const isDemo = process.env.MDI_DEMO_MODE === 'true';
+    // Defaults to SANDBOX while partner status is "Integrating".
+    // Set MDI_LIVE_MODE=true in Netlify env vars once partner is activated.
+    const isDemo = process.env.MDI_LIVE_MODE !== 'true';
 
     // ── Build voucher payload ──
     // The /v1/partner/vouchers endpoint is the documented public API.

@@ -87,8 +87,9 @@ exports.handler = async (event) => {
         const product = PRODUCTS[resolvedKey];
 
         // Build voucher payload — uses /v1/partner/vouchers (public API)
-        // Defaults to LIVE. Set MDI_DEMO_MODE=true for sandbox testing only.
-        const isDemo = process.env.MDI_DEMO_MODE === 'true';
+        // Defaults to SANDBOX while partner is "Integrating".
+        // Set MDI_LIVE_MODE=true once partner is activated.
+        const isDemo = process.env.MDI_LIVE_MODE !== 'true';
         const MDI_SANDBOX_ENV_ID = '6ab0181e-d52a-488f-a161-d64d576b2eba';
         const MDI_LIVE_ENV_ID = 'b374c499-638d-4e72-b844-4c68fcda2eff';
         const environmentId = isDemo ? MDI_SANDBOX_ENV_ID : MDI_LIVE_ENV_ID;
