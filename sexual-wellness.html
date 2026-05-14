@@ -566,10 +566,12 @@
         <div class="reveal">
           <div class="hero-product-wrapper">
             <div class="product-card">
-              <img src="assets/brand/freeley_troche_transparent.png" alt="Freeley 3-in-1 ED Troche" class="floating-vial"
-                style="width: 100%; height: 240px; object-fit: contain; border-radius: 12px; margin-bottom: 24px; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.15)); transform: scale(1.3);">
-              <!-- Inline gallery image (replaces carousel when thumbnail clicked) -->
-              <img id="galleryInlineImg" src="" alt="Gallery image" style="display:none; width:100%; height:100%; object-fit:contain; position:absolute; top:0; left:0; z-index:10; padding:16px; box-sizing:border-box;">
+              <div class="sw-image-container" style="position:relative; width:100%; height:240px; border-radius:12px; margin-bottom:24px; overflow:hidden;">
+                <img src="assets/brand/freeley_troche_transparent.png" alt="Freeley 3-in-1 ED Troche" class="floating-vial"
+                  style="width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.15)); transform: scale(1.3);">
+                <!-- Inline gallery image (replaces carousel when thumbnail clicked) -->
+                <img id="galleryInlineImg" src="" alt="Gallery image" style="display:none; width:100%; height:100%; object-fit:contain; position:absolute; top:0; left:0; z-index:10; padding:16px; box-sizing:border-box;">
+              </div>
               <div class="gp-title">Vast 3-in-1 Tablet</div>
               <div class="gp-sub">Three medications, one powerful formula. Dissolves under the tongue.</div>
               <div class="gp-med-list">
@@ -816,26 +818,21 @@
       document.querySelectorAll('.thumb-item').forEach(t => t.classList.remove('active'));
       el.classList.add('active');
       const inlineImg = document.getElementById('galleryInlineImg');
-      const track = document.querySelector('.vial-carousel-track');
-      const arrows = document.querySelectorAll('.vial-arrow');
+      const productImg = document.querySelector('.sw-image-container .floating-vial');
       if (el.dataset.type === 'product') {
         inlineImg.style.display = 'none';
-        if (track) track.style.display = '';
-        arrows.forEach(a => a.style.display = '');
+        if (productImg) productImg.style.display = '';
       } else {
         inlineImg.src = src;
         inlineImg.style.display = 'block';
-        if (track) track.style.display = 'none';
-        arrows.forEach(a => a.style.display = 'none');
+        if (productImg) productImg.style.display = 'none';
       }
     }
     function closeGallery() {
       const inlineImg = document.getElementById('galleryInlineImg');
-      const track = document.querySelector('.vial-carousel-track');
-      const arrows = document.querySelectorAll('.vial-arrow');
+      const productImg = document.querySelector('.sw-image-container .floating-vial');
       inlineImg.style.display = 'none';
-      if (track) track.style.display = '';
-      arrows.forEach(a => a.style.display = '');
+      if (productImg) productImg.style.display = '';
       document.querySelectorAll('.thumb-item').forEach(t => t.classList.remove('active'));
       const productThumb = document.querySelector('.thumb-item[data-type="product"]');
       if (productThumb) productThumb.classList.add('active');

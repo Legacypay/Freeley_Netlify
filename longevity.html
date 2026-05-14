@@ -547,6 +547,8 @@
                       <div class="pep-dot" data-index="1" style="width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,0.3); cursor:pointer;"></div>
                       <div class="pep-dot" data-index="2" style="width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,0.3); cursor:pointer;"></div>
                   </div>
+                  <!-- Inline gallery image (replaces carousel when thumbnail clicked) -->
+                  <img id="galleryInlineImg" src="" alt="Gallery image" style="display:none; width:100%; height:100%; object-fit:contain; position:absolute; top:0; left:0; z-index:10; padding:16px; box-sizing:border-box; background:radial-gradient(circle at center, rgba(80,140,222,0.1) 0%, transparent 70%);">
               </div>
               <script>
                   let pepIdx = 0;
@@ -565,8 +567,6 @@
                       if (nx > tx + 30) { pepIdx = pepIdx > 0 ? pepIdx - 1 : 2; updPep(); }
                   }, {passive:true});
               </script>
-              <!-- Inline gallery image (replaces carousel when thumbnail clicked) -->
-              <img id="galleryInlineImg" src="" alt="Gallery image" style="display:none; width:100%; height:100%; object-fit:contain; position:absolute; top:0; left:0; z-index:10; padding:16px; box-sizing:border-box;">
               <div class="ps-title">Build your stack</div>
               <div class="ps-sub">Select the peptides you're interested in — your physician will finalize what's
                 appropriate for you.</div>
@@ -821,30 +821,25 @@
       document.querySelectorAll('.thumb-item').forEach(t => t.classList.remove('active'));
       el.classList.add('active');
       const inlineImg = document.getElementById('galleryInlineImg');
-      const track = document.querySelector('.vial-carousel-track');
-      const arrows = document.querySelectorAll('.vial-arrow');
-      const dots = document.querySelector('.vial-dots');
+      const slider = document.getElementById('pepSlider');
+      const dots = document.getElementById('pepDots');
       if (el.dataset.type === 'product') {
         inlineImg.style.display = 'none';
-        if (track) track.style.display = '';
-        arrows.forEach(a => a.style.display = '');
+        if (slider) slider.style.display = '';
         if (dots) dots.style.display = '';
       } else {
         inlineImg.src = src;
         inlineImg.style.display = 'block';
-        if (track) track.style.display = 'none';
-        arrows.forEach(a => a.style.display = 'none');
+        if (slider) slider.style.display = 'none';
         if (dots) dots.style.display = 'none';
       }
     }
     function closeGallery() {
       const inlineImg = document.getElementById('galleryInlineImg');
-      const track = document.querySelector('.vial-carousel-track');
-      const arrows = document.querySelectorAll('.vial-arrow');
-      const dots = document.querySelector('.vial-dots');
+      const slider = document.getElementById('pepSlider');
+      const dots = document.getElementById('pepDots');
       inlineImg.style.display = 'none';
-      if (track) track.style.display = '';
-      arrows.forEach(a => a.style.display = '');
+      if (slider) slider.style.display = '';
       if (dots) dots.style.display = '';
       document.querySelectorAll('.thumb-item').forEach(t => t.classList.remove('active'));
       const productThumb = document.querySelector('.thumb-item[data-type="product"]');
