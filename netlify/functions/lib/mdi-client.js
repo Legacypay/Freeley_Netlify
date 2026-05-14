@@ -29,7 +29,7 @@ function preview(value) {
 // actually injected at function boot. Never logs the secret itself.
 const _envSummary = {
   base_url: BASE_URL,
-  demo_mode: process.env.MDI_DEMO_MODE === 'true',
+  sandbox_mode: process.env.MDI_LIVE_MODE !== 'true',
   client_id: preview(process.env.MDI_CLIENT_ID),
   client_secret: process.env.MDI_CLIENT_SECRET ? 'set' : '<missing>',
   partner_id: preview(process.env.MDI_PARTNER_ID),

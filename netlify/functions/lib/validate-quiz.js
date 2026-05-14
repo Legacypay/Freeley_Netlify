@@ -50,7 +50,23 @@ function validatePatient(p) {
 
 function validateQuizAnswers(qa) {
   if (qa == null) return null;
-  if (!isObject(qa)) return 'quiz_answers must be an object';
+  // Accept both array format [{question, answer, type}] and object format {key: value}
+  if (Array.isArray(qa)) {
+    if (qa.length > MAX_QUIZ_ANSWERS) return 'quiz_answers has too many items';
+    for (let i = 0; i < qa.length; i++) {
+      const item = qa[i];
+      if (!isObject(item)) return `quiz_answers[${i}] must be an object`;
+      // Validate question/answer pair
+      if (item.question != null && typeof item.question === 'string' && item.question.length > MAX_QUIZ_VALUE) {
+        return `quiz_answers[${i}].question too long`;
+      }
+      if (item.answer != null && typeof item.answer === 'string' && item.answer.length > MAX_QUIZ_VALUE) {
+        return `quiz_answers[${i}].answer too long`;
+      }
+    }
+    return null;
+  }
+  if (!isObject(qa)) return 'quiz_answers must be an object or array';
   const keys = Object.keys(qa);
   if (keys.length > MAX_QUIZ_ANSWERS) return 'quiz_answers has too many fields';
   for (const k of keys) {
