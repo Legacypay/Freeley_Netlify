@@ -3,7 +3,7 @@
  * 
  * 1. Bottom Sheet CTA — Native-app-style slide-up sheet on mobile
  *    replaces the generic sticky CTA with a richer experience
- * 2. Referral Banner — "Give $25, Get $25" viral loop
+ * 2. Referral Banner — "Give $50, Get $50" viral loop
  * 
  * Auto-initializes on mobile viewports.
  */
@@ -268,8 +268,8 @@
       el.innerHTML = `
         <div class="referral-icon">🎁</div>
         <div class="referral-body">
-          <div class="referral-title">Give <strong>$25</strong>, Get <strong>$25</strong></div>
-          <div class="referral-desc">Share Freeley with a friend. When they start their plan, you both save $25 on your next month.</div>
+          <div class="referral-title">Give <strong>$50</strong>, Get <strong>$50</strong></div>
+          <div class="referral-desc">Share Freeley with a friend. When they start their plan, you both save $50 on your next month.</div>
         </div>
         <a href="/quiz.html?ref=share" class="referral-cta">Share & Save →</a>
       `;
