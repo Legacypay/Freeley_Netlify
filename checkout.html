@@ -1182,6 +1182,35 @@
       const plan = currentConfig.plans[selectedPlanIndex];
       const compound = (treatmentType === 'weight-loss') ? (compoundOverride || 'semaglutide') : 'default';
 
+      // Read attribution context written by attribution.js on a previous
+      // public page visit. Localstorage only — no tracking pixel calls
+      // from this HIPAA-sensitive page. The data ends up in
+      // PaymentIntent.metadata so the Stripe webhook can fire
+      // server-side conversion events on payment_intent.succeeded.
+      let attribution = {};
+      try {
+        const raw = localStorage.getItem('freeley_attribution');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          const u = parsed.utm || {}, c = parsed.click_ids || {}, l = parsed.live_ids || {};
+          if (parsed.landing_path) attribution.attr_landing = String(parsed.landing_path).slice(0, 100);
+          if (parsed.referrer)     attribution.attr_referrer = String(parsed.referrer).slice(0, 200);
+          if (parsed.source_class) attribution.attr_class = parsed.source_class;
+          if (u.source)   attribution.attr_utm_source = String(u.source).slice(0, 100);
+          if (u.medium)   attribution.attr_utm_medium = String(u.medium).slice(0, 100);
+          if (u.campaign) attribution.attr_utm_campaign = String(u.campaign).slice(0, 100);
+          if (u.term)     attribution.attr_utm_term = String(u.term).slice(0, 100);
+          if (u.content)  attribution.attr_utm_content = String(u.content).slice(0, 100);
+          if (c.fbclid)   attribution.attr_fbclid = String(c.fbclid).slice(0, 200);
+          if (c.gclid)    attribution.attr_gclid = String(c.gclid).slice(0, 200);
+          if (c.msclkid)  attribution.attr_msclkid = String(c.msclkid).slice(0, 200);
+          if (c.ttclid)   attribution.attr_ttclid = String(c.ttclid).slice(0, 200);
+          if (l._ga)      attribution.attr_ga_client = String(l._ga).slice(0, 200);
+          if (l._fbp)     attribution.attr_fbp = String(l._fbp).slice(0, 200);
+          if (l._fbc)     attribution.attr_fbc = String(l._fbc).slice(0, 200);
+        }
+      } catch (e) { /* localStorage unavailable — proceed without attribution */ }
+
       try {
         const response = await fetch('/.netlify/functions/create-payment-intent', {
           method: 'POST',
@@ -1189,7 +1218,8 @@
           body: JSON.stringify({
             treatment: treatmentType,
             plan_months: plan.months,
-            compound: compound
+            compound: compound,
+            attribution: attribution
           })
         });
 

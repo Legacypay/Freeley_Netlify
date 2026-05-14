@@ -16,6 +16,7 @@
  */
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const { fireConversion } = require('./lib/conversion-tracker');
 
 exports.handler = async (event) => {
   // Only accept POST
@@ -54,7 +55,33 @@ exports.handler = async (event) => {
       case 'payment_intent.succeeded': {
         const { treatment, treatment_name, compound, plan_months, total } = data.metadata || {};
         console.log(`[STRIPE WEBHOOK] ✅ Payment SUCCEEDED: $${(data.amount / 100).toFixed(2)} | Treatment: ${treatment_name || treatment} | Plan: ${plan_months}mo`);
-        
+
+        // Fire server-side conversion events (Meta CAPI + GA4 MP).
+        // Attribution is read back from PaymentIntent.metadata where
+        // create-payment-intent.js stashed it from the checkout payload.
+        // PII (email) is hashed inside fireConversion; medical context
+        // is replaced with a generic "Telehealth Consultation" label.
+        try {
+          const attribution = {};
+          for (const [k, v] of Object.entries(data.metadata || {})) {
+            if (k.startsWith('attr_')) attribution[k] = v;
+          }
+          const totalUsd = total ? Number(total) : (data.amount / 100);
+          const conversionResult = await fireConversion({
+            totalValue: totalUsd,
+            email: data.receipt_email || data.charges?.data?.[0]?.billing_details?.email,
+            phone: data.charges?.data?.[0]?.billing_details?.phone,
+            firstName: (data.charges?.data?.[0]?.billing_details?.name || '').split(' ')[0],
+            lastName:  (data.charges?.data?.[0]?.billing_details?.name || '').split(' ').slice(1).join(' '),
+            eventId: data.id, // idempotency — same id as PaymentIntent
+            attribution
+          });
+          console.log(`[STRIPE WEBHOOK] Conversion dispatched: ${JSON.stringify(conversionResult)}`);
+        } catch (e) {
+          // Conversion firing must never break the Stripe ack.
+          console.warn('[STRIPE WEBHOOK] Conversion firing failed (non-blocking):', e.message);
+        }
+
         await notifyInternal('payment_succeeded', {
           payment_intent_id: data.id,
           amount: (data.amount / 100).toFixed(2),

@@ -46,7 +46,7 @@ exports.handler = async (event) => {
   }
 
   try {
-    const { treatment, plan_months, compound, customer_email } = JSON.parse(event.body);
+    const { treatment, plan_months, compound, customer_email, attribution } = JSON.parse(event.body);
 
     // Validate treatment type
     if (!PRICING[treatment]) {
@@ -99,7 +99,18 @@ exports.handler = async (event) => {
         compound: compoundKey,
         plan_months: months.toString(),
         monthly_price: monthlyPrice.toString(),
-        total: (monthlyPrice * months).toFixed(2)
+        total: (monthlyPrice * months).toFixed(2),
+        // Attribution context — used by stripeWebhook to fire server-side
+        // conversion events (Meta CAPI, GA4 Measurement Protocol). Stripe
+        // metadata accepts up to 50 keys, 500 chars per value.
+        ...(attribution && typeof attribution === 'object'
+          ? Object.fromEntries(
+              Object.entries(attribution)
+                .filter(([k, v]) => typeof k === 'string' && k.startsWith('attr_') && v != null)
+                .slice(0, 30)
+                .map(([k, v]) => [k, String(v).slice(0, 500)])
+            )
+          : {})
       },
       ...(customer_email && { receipt_email: customer_email }),
       description: `${TREATMENT_NAMES[treatment] || treatment} — ${months} month${months > 1 ? 's' : ''} @ $${monthlyPrice}/mo`
