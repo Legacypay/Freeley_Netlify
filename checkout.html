@@ -987,10 +987,14 @@
       }
     };
 
-    // Parse URL Params
+    // Parse URL Params — primary: treatment=, fallback: category= or product= for legacy links
     const urlParams = new URLSearchParams(window.location.search);
-    let treatmentType = urlParams.get('treatment') || 'weight-loss';
+    let treatmentType = urlParams.get('treatment') || urlParams.get('category') || urlParams.get('product') || 'weight-loss';
     let compoundOverride = urlParams.get('compound');
+
+    // Normalize legacy param values
+    const treatmentAliases = { 'sexual-wellness': 'sexual-wellness', 'ed': 'ed', 'erectile-dysfunction': 'ed' };
+    if (treatmentAliases[treatmentType]) treatmentType = treatmentAliases[treatmentType];
 
     // Default fallback if unknown
     if (!pricingData[treatmentType]) {
@@ -998,6 +1002,56 @@
     }
 
     const currentConfig = pricingData[treatmentType];
+
+    // ── Shared product key mapping (used by both test and Stripe paths) ──
+    const productKeyMap = {
+      // Weight Loss
+      'weight-loss-sema':           'semaglutide',
+      'weight-loss-semaglutide':    'semaglutide',
+      'weight-loss-tirz':           'tirzepatide',
+      'weight-loss-tirzepatide':    'tirzepatide',
+      'weight-loss':                'semaglutide',
+      // Sexual Wellness
+      'ed':                         'tadalafil-daily',
+      'ed-tadalafil':               'tadalafil-daily',
+      'ed-tadalafil-daily':         'tadalafil-daily',
+      'ed-tadalafil-prn':           'tadalafil-prn',
+      'ed-olympus-peak':            'olympus-peak',
+      'ed-olympus-max':             'olympus-max',
+      'ed-olympus':                 'olympus',
+      'ed-olympus-plus':            'olympus-plus',
+      'sexual-wellness':            'tadalafil-daily',
+      'sexual-wellness-tadalafil':          'tadalafil-daily',
+      'sexual-wellness-tadalafil-daily':    'tadalafil-daily',
+      'sexual-wellness-tadalafil-prn':      'tadalafil-prn',
+      'sexual-wellness-olympus-peak':       'olympus-peak',
+      'sexual-wellness-olympus-max':        'olympus-max',
+      'sexual-wellness-olympus':            'olympus',
+      'sexual-wellness-olympus-plus':       'olympus-plus',
+      // Longevity
+      'longevity-nad':              'nad-plus',
+      'longevity-nad+':             'nad-plus',
+      'longevity-sermorelin':        'sermorelin-injectable',
+      'longevity-glutathione':       'glutathione-injectable',
+      'longevity-gluta':             'glutathione-injectable',
+      'longevity':                   'sermorelin-injectable',
+      // Hair Loss (gender-based default handled at lookup time)
+      'hair-loss-men':               'hair-men',
+      'hair-loss-cedar':             'hair-men',
+      'hair-loss-women-45plus':      'hair-women-45plus',
+      'hair-loss-ivy':               'hair-women-45plus',
+      'hair-loss-women-under45':     'hair-women-under45',
+      'hair-loss-willow':            'hair-women-under45',
+      'hair-loss':                   'hair-men'
+    };
+
+    function resolveProductKey(gender) {
+      let key = productKeyMap[treatmentType + (compoundOverride ? '-' + compoundOverride : '')] || productKeyMap[treatmentType] || 'semaglutide';
+      if (treatmentType === 'hair-loss' && !compoundOverride) {
+        key = parseInt(gender) === 1 ? 'hair-men' : 'hair-women-under45';
+      }
+      return key;
+    }
 
     let selectedPlanIndex = -1;
 
@@ -1417,52 +1471,8 @@
             return;
           }
 
-          // Determine MDI product key from URL params
-          const productKeyMap = {
-            // Weight Loss
-            'weight-loss-sema':           'semaglutide',
-            'weight-loss-semaglutide':    'semaglutide',
-            'weight-loss-tirz':           'tirzepatide',
-            'weight-loss-tirzepatide':    'tirzepatide',
-            'weight-loss':                'semaglutide',
-            // Sexual Wellness
-            'ed':                         'tadalafil-daily',
-            'ed-tadalafil':               'tadalafil-daily',
-            'ed-tadalafil-daily':         'tadalafil-daily',
-            'ed-tadalafil-prn':           'tadalafil-prn',
-            'ed-olympus-peak':            'olympus-peak',
-            'ed-olympus-max':             'olympus-max',
-            'ed-olympus':                 'olympus',
-            'ed-olympus-plus':            'olympus-plus',
-            'sexual-wellness':            'tadalafil-daily',
-            'sexual-wellness-tadalafil':          'tadalafil-daily',
-            'sexual-wellness-tadalafil-daily':    'tadalafil-daily',
-            'sexual-wellness-tadalafil-prn':      'tadalafil-prn',
-            'sexual-wellness-olympus-peak':       'olympus-peak',
-            'sexual-wellness-olympus-max':        'olympus-max',
-            'sexual-wellness-olympus':            'olympus',
-            'sexual-wellness-olympus-plus':       'olympus-plus',
-            // Longevity
-            'longevity-nad':              'nad-plus',
-            'longevity-nad+':             'nad-plus',
-            'longevity-sermorelin':        'sermorelin-injectable',
-            'longevity-glutathione':       'glutathione-injectable',
-            'longevity-gluta':             'glutathione-injectable',
-            'longevity':                   'sermorelin-injectable',
-            // Hair Loss (gender-based default handled below)
-            'hair-loss-men':               'hair-men',
-            'hair-loss-cedar':             'hair-men',
-            'hair-loss-women-45plus':      'hair-women-45plus',
-            'hair-loss-ivy':               'hair-women-45plus',
-            'hair-loss-women-under45':     'hair-women-under45',
-            'hair-loss-willow':            'hair-women-under45',
-            'hair-loss':                   'hair-men'
-          };
-          let productKey = productKeyMap[treatmentType + (compoundOverride ? '-' + compoundOverride : '')] || productKeyMap[treatmentType] || 'semaglutide';
-          // Special case: hair defaults by gender if no compound override
-          if (treatmentType === 'hair-loss' && !compoundOverride) {
-            productKey = parseInt(gender) === 1 ? 'hair-men' : 'hair-women-under45';
-          }
+          // Determine MDI product key from shared map (defined at top of script)
+          let productKey = resolveProductKey(gender);
 
           // Pull quiz data from sessionStorage if available
           let quizData = {};
@@ -1607,52 +1617,8 @@
               return;
             }
 
-            // Determine MDI product key from URL params
-            const productKeyMap = {
-              // Weight Loss
-              'weight-loss-sema':           'semaglutide',
-              'weight-loss-semaglutide':    'semaglutide',
-              'weight-loss-tirz':           'tirzepatide',
-              'weight-loss-tirzepatide':    'tirzepatide',
-              'weight-loss':                'semaglutide',
-              // Sexual Wellness
-              'ed':                         'tadalafil-daily',
-              'ed-tadalafil':               'tadalafil-daily',
-              'ed-tadalafil-daily':         'tadalafil-daily',
-              'ed-tadalafil-prn':           'tadalafil-prn',
-              'ed-olympus-peak':            'olympus-peak',
-              'ed-olympus-max':             'olympus-max',
-              'ed-olympus':                 'olympus',
-              'ed-olympus-plus':            'olympus-plus',
-              'sexual-wellness':            'tadalafil-daily',
-              'sexual-wellness-tadalafil':          'tadalafil-daily',
-              'sexual-wellness-tadalafil-daily':    'tadalafil-daily',
-              'sexual-wellness-tadalafil-prn':      'tadalafil-prn',
-              'sexual-wellness-olympus-peak':       'olympus-peak',
-              'sexual-wellness-olympus-max':        'olympus-max',
-              'sexual-wellness-olympus':            'olympus',
-              'sexual-wellness-olympus-plus':       'olympus-plus',
-              // Longevity
-              'longevity-nad':              'nad-plus',
-              'longevity-nad+':             'nad-plus',
-              'longevity-sermorelin':        'sermorelin-injectable',
-              'longevity-glutathione':       'glutathione-injectable',
-              'longevity-gluta':             'glutathione-injectable',
-              'longevity':                   'sermorelin-injectable',
-              // Hair Loss (gender-based default handled below)
-              'hair-loss-men':               'hair-men',
-              'hair-loss-cedar':             'hair-men',
-              'hair-loss-women-45plus':      'hair-women-45plus',
-              'hair-loss-ivy':               'hair-women-45plus',
-              'hair-loss-women-under45':     'hair-women-under45',
-              'hair-loss-willow':            'hair-women-under45',
-              'hair-loss':                   'hair-men'
-            };
-            let productKey = productKeyMap[treatmentType + (compoundOverride ? '-' + compoundOverride : '')] || productKeyMap[treatmentType] || 'semaglutide';
-            // Special case: hair defaults by gender if no compound override
-            if (treatmentType === 'hair-loss' && !compoundOverride) {
-              productKey = parseInt(gender) === 1 ? 'hair-men' : 'hair-women-under45';
-            }
+            // Determine MDI product key from shared map (defined at top of script)
+            let productKey = resolveProductKey(gender);
 
             let quizData = {};
             try { quizData = JSON.parse(sessionStorage.getItem('freeley_quiz_data') || '{}'); } catch(e) {}

@@ -1,12 +1,12 @@
 /**
  * Netlify Function: mdiWebhook
- * 
+ *
  * Receives webhook POST requests from MD Integrations when case
  * statuses change (approved, denied, completed, etc.).
- * 
+ *
  * Register this URL with MDI during onboarding:
  *   https://your-site.netlify.app/.netlify/functions/mdiWebhook
- * 
+ *
  * MDI sends webhooks for these events:
  *   - case_waiting       → Clinician needs more info from patient
  *   - case_approved      → Clinician approved the case
@@ -17,9 +17,15 @@
  *   - patient_created    → Patient record created
  *   - patient_modified   → Patient record updated
  *   - message_created    → New message in patient-clinician chat (inbound & outbound)
+ *
+ * Transactional emails are dispatched via N8N webhook with structured
+ * email_action payloads. N8N routes these to your ESP (SendGrid, Postmark, etc.).
+ *
+ * Order status is tracked in Netlify Blobs (mdi-orders store, keyed by voucher_id).
  */
 
 const { verifyWebhookSignature } = require('./lib/mdi-client');
+const { getStore } = require('@netlify/blobs');
 
 exports.handler = async (event) => {
   // Only accept POST
@@ -49,60 +55,144 @@ exports.handler = async (event) => {
 
     console.log(`[MDI WEBHOOK] Event: ${event_type} | Case: ${case_id || 'N/A'} | Patient: ${patient_id || 'N/A'}`);
 
-    // ── Step 3: Handle each event type ────────────────────────
+    // ── Step 3: Look up order record (best-effort) ────────────
+    // Order records are keyed by voucher_id in the mdi-orders blob store.
+    // We search by patient_id or case_id from the webhook metadata.
+    const order = await lookupOrder(patient_id, case_id, metadata);
+
+    // ── Step 4: Handle each event type ────────────────────────
     switch (event_type) {
 
       // ── Case approved by clinician ──────────────────────────
-      case 'case_approved':
+      case 'case_approved': {
         console.log(`[MDI WEBHOOK] ✅ Case APPROVED: ${case_id}`);
-        // TODO: Trigger payment charge for the patient
-        // TODO: Send confirmation email via your ESP
+        // NOTE: Payment charge is NOT triggered here (sandbox mode).
+        // When going live, uncomment the charge logic below.
+        // await chargePatient(order);
+
+        // Update order status
+        await updateOrderStatus(order, 'approved', {
+          case_id,
+          approved_at: new Date().toISOString()
+        });
+
+        // Send approval confirmation email
+        await sendPatientEmail(order, 'case_approved', {
+          subject: 'Great news! Your prescription has been approved',
+          template: 'case_approved',
+          data: {
+            first_name: order?.first_name || 'there',
+            product: order?.product_key || 'your treatment',
+            case_id
+          }
+        });
+
         await notifyInternalWebhook('case_approved', {
           case_id,
+          patient_email: order?.email,
           metadata,
-          action: 'charge_patient_and_confirm'
+          action: 'case_approved_email_sent'
         });
         break;
+      }
 
       // ── Clinician needs more info ───────────────────────────
-      case 'case_waiting':
+      case 'case_waiting': {
         console.log(`[MDI WEBHOOK] ⏳ Case WAITING: ${case_id}`);
-        // TODO: Send email/SMS to patient asking for more info
+
+        // Update order status
+        await updateOrderStatus(order, 'waiting', {
+          case_id,
+          waiting_since: new Date().toISOString()
+        });
+
+        // Send "action needed" email to patient
+        await sendPatientEmail(order, 'case_waiting', {
+          subject: 'Action needed — your clinician has a question',
+          template: 'case_waiting',
+          data: {
+            first_name: order?.first_name || 'there',
+            product: order?.product_key || 'your treatment',
+            case_id,
+            portal_url: 'https://patient.mdintegrations.com'
+          }
+        });
+
         await notifyInternalWebhook('case_waiting', {
           case_id,
+          patient_email: order?.email,
           metadata,
-          action: 'request_patient_info'
+          action: 'patient_info_requested_email_sent'
         });
         break;
+      }
 
       // ── Case is being processed ─────────────────────────────
       case 'case_processing':
         console.log(`[MDI WEBHOOK] 🔄 Case PROCESSING: ${case_id}`);
+
+        await updateOrderStatus(order, 'processing', {
+          case_id,
+          processing_since: new Date().toISOString()
+        });
+
         await notifyInternalWebhook('case_processing', {
           case_id,
+          patient_email: order?.email,
           metadata,
           action: 'update_order_status'
         });
         break;
 
       // ── Case completed → prescription confirmed by pharmacy ─
-      case 'case_completed':
+      case 'case_completed': {
         console.log(`[MDI WEBHOOK] 🎉 Case COMPLETED: ${case_id}`);
-        // TODO: Send "Your prescription is ready" email
-        // TODO: Update order status in your database
+
+        // Update order status to completed
+        await updateOrderStatus(order, 'completed', {
+          case_id,
+          completed_at: new Date().toISOString()
+        });
+
+        // Send "prescription ready" email
+        await sendPatientEmail(order, 'case_completed', {
+          subject: 'Your prescription is ready and on its way!',
+          template: 'case_completed',
+          data: {
+            first_name: order?.first_name || 'there',
+            product: order?.product_key || 'your treatment',
+            case_id
+          }
+        });
+
         await notifyInternalWebhook('case_completed', {
           case_id,
+          patient_email: order?.email,
           metadata,
-          action: 'prescription_ready_notify_patient'
+          action: 'prescription_ready_email_sent'
         });
         break;
+      }
 
       // ── Offering submitted → order being fulfilled ──────────
-      case 'offering_submitted':
+      case 'offering_submitted': {
         console.log(`[MDI WEBHOOK] 📦 Offering SUBMITTED: ${case_id}`);
         const offerings = payload.offerings || [];
+
+        await updateOrderStatus(order, 'fulfilling', {
+          case_id,
+          offerings: offerings.map(o => ({
+            id: o.case_offering_id,
+            name: o.name,
+            status: o.status,
+            directions: o.directions
+          })),
+          fulfillment_started_at: new Date().toISOString()
+        });
+
         await notifyInternalWebhook('offering_submitted', {
           case_id,
+          patient_email: order?.email,
           metadata,
           offerings: offerings.map(o => ({
             id: o.case_offering_id,
@@ -113,6 +203,7 @@ exports.handler = async (event) => {
           action: 'order_fulfillment_started'
         });
         break;
+      }
 
       // ── Patient events ──────────────────────────────────────
       case 'patient_created':
@@ -132,12 +223,24 @@ exports.handler = async (event) => {
 
         // Only notify patient when a CLINICIAN sends a message
         if (senderType === 'clinician' || senderType === 'provider' || senderType === 'doctor') {
+          // Send "new message from your clinician" email
+          await sendPatientEmail(order, 'message_from_clinician', {
+            subject: 'You have a new message from your clinician',
+            template: 'clinician_message',
+            data: {
+              first_name: order?.first_name || 'there',
+              portal_url: 'https://patient.mdintegrations.com'
+              // NOTE: Do NOT include message content in email (PHI concern)
+            }
+          });
+
           await notifyInternalWebhook('message_from_clinician', {
             patient_id,
             case_id,
+            patient_email: order?.email,
             sender_type: senderType,
             message_preview: messagePreview,
-            action: 'notify_patient_new_message'
+            action: 'clinician_message_email_sent'
           });
         } else {
           // Patient sent a message — log only, no notification needed
@@ -174,10 +277,148 @@ exports.handler = async (event) => {
   }
 };
 
-/**
- * Forward webhook events to your internal system (n8n, Make, Zapier, etc.)
- * This lets you trigger emails, SMS, Slack alerts, database updates, etc.
- */
+
+// ═══════════════════════════════════════════════════════════════
+// Helper: Look up order record from Netlify Blobs
+// ═══════════════════════════════════════════════════════════════
+// Orders are stored in mdi-orders keyed by voucher_id. The webhook
+// gives us case_id and/or patient_id, so we iterate to find a match.
+// This is O(n) over orders but the store is small (hundreds, not millions).
+
+async function lookupOrder(patientId, caseId, metadata) {
+  try {
+    const store = getStore('mdi-orders');
+    const { blobs } = await store.list();
+
+    if (!blobs || blobs.length === 0) {
+      console.log('[MDI WEBHOOK] No orders in store — cannot look up patient');
+      return null;
+    }
+
+    // Check if metadata contains voucher_id directly (fastest path)
+    const metaVoucherId = metadata?.voucher_id || metadata?.voucher_token;
+    if (metaVoucherId) {
+      try {
+        const order = await store.get(metaVoucherId, { type: 'json' });
+        if (order) {
+          console.log(`[MDI WEBHOOK] Order found by metadata voucher_id: ${metaVoucherId}`);
+          order._voucher_id = metaVoucherId;
+          return order;
+        }
+      } catch { /* not found, continue search */ }
+    }
+
+    // Search by patient_id or case_id across all orders
+    for (const blob of blobs) {
+      try {
+        const order = await store.get(blob.key, { type: 'json' });
+        if (!order) continue;
+
+        // Match by patient_id
+        if (patientId && order.patient_id === patientId) {
+          console.log(`[MDI WEBHOOK] Order found by patient_id: ${blob.key}`);
+          order._voucher_id = blob.key;
+          return order;
+        }
+
+        // Match by case_id (if stored from a previous webhook)
+        if (caseId && order.case_id === caseId) {
+          console.log(`[MDI WEBHOOK] Order found by case_id: ${blob.key}`);
+          order._voucher_id = blob.key;
+          return order;
+        }
+      } catch { /* skip corrupted entries */ }
+    }
+
+    console.warn(`[MDI WEBHOOK] No matching order found for patient=${patientId}, case=${caseId}`);
+    return null;
+  } catch (err) {
+    console.warn(`[MDI WEBHOOK] Order lookup failed (non-critical): ${err.message}`);
+    return null;
+  }
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// Helper: Update order status in Netlify Blobs
+// ═══════════════════════════════════════════════════════════════
+
+async function updateOrderStatus(order, status, extraFields = {}) {
+  if (!order || !order._voucher_id) {
+    console.warn(`[MDI WEBHOOK] Cannot update order status — no order found`);
+    return;
+  }
+
+  try {
+    const store = getStore('mdi-orders');
+    const updated = {
+      ...order,
+      status,
+      ...extraFields,
+      updated_at: new Date().toISOString(),
+      status_history: [
+        ...(order.status_history || []),
+        { status, timestamp: new Date().toISOString() }
+      ]
+    };
+    // Remove internal lookup key before persisting
+    delete updated._voucher_id;
+
+    await store.setJSON(order._voucher_id, updated);
+    console.log(`[MDI WEBHOOK] Order ${order._voucher_id} status updated: ${status}`);
+  } catch (err) {
+    console.warn(`[MDI WEBHOOK] Failed to update order status (non-critical): ${err.message}`);
+  }
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// Helper: Send transactional email via N8N webhook
+// ═══════════════════════════════════════════════════════════════
+// N8N receives structured email payloads and routes them to your
+// ESP (SendGrid, Postmark, Resend, etc.) based on the template field.
+// If no N8N webhook is configured, logs the email action for debugging.
+
+async function sendPatientEmail(order, emailType, emailPayload) {
+  const patientEmail = order?.email;
+  if (!patientEmail) {
+    console.warn(`[MDI WEBHOOK] Cannot send ${emailType} email — no patient email found`);
+    return;
+  }
+
+  const webhookUrl = process.env.N8N_WEBHOOK_URL;
+  if (!webhookUrl) {
+    console.log(`[MDI WEBHOOK] Email action queued (no N8N_WEBHOOK_URL): ${emailType} → ${patientEmail}`);
+    console.log(`[MDI WEBHOOK] Email payload:`, JSON.stringify({ to: patientEmail, ...emailPayload }));
+    return;
+  }
+
+  try {
+    await fetch(webhookUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        source: 'mdi_webhook',
+        event_type: 'send_email',
+        email_action: emailType,
+        to: patientEmail,
+        subject: emailPayload.subject,
+        template: emailPayload.template,
+        template_data: emailPayload.data || {},
+        timestamp: new Date().toISOString()
+      })
+    });
+    console.log(`[MDI WEBHOOK] 📧 Email dispatched: ${emailType} → ${patientEmail}`);
+  } catch (err) {
+    console.warn(`[MDI WEBHOOK] Email dispatch failed (non-critical): ${err.message}`);
+  }
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// Helper: Forward events to internal system (N8N / Make / Zapier)
+// ═══════════════════════════════════════════════════════════════
+
 async function notifyInternalWebhook(eventType, data) {
   const webhookUrl = process.env.N8N_WEBHOOK_URL;
   if (!webhookUrl) {
