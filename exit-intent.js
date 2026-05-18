@@ -200,7 +200,7 @@
           <div class="exit-emoji">🎉</div>
           <h3 class="exit-success-title">You're all set!</h3>
           <p class="exit-success-sub">We've saved your details. Ready to continue your free consultation?</p>
-          <a href="/quiz.html" class="exit-success-cta">Start My Free Visit →</a>
+          <a href="/quiz" class="exit-success-cta">Start My Free Visit →</a>
         </div>
       </div>
     `;

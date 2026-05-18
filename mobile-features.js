@@ -140,7 +140,7 @@
           <div class="mbs-price">${price} <span class="mbs-price-old">${oldPrice}</span></div>
           <div class="mbs-label">${label}</div>
         </div>
-        <a href="/quiz.html" class="mbs-cta">Get Started</a>
+        <a href="/quiz" class="mbs-cta">Get Started</a>
       </div>
       <div class="mbs-trust">
         <div class="mbs-trust-item"><span class="mbs-trust-dot"></span> HIPAA</div>
@@ -271,7 +271,7 @@
           <div class="referral-title">Give <strong>$50</strong>, Get <strong>$50</strong></div>
           <div class="referral-desc">Share Freeley with a friend. When they start their plan, you both save $50 on your next month.</div>
         </div>
-        <a href="/quiz.html?ref=share" class="referral-cta">Share & Save →</a>
+        <a href="/quiz?ref=share" class="referral-cta">Share & Save →</a>
       `;
       el.classList.add('referral-banner');
     });
