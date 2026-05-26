@@ -1,23 +1,17 @@
 /**
  * Netlify Function: sendMessage
  *
- * Sends a message from a patient to their clinician via MDI's Messaging API.
- * Uses the Partner bearer token to send messages on behalf of the patient.
- *
- * Tries multiple MDI endpoint patterns:
- *   1. POST /v1/partner/patients/:patient/messages  (Partner scope)
- *   2. POST /v1/patient/patients/:patient/messages   (Patient scope, Partner token)
+ * Sends a message from a patient to their clinician via MDI's Patient Messaging API.
+ * Requires a patient access_token obtained via the 2FA verification flow.
  *
  * POST /.netlify/functions/sendMessage
  * Headers: { Authorization: 'Bearer <firebase-id-token>' }
  * Body: {
  *   "patient_id": "uuid",
- *   "text": "Message content here",
- *   "channel": "patient",                // optional, defaults to "patient"
- *   "reference_message_id": "uuid"        // optional, for reply threading
+ *   "patient_token": "...",          // from validateMessagingCode
+ *   "text": "Message content",
+ *   "channel": "patient"             // optional
  * }
- *
- * Returns: The created message object from MDI.
  */
 
 const { getAccessToken, getCorsHeaders, BASE_URL } = require('./lib/mdi-client');
@@ -55,81 +49,45 @@ exports.handler = async (event) => {
     // ── Step 2: Parse and validate request ───────────────────────
     const {
       patient_id,
+      patient_token,
       text,
       channel = 'patient',
       reference_message_id
     } = JSON.parse(event.body);
 
     if (!patient_id) {
-      return {
-        statusCode: 400,
-        headers: cors,
-        body: JSON.stringify({ error: 'patient_id is required.' })
-      };
+      return { statusCode: 400, headers: cors, body: JSON.stringify({ error: 'patient_id is required.' }) };
     }
-
+    if (!patient_token) {
+      return { statusCode: 401, headers: cors, body: JSON.stringify({ error: 'Messaging verification required.', code: 'VERIFICATION_REQUIRED' }) };
+    }
     if (!text || !text.trim()) {
-      return {
-        statusCode: 400,
-        headers: cors,
-        body: JSON.stringify({ error: 'Message text is required.' })
-      };
+      return { statusCode: 400, headers: cors, body: JSON.stringify({ error: 'Message text is required.' }) };
     }
 
-    // Sanitize: limit message length
     const sanitizedText = text.trim().slice(0, 5000);
 
-    // ── Step 3: Build message payload ────────────────────────────
-    const messagePayload = {
-      channel,
-      text: sanitizedText
-    };
+    // ── Step 3: Send message via MDI Patient API ─────────────────
+    const messagePayload = { channel, text: sanitizedText };
+    if (reference_message_id) messagePayload.reference_message_id = reference_message_id;
 
-    if (reference_message_id) {
-      messagePayload.reference_message_id = reference_message_id;
-    }
+    const messagesUrl = `${BASE_URL}/v1/patient/patients/${patient_id}/messages`;
+    console.log(`[SEND MESSAGE] Sending message for patient: ${patient_id}`);
 
-    // ── Step 4: Try multiple endpoint patterns ───────────────────
-    const endpoints = [
-      `/v1/partner/patients/${patient_id}/messages`,
-      `/v1/patient/patients/${patient_id}/messages`
-    ];
+    const response = await fetch(messagesUrl, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${patient_token}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Version': '2'
+      },
+      body: JSON.stringify(messagePayload)
+    });
 
-    const token = await getAccessToken();
-    let messageData = null;
-    let lastError = null;
-
-    for (const endpoint of endpoints) {
-      try {
-        console.log(`[SEND MESSAGE] Trying: ${endpoint}`);
-        const response = await fetch(BASE_URL + endpoint, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Version': '2'
-          },
-          body: JSON.stringify(messagePayload)
-        });
-
-        if (response.ok) {
-          messageData = await response.json();
-          console.log(`[SEND MESSAGE] Success via: ${endpoint}`);
-          break;
-        }
-
-        const errText = await response.text();
-        console.warn(`[SEND MESSAGE] ${endpoint} returned ${response.status}: ${errText.slice(0, 200)}`);
-        lastError = { status: response.status, text: errText };
-
-      } catch (fetchErr) {
-        console.warn(`[SEND MESSAGE] Fetch error for ${endpoint}: ${fetchErr.message}`);
-        lastError = { status: 500, text: fetchErr.message };
-      }
-    }
-
-    if (messageData !== null) {
+    if (response.ok) {
+      const messageData = await response.json();
+      console.log(`[SEND MESSAGE] Message sent for patient: ${patient_id}`);
       return {
         statusCode: 200,
         headers: cors,
@@ -137,17 +95,43 @@ exports.handler = async (event) => {
       };
     }
 
-    // All endpoints failed
-    console.error(`[SEND MESSAGE] All endpoints failed. Last error: ${lastError?.status}`);
+    const errText = await response.text();
+    console.error(`[SEND MESSAGE] MDI error (${response.status}): ${errText.slice(0, 200)}`);
+
+    // Try partner fallback
+    if (response.status === 401 || response.status === 403) {
+      console.log(`[SEND MESSAGE] Trying partner token fallback...`);
+      const partnerToken = await getAccessToken();
+      const partnerUrl = `${BASE_URL}/v1/partner/patients/${patient_id}/messages`;
+
+      const partnerResponse = await fetch(partnerUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${partnerToken}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(messagePayload)
+      });
+
+      if (partnerResponse.ok) {
+        const data = await partnerResponse.json();
+        console.log(`[SEND MESSAGE] Partner fallback succeeded`);
+        return { statusCode: 200, headers: cors, body: JSON.stringify(data) };
+      }
+    }
+
     return {
-      statusCode: lastError?.status || 500,
+      statusCode: response.status === 401 ? 401 : 500,
       headers: cors,
-      body: JSON.stringify({ error: 'Unable to send message. Please try again.' })
+      body: JSON.stringify({
+        error: response.status === 401 ? 'Session expired. Please verify again.' : 'Unable to send message.',
+        code: response.status === 401 ? 'TOKEN_EXPIRED' : 'SEND_ERROR'
+      })
     };
 
   } catch (error) {
     console.error('[SEND MESSAGE] Error:', error);
-
     return {
       statusCode: 500,
       headers: cors,

@@ -1,28 +1,22 @@
 /**
  * Netlify Function: getMessages
  *
- * Fetches messages for a patient from MDI's Messaging API.
- * Uses the Partner bearer token to access patient messages.
- *
- * Tries multiple MDI endpoint patterns since the API may vary between
- * Partner and Patient namespaces:
- *   1. GET /v1/partner/patients/:patient/messages  (Partner scope)
- *   2. GET /v1/patient/patients/:patient/messages   (Patient scope, Partner token)
+ * Fetches messages for a patient from MDI's Patient Messaging API.
+ * Requires a patient access_token obtained via the 2FA verification flow.
  *
  * POST /.netlify/functions/getMessages
  * Headers: { Authorization: 'Bearer <firebase-id-token>' }
  * Body: {
  *   "patient_id": "uuid",
- *   "channel": "patient",        // optional, defaults to "patient"
- *   "page": 1,                   // optional, defaults to 1
- *   "per_page": 25,              // optional, defaults to 25
- *   "order": "desc"              // optional, defaults to "desc"
+ *   "patient_token": "...",          // from validateMessagingCode
+ *   "channel": "patient",            // optional, defaults to "patient"
+ *   "page": 1,                       // optional
+ *   "per_page": 25,                  // optional
+ *   "order": "desc"                  // optional
  * }
- *
- * Returns: MDI messages array with sender info, timestamps, and content.
  */
 
-const { mdiRequest, getAccessToken, getCorsHeaders, BASE_URL } = require('./lib/mdi-client');
+const { getAccessToken, getCorsHeaders, BASE_URL } = require('./lib/mdi-client');
 const { verifyFirebaseToken } = require('./lib/verify-firebase-token');
 
 exports.handler = async (event) => {
@@ -57,6 +51,7 @@ exports.handler = async (event) => {
     // ── Step 2: Parse request ────────────────────────────────────
     const {
       patient_id,
+      patient_token,
       channel = 'patient',
       page = 1,
       per_page = 25,
@@ -71,49 +66,36 @@ exports.handler = async (event) => {
       };
     }
 
-    // ── Step 3: Try multiple endpoint patterns ───────────────────
-    const queryString = `channel=${channel}&page=${page}&per_page=${per_page}&order=${order}`;
-
-    // MDI endpoint patterns to try (Partner token used for all)
-    const endpoints = [
-      `/v1/partner/patients/${patient_id}/messages?${queryString}`,
-      `/v1/patient/patients/${patient_id}/messages?${queryString}`
-    ];
-
-    const token = await getAccessToken();
-    let messagesData = null;
-    let lastError = null;
-
-    for (const endpoint of endpoints) {
-      try {
-        console.log(`[GET MESSAGES] Trying: ${endpoint}`);
-        const response = await fetch(BASE_URL + endpoint, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Version': '2'
-          }
-        });
-
-        if (response.ok) {
-          messagesData = await response.json();
-          console.log(`[GET MESSAGES] Success via: ${endpoint}`);
-          break;
-        }
-
-        const errText = await response.text();
-        console.warn(`[GET MESSAGES] ${endpoint} returned ${response.status}: ${errText.slice(0, 200)}`);
-        lastError = { status: response.status, text: errText };
-
-      } catch (fetchErr) {
-        console.warn(`[GET MESSAGES] Fetch error for ${endpoint}: ${fetchErr.message}`);
-        lastError = { status: 500, text: fetchErr.message };
-      }
+    if (!patient_token) {
+      return {
+        statusCode: 401,
+        headers: cors,
+        body: JSON.stringify({
+          error: 'Messaging verification required.',
+          code: 'VERIFICATION_REQUIRED'
+        })
+      };
     }
 
-    if (messagesData !== null) {
+    // ── Step 3: Fetch messages from MDI ──────────────────────────
+    const queryString = `channel=${channel}&page=${page}&per_page=${per_page}&order=${order}`;
+    const messagesUrl = `${BASE_URL}/v1/patient/patients/${patient_id}/messages?${queryString}`;
+
+    console.log(`[GET MESSAGES] Fetching messages for patient: ${patient_id}, channel: ${channel}, page: ${page}`);
+
+    const response = await fetch(messagesUrl, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${patient_token}`,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Version': '2'
+      }
+    });
+
+    if (response.ok) {
+      const messagesData = await response.json();
+      console.log(`[GET MESSAGES] Success for patient: ${patient_id}`);
       return {
         statusCode: 200,
         headers: cors,
@@ -121,27 +103,58 @@ exports.handler = async (event) => {
       };
     }
 
-    // All endpoints failed
-    console.error(`[GET MESSAGES] All endpoints failed. Last error: ${lastError?.status} ${lastError?.text?.slice(0, 200)}`);
+    const errText = await response.text();
+    console.warn(`[GET MESSAGES] Patient endpoint returned ${response.status}: ${errText.slice(0, 200)}`);
 
-    // If 404 on all endpoints, the patient may not have messaging enabled yet
-    if (lastError?.status === 404) {
+    // If patient token doesn't work, try partner token as fallback
+    if (response.status === 401 || response.status === 403) {
+      console.log(`[GET MESSAGES] Trying with partner token as fallback...`);
+      const partnerToken = await getAccessToken();
+
+      // Try partner endpoint for messages
+      const partnerUrl = `${BASE_URL}/v1/partner/patients/${patient_id}/messages?${queryString}`;
+      const partnerResponse = await fetch(partnerUrl, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${partnerToken}`,
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (partnerResponse.ok) {
+        const data = await partnerResponse.json();
+        console.log(`[GET MESSAGES] Partner fallback succeeded`);
+        return {
+          statusCode: 200,
+          headers: cors,
+          body: JSON.stringify(data)
+        };
+      }
+
+      console.warn(`[GET MESSAGES] Partner fallback also failed: ${partnerResponse.status}`);
+    }
+
+    // Return empty if 404 (no messages yet)
+    if (response.status === 404) {
       return {
         statusCode: 200,
         headers: cors,
-        body: JSON.stringify({ data: [], messages: [], total: 0, note: 'No messages found for this patient.' })
+        body: JSON.stringify({ data: [], messages: [], total: 0 })
       };
     }
 
     return {
-      statusCode: lastError?.status || 500,
+      statusCode: response.status === 401 ? 401 : 500,
       headers: cors,
-      body: JSON.stringify({ error: 'Unable to fetch messages. Please try again.' })
+      body: JSON.stringify({
+        error: response.status === 401 ? 'Session expired. Please verify again.' : 'Unable to fetch messages.',
+        code: response.status === 401 ? 'TOKEN_EXPIRED' : 'FETCH_ERROR'
+      })
     };
 
   } catch (error) {
     console.error('[GET MESSAGES] Error:', error);
-
     return {
       statusCode: 500,
       headers: cors,

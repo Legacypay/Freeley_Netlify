@@ -779,6 +779,84 @@
       color: var(--text-muted);
       font-style: italic;
     }
+    /* ── Chat Verification Screen ────────────────── */
+    .chat-verify {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 28px;
+      text-align: center;
+      gap: 14px;
+    }
+    .chat-verify i {
+      font-size: 44px;
+      color: var(--green-light);
+      margin-bottom: 4px;
+    }
+    .chat-verify h3 {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--charcoal);
+      margin: 0;
+    }
+    .chat-verify p {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin: 0;
+    }
+    .chat-verify-btn {
+      margin-top: 6px;
+      padding: 12px 28px;
+      border: none;
+      border-radius: 24px;
+      background: var(--green-light);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .chat-verify-btn:hover { background: var(--green); }
+    .chat-verify-btn:active { transform: scale(0.97); }
+    .chat-verify-btn:disabled {
+      background: var(--border);
+      cursor: not-allowed;
+    }
+    .chat-code-input {
+      width: 200px;
+      padding: 12px 16px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-size: 20px;
+      font-family: 'DM Sans', monospace;
+      text-align: center;
+      letter-spacing: 4px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .chat-code-input:focus {
+      border-color: var(--green-light);
+    }
+    .chat-verify-error {
+      font-size: 13px;
+      color: #d32f2f;
+      margin: 0;
+    }
+    .chat-verify-resend {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-decoration: underline;
+      font-family: 'DM Sans', sans-serif;
+      padding: 4px;
+    }
+    .chat-verify-resend:hover { color: var(--charcoal); }
     @media (max-width: 480px) {
       .chat-drawer {
         width: 100vw;
@@ -1533,6 +1611,13 @@
       const patientId = sessionStorage.getItem('freeley_patient_id');
       if (!patientId) return;
 
+      const patientToken = getPatientToken();
+      // If no patient token yet, skip — messages require 2FA verification
+      if (!patientToken) {
+        console.log('[Hub] No patient token — skipping latest message load (2FA required)');
+        return;
+      }
+
       try {
         const authToken = await getFirebaseIdToken();
         const res = await fetch('/.netlify/functions/getMessages', {
@@ -1543,6 +1628,7 @@
           },
           body: JSON.stringify({
             patient_id: patientId,
+            patient_token: patientToken,
             channel: 'patient',
             page: 1,
             per_page: 10,
@@ -1607,6 +1693,19 @@
     let chatPollingTimer = null;
     let chatIsOpen = false;
 
+    // Get stored patient messaging token (from 2FA verification)
+    function getPatientToken() {
+      return sessionStorage.getItem('freeley_patient_token') || null;
+    }
+
+    // Get stored patient messaging email (may differ from Firebase email)
+    function getPatientEmail() {
+      // Try stored MDI email first, then fall back to displayed Firebase email
+      return sessionStorage.getItem('freeley_patient_email')
+        || (document.getElementById('dashUserEmail') ? document.getElementById('dashUserEmail').textContent : '')
+        || '';
+    }
+
     function openMessaging() {
       const patientId = sessionStorage.getItem('freeley_patient_id');
       if (!patientId) {
@@ -1634,9 +1733,180 @@
         document.getElementById('chatAvatarFallback').style.display = 'none';
       }
 
-      loadMessages();
-      // Poll for new messages every 15 seconds while chat is open
-      chatPollingTimer = setInterval(() => { if (chatIsOpen) loadMessages(true); }, 15000);
+      // Check if we already have a valid patient messaging token
+      const token = getPatientToken();
+      if (token) {
+        // Already verified — go straight to messages
+        showChatUI();
+        loadMessages();
+        chatPollingTimer = setInterval(() => { if (chatIsOpen) loadMessages(true); }, 15000);
+      } else {
+        // Need 2FA verification first
+        showVerificationScreen();
+      }
+    }
+
+    function showChatUI() {
+      // Show the footer (input area) and hide any verification screen
+      document.getElementById('chatFooter').style.display = 'flex';
+      document.getElementById('chatBody').innerHTML = '<div class="chat-loading"><i class="ri-loader-4-line ri-spin"></i> Loading messages...</div>';
+    }
+
+    function showVerificationScreen() {
+      document.getElementById('chatFooter').style.display = 'none';
+      const chatBody = document.getElementById('chatBody');
+      const email = getPatientEmail();
+      const maskedEmail = email ? email.replace(/(.{2})(.*)(@.*)/, '$1***$3') : 'your email';
+
+      chatBody.innerHTML =
+        '<div class="chat-verify">' +
+          '<i class="ri-shield-check-line"></i>' +
+          '<h3>Secure Messaging</h3>' +
+          '<p>To protect your privacy, we need to verify your identity before you can message your care team.</p>' +
+          '<p style="font-size:12.5px;">We\'ll send a one-time code to <strong>' + escapeHtml(maskedEmail) + '</strong></p>' +
+          '<button class="chat-verify-btn" id="chatSendCodeBtn" onclick="requestVerificationCode()">Send Verification Code</button>' +
+          '<p id="chatVerifyError" class="chat-verify-error" style="display:none;"></p>' +
+        '</div>';
+    }
+
+    async function requestVerificationCode() {
+      const email = getPatientEmail();
+      if (!email) {
+        showVerifyError('Unable to determine your email address. Please contact support.');
+        return;
+      }
+
+      const btn = document.getElementById('chatSendCodeBtn');
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Sending...';
+      }
+
+      try {
+        const authToken = await getFirebaseIdToken();
+        const res = await fetch('/.netlify/functions/requestMessagingCode', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {})
+          },
+          body: JSON.stringify({ email })
+        });
+
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+          if (data.code === 'PATIENT_NOT_FOUND') {
+            showVerifyError('No patient account found. Please complete your intake first.');
+          } else {
+            showVerifyError(data.error || 'Unable to send code. Please try again.');
+          }
+          if (btn) { btn.disabled = false; btn.textContent = 'Send Verification Code'; }
+          return;
+        }
+
+        // Show code input screen
+        showCodeInputScreen(email);
+
+      } catch (e) {
+        console.error('[Chat] Request code failed:', e);
+        showVerifyError('Connection error. Please try again.');
+        if (btn) { btn.disabled = false; btn.textContent = 'Send Verification Code'; }
+      }
+    }
+
+    function showCodeInputScreen(email) {
+      const maskedEmail = email ? email.replace(/(.{2})(.*)(@.*)/, '$1***$3') : 'your email';
+      const chatBody = document.getElementById('chatBody');
+
+      chatBody.innerHTML =
+        '<div class="chat-verify">' +
+          '<i class="ri-mail-check-line"></i>' +
+          '<h3>Enter Verification Code</h3>' +
+          '<p>We sent a code to <strong>' + escapeHtml(maskedEmail) + '</strong>.<br>Check your inbox and enter it below.</p>' +
+          '<input type="text" class="chat-code-input" id="chatCodeInput" maxlength="8" placeholder="• • • • • •" autocomplete="one-time-code" autofocus />' +
+          '<button class="chat-verify-btn" id="chatVerifyBtn" onclick="submitVerificationCode()">Verify</button>' +
+          '<p id="chatVerifyError" class="chat-verify-error" style="display:none;"></p>' +
+          '<button class="chat-verify-resend" onclick="requestVerificationCode()">Didn\'t receive it? Send again</button>' +
+        '</div>';
+
+      // Focus input and handle Enter key
+      setTimeout(() => {
+        const inp = document.getElementById('chatCodeInput');
+        if (inp) {
+          inp.focus();
+          inp.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') { e.preventDefault(); submitVerificationCode(); }
+          });
+        }
+      }, 100);
+    }
+
+    async function submitVerificationCode() {
+      const codeInput = document.getElementById('chatCodeInput');
+      const code = (codeInput ? codeInput.value : '').trim();
+      if (!code) {
+        showVerifyError('Please enter the verification code.');
+        return;
+      }
+
+      const email = getPatientEmail();
+      const btn = document.getElementById('chatVerifyBtn');
+      if (btn) { btn.disabled = true; btn.textContent = 'Verifying...'; }
+      if (codeInput) codeInput.disabled = true;
+
+      try {
+        const authToken = await getFirebaseIdToken();
+        const res = await fetch('/.netlify/functions/validateMessagingCode', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {})
+          },
+          body: JSON.stringify({ email, verification_code: code })
+        });
+
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+          showVerifyError(data.error || 'Invalid code. Please try again.');
+          if (btn) { btn.disabled = false; btn.textContent = 'Verify'; }
+          if (codeInput) { codeInput.disabled = false; codeInput.focus(); codeInput.select(); }
+          return;
+        }
+
+        // Store the patient token and ID
+        if (data.access_token) {
+          sessionStorage.setItem('freeley_patient_token', data.access_token);
+        }
+        if (data.patient_id) {
+          sessionStorage.setItem('freeley_patient_id', data.patient_id);
+        }
+        if (data.email) {
+          sessionStorage.setItem('freeley_patient_email', data.email);
+        }
+
+        console.log('[Chat] Verification successful, token type:', data.token_type);
+
+        // Transition to chat
+        showChatUI();
+        loadMessages();
+        chatPollingTimer = setInterval(() => { if (chatIsOpen) loadMessages(true); }, 15000);
+
+      } catch (e) {
+        console.error('[Chat] Verify code failed:', e);
+        showVerifyError('Connection error. Please try again.');
+        if (btn) { btn.disabled = false; btn.textContent = 'Verify'; }
+        if (codeInput) { codeInput.disabled = false; codeInput.focus(); }
+      }
+    }
+
+    function showVerifyError(msg) {
+      const el = document.getElementById('chatVerifyError');
+      if (el) {
+        el.textContent = msg;
+        el.style.display = 'block';
+      }
     }
 
     function closeChat() {
@@ -1657,6 +1927,7 @@
 
     async function loadMessages(silent = false) {
       const patientId = sessionStorage.getItem('freeley_patient_id');
+      const patientToken = getPatientToken();
       if (!patientId) return;
 
       const chatBody = document.getElementById('chatBody');
@@ -1675,6 +1946,7 @@
           },
           body: JSON.stringify({
             patient_id: patientId,
+            patient_token: patientToken,
             channel: 'patient',
             page: 1,
             per_page: 50,
@@ -1684,6 +1956,12 @@
 
         if (!res.ok) {
           const errData = await res.json().catch(() => ({}));
+          // If token expired, clear it and show re-verification
+          if (errData.code === 'VERIFICATION_REQUIRED' || errData.code === 'TOKEN_EXPIRED') {
+            sessionStorage.removeItem('freeley_patient_token');
+            if (!silent) showVerificationScreen();
+            return;
+          }
           throw new Error(errData.error || 'Failed to load messages');
         }
 
@@ -1756,7 +2034,14 @@
       if (!text) return;
 
       const patientId = sessionStorage.getItem('freeley_patient_id');
+      const patientToken = getPatientToken();
       if (!patientId) return;
+
+      // If no token, show verification
+      if (!patientToken) {
+        showVerificationScreen();
+        return;
+      }
 
       const sendBtn = document.getElementById('chatSendBtn');
       sendBtn.disabled = true;
@@ -1785,6 +2070,7 @@
           },
           body: JSON.stringify({
             patient_id: patientId,
+            patient_token: patientToken,
             text: text,
             channel: 'patient'
           })
@@ -1792,6 +2078,14 @@
 
         if (!res.ok) {
           const errData = await res.json().catch(() => ({}));
+          // If token expired, clear and re-verify
+          if (errData.code === 'VERIFICATION_REQUIRED' || errData.code === 'TOKEN_EXPIRED') {
+            sessionStorage.removeItem('freeley_patient_token');
+            tempMsg.remove();
+            document.getElementById('chatInput').value = text; // Preserve their message
+            showVerificationScreen();
+            return;
+          }
           throw new Error(errData.error || 'Failed to send message');
         }
 
@@ -1859,7 +2153,7 @@
       <div class="chat-body" id="chatBody">
         <div class="chat-loading"><i class="ri-loader-4-line ri-spin"></i> Loading messages...</div>
       </div>
-      <div class="chat-footer">
+      <div class="chat-footer" id="chatFooter" style="display:none;">
         <textarea class="chat-input" id="chatInput" rows="1" placeholder="Type your message..." onkeydown="handleChatKeydown(event)" oninput="autoResizeChatInput()"></textarea>
         <button class="chat-send-btn" id="chatSendBtn" onclick="sendChatMessage()" aria-label="Send message"><i class="ri-send-plane-2-fill"></i></button>
       </div>
