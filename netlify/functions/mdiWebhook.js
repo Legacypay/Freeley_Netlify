@@ -249,6 +249,28 @@ exports.handler = async (event) => {
         break;
       }
 
+      // ── Case created / assigned ─────────────────────────────
+      // These fire early in the lifecycle — critical to store the
+      // case_id so the patient hub can look it up later.
+      case 'case_created':
+      case 'case_assigned_to_clinician': {
+        console.log(`[MDI WEBHOOK] 📋 ${event_type}: case=${case_id}, patient=${patient_id}`);
+
+        await updateOrderStatus(order, event_type === 'case_created' ? 'created' : 'assigned', {
+          case_id,
+          [`${event_type}_at`]: new Date().toISOString()
+        });
+
+        await notifyInternalWebhook(event_type, {
+          case_id,
+          patient_id,
+          patient_email: order?.email,
+          metadata,
+          action: 'case_status_updated'
+        });
+        break;
+      }
+
       // ── Voucher events ──────────────────────────────────────
       case 'voucher_used':
       case 'voucher_created':

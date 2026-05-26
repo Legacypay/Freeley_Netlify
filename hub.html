@@ -1111,11 +1111,70 @@
       'vast': 'Vast — Sexual Wellness'
     };
 
-    async function refreshCaseStatus() {
-      const patientId = sessionStorage.getItem('freeley_patient_id');
-      const caseId    = sessionStorage.getItem('freeley_case_id');
-      const product   = sessionStorage.getItem('freeley_product');
+    // Helper: get Firebase ID token for authenticated API calls
+    async function getFirebaseIdToken() {
+      try {
+        const currentUser = window.firebaseAuth && window.firebaseAuth.currentUser;
+        if (currentUser) return await currentUser.getIdToken();
+      } catch(e) {
+        console.warn('[Hub] Could not get Firebase token:', e);
+      }
+      return '';
+    }
 
+    async function refreshCaseStatus() {
+      let patientId = sessionStorage.getItem('freeley_patient_id');
+      let caseId    = sessionStorage.getItem('freeley_case_id');
+      let product   = sessionStorage.getItem('freeley_product');
+      const voucherId = sessionStorage.getItem('freeley_voucher_id');
+
+      const authToken = await getFirebaseIdToken();
+      const authHeaders = {
+        'Content-Type': 'application/json',
+        ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {})
+      };
+
+      // ── If we have patient_id or voucher_id but no case_id, look it up ──
+      if (!caseId && (patientId || voucherId)) {
+        try {
+          console.log('[Hub] No case_id in sessionStorage — looking up via patientCases...');
+          const currentUser = window.firebaseAuth && window.firebaseAuth.currentUser;
+          const lookupBody = {};
+          if (patientId) lookupBody.patient_id = patientId;
+          if (voucherId) lookupBody.voucher_id = voucherId;
+          if (currentUser && currentUser.email) lookupBody.email = currentUser.email;
+
+          const lookupRes = await fetch('/.netlify/functions/patientCases', {
+            method: 'POST',
+            headers: authHeaders,
+            body: JSON.stringify(lookupBody)
+          });
+          const lookupData = await lookupRes.json();
+
+          if (lookupData.cases && lookupData.cases.length > 0) {
+            const latest = lookupData.cases[0];
+            if (latest.case_id) {
+              caseId = latest.case_id;
+              sessionStorage.setItem('freeley_case_id', caseId);
+              console.log('[Hub] Resolved case_id from patientCases:', caseId);
+            }
+            if (!patientId && latest.patient_id) {
+              patientId = latest.patient_id;
+              sessionStorage.setItem('freeley_patient_id', patientId);
+            }
+            if (!product && latest.product_key) {
+              product = latest.product_key;
+              sessionStorage.setItem('freeley_product', product);
+            }
+            // Also update the overview panel with real data
+            updateOverviewPanel(latest);
+          }
+        } catch(e) {
+          console.warn('[Hub] patientCases lookup failed:', e);
+        }
+      }
+
+      // ── Still no case? Show empty state ──
       if (!patientId || !caseId) {
         document.getElementById('mdi-status-card').style.display = 'none';
         document.getElementById('mdi-no-case').style.display = 'block';
@@ -1128,23 +1187,9 @@
       document.getElementById('mdi-case-id-badge').textContent = 'Case: ' + caseId.slice(0, 8) + '...';
 
       try {
-        // Get Firebase ID token for authenticated API call (HIPAA requirement)
-        let authToken = '';
-        try {
-          const currentUser = window.firebaseAuth && window.firebaseAuth.currentUser;
-          if (currentUser) {
-            authToken = await currentUser.getIdToken();
-          }
-        } catch(tokenErr) {
-          console.warn('[Hub] Could not get Firebase token:', tokenErr);
-        }
-
         const res = await fetch('/.netlify/functions/caseStatus', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {})
-          },
+          headers: authHeaders,
           body: JSON.stringify({ patient_id: patientId, case_id: caseId })
         });
         const data = await res.json();
@@ -1169,8 +1214,92 @@
             img.style.display = 'block';
           }
         }
+
+        // Also update overview with live MDI data
+        updateOverviewFromCaseStatus(data, product);
       } catch(e) {
         document.getElementById('mdi-status-message').textContent = 'Unable to load status. Please try again.';
+      }
+    }
+
+    // ── Update Overview panel with real case data ─────────────────
+    // Replaces the hardcoded Tirzepatide / Dr. Sarah Lewis demo content
+    // when we have actual MDI case data.
+    function updateOverviewPanel(caseRecord) {
+      if (!caseRecord) return;
+      const productName = PRODUCT_NAMES[caseRecord.product_key] || caseRecord.product_name || caseRecord.product_key || 'Your Treatment';
+      const statusLabel = (caseRecord.status || 'pending').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+
+      // Update treatment name
+      const subName = document.querySelector('#panel-overview .sub-name');
+      if (subName) subName.textContent = productName;
+
+      // Update treatment description
+      const subDesc = document.querySelector('#panel-overview .sub-desc');
+      if (subDesc) subDesc.textContent = 'Status: ' + statusLabel;
+
+      // Update the "next shipment" line
+      const shipmentLine = document.querySelector('#panel-overview .sub-info div[style*="font-size:12px"]');
+      if (shipmentLine) {
+        const updatedAt = caseRecord.updated_at || caseRecord.created_at;
+        if (updatedAt) {
+          const d = new Date(updatedAt);
+          shipmentLine.textContent = 'Last updated: ' + d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+        } else {
+          shipmentLine.textContent = 'Case submitted — awaiting physician review';
+        }
+      }
+
+      // Update status badge
+      const statusBadge = document.querySelector('#panel-overview .sub-status');
+      if (statusBadge) {
+        statusBadge.textContent = statusLabel;
+        if (caseRecord.status === 'approved' || caseRecord.status === 'completed') {
+          statusBadge.style.background = '#e8f5e9';
+          statusBadge.style.color = '#2e7d32';
+        } else if (caseRecord.status === 'cancelled') {
+          statusBadge.style.background = '#ffebee';
+          statusBadge.style.color = '#c62828';
+        } else {
+          statusBadge.style.background = '#fff8e1';
+          statusBadge.style.color = '#f57f17';
+        }
+      }
+    }
+
+    function updateOverviewFromCaseStatus(data, product) {
+      if (!data) return;
+      const productName = PRODUCT_NAMES[product] || product || 'Your Treatment';
+
+      const subName = document.querySelector('#panel-overview .sub-name');
+      if (subName) subName.textContent = productName;
+
+      const subDesc = document.querySelector('#panel-overview .sub-desc');
+      if (subDesc) subDesc.textContent = data.title || 'Under Review';
+
+      const shipmentLine = document.querySelector('#panel-overview .sub-info div[style*="font-size:12px"]');
+      if (shipmentLine) {
+        shipmentLine.textContent = data.message || '';
+      }
+
+      const statusBadge = document.querySelector('#panel-overview .sub-status');
+      if (statusBadge) {
+        statusBadge.textContent = data.title || 'Active';
+      }
+
+      // Update provider message section if clinician info is available
+      if (data.clinician && data.clinician.name) {
+        const docName = document.querySelector('#panel-overview .doc-name');
+        if (docName) docName.textContent = data.clinician.name;
+
+        const docDate = document.querySelector('#panel-overview .doc-date');
+        if (docDate && data.last_updated) {
+          const d = new Date(data.last_updated);
+          docDate.textContent = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' });
+        }
+
+        const docBody = document.querySelector('#panel-overview .doc-body');
+        if (docBody) docBody.textContent = data.message || 'Your case is being reviewed by your physician.';
       }
     }
 
@@ -1260,7 +1389,7 @@
         treatmentsNav.setAttribute('onclick', orig + '; refreshCaseStatus();');
       }
 
-      if (sessionStorage.getItem('freeley_patient_id')) {
+      if (sessionStorage.getItem('freeley_patient_id') || sessionStorage.getItem('freeley_voucher_id')) {
         refreshCaseStatus();
       }
     })();
