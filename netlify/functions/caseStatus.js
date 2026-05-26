@@ -1,23 +1,29 @@
 /**
  * Netlify Function: caseStatus
- * 
+ *
  * Allows authenticated patients to check the status of their MDI case.
  * REQUIRES a valid Firebase ID token in the Authorization header.
- * 
+ *
  * POST /.netlify/functions/caseStatus
  * Headers: { Authorization: 'Bearer <firebase-id-token>' }
- * 
+ *
  * Request Body:
  * {
  *   "patient_id": "uuid-here",
- *   "case_id": "uuid-here"
+ *   "case_id": "uuid-here",          // optional if voucher_id provided
+ *   "voucher_id": "uuid-here"        // optional — used to resolve case_id from blob store
  * }
- * 
+ *
+ * If case_id is missing but voucher_id or patient_id is provided,
+ * the function will attempt to resolve case_id from the mdi-orders
+ * blob store before calling the MDI API.
+ *
  * Returns a simplified, patient-friendly status.
  */
 
 const { mdiRequest, CORS_HEADERS } = require('./lib/mdi-client');
 const { verifyFirebaseToken } = require('./lib/verify-firebase-token');
+const { getStore } = require('@netlify/blobs');
 
 // Map MDI internal statuses to patient-friendly messages
 const STATUS_MAP = {
@@ -103,20 +109,111 @@ exports.handler = async (event) => {
     console.log(`[CASE STATUS] Authenticated user: ${user.email}`);
 
     // ── Step 2: Parse and validate request ──────────────────────
-    const { patient_id, case_id } = JSON.parse(event.body);
+    const { patient_id, case_id, voucher_id } = JSON.parse(event.body);
 
-    if (!patient_id || !case_id) {
+    let resolvedPatientId = patient_id;
+    let resolvedCaseId = case_id;
+
+    // ── Step 2b: If case_id missing, resolve from blob store ───
+    if (!resolvedCaseId && (voucher_id || resolvedPatientId)) {
+      console.log(`[CASE STATUS] No case_id — resolving from blobs (voucher=${voucher_id || 'N/A'}, patient=${resolvedPatientId || 'N/A'})`);
+      try {
+        const store = getStore('mdi-orders');
+
+        // Fast path: direct voucher_id lookup
+        if (voucher_id) {
+          try {
+            const order = await store.get(voucher_id, { type: 'json' });
+            if (order) {
+              console.log(`[CASE STATUS] Found order by voucher_id: case_id=${order.case_id || 'none'}, status=${order.status}`);
+              resolvedCaseId = order.case_id || null;
+              resolvedPatientId = resolvedPatientId || order.patient_id;
+
+              // If no case_id in the blob yet (webhook hasn't fired), return what we have
+              if (!resolvedCaseId) {
+                return {
+                  statusCode: 200,
+                  headers: CORS_HEADERS,
+                  body: JSON.stringify({
+                    status: order.status || 'submitted',
+                    title: 'Submitted for Review',
+                    message: 'Your information has been submitted. A licensed physician will review your case shortly.',
+                    icon: '📝',
+                    case_id: null,
+                    patient_id: resolvedPatientId,
+                    voucher_id: voucher_id,
+                    clinician: null,
+                    offerings: [],
+                    last_updated: order.updated_at || order.created_at || null
+                  })
+                };
+              }
+            }
+          } catch (e) {
+            console.warn(`[CASE STATUS] Direct voucher lookup failed: ${e.message}`);
+          }
+        }
+
+        // Fallback: scan by patient_id
+        if (!resolvedCaseId && resolvedPatientId) {
+          try {
+            const { blobs } = await store.list();
+            if (blobs && blobs.length > 0) {
+              for (const blob of blobs) {
+                try {
+                  const order = await store.get(blob.key, { type: 'json' });
+                  if (order && order.patient_id === resolvedPatientId) {
+                    console.log(`[CASE STATUS] Found order by patient_id: ${blob.key}, case_id=${order.case_id || 'none'}`);
+                    resolvedCaseId = order.case_id || null;
+                    if (!resolvedCaseId) {
+                      return {
+                        statusCode: 200,
+                        headers: CORS_HEADERS,
+                        body: JSON.stringify({
+                          status: order.status || 'submitted',
+                          title: 'Submitted for Review',
+                          message: 'Your information has been submitted. A licensed physician will review your case shortly.',
+                          icon: '📝',
+                          case_id: null,
+                          patient_id: resolvedPatientId,
+                          voucher_id: blob.key,
+                          clinician: null,
+                          offerings: [],
+                          last_updated: order.updated_at || order.created_at || null
+                        })
+                      };
+                    }
+                    break;
+                  }
+                } catch { /* skip */ }
+              }
+            }
+          } catch (e) {
+            console.warn(`[CASE STATUS] Blob scan failed: ${e.message}`);
+          }
+        }
+      } catch (blobErr) {
+        console.warn(`[CASE STATUS] Blob store access failed: ${blobErr.message}`);
+        // Continue — we might still have case_id from the original request
+      }
+    }
+
+    if (!resolvedPatientId || !resolvedCaseId) {
       return {
         statusCode: 400,
         headers: CORS_HEADERS,
-        body: JSON.stringify({ error: 'patient_id and case_id are required.' })
+        body: JSON.stringify({
+          error: 'Could not determine case. Please provide case_id or voucher_id.',
+          resolved_patient_id: resolvedPatientId || null,
+          resolved_case_id: resolvedCaseId || null
+        })
       };
     }
 
     // ── Step 3: Fetch case details from MDI ─────────────────────
     const caseData = await mdiRequest(
       'GET',
-      `/v1/patient/patients/${patient_id}/cases/${case_id}`
+      `/v1/patient/patients/${resolvedPatientId}/cases/${resolvedCaseId}`
     );
 
     // ── Step 4: Extract the status ──────────────────────────────
@@ -145,7 +242,8 @@ exports.handler = async (event) => {
       headers: CORS_HEADERS,
       body: JSON.stringify({
         ...friendlyStatus,
-        case_id,
+        case_id: resolvedCaseId,
+        patient_id: resolvedPatientId,
         clinician,
         offerings,
         last_updated: caseData.case_status?.updated_at || null
@@ -171,4 +269,5 @@ exports.handler = async (event) => {
   }
 };
 
+// Exported for reference only
 exports.verifyFirebaseToken = verifyFirebaseToken;

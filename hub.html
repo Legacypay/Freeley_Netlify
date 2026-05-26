@@ -1134,66 +1134,56 @@
         ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {})
       };
 
-      // ── If we have patient_id or voucher_id but no case_id, look it up ──
-      if (!caseId && (patientId || voucherId)) {
-        try {
-          console.log('[Hub] No case_id in sessionStorage — looking up via patientCases...');
-          const currentUser = window.firebaseAuth && window.firebaseAuth.currentUser;
-          const lookupBody = {};
-          if (patientId) lookupBody.patient_id = patientId;
-          if (voucherId) lookupBody.voucher_id = voucherId;
-          if (currentUser && currentUser.email) lookupBody.email = currentUser.email;
-
-          const lookupRes = await fetch('/.netlify/functions/patientCases', {
-            method: 'POST',
-            headers: authHeaders,
-            body: JSON.stringify(lookupBody)
-          });
-          const lookupData = await lookupRes.json();
-
-          if (lookupData.cases && lookupData.cases.length > 0) {
-            const latest = lookupData.cases[0];
-            if (latest.case_id) {
-              caseId = latest.case_id;
-              sessionStorage.setItem('freeley_case_id', caseId);
-              console.log('[Hub] Resolved case_id from patientCases:', caseId);
-            }
-            if (!patientId && latest.patient_id) {
-              patientId = latest.patient_id;
-              sessionStorage.setItem('freeley_patient_id', patientId);
-            }
-            // Update overview with what we know from the cases API
-            updateOverviewPanel({
-              product_key: product,
-              status: latest.status,
-              updated_at: latest.updated_at,
-              created_at: latest.created_at
-            });
-          }
-        } catch(e) {
-          console.warn('[Hub] patientCases lookup failed:', e);
-        }
-      }
-
-      // ── Still no case? Show empty state ──
-      if (!patientId || !caseId) {
+      // ── Call caseStatus with whatever IDs we have ──
+      // caseStatus now handles case_id resolution from blobs internally
+      // when case_id is missing but voucher_id or patient_id is available.
+      if (!patientId && !voucherId) {
         document.getElementById('mdi-status-card').style.display = 'none';
         document.getElementById('mdi-no-case').style.display = 'block';
         return;
       }
 
-      document.getElementById('mdi-status-card').style.display = 'block';
-      document.getElementById('mdi-no-case').style.display = 'none';
-      document.getElementById('mdi-status-product').textContent = PRODUCT_NAMES[product] || product || 'Your Treatment';
-      document.getElementById('mdi-case-id-badge').textContent = 'Case: ' + caseId.slice(0, 8) + '...';
-
       try {
+        const reqBody = {};
+        if (patientId) reqBody.patient_id = patientId;
+        if (caseId)    reqBody.case_id = caseId;
+        if (voucherId) reqBody.voucher_id = voucherId;
+
+        console.log('[Hub] Calling caseStatus with:', JSON.stringify(reqBody));
+
         const res = await fetch('/.netlify/functions/caseStatus', {
           method: 'POST',
           headers: authHeaders,
-          body: JSON.stringify({ patient_id: patientId, case_id: caseId })
+          body: JSON.stringify(reqBody)
         });
         const data = await res.json();
+
+        if (!res.ok) {
+          console.warn('[Hub] caseStatus returned error:', data);
+          document.getElementById('mdi-status-card').style.display = 'none';
+          document.getElementById('mdi-no-case').style.display = 'block';
+          return;
+        }
+
+        // Cache resolved IDs for faster subsequent calls
+        if (data.case_id && !caseId) {
+          sessionStorage.setItem('freeley_case_id', data.case_id);
+          caseId = data.case_id;
+        }
+        if (data.patient_id && !patientId) {
+          sessionStorage.setItem('freeley_patient_id', data.patient_id);
+          patientId = data.patient_id;
+        }
+
+        // Show the status card
+        document.getElementById('mdi-status-card').style.display = 'block';
+        document.getElementById('mdi-no-case').style.display = 'none';
+        document.getElementById('mdi-status-product').textContent = PRODUCT_NAMES[product] || product || 'Your Treatment';
+        if (data.case_id) {
+          document.getElementById('mdi-case-id-badge').textContent = 'Case: ' + data.case_id.slice(0, 8) + '...';
+        } else {
+          document.getElementById('mdi-case-id-badge').textContent = 'Submitted';
+        }
 
         document.getElementById('mdi-status-icon').textContent  = data.icon  || '📋';
         document.getElementById('mdi-status-title').textContent = data.title || 'Status Unknown';
@@ -1219,6 +1209,7 @@
         // Also update overview with live MDI data
         updateOverviewFromCaseStatus(data, product);
       } catch(e) {
+        console.warn('[Hub] caseStatus call failed:', e);
         document.getElementById('mdi-status-message').textContent = 'Unable to load status. Please try again.';
       }
     }
