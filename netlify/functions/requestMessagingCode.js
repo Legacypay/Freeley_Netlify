@@ -47,21 +47,46 @@ exports.handler = async (event) => {
     }
 
     // ── Step 2: Parse request ────────────────────────────────────
-    const { email } = JSON.parse(event.body);
+    const { email: providedEmail, patient_id } = JSON.parse(event.body);
+
+    const token = await getAccessToken();
+
+    // Resolve patient email — use provided email, or look up from MDI by patient_id
+    let email = providedEmail;
+
+    if (!email && patient_id) {
+      console.log(`[MESSAGING CODE] No email provided — looking up patient ${patient_id} from MDI`);
+      try {
+        const patientRes = await fetch(`${BASE_URL}/v1/partner/patients/${patient_id}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/json'
+          }
+        });
+        if (patientRes.ok) {
+          const patientData = await patientRes.json();
+          email = patientData.email;
+          console.log(`[MESSAGING CODE] Resolved patient email: ${email}`);
+        } else {
+          console.warn(`[MESSAGING CODE] Patient lookup failed: ${patientRes.status}`);
+        }
+      } catch (e) {
+        console.warn(`[MESSAGING CODE] Patient lookup error: ${e.message}`);
+      }
+    }
 
     if (!email) {
       return {
         statusCode: 400,
         headers: cors,
-        body: JSON.stringify({ error: 'Email is required.' })
+        body: JSON.stringify({ error: 'Unable to determine your email. Please contact support.' })
       };
     }
 
     // ── Step 3: Call MDI Partner 2FA endpoint ─────────────────────
     // POST /v1/partner/patients/auth/2fa
     // Sends a one-time verification code to the patient's email
-    const token = await getAccessToken();
-
     console.log(`[MESSAGING CODE] Sending verification code to: ${email}`);
 
     const response = await fetch(BASE_URL + '/v1/partner/patients/auth/2fa', {
@@ -99,7 +124,8 @@ exports.handler = async (event) => {
       headers: cors,
       body: JSON.stringify({
         success: true,
-        message: 'Verification code sent to your email.'
+        message: 'Verification code sent to your email.',
+        email: email  // Return resolved email so frontend can store it
       })
     };
 

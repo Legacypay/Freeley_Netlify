@@ -1775,7 +1775,9 @@
 
     async function requestVerificationCode() {
       const email = getPatientEmail();
-      if (!email) {
+      const patientId = sessionStorage.getItem('freeley_patient_id');
+
+      if (!email && !patientId) {
         showVerifyError('Unable to determine your email address. Please contact support.');
         return;
       }
@@ -1788,13 +1790,18 @@
 
       try {
         const authToken = await getFirebaseIdToken();
+        // Send both email and patient_id — server will resolve the correct MDI email
+        const payload = {};
+        if (email) payload.email = email;
+        if (patientId) payload.patient_id = patientId;
+
         const res = await fetch('/.netlify/functions/requestMessagingCode', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {})
           },
-          body: JSON.stringify({ email })
+          body: JSON.stringify(payload)
         });
 
         const data = await res.json().catch(() => ({}));
@@ -1809,8 +1816,14 @@
           return;
         }
 
+        // Store the resolved MDI email if returned
+        const resolvedEmail = data.email || email;
+        if (resolvedEmail) {
+          sessionStorage.setItem('freeley_patient_email', resolvedEmail);
+        }
+
         // Show code input screen
-        showCodeInputScreen(email);
+        showCodeInputScreen(resolvedEmail);
 
       } catch (e) {
         console.error('[Chat] Request code failed:', e);
