@@ -1,18 +1,16 @@
 /**
  * Netlify Function: patientCases
  *
- * Looks up a patient's MDI case(s) from the mdi-orders blob store.
+ * Looks up a patient's MDI case(s) via the MDI Partner API.
  * This bridges the gap where checkout stores voucher_id + patient_id
  * but the hub needs case_id (which only arrives via webhook later).
  *
  * POST /.netlify/functions/patientCases
  * Headers: { Authorization: 'Bearer <firebase-id-token>' }
  *
- * Request Body (at least one identifier required):
+ * Request Body:
  * {
- *   "patient_id": "uuid",        // MDI patient ID
- *   "voucher_id": "uuid",        // MDI voucher ID (optional, faster lookup)
- *   "email": "user@example.com"  // Firebase email (optional fallback)
+ *   "patient_id": "uuid"   // MDI patient ID (required)
  * }
  *
  * Returns:
@@ -20,20 +18,16 @@
  *   "cases": [
  *     {
  *       "case_id": "uuid",
- *       "patient_id": "uuid",
- *       "voucher_id": "uuid",
- *       "product_key": "tirzepatide",
- *       "status": "approved",
+ *       "status": "assigned",
  *       "created_at": "...",
- *       "updated_at": "..."
+ *       "clinician": { "name": "...", "specialty": "..." }
  *     }
  *   ]
  * }
  */
 
-const { CORS_HEADERS } = require('./lib/mdi-client');
+const { mdiRequest, CORS_HEADERS } = require('./lib/mdi-client');
 const { verifyFirebaseToken } = require('./lib/verify-firebase-token');
-const { getStore } = require('@netlify/blobs');
 
 exports.handler = async (event) => {
   // Handle CORS preflight
@@ -67,83 +61,66 @@ exports.handler = async (event) => {
     console.log(`[PATIENT CASES] Authenticated user: ${user.email}`);
 
     // ── Step 2: Parse request ───────────────────────────────────
-    const { patient_id, voucher_id, email } = JSON.parse(event.body || '{}');
+    const { patient_id } = JSON.parse(event.body || '{}');
 
-    if (!patient_id && !voucher_id && !email) {
+    if (!patient_id) {
       return {
         statusCode: 400,
         headers: CORS_HEADERS,
-        body: JSON.stringify({ error: 'At least one of patient_id, voucher_id, or email is required.' })
+        body: JSON.stringify({ error: 'patient_id is required.' })
       };
     }
 
-    // ── Step 3: Search mdi-orders blob store ────────────────────
-    const store = getStore('mdi-orders');
-    const { blobs } = await store.list();
-    const cases = [];
+    // ── Step 3: Fetch patient's cases from MDI API ──────────────
+    // GET /v1/patient/patients/{patient_id}/cases returns all cases
+    console.log(`[PATIENT CASES] Fetching cases for patient: ${patient_id}`);
 
-    if (!blobs || blobs.length === 0) {
-      console.log('[PATIENT CASES] No orders in store');
-      return {
-        statusCode: 200,
-        headers: CORS_HEADERS,
-        body: JSON.stringify({ cases: [] })
-      };
-    }
-
-    // Fast path: direct voucher_id lookup
-    if (voucher_id) {
-      try {
-        const order = await store.get(voucher_id, { type: 'json' });
-        if (order) {
-          cases.push({
-            case_id: order.case_id || null,
-            patient_id: order.patient_id || patient_id,
-            voucher_id: voucher_id,
-            product_key: order.product_key || null,
-            product_name: order.product_name || null,
-            status: order.status || 'pending',
-            first_name: order.first_name || null,
-            email: order.email || null,
-            created_at: order.created_at || null,
-            updated_at: order.updated_at || null,
-            status_history: order.status_history || []
-          });
-        }
-      } catch { /* not found */ }
-    }
-
-    // If no direct match, scan by patient_id or email
-    if (cases.length === 0) {
-      for (const blob of blobs) {
-        try {
-          const order = await store.get(blob.key, { type: 'json' });
-          if (!order) continue;
-
-          const match =
-            (patient_id && order.patient_id === patient_id) ||
-            (email && order.email === email);
-
-          if (match) {
-            cases.push({
-              case_id: order.case_id || null,
-              patient_id: order.patient_id || patient_id,
-              voucher_id: blob.key,
-              product_key: order.product_key || null,
-              product_name: order.product_name || null,
-              status: order.status || 'pending',
-              first_name: order.first_name || null,
-              email: order.email || null,
-              created_at: order.created_at || null,
-              updated_at: order.updated_at || null,
-              status_history: order.status_history || []
-            });
-          }
-        } catch { /* skip corrupted entries */ }
+    let casesData;
+    try {
+      casesData = await mdiRequest('GET', `/v1/patient/patients/${patient_id}/cases`);
+    } catch (apiErr) {
+      // If 404, patient has no cases yet
+      if (apiErr.statusCode === 404) {
+        console.log('[PATIENT CASES] No cases found for patient (404)');
+        return {
+          statusCode: 200,
+          headers: CORS_HEADERS,
+          body: JSON.stringify({ cases: [] })
+        };
       }
+      throw apiErr;
     }
 
-    console.log(`[PATIENT CASES] Found ${cases.length} case(s) for patient=${patient_id || 'N/A'}, voucher=${voucher_id || 'N/A'}`);
+    // MDI may return an array directly or { data: [...] } or { cases: [...] }
+    const rawCases = Array.isArray(casesData)
+      ? casesData
+      : (casesData.data || casesData.cases || [casesData]);
+
+    const cases = rawCases.map(c => {
+      let clinician = null;
+      if (c.case_assignment?.clinician) {
+        const doc = c.case_assignment.clinician;
+        clinician = {
+          name: doc.full_name || doc.name,
+          specialty: doc.clinician_specialty || doc.specialty,
+          photo: doc.photo?.url_thumbnail || null
+        };
+      }
+
+      return {
+        case_id: c.id || c.case_id,
+        status: c.case_status?.name?.toLowerCase() || c.status || 'unknown',
+        created_at: c.created_at || null,
+        updated_at: c.case_status?.updated_at || c.updated_at || null,
+        clinician,
+        offerings: (c.case_offerings || []).map(o => ({
+          name: o.name || o.title,
+          status: o.status
+        }))
+      };
+    });
+
+    console.log(`[PATIENT CASES] Found ${cases.length} case(s) for patient ${patient_id}`);
 
     return {
       statusCode: 200,

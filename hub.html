@@ -1162,12 +1162,13 @@
               patientId = latest.patient_id;
               sessionStorage.setItem('freeley_patient_id', patientId);
             }
-            if (!product && latest.product_key) {
-              product = latest.product_key;
-              sessionStorage.setItem('freeley_product', product);
-            }
-            // Also update the overview panel with real data
-            updateOverviewPanel(latest);
+            // Update overview with what we know from the cases API
+            updateOverviewPanel({
+              product_key: product,
+              status: latest.status,
+              updated_at: latest.updated_at,
+              created_at: latest.created_at
+            });
           }
         } catch(e) {
           console.warn('[Hub] patientCases lookup failed:', e);
