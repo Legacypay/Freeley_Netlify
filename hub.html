@@ -1066,6 +1066,11 @@
       document.getElementById('dashUserName').innerText = formattedName;
       document.getElementById('dashUserInitial').innerText = formattedName.charAt(0).toUpperCase();
       document.getElementById('dashUserEmail').innerText = email;
+
+      // Trigger MDI status refresh now that Firebase auth is confirmed
+      if (sessionStorage.getItem('freeley_patient_id') || sessionStorage.getItem('freeley_voucher_id')) {
+        setTimeout(() => refreshCaseStatus(), 300);
+      }
     };
 
     // Panel switching logic
@@ -1381,9 +1386,7 @@
         treatmentsNav.setAttribute('onclick', orig + '; refreshCaseStatus();');
       }
 
-      if (sessionStorage.getItem('freeley_patient_id') || sessionStorage.getItem('freeley_voucher_id')) {
-        refreshCaseStatus();
-      }
+      // refreshCaseStatus is now triggered by showDashboard after auth is confirmed
     })();
   </script>
 
