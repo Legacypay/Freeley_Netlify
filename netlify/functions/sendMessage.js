@@ -76,7 +76,8 @@ exports.handler = async (event) => {
       headers: {
         'Authorization': `Bearer ${partnerToken}`,
         'Content-Type': 'application/json',
-        'Accept': 'application/json'
+        'Accept': 'application/json',
+        'Version': '2'
       },
       body: JSON.stringify(messagePayload)
     });
