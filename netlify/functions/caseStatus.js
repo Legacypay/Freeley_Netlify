@@ -113,6 +113,7 @@ exports.handler = async (event) => {
 
     let resolvedPatientId = patient_id;
     let resolvedCaseId = case_id;
+    let resolvedEmail = null; // MDI patient email (may differ from Firebase email)
 
     // ── Step 2b: If case_id missing, resolve from blob store ───
     if (!resolvedCaseId && (voucher_id || resolvedPatientId)) {
@@ -128,6 +129,7 @@ exports.handler = async (event) => {
               console.log(`[CASE STATUS] Found order by voucher_id: case_id=${order.case_id || 'none'}, status=${order.status}`);
               resolvedCaseId = order.case_id || null;
               resolvedPatientId = resolvedPatientId || order.patient_id;
+              resolvedEmail = order.email || null;
 
               // If no case_id in the blob yet (webhook hasn't fired), return what we have
               if (!resolvedCaseId) {
@@ -141,6 +143,7 @@ exports.handler = async (event) => {
                     icon: '📝',
                     case_id: null,
                     patient_id: resolvedPatientId,
+                    patient_email: resolvedEmail,
                     voucher_id: voucher_id,
                     clinician: null,
                     offerings: [],
@@ -165,6 +168,7 @@ exports.handler = async (event) => {
                   if (order && order.patient_id === resolvedPatientId) {
                     console.log(`[CASE STATUS] Found order by patient_id: ${blob.key}, case_id=${order.case_id || 'none'}`);
                     resolvedCaseId = order.case_id || null;
+                    resolvedEmail = resolvedEmail || order.email || null;
                     if (!resolvedCaseId) {
                       return {
                         statusCode: 200,
@@ -176,6 +180,7 @@ exports.handler = async (event) => {
                           icon: '📝',
                           case_id: null,
                           patient_id: resolvedPatientId,
+                          patient_email: resolvedEmail,
                           voucher_id: blob.key,
                           clinician: null,
                           offerings: [],
@@ -212,6 +217,7 @@ exports.handler = async (event) => {
           icon: '📝',
           case_id: null,
           patient_id: resolvedPatientId || null,
+          patient_email: resolvedEmail,
           voucher_id: voucher_id || null,
           clinician: null,
           offerings: [],
@@ -254,6 +260,7 @@ exports.handler = async (event) => {
         ...friendlyStatus,
         case_id: resolvedCaseId,
         patient_id: resolvedPatientId,
+        patient_email: resolvedEmail || caseData.patient?.email || null,
         clinician,
         offerings,
         last_updated: caseData.case_status?.updated_at || null

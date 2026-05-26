@@ -1485,6 +1485,10 @@
           sessionStorage.setItem('freeley_patient_id', data.patient_id);
           patientId = data.patient_id;
         }
+        // Store MDI patient email for messaging verification (may differ from Firebase email)
+        if (data.patient_email) {
+          sessionStorage.setItem('freeley_patient_email', data.patient_email);
+        }
 
         // Show the status card
         document.getElementById('mdi-status-card').style.display = 'block';
