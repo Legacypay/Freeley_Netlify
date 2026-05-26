@@ -198,14 +198,24 @@ exports.handler = async (event) => {
       }
     }
 
-    if (!resolvedPatientId || !resolvedCaseId) {
+    // If we still don't have a case_id, return a "submitted/pending" status
+    // rather than an error — the case may not have been created by MDI yet
+    if (!resolvedCaseId) {
+      console.log(`[CASE STATUS] No case_id resolved — returning pending status`);
       return {
-        statusCode: 400,
+        statusCode: 200,
         headers: CORS_HEADERS,
         body: JSON.stringify({
-          error: 'Could not determine case. Please provide case_id or voucher_id.',
-          resolved_patient_id: resolvedPatientId || null,
-          resolved_case_id: resolvedCaseId || null
+          status: 'submitted',
+          title: 'Submitted for Review',
+          message: 'Your information has been submitted. A licensed physician will review your case shortly.',
+          icon: '📝',
+          case_id: null,
+          patient_id: resolvedPatientId || null,
+          voucher_id: voucher_id || null,
+          clinician: null,
+          offerings: [],
+          last_updated: new Date().toISOString()
         })
       };
     }
