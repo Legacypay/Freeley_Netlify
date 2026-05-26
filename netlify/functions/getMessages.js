@@ -1,9 +1,13 @@
 /**
  * Netlify Function: getMessages
  *
- * Fetches messages for a patient from MDI's Patient Messaging API.
- * Acts as a secure proxy — the patient bearer token is obtained server-side
- * via getPatientToken, then used to call MDI's messaging endpoint.
+ * Fetches messages for a patient from MDI's Messaging API.
+ * Uses the Partner bearer token to access patient messages.
+ *
+ * Tries multiple MDI endpoint patterns since the API may vary between
+ * Partner and Patient namespaces:
+ *   1. GET /v1/partner/patients/:patient/messages  (Partner scope)
+ *   2. GET /v1/patient/patients/:patient/messages   (Patient scope, Partner token)
  *
  * POST /.netlify/functions/getMessages
  * Headers: { Authorization: 'Bearer <firebase-id-token>' }
@@ -18,35 +22,8 @@
  * Returns: MDI messages array with sender info, timestamps, and content.
  */
 
-const { getCorsHeaders, BASE_URL } = require('./lib/mdi-client');
+const { mdiRequest, getAccessToken, getCorsHeaders, BASE_URL } = require('./lib/mdi-client');
 const { verifyFirebaseToken } = require('./lib/verify-firebase-token');
-
-// Import the patient token helper
-const getPatientTokenModule = require('./getPatientToken');
-
-/**
- * Get a patient bearer token by calling our getPatientToken function internally.
- * This avoids a network round-trip — we call it as a module.
- */
-async function obtainPatientToken(event, patientId) {
-  // Build a synthetic event to pass to getPatientToken handler
-  const syntheticEvent = {
-    httpMethod: 'POST',
-    headers: event.headers,
-    body: JSON.stringify({ patient_id: patientId })
-  };
-
-  const result = await getPatientTokenModule.handler(syntheticEvent);
-
-  if (result.statusCode !== 200) {
-    const errData = JSON.parse(result.body);
-    const error = new Error(errData.error || 'Failed to obtain patient token');
-    error.statusCode = result.statusCode;
-    throw error;
-  }
-
-  return JSON.parse(result.body).access_token;
-}
 
 exports.handler = async (event) => {
   const cors = getCorsHeaders(event);
@@ -94,62 +71,81 @@ exports.handler = async (event) => {
       };
     }
 
-    // ── Step 3: Get patient bearer token ─────────────────────────
-    const patientToken = await obtainPatientToken(event, patient_id);
+    // ── Step 3: Try multiple endpoint patterns ───────────────────
+    const queryString = `channel=${channel}&page=${page}&per_page=${per_page}&order=${order}`;
 
-    // ── Step 4: Fetch messages from MDI ──────────────────────────
-    // GET /v1/patient/patients/:patient/messages?channel=patient&page=1&per_page=25&order=desc
-    const queryParams = new URLSearchParams({
-      channel,
-      page: String(page),
-      per_page: String(per_page),
-      order
-    });
+    // MDI endpoint patterns to try (Partner token used for all)
+    const endpoints = [
+      `/v1/partner/patients/${patient_id}/messages?${queryString}`,
+      `/v1/patient/patients/${patient_id}/messages?${queryString}`
+    ];
 
-    const messagesUrl = `${BASE_URL}/v1/patient/patients/${patient_id}/messages?${queryParams}`;
-    console.log(`[GET MESSAGES] Fetching messages for patient: ${patient_id}, channel: ${channel}, page: ${page}`);
+    const token = await getAccessToken();
+    let messagesData = null;
+    let lastError = null;
 
-    const response = await fetch(messagesUrl, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${patientToken}`,
-        'Accept': 'application/json',
-        'Version': '2'
+    for (const endpoint of endpoints) {
+      try {
+        console.log(`[GET MESSAGES] Trying: ${endpoint}`);
+        const response = await fetch(BASE_URL + endpoint, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Version': '2'
+          }
+        });
+
+        if (response.ok) {
+          messagesData = await response.json();
+          console.log(`[GET MESSAGES] Success via: ${endpoint}`);
+          break;
+        }
+
+        const errText = await response.text();
+        console.warn(`[GET MESSAGES] ${endpoint} returned ${response.status}: ${errText.slice(0, 200)}`);
+        lastError = { status: response.status, text: errText };
+
+      } catch (fetchErr) {
+        console.warn(`[GET MESSAGES] Fetch error for ${endpoint}: ${fetchErr.message}`);
+        lastError = { status: 500, text: fetchErr.message };
       }
-    });
-
-    if (!response.ok) {
-      const errText = await response.text();
-      console.error(`[GET MESSAGES] MDI API error (${response.status}): ${errText}`);
-
-      if (response.status === 401) {
-        // Token may have expired — clear cache and return auth error
-        return {
-          statusCode: 401,
-          headers: cors,
-          body: JSON.stringify({ error: 'Patient session expired. Please refresh.' })
-        };
-      }
-
-      throw new Error(`MDI messages API error: ${response.status}`);
     }
 
-    const messagesData = await response.json();
-    console.log(`[GET MESSAGES] Retrieved messages for patient: ${patient_id}`);
+    if (messagesData !== null) {
+      return {
+        statusCode: 200,
+        headers: cors,
+        body: JSON.stringify(messagesData)
+      };
+    }
+
+    // All endpoints failed
+    console.error(`[GET MESSAGES] All endpoints failed. Last error: ${lastError?.status} ${lastError?.text?.slice(0, 200)}`);
+
+    // If 404 on all endpoints, the patient may not have messaging enabled yet
+    if (lastError?.status === 404) {
+      return {
+        statusCode: 200,
+        headers: cors,
+        body: JSON.stringify({ data: [], messages: [], total: 0, note: 'No messages found for this patient.' })
+      };
+    }
 
     return {
-      statusCode: 200,
+      statusCode: lastError?.status || 500,
       headers: cors,
-      body: JSON.stringify(messagesData)
+      body: JSON.stringify({ error: 'Unable to fetch messages. Please try again.' })
     };
 
   } catch (error) {
     console.error('[GET MESSAGES] Error:', error);
 
     return {
-      statusCode: error.statusCode || 500,
+      statusCode: 500,
       headers: cors,
-      body: JSON.stringify({ error: error.message || 'Unable to fetch messages. Please try again.' })
+      body: JSON.stringify({ error: 'Unable to fetch messages. Please try again.' })
     };
   }
 };
