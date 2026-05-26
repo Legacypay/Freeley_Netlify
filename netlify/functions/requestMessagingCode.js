@@ -103,8 +103,12 @@ exports.handler = async (event) => {
       body: JSON.stringify({ email })
     });
 
+    // Log the actual MDI response for debugging
+    const responseText = await response.text();
+    console.log(`[MESSAGING CODE] MDI 2FA response (${response.status}): ${responseText}`);
+
     if (!response.ok) {
-      const errText = await response.text();
+      const errText = responseText;
       console.error(`[MESSAGING CODE] MDI 2FA request failed (${response.status}): ${errText}`);
 
       if (response.status === 422) {
