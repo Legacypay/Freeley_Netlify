@@ -51,11 +51,12 @@ exports.handler = async (event) => {
 
     const token = await getAccessToken();
 
-    // Resolve patient email — use provided email, or look up from MDI by patient_id
-    let email = providedEmail;
+    // Resolve patient email — always prefer MDI lookup by patient_id (the MDI email
+    // may differ from the Firebase login email), fall back to provided email
+    let email = null;
 
-    if (!email && patient_id) {
-      console.log(`[MESSAGING CODE] No email provided — looking up patient ${patient_id} from MDI`);
+    if (patient_id) {
+      console.log(`[MESSAGING CODE] Looking up MDI patient email for ${patient_id}`);
       try {
         const patientRes = await fetch(`${BASE_URL}/v1/partner/patients/${patient_id}`, {
           method: 'GET',
@@ -75,6 +76,9 @@ exports.handler = async (event) => {
         console.warn(`[MESSAGING CODE] Patient lookup error: ${e.message}`);
       }
     }
+
+    // Fall back to provided email if MDI lookup didn't return one
+    if (!email) email = providedEmail;
 
     if (!email) {
       return {
