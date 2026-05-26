@@ -107,12 +107,23 @@ exports.handler = async (event) => {
       const errText = await response.text();
       console.error(`[MESSAGING CODE] MDI 2FA request failed (${response.status}): ${errText}`);
 
-      if (response.status === 404 || response.status === 422) {
+      if (response.status === 422) {
+        // Email doesn't match any MDI patient — ask user to provide their MDI email
+        return {
+          statusCode: 422,
+          headers: cors,
+          body: JSON.stringify({
+            error: 'We couldn\'t find a patient account with this email. Please enter the email you used during your medical intake.',
+            code: 'EMAIL_MISMATCH'
+          })
+        };
+      }
+      if (response.status === 404) {
         return {
           statusCode: 404,
           headers: cors,
           body: JSON.stringify({
-            error: 'No patient account found with this email. Please complete your intake first.',
+            error: 'No patient account found. Please complete your intake first.',
             code: 'PATIENT_NOT_FOUND'
           })
         };

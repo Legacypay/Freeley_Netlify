@@ -1773,6 +1773,44 @@
         '</div>';
     }
 
+    function showEmailInputScreen() {
+      document.getElementById('chatFooter').style.display = 'none';
+      const chatBody = document.getElementById('chatBody');
+      chatBody.innerHTML =
+        '<div class="chat-verify">' +
+          '<i class="ri-mail-line"></i>' +
+          '<h3>Enter Your Email</h3>' +
+          '<p>Please enter the email address you used during your medical intake. This may be different from your login email.</p>' +
+          '<input type="email" class="chat-code-input" id="chatEmailInput" style="width:260px; font-size:14px; letter-spacing:0;" placeholder="your@email.com" autofocus />' +
+          '<button class="chat-verify-btn" id="chatEmailSubmitBtn" onclick="submitEmailAndRequestCode()">Send Code</button>' +
+          '<p id="chatVerifyError" class="chat-verify-error" style="display:none;"></p>' +
+        '</div>';
+      setTimeout(() => {
+        const inp = document.getElementById('chatEmailInput');
+        if (inp) {
+          inp.focus();
+          inp.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') { e.preventDefault(); submitEmailAndRequestCode(); }
+          });
+        }
+      }, 100);
+    }
+
+    async function submitEmailAndRequestCode() {
+      const emailInput = document.getElementById('chatEmailInput');
+      const manualEmail = (emailInput ? emailInput.value : '').trim();
+      if (!manualEmail || !manualEmail.includes('@')) {
+        showVerifyError('Please enter a valid email address.');
+        return;
+      }
+      // Store the manually entered email and retry
+      sessionStorage.setItem('freeley_patient_email', manualEmail);
+      // Show the verification screen with the new email, then auto-send
+      showVerificationScreen();
+      // Directly trigger the code send
+      requestVerificationCode();
+    }
+
     async function requestVerificationCode() {
       const email = getPatientEmail();
       const patientId = sessionStorage.getItem('freeley_patient_id');
@@ -1807,7 +1845,11 @@
         const data = await res.json().catch(() => ({}));
 
         if (!res.ok) {
-          if (data.code === 'PATIENT_NOT_FOUND') {
+          if (data.code === 'EMAIL_MISMATCH') {
+            // Email didn't match MDI records — show manual email input
+            showEmailInputScreen();
+            return;
+          } else if (data.code === 'PATIENT_NOT_FOUND') {
             showVerifyError('No patient account found. Please complete your intake first.');
           } else {
             showVerifyError(data.error || 'Unable to send code. Please try again.');
