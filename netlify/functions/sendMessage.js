@@ -1,14 +1,14 @@
 /**
  * Netlify Function: sendMessage
  *
- * Sends a message from a patient to their clinician via MDI's Patient Messaging API.
- * Requires a patient access_token obtained via the 2FA verification flow.
+ * Sends a message from a patient to their clinician via MDI's Partner Messaging API.
+ * Uses the Partner token (server-side) for authentication — no patient 2FA needed.
+ * Patient identity is verified via Firebase ID token.
  *
  * POST /.netlify/functions/sendMessage
  * Headers: { Authorization: 'Bearer <firebase-id-token>' }
  * Body: {
  *   "patient_id": "uuid",
- *   "patient_token": "...",          // from validateMessagingCode
  *   "text": "Message content",
  *   "channel": "patient"             // optional
  * }
@@ -49,7 +49,6 @@ exports.handler = async (event) => {
     // ── Step 2: Parse and validate request ───────────────────────
     const {
       patient_id,
-      patient_token,
       text,
       channel = 'patient',
       reference_message_id
@@ -58,29 +57,26 @@ exports.handler = async (event) => {
     if (!patient_id) {
       return { statusCode: 400, headers: cors, body: JSON.stringify({ error: 'patient_id is required.' }) };
     }
-    if (!patient_token) {
-      return { statusCode: 401, headers: cors, body: JSON.stringify({ error: 'Messaging verification required.', code: 'VERIFICATION_REQUIRED' }) };
-    }
     if (!text || !text.trim()) {
       return { statusCode: 400, headers: cors, body: JSON.stringify({ error: 'Message text is required.' }) };
     }
 
     const sanitizedText = text.trim().slice(0, 5000);
 
-    // ── Step 3: Send message via MDI Patient API ─────────────────
+    // ── Step 3: Send message via MDI Partner API ─────────────────
+    const partnerToken = await getAccessToken();
     const messagePayload = { channel, text: sanitizedText };
     if (reference_message_id) messagePayload.reference_message_id = reference_message_id;
 
-    const messagesUrl = `${BASE_URL}/v1/patient/patients/${patient_id}/messages`;
+    const messagesUrl = `${BASE_URL}/v1/partner/patients/${patient_id}/messages`;
     console.log(`[SEND MESSAGE] Sending message for patient: ${patient_id}`);
 
     const response = await fetch(messagesUrl, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${patient_token}`,
+        'Authorization': `Bearer ${partnerToken}`,
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Version': '2'
+        'Accept': 'application/json'
       },
       body: JSON.stringify(messagePayload)
     });
@@ -96,37 +92,14 @@ exports.handler = async (event) => {
     }
 
     const errText = await response.text();
-    console.error(`[SEND MESSAGE] MDI error (${response.status}): ${errText.slice(0, 200)}`);
-
-    // Try partner fallback
-    if (response.status === 401 || response.status === 403) {
-      console.log(`[SEND MESSAGE] Trying partner token fallback...`);
-      const partnerToken = await getAccessToken();
-      const partnerUrl = `${BASE_URL}/v1/partner/patients/${patient_id}/messages`;
-
-      const partnerResponse = await fetch(partnerUrl, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${partnerToken}`,
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify(messagePayload)
-      });
-
-      if (partnerResponse.ok) {
-        const data = await partnerResponse.json();
-        console.log(`[SEND MESSAGE] Partner fallback succeeded`);
-        return { statusCode: 200, headers: cors, body: JSON.stringify(data) };
-      }
-    }
+    console.error(`[SEND MESSAGE] MDI error (${response.status}): ${errText.slice(0, 300)}`);
 
     return {
-      statusCode: response.status === 401 ? 401 : 500,
+      statusCode: response.status >= 500 ? 502 : response.status,
       headers: cors,
       body: JSON.stringify({
-        error: response.status === 401 ? 'Session expired. Please verify again.' : 'Unable to send message.',
-        code: response.status === 401 ? 'TOKEN_EXPIRED' : 'SEND_ERROR'
+        error: 'Unable to send message. Please try again.',
+        code: 'SEND_ERROR'
       })
     };
 

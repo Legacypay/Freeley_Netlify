@@ -1,14 +1,14 @@
 /**
  * Netlify Function: getMessages
  *
- * Fetches messages for a patient from MDI's Patient Messaging API.
- * Requires a patient access_token obtained via the 2FA verification flow.
+ * Fetches messages for a patient from MDI's Partner Messaging API.
+ * Uses the Partner token (server-side) for authentication — no patient 2FA needed.
+ * Patient identity is verified via Firebase ID token.
  *
  * POST /.netlify/functions/getMessages
  * Headers: { Authorization: 'Bearer <firebase-id-token>' }
  * Body: {
  *   "patient_id": "uuid",
- *   "patient_token": "...",          // from validateMessagingCode
  *   "channel": "patient",            // optional, defaults to "patient"
  *   "page": 1,                       // optional
  *   "per_page": 25,                  // optional
@@ -51,7 +51,6 @@ exports.handler = async (event) => {
     // ── Step 2: Parse request ────────────────────────────────────
     const {
       patient_id,
-      patient_token,
       channel = 'patient',
       page = 1,
       per_page = 25,
@@ -66,36 +65,25 @@ exports.handler = async (event) => {
       };
     }
 
-    if (!patient_token) {
-      return {
-        statusCode: 401,
-        headers: cors,
-        body: JSON.stringify({
-          error: 'Messaging verification required.',
-          code: 'VERIFICATION_REQUIRED'
-        })
-      };
-    }
-
-    // ── Step 3: Fetch messages from MDI ──────────────────────────
+    // ── Step 3: Fetch messages using Partner token ───────────────
+    const partnerToken = await getAccessToken();
     const queryString = `channel=${channel}&page=${page}&per_page=${per_page}&order=${order}`;
-    const messagesUrl = `${BASE_URL}/v1/patient/patients/${patient_id}/messages?${queryString}`;
+    const messagesUrl = `${BASE_URL}/v1/partner/patients/${patient_id}/messages?${queryString}`;
 
     console.log(`[GET MESSAGES] Fetching messages for patient: ${patient_id}, channel: ${channel}, page: ${page}`);
 
     const response = await fetch(messagesUrl, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${patient_token}`,
+        'Authorization': `Bearer ${partnerToken}`,
         'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Version': '2'
+        'Content-Type': 'application/json'
       }
     });
 
     if (response.ok) {
       const messagesData = await response.json();
-      console.log(`[GET MESSAGES] Success for patient: ${patient_id}`);
+      console.log(`[GET MESSAGES] Success for patient: ${patient_id}, messages: ${Array.isArray(messagesData) ? messagesData.length : (messagesData.data || []).length}`);
       return {
         statusCode: 200,
         headers: cors,
@@ -104,36 +92,7 @@ exports.handler = async (event) => {
     }
 
     const errText = await response.text();
-    console.warn(`[GET MESSAGES] Patient endpoint returned ${response.status}: ${errText.slice(0, 200)}`);
-
-    // If patient token doesn't work, try partner token as fallback
-    if (response.status === 401 || response.status === 403) {
-      console.log(`[GET MESSAGES] Trying with partner token as fallback...`);
-      const partnerToken = await getAccessToken();
-
-      // Try partner endpoint for messages
-      const partnerUrl = `${BASE_URL}/v1/partner/patients/${patient_id}/messages?${queryString}`;
-      const partnerResponse = await fetch(partnerUrl, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${partnerToken}`,
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (partnerResponse.ok) {
-        const data = await partnerResponse.json();
-        console.log(`[GET MESSAGES] Partner fallback succeeded`);
-        return {
-          statusCode: 200,
-          headers: cors,
-          body: JSON.stringify(data)
-        };
-      }
-
-      console.warn(`[GET MESSAGES] Partner fallback also failed: ${partnerResponse.status}`);
-    }
+    console.warn(`[GET MESSAGES] MDI returned ${response.status}: ${errText.slice(0, 300)}`);
 
     // Return empty if 404 (no messages yet)
     if (response.status === 404) {
@@ -145,11 +104,11 @@ exports.handler = async (event) => {
     }
 
     return {
-      statusCode: response.status === 401 ? 401 : 500,
+      statusCode: response.status >= 500 ? 502 : response.status,
       headers: cors,
       body: JSON.stringify({
-        error: response.status === 401 ? 'Session expired. Please verify again.' : 'Unable to fetch messages.',
-        code: response.status === 401 ? 'TOKEN_EXPIRED' : 'FETCH_ERROR'
+        error: 'Unable to fetch messages. Please try again.',
+        code: 'FETCH_ERROR'
       })
     };
 

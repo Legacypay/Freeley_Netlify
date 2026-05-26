@@ -1615,13 +1615,6 @@
       const patientId = sessionStorage.getItem('freeley_patient_id');
       if (!patientId) return;
 
-      const patientToken = getPatientToken();
-      // If no patient token yet, skip — messages require 2FA verification
-      if (!patientToken) {
-        console.log('[Hub] No patient token — skipping latest message load (2FA required)');
-        return;
-      }
-
       try {
         const authToken = await getFirebaseIdToken();
         const res = await fetch('/.netlify/functions/getMessages', {
@@ -1632,7 +1625,6 @@
           },
           body: JSON.stringify({
             patient_id: patientId,
-            patient_token: patientToken,
             channel: 'patient',
             page: 1,
             per_page: 10,
@@ -1737,17 +1729,10 @@
         document.getElementById('chatAvatarFallback').style.display = 'none';
       }
 
-      // Check if we already have a valid patient messaging token
-      const token = getPatientToken();
-      if (token) {
-        // Already verified — go straight to messages
-        showChatUI();
-        loadMessages();
-        chatPollingTimer = setInterval(() => { if (chatIsOpen) loadMessages(true); }, 15000);
-      } else {
-        // Need 2FA verification first
-        showVerificationScreen();
-      }
+      // Go straight to chat — Partner token handles auth server-side
+      showChatUI();
+      loadMessages();
+      chatPollingTimer = setInterval(() => { if (chatIsOpen) loadMessages(true); }, 15000);
     }
 
     function showChatUI() {
@@ -1986,7 +1971,6 @@
 
     async function loadMessages(silent = false) {
       const patientId = sessionStorage.getItem('freeley_patient_id');
-      const patientToken = getPatientToken();
       if (!patientId) return;
 
       const chatBody = document.getElementById('chatBody');
@@ -2005,7 +1989,6 @@
           },
           body: JSON.stringify({
             patient_id: patientId,
-            patient_token: patientToken,
             channel: 'patient',
             page: 1,
             per_page: 50,
@@ -2015,12 +1998,6 @@
 
         if (!res.ok) {
           const errData = await res.json().catch(() => ({}));
-          // If token expired, clear it and show re-verification
-          if (errData.code === 'VERIFICATION_REQUIRED' || errData.code === 'TOKEN_EXPIRED') {
-            sessionStorage.removeItem('freeley_patient_token');
-            if (!silent) showVerificationScreen();
-            return;
-          }
           throw new Error(errData.error || 'Failed to load messages');
         }
 
@@ -2093,14 +2070,7 @@
       if (!text) return;
 
       const patientId = sessionStorage.getItem('freeley_patient_id');
-      const patientToken = getPatientToken();
       if (!patientId) return;
-
-      // If no token, show verification
-      if (!patientToken) {
-        showVerificationScreen();
-        return;
-      }
 
       const sendBtn = document.getElementById('chatSendBtn');
       sendBtn.disabled = true;
@@ -2129,7 +2099,6 @@
           },
           body: JSON.stringify({
             patient_id: patientId,
-            patient_token: patientToken,
             text: text,
             channel: 'patient'
           })
@@ -2137,14 +2106,6 @@
 
         if (!res.ok) {
           const errData = await res.json().catch(() => ({}));
-          // If token expired, clear and re-verify
-          if (errData.code === 'VERIFICATION_REQUIRED' || errData.code === 'TOKEN_EXPIRED') {
-            sessionStorage.removeItem('freeley_patient_token');
-            tempMsg.remove();
-            document.getElementById('chatInput').value = text; // Preserve their message
-            showVerificationScreen();
-            return;
-          }
           throw new Error(errData.error || 'Failed to send message');
         }
 
