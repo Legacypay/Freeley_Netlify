@@ -554,6 +554,236 @@
         gap: 20px;
       }
     }
+
+    /* ── Chat Panel (Slide-over Drawer) ─────────────────────── */
+    .chat-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      background: rgba(0,0,0,0.35);
+      backdrop-filter: blur(2px);
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+    .chat-overlay.open {
+      display: flex;
+      justify-content: flex-end;
+      opacity: 1;
+    }
+    .chat-drawer {
+      width: 420px;
+      max-width: 100vw;
+      height: 100%;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      box-shadow: -4px 0 24px rgba(0,0,0,0.15);
+      transform: translateX(100%);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .chat-overlay.open .chat-drawer {
+      transform: translateX(0);
+    }
+    .chat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      background: var(--off-white);
+    }
+    .chat-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .chat-header-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--green-light);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .chat-header-avatar img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .chat-header-name {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--charcoal);
+    }
+    .chat-header-role {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .chat-close-btn {
+      background: none;
+      border: none;
+      font-size: 22px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 6px;
+      transition: background 0.15s;
+    }
+    .chat-close-btn:hover {
+      background: var(--border);
+      color: var(--charcoal);
+    }
+    .chat-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .chat-body::-webkit-scrollbar {
+      width: 5px;
+    }
+    .chat-body::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
+    }
+    .chat-msg {
+      max-width: 82%;
+      padding: 12px 16px;
+      border-radius: 18px;
+      font-size: 14px;
+      line-height: 1.55;
+      word-wrap: break-word;
+    }
+    .chat-msg.incoming {
+      align-self: flex-start;
+      background: var(--off-white);
+      color: var(--text);
+      border-bottom-left-radius: 4px;
+    }
+    .chat-msg.outgoing {
+      align-self: flex-end;
+      background: var(--green-light);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+    .chat-msg-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    .chat-msg.outgoing .chat-msg-meta {
+      color: rgba(255,255,255,0.7);
+      text-align: right;
+    }
+    .chat-msg-sender {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--charcoal);
+    }
+    .chat-empty {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: var(--text-muted);
+      gap: 8px;
+      padding: 40px 20px;
+    }
+    .chat-empty i {
+      font-size: 40px;
+      opacity: 0.4;
+    }
+    .chat-loading {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 14px;
+      gap: 8px;
+    }
+    .chat-footer {
+      border-top: 1px solid var(--border);
+      padding: 14px 16px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+      background: #fff;
+    }
+    .chat-input {
+      flex: 1;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 10px 16px;
+      font-size: 14px;
+      font-family: 'DM Sans', sans-serif;
+      resize: none;
+      outline: none;
+      max-height: 120px;
+      line-height: 1.45;
+      transition: border-color 0.15s;
+    }
+    .chat-input:focus {
+      border-color: var(--green-light);
+    }
+    .chat-input::placeholder {
+      color: var(--text-muted);
+    }
+    .chat-send-btn {
+      width: 40px;
+      height: 40px;
+      border: none;
+      border-radius: 50%;
+      background: var(--green-light);
+      color: #fff;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, transform 0.1s;
+      flex-shrink: 0;
+    }
+    .chat-send-btn:hover { background: var(--green); }
+    .chat-send-btn:active { transform: scale(0.93); }
+    .chat-send-btn:disabled {
+      background: var(--border);
+      cursor: not-allowed;
+    }
+    .chat-error {
+      text-align: center;
+      color: #d32f2f;
+      font-size: 13px;
+      padding: 12px 20px;
+    }
+    .chat-typing-indicator {
+      display: none;
+      align-self: flex-start;
+      padding: 10px 18px;
+      background: var(--off-white);
+      border-radius: 18px;
+      border-bottom-left-radius: 4px;
+      font-size: 13px;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+    @media (max-width: 480px) {
+      .chat-drawer {
+        width: 100vw;
+      }
+    }
   </style>
   <link rel="canonical" href="https://freeley.com/hub">
 <!-- SEO_CRUMB_SCHEMA_AUTO -->
@@ -773,22 +1003,18 @@
               </div>
             </div>
 
-            <div class="panel-card">
+            <div class="panel-card" id="latestMessageCard">
               <div class="panel-header">
                 <h3>Latest Provider Message</h3>
               </div>
-              <div class="doc-msg" style="margin:0;">
-                <div class="doc-meta">
-                  <img src="assets/sarah.jpeg" alt="Dr. Lewis" class="doc-avatar" loading="lazy" decoding="async">
-                  <div>
-                    <div class="doc-name">Dr. Sarah Lewis, MD</div>
-                    <div class="doc-date">August 28, 2026 at 10:14 AM</div>
-                  </div>
+              <div id="latestMessageContent" class="doc-msg" style="margin:0;">
+                <div style="text-align:center; color:var(--text-muted); padding:20px 0; font-size:14px;">
+                  <i class="ri-chat-3-line" style="font-size:28px; display:block; margin-bottom:8px; opacity:0.4;"></i>
+                  No messages yet. Your care team will reach out once they review your case.
                 </div>
-                <div class="doc-body">
-                  "Hi there! I've reviewed your latest check-in form. Since you are tolerating the 7.5mg dosage well with minimal side effects and your weight loss has momentarily plateaued, I have approved stepping you up to the 10mg dosage for your next refill. I've attached your updated prescription and protocol instructions below. Please reach out if you experience any unexpected nausea with the dose increase."
-                </div>
-                <a href="#" class="file-attachment"><i class="ri-file-pdf-line"></i> Titration_Protocol_10mg.pdf</a>
+              </div>
+              <div style="margin-top:12px; text-align:center;">
+                <button class="req-btn req-btn-outline" onclick="openMessaging()" style="font-size:13px;"><i class="ri-chat-3-line"></i> Open Messages</button>
               </div>
             </div>
           </div>
@@ -1070,6 +1296,8 @@
       // Trigger MDI status refresh now that Firebase auth is confirmed
       if (sessionStorage.getItem('freeley_patient_id') || sessionStorage.getItem('freeley_voucher_id')) {
         setTimeout(() => refreshCaseStatus(), 300);
+        // Also load latest provider message for the overview card
+        setTimeout(() => loadLatestProviderMessage(), 600);
       }
     };
 
@@ -1300,72 +1528,55 @@
       }
     }
 
-    // ── MDI Secure Messaging ─────────────────────────────────────
-    // Calls getMessagingAuth to generate a one-time authenticated link
-    // for the patient to message their clinician via MDI's platform.
-    async function openMessaging() {
+    // ── Load Latest Provider Message for Overview Card ──────────
+    async function loadLatestProviderMessage() {
       const patientId = sessionStorage.getItem('freeley_patient_id');
-      if (!patientId) {
-        alert('Please complete your intake first. No active patient record found.');
-        return;
-      }
-
-      // Show loading state on button
-      const btn = event.currentTarget;
-      const originalText = btn.innerHTML;
-      btn.innerHTML = '<i class="ri-loader-4-line ri-spin"></i> Opening secure messaging...';
-      btn.disabled = true;
+      if (!patientId) return;
 
       try {
-        // Get Firebase ID token for HIPAA-compliant auth
-        let authToken = '';
-        try {
-          const currentUser = window.firebaseAuth && window.firebaseAuth.currentUser;
-          if (currentUser) {
-            authToken = await currentUser.getIdToken();
-          }
-        } catch (tokenErr) {
-          console.warn('[Hub] Could not get Firebase token:', tokenErr);
-        }
-
-        const res = await fetch('/.netlify/functions/getMessagingAuth', {
+        const authToken = await getFirebaseIdToken();
+        const res = await fetch('/.netlify/functions/getMessages', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {})
           },
-          body: JSON.stringify({ patient_id: patientId })
+          body: JSON.stringify({
+            patient_id: patientId,
+            channel: 'patient',
+            page: 1,
+            per_page: 10,
+            order: 'desc'
+          })
         });
 
-        if (!res.ok) {
-          const errData = await res.json().catch(() => ({}));
-          throw new Error(errData.error || 'Failed to generate messaging link');
-        }
+        if (!res.ok) return; // Fail silently for overview card
 
         const data = await res.json();
+        const messages = Array.isArray(data) ? data : (data.data || data.messages || []);
 
-        if (data.auth_link && data.verification_code) {
-          // Build the full authenticated URL
-          // MDI requires the verification_code to be appended to the auth_link
-          const messagingUrl = data.auth_link.includes('?')
-            ? `${data.auth_link}&verification_code=${data.verification_code}`
-            : `${data.auth_link}?verification_code=${data.verification_code}`;
+        // Find the latest clinician message
+        const latestClinician = messages.find(m => {
+          const st = (m.sender_type || m.sender || '').toLowerCase();
+          return st !== 'patient' && st !== 'user';
+        });
 
-          // Open in new tab — patient can message their clinician directly
-          window.open(messagingUrl, '_blank', 'noopener,noreferrer');
-        } else if (data.auth_link) {
-          // Some MDI setups return the code pre-embedded in the link
-          window.open(data.auth_link, '_blank', 'noopener,noreferrer');
-        } else {
-          throw new Error('No messaging link received from server');
+        const container = document.getElementById('latestMessageContent');
+        if (!container) return;
+
+        if (latestClinician) {
+          const senderName = latestClinician.sender_name || latestClinician.user_name || latestClinician.clinician_name || 'Your Care Team';
+          const text = latestClinician.text || latestClinician.body || latestClinician.content || latestClinician.message || '';
+          let timeStr = '';
+          if (latestClinician.created_at || latestClinician.timestamp) {
+            const d = new Date(latestClinician.created_at || latestClinician.timestamp);
+            timeStr = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) + ' at ' + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+          }
+
+          container.innerHTML = '<div class="doc-meta"><div class="chat-header-avatar" style="width:40px;height:40px;font-size:15px;"><i class="ri-stethoscope-line"></i></div><div><div class="doc-name">' + escapeHtml(senderName) + '</div>' + (timeStr ? '<div class="doc-date">' + timeStr + '</div>' : '') + '</div></div><div class="doc-body" style="margin-top:12px;">' + escapeHtml(text.length > 300 ? text.slice(0, 300) + '...' : text) + '</div>';
         }
-
       } catch (e) {
-        console.error('[Hub] Messaging auth failed:', e);
-        alert('Unable to open secure messaging right now. Please try again or contact support@freeley.com.');
-      } finally {
-        btn.innerHTML = originalText;
-        btn.disabled = false;
+        console.warn('[Hub] Could not load latest provider message:', e);
       }
     }
 
@@ -1388,7 +1599,272 @@
 
       // refreshCaseStatus is now triggered by showDashboard after auth is confirmed
     })();
+
+    // ══════════════════════════════════════════════════════════════
+    // ── In-App Chat (MDI Patient Messaging) ──────────────────────
+    // ══════════════════════════════════════════════════════════════
+    let chatMessages = [];
+    let chatPollingTimer = null;
+    let chatIsOpen = false;
+
+    function openMessaging() {
+      const patientId = sessionStorage.getItem('freeley_patient_id');
+      if (!patientId) {
+        alert('Please complete your intake first. No active patient record found.');
+        return;
+      }
+      const overlay = document.getElementById('chatOverlay');
+      overlay.classList.add('open');
+      chatIsOpen = true;
+      document.body.style.overflow = 'hidden';
+
+      // Update header with clinician info if available
+      const clinName = document.getElementById('mdi-clinician-name');
+      if (clinName && clinName.textContent && clinName.textContent !== '') {
+        document.getElementById('chatHeaderName').textContent = clinName.textContent;
+      }
+      const clinSpecialty = document.getElementById('mdi-clinician-specialty');
+      if (clinSpecialty && clinSpecialty.textContent && clinSpecialty.textContent !== '') {
+        document.getElementById('chatHeaderRole').textContent = clinSpecialty.textContent;
+      }
+      const clinPhoto = document.getElementById('mdi-clinician-photo');
+      if (clinPhoto && clinPhoto.src && !clinPhoto.src.endsWith('/')) {
+        document.getElementById('chatAvatarImg').src = clinPhoto.src;
+        document.getElementById('chatAvatarImg').style.display = 'block';
+        document.getElementById('chatAvatarFallback').style.display = 'none';
+      }
+
+      loadMessages();
+      // Poll for new messages every 15 seconds while chat is open
+      chatPollingTimer = setInterval(() => { if (chatIsOpen) loadMessages(true); }, 15000);
+    }
+
+    function closeChat() {
+      const overlay = document.getElementById('chatOverlay');
+      overlay.classList.remove('open');
+      chatIsOpen = false;
+      document.body.style.overflow = '';
+      if (chatPollingTimer) {
+        clearInterval(chatPollingTimer);
+        chatPollingTimer = null;
+      }
+    }
+
+    // Close chat on overlay click (not drawer)
+    function onOverlayClick(e) {
+      if (e.target === e.currentTarget) closeChat();
+    }
+
+    async function loadMessages(silent = false) {
+      const patientId = sessionStorage.getItem('freeley_patient_id');
+      if (!patientId) return;
+
+      const chatBody = document.getElementById('chatBody');
+
+      if (!silent) {
+        chatBody.innerHTML = '<div class="chat-loading"><i class="ri-loader-4-line ri-spin"></i> Loading messages...</div>';
+      }
+
+      try {
+        const authToken = await getFirebaseIdToken();
+        const res = await fetch('/.netlify/functions/getMessages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {})
+          },
+          body: JSON.stringify({
+            patient_id: patientId,
+            channel: 'patient',
+            page: 1,
+            per_page: 50,
+            order: 'asc'
+          })
+        });
+
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error || 'Failed to load messages');
+        }
+
+        const data = await res.json();
+
+        // MDI may return { data: [...] } or just an array
+        const messages = Array.isArray(data) ? data : (data.data || data.messages || []);
+        chatMessages = messages;
+        renderMessages(messages);
+
+      } catch (e) {
+        console.error('[Chat] Load messages failed:', e);
+        if (!silent) {
+          chatBody.innerHTML = '<div class="chat-empty"><i class="ri-chat-3-line"></i><div>Unable to load messages right now.</div><div style="font-size:12px;">Your care team may not have sent any messages yet, or the connection could not be established. Try again shortly.</div></div>';
+        }
+      }
+    }
+
+    function renderMessages(messages) {
+      const chatBody = document.getElementById('chatBody');
+
+      if (!messages || messages.length === 0) {
+        chatBody.innerHTML = '<div class="chat-empty"><i class="ri-chat-smile-3-line"></i><div style="font-weight:600; color:var(--charcoal);">No messages yet</div><div>Send a message to start a conversation with your care team.</div></div>';
+        return;
+      }
+
+      let html = '';
+      for (const msg of messages) {
+        // Determine sender type: patient (outgoing) or clinician (incoming)
+        const senderType = (msg.sender_type || msg.sender || '').toLowerCase();
+        const isOutgoing = senderType === 'patient' || senderType === 'user';
+        const cssClass = isOutgoing ? 'outgoing' : 'incoming';
+
+        // Format timestamp
+        let timeStr = '';
+        if (msg.created_at || msg.timestamp) {
+          const d = new Date(msg.created_at || msg.timestamp);
+          timeStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' at ' + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+        }
+
+        // Sender name for incoming messages
+        const senderName = !isOutgoing ? (msg.sender_name || msg.user_name || msg.clinician_name || 'Care Team') : '';
+
+        const text = msg.text || msg.body || msg.content || msg.message || '';
+
+        html += '<div class="chat-msg ' + cssClass + '">';
+        if (!isOutgoing && senderName) {
+          html += '<div class="chat-msg-sender">' + escapeHtml(senderName) + '</div>';
+        }
+        html += '<div>' + escapeHtml(text) + '</div>';
+        if (timeStr) {
+          html += '<div class="chat-msg-meta">' + timeStr + '</div>';
+        }
+        html += '</div>';
+      }
+
+      chatBody.innerHTML = html;
+      // Scroll to bottom
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    async function sendChatMessage() {
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const patientId = sessionStorage.getItem('freeley_patient_id');
+      if (!patientId) return;
+
+      const sendBtn = document.getElementById('chatSendBtn');
+      sendBtn.disabled = true;
+      input.disabled = true;
+
+      // Optimistic UI: show message immediately
+      const chatBody = document.getElementById('chatBody');
+      const emptyState = chatBody.querySelector('.chat-empty');
+      if (emptyState) emptyState.remove();
+
+      const tempMsg = document.createElement('div');
+      tempMsg.className = 'chat-msg outgoing';
+      tempMsg.innerHTML = '<div>' + escapeHtml(text) + '</div><div class="chat-msg-meta">Sending...</div>';
+      chatBody.appendChild(tempMsg);
+      chatBody.scrollTop = chatBody.scrollHeight;
+
+      input.value = '';
+
+      try {
+        const authToken = await getFirebaseIdToken();
+        const res = await fetch('/.netlify/functions/sendMessage', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {})
+          },
+          body: JSON.stringify({
+            patient_id: patientId,
+            text: text,
+            channel: 'patient'
+          })
+        });
+
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error || 'Failed to send message');
+        }
+
+        // Update timestamp to "Sent"
+        const meta = tempMsg.querySelector('.chat-msg-meta');
+        if (meta) {
+          const now = new Date();
+          meta.textContent = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' at ' + now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+        }
+
+        // Refresh messages after a short delay to catch any server-side updates
+        setTimeout(() => loadMessages(true), 2000);
+
+      } catch (e) {
+        console.error('[Chat] Send failed:', e);
+        const meta = tempMsg.querySelector('.chat-msg-meta');
+        if (meta) {
+          meta.textContent = 'Failed to send — tap to retry';
+          meta.style.color = '#d32f2f';
+        }
+        tempMsg.style.opacity = '0.7';
+        tempMsg.onclick = function() {
+          tempMsg.remove();
+          document.getElementById('chatInput').value = text;
+          sendChatMessage();
+        };
+      } finally {
+        sendBtn.disabled = false;
+        input.disabled = false;
+        input.focus();
+      }
+    }
+
+    function handleChatKeydown(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendChatMessage();
+      }
+    }
+
+    // Auto-resize textarea
+    function autoResizeChatInput() {
+      const el = document.getElementById('chatInput');
+      el.style.height = 'auto';
+      el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+    }
   </script>
+
+  <!-- ── Chat Drawer Overlay ─────────────────────────────────── -->
+  <div id="chatOverlay" class="chat-overlay" onclick="onOverlayClick(event)">
+    <div class="chat-drawer" onclick="event.stopPropagation()">
+      <div class="chat-header">
+        <div class="chat-header-left">
+          <div class="chat-header-avatar">
+            <img id="chatAvatarImg" src="" alt="" style="display:none;">
+            <span id="chatAvatarFallback"><i class="ri-stethoscope-line"></i></span>
+          </div>
+          <div>
+            <div class="chat-header-name" id="chatHeaderName">Your Care Team</div>
+            <div class="chat-header-role" id="chatHeaderRole">Secure messaging</div>
+          </div>
+        </div>
+        <button class="chat-close-btn" onclick="closeChat()" aria-label="Close chat"><i class="ri-close-line"></i></button>
+      </div>
+      <div class="chat-body" id="chatBody">
+        <div class="chat-loading"><i class="ri-loader-4-line ri-spin"></i> Loading messages...</div>
+      </div>
+      <div class="chat-footer">
+        <textarea class="chat-input" id="chatInput" rows="1" placeholder="Type your message..." onkeydown="handleChatKeydown(event)" oninput="autoResizeChatInput()"></textarea>
+        <button class="chat-send-btn" id="chatSendBtn" onclick="sendChatMessage()" aria-label="Send message"><i class="ri-send-plane-2-fill"></i></button>
+      </div>
+    </div>
+  </div>
 
 </body>
 

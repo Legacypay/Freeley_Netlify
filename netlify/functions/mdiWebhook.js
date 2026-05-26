@@ -114,7 +114,7 @@ exports.handler = async (event) => {
             first_name: order?.first_name || 'there',
             product: order?.product_key || 'your treatment',
             case_id,
-            portal_url: 'https://patient.mdintegrations.com'
+            portal_url: 'https://freeley.com/hub'
           }
         });
 
@@ -229,8 +229,9 @@ exports.handler = async (event) => {
             template: 'clinician_message',
             data: {
               first_name: order?.first_name || 'there',
-              portal_url: 'https://patient.mdintegrations.com'
+              portal_url: 'https://freeley.com/hub'
               // NOTE: Do NOT include message content in email (PHI concern)
+              // Points to Freeley hub (in-app messaging) instead of MDI portal
             }
           });
 
