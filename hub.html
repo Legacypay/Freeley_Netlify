@@ -1160,13 +1160,18 @@
             </div>
           </div>
 
-<!-- RECORDS — populated by physician -->
+<!-- RECORDS — dynamically loaded from MDI -->
           <div id="panel-records" class="dash-panel">
             <div class="panel-card">
               <div class="panel-header">
                 <h3>Clinical Notes & Files</h3>
               </div>
-              <div style="text-align:center; padding:48px 24px; color:var(--text-muted);">
+              <div id="records-loading" style="text-align:center; padding:32px 0; color:var(--text-muted);">
+                <div class="spinner" style="width:24px;height:24px;border:3px solid #e0e0e0;border-top:3px solid var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 12px;"></div>
+                Loading medical records...
+              </div>
+              <div id="records-content" style="display:none;"></div>
+              <div id="records-empty" style="display:none; text-align:center; padding:48px 24px; color:var(--text-muted);">
                 <i class="ri-file-list-3-line" style="font-size:48px; display:block; margin-bottom:16px; opacity:0.3;"></i>
                 <p style="font-size:15px; margin:0 0 8px;">No clinical notes yet</p>
                 <p style="font-size:13px; margin:0; opacity:0.7;">Your physician's consultation notes, lab results, and medical files will appear here once your case is reviewed.</p>
@@ -1176,23 +1181,29 @@
 
 
 
-          <!-- BILLING — integrated with payment system -->
+          <!-- BILLING — dynamically loaded from Stripe -->
           <div id="panel-billing" class="dash-panel">
             <div class="panel-card">
               <div class="panel-header">
                 <h3>Payment Methods</h3>
               </div>
-              <div style="text-align:center; padding:32px 24px; color:var(--text-muted);">
+              <div id="billing-loading" style="text-align:center; padding:32px 0; color:var(--text-muted);">
+                <div class="spinner" style="width:24px;height:24px;border:3px solid #e0e0e0;border-top:3px solid var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 12px;"></div>
+                Loading billing information...
+              </div>
+              <div id="payment-methods-content" style="display:none;"></div>
+              <div id="payment-methods-empty" style="display:none; text-align:center; padding:32px 24px; color:var(--text-muted);">
                 <i class="ri-bank-card-line" style="font-size:48px; display:block; margin-bottom:16px; opacity:0.3;"></i>
                 <p style="font-size:15px; margin:0 0 8px;">No payment methods on file</p>
-                <p style="font-size:13px; margin:0; opacity:0.7;">Payment information is managed through your checkout process. Contact support to update billing details.</p>
+                <p style="font-size:13px; margin:0; opacity:0.7;">Payment information is managed through your checkout process.</p>
               </div>
             </div>
             <div class="panel-card">
               <div class="panel-header">
                 <h3>Invoice History</h3>
               </div>
-              <div style="text-align:center; padding:32px 24px; color:var(--text-muted);">
+              <div id="invoices-content" style="display:none;"></div>
+              <div id="invoices-empty" style="display:none; text-align:center; padding:32px 24px; color:var(--text-muted);">
                 <i class="ri-receipt-line" style="font-size:48px; display:block; margin-bottom:16px; opacity:0.3;"></i>
                 <p style="font-size:15px; margin:0 0 8px;">No invoices yet</p>
                 <p style="font-size:13px; margin:0; opacity:0.7;">Your payment receipts and invoices will appear here after your first order is processed.</p>
@@ -2238,6 +2249,183 @@
         sendChatMessage();
       }
     }
+
+
+
+    // ── Medical Records: load encounter details ─────────────────
+    let recordsLoaded = false;
+    async function loadMedicalRecords() {
+      if (recordsLoaded) return;
+      recordsLoaded = true;
+      const loadingEl = document.getElementById('records-loading');
+      const contentEl = document.getElementById('records-content');
+      const emptyEl = document.getElementById('records-empty');
+      if (!loadingEl) return;
+
+      try {
+        const caseId = sessionStorage.getItem('freeley_case_id');
+        const patientId = sessionStorage.getItem('freeley_patient_id');
+        if (!caseId) { loadingEl.style.display='none'; emptyEl.style.display='block'; return; }
+
+        const authToken = await getFirebaseIdToken();
+        const res = await fetch('/.netlify/functions/getEncounterDetails', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {}) },
+          body: JSON.stringify({ case_id: caseId, patient_id: patientId })
+        });
+
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        const records = data.records || [];
+
+        loadingEl.style.display = 'none';
+        if (records.length === 0) { emptyEl.style.display = 'block'; return; }
+
+        let html = '';
+        for (const rec of records) {
+          const date = rec.date ? new Date(rec.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '';
+          const icon = rec.type === 'prescription' ? 'ri-capsule-line' : rec.type === 'clinician_assignment' ? 'ri-user-heart-line' : rec.type === 'status_update' ? 'ri-checkbox-circle-line' : 'ri-file-text-line';
+          const borderColor = rec.type === 'prescription' ? 'var(--green)' : rec.type === 'clinician_assignment' ? 'var(--accent)' : 'var(--border)';
+
+          html += '<div class="doc-msg" style="border-left-color:' + borderColor + ';">';
+          html += '<div class="doc-meta"><div class="doc-avatar" style="background:var(--border-light);color:var(--text-muted);display:flex;align-items:center;justify-content:center;"><i class="' + icon + '"></i></div>';
+          html += '<div><div class="doc-name">' + (rec.title || 'Record') + '</div>';
+          if (date) html += '<div class="doc-date">' + date + '</div>';
+          html += '</div></div>';
+          if (rec.body) html += '<div class="doc-body">' + rec.body + '</div>';
+          if (rec.status) html += '<div style="margin-top:8px;"><span style="font-size:12px;padding:3px 10px;border-radius:20px;background:#e8f5e9;color:#2e7d32;">' + rec.status + '</span></div>';
+          if (rec.clinician) html += '<div style="margin-top:8px;font-size:13px;color:var(--text-muted);">' + rec.clinician.name + ' — ' + (rec.clinician.specialty || '') + '</div>';
+          html += '</div>';
+        }
+        contentEl.innerHTML = html;
+        contentEl.style.display = 'block';
+      } catch (e) {
+        console.warn('[Hub] Medical records load error:', e);
+        loadingEl.style.display = 'none';
+        emptyEl.style.display = 'block';
+      }
+    }
+
+    // ── Billing: load payment history from Stripe ───────────────
+    let billingLoaded = false;
+    async function loadBillingHistory() {
+      if (billingLoaded) return;
+      billingLoaded = true;
+      const loadingEl = document.getElementById('billing-loading');
+      const methodsEl = document.getElementById('payment-methods-content');
+      const methodsEmpty = document.getElementById('payment-methods-empty');
+      const invoicesEl = document.getElementById('invoices-content');
+      const invoicesEmpty = document.getElementById('invoices-empty');
+      if (!loadingEl) return;
+
+      try {
+        const email = sessionStorage.getItem('freeley_patient_email') || document.getElementById('dashUserEmail')?.innerText;
+        const authToken = await getFirebaseIdToken();
+        const res = await fetch('/.netlify/functions/getBillingHistory', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {}) },
+          body: JSON.stringify({ email })
+        });
+
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        loadingEl.style.display = 'none';
+
+        // Payment methods
+        const methods = data.payment_methods || [];
+        if (methods.length === 0) { methodsEmpty.style.display = 'block'; }
+        else {
+          let mhtml = '';
+          for (const pm of methods) {
+            const brand = (pm.brand || 'card').charAt(0).toUpperCase() + (pm.brand || 'card').slice(1);
+            const brandIcon = pm.brand === 'visa' ? 'ri-visa-line' : pm.brand === 'mastercard' ? 'ri-mastercard-line' : 'ri-bank-card-line';
+            mhtml += '<div style="display:flex;align-items:center;gap:16px;padding:16px;border:1px solid var(--border);border-radius:12px;margin-bottom:8px;">';
+            mhtml += '<i class="' + brandIcon + '" style="font-size:28px;color:#1a1f71;"></i>';
+            mhtml += '<div style="flex:1;"><div style="font-weight:600;font-size:15px;">' + brand + ' ending in ' + pm.last4 + '</div>';
+            mhtml += '<div style="font-size:13px;color:var(--text-faint);">Expires ' + pm.exp_month + '/' + pm.exp_year;
+            if (pm.is_default) mhtml += ' &bull; Default Payment';
+            mhtml += '</div></div></div>';
+          }
+          methodsEl.innerHTML = mhtml;
+          methodsEl.style.display = 'block';
+        }
+
+        // Charges / invoices
+        const charges = data.charges || [];
+        if (charges.length === 0) { invoicesEmpty.style.display = 'block'; }
+        else {
+          let ihtml = '<table style="width:100%;font-size:14px;text-align:left;border-collapse:collapse;">';
+          ihtml += '<tr style="border-bottom:2px solid var(--border-light);"><th style="padding:12px 0;">Date</th><th style="padding:12px 0;">Description</th><th style="padding:12px 0;">Amount</th><th style="padding:12px 0;">Receipt</th></tr>';
+          for (const ch of charges) {
+            const d = new Date(ch.created).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            ihtml += '<tr style="border-bottom:1px solid var(--border-light);">';
+            ihtml += '<td style="padding:14px 0;color:var(--text-muted);">' + d + '</td>';
+            ihtml += '<td style="padding:14px 0;font-weight:500;">' + (ch.description || 'Freeley Health') + '</td>';
+            ihtml += '<td style="padding:14px 0;">
+    function autoResizeChatInput() {
+      const el = document.getElementById('chatInput');
+      el.style.height = 'auto';
+      el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+    }
+  </script>
+
+  <!-- ── Chat Drawer Overlay ─────────────────────────────────── -->
+  <div id="chatOverlay" class="chat-overlay" onclick="onOverlayClick(event)">
+    <div class="chat-drawer" onclick="event.stopPropagation()">
+      <div class="chat-header">
+        <div class="chat-header-left">
+          <div class="chat-header-avatar">
+            <img id="chatAvatarImg" src="" alt="" style="display:none;">
+            <span id="chatAvatarFallback"><i class="ri-stethoscope-line"></i></span>
+          </div>
+          <div>
+            <div class="chat-header-name" id="chatHeaderName">Your Care Team</div>
+            <div class="chat-header-role" id="chatHeaderRole">Secure messaging</div>
+          </div>
+        </div>
+        <button class="chat-close-btn" onclick="closeChat()" aria-label="Close chat"><i class="ri-close-line"></i></button>
+      </div>
+      <div class="chat-body" id="chatBody">
+        <div class="chat-loading"><i class="ri-loader-4-line ri-spin"></i> Loading messages...</div>
+      </div>
+      <div class="chat-footer" id="chatFooter" style="display:none;">
+        <textarea class="chat-input" id="chatInput" rows="1" placeholder="Type your message..." onkeydown="handleChatKeydown(event)" oninput="autoResizeChatInput()"></textarea>
+        <button class="chat-send-btn" id="chatSendBtn" onclick="sendChatMessage()" aria-label="Send message"><i class="ri-send-plane-2-fill"></i></button>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>
+ + ch.amount.toFixed(2) + '</td>';
+            ihtml += '<td style="padding:14px 0;">' + (ch.receipt_url ? '<a href="' + ch.receipt_url + '" target="_blank" style="color:var(--green);"><i class="ri-download-2-line"></i> PDF</a>' : '—') + '</td>';
+            ihtml += '</tr>';
+          }
+          ihtml += '</table>';
+          invoicesEl.innerHTML = ihtml;
+          invoicesEl.style.display = 'block';
+        }
+      } catch (e) {
+        console.warn('[Hub] Billing load error:', e);
+        loadingEl.style.display = 'none';
+        methodsEmpty.style.display = 'block';
+        invoicesEmpty.style.display = 'block';
+      }
+    }
+
+    // Hook tab switches to load data
+    const origSwitchPanel = typeof switchPanel === 'function' ? switchPanel : null;
+    document.addEventListener('click', function(e) {
+      const tab = e.target.closest('[onclick*="switchPanel"]');
+      if (tab) {
+        const match = tab.getAttribute('onclick')?.match(/switchPanel\('(\w+)'\)/);
+        if (match) {
+          if (match[1] === 'records') setTimeout(() => loadMedicalRecords(), 200);
+          if (match[1] === 'billing') setTimeout(() => loadBillingHistory(), 200);
+        }
+      }
+    });
 
     // Auto-resize textarea
     function autoResizeChatInput() {
