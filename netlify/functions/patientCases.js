@@ -50,18 +50,18 @@ exports.handler = async (event) => {
     console.log(`[PATIENT CASES] Authenticated user: ${user.email}`);
 
     // ── Step 2: Parse request ───────────────────────────────────
-    const { patient_id, voucher_id } = JSON.parse(event.body || '{}');
+    const { patient_id, voucher_id, email } = JSON.parse(event.body || '{}');
 
-    if (!patient_id && !voucher_id) {
+    if (!patient_id && !voucher_id && !email) {
       return {
         statusCode: 400,
         headers: CORS_HEADERS,
-        body: JSON.stringify({ error: 'patient_id or voucher_id is required.' })
+        body: JSON.stringify({ error: 'patient_id, voucher_id, or email is required.' })
       };
     }
 
     // ── Step 3: Search mdi-orders blob store ────────────────────
-    console.log(`[PATIENT CASES] Looking up: patient=${patient_id || 'N/A'}, voucher=${voucher_id || 'N/A'}`);
+    console.log(`[PATIENT CASES] Looking up: patient=${patient_id || 'N/A'}, voucher=${voucher_id || 'N/A'}, email=${email || 'N/A'}`);
 
     const store = getStore('mdi-orders');
     const cases = [];
@@ -79,18 +79,24 @@ exports.handler = async (event) => {
       }
     }
 
-    // If no direct match, scan by patient_id
-    if (cases.length === 0 && patient_id) {
+    // If no direct match, scan by patient_id or email
+    if (cases.length === 0 && (patient_id || email)) {
       try {
         const { blobs } = await store.list();
         if (blobs && blobs.length > 0) {
           for (const blob of blobs) {
             try {
               const order = await store.get(blob.key, { type: 'json' });
-              if (order && order.patient_id === patient_id) {
+              if (!order) continue;
+              // Match by patient_id
+              if (patient_id && order.patient_id === patient_id) {
                 console.log(`[PATIENT CASES] Found order by patient_id: ${blob.key}, case_id: ${order.case_id || 'none'}`);
                 cases.push(orderToCase(order, blob.key));
-                break; // Return most recent match
+              }
+              // Match by email (check order.email and order.patient?.email)
+              else if (email && (order.email === email || (order.patient && order.patient.email === email))) {
+                console.log(`[PATIENT CASES] Found order by email: ${blob.key}, case_id: ${order.case_id || 'none'}`);
+                cases.push(orderToCase(order, blob.key));
               }
             } catch { /* skip */ }
           }
