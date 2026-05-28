@@ -1166,11 +1166,9 @@
               <div class="panel-header">
                 <h3>Clinical Notes & Files</h3>
               </div>
-              <div style="text-align:center; padding:48px 24px; color:var(--text-muted);">
-                <i class="ri-file-list-3-line" style="font-size:48px; display:block; margin-bottom:16px; opacity:0.3;"></i>
-                <p style="font-size:15px; margin:0 0 8px;">No clinical notes yet</p>
-                <p style="font-size:13px; margin:0; opacity:0.7;">Your physician's consultation notes, lab results, and medical files will appear here once your case is reviewed.</p>
-              </div>
+              <div id="records-loading" style="text-align:center; padding:32px 0; color:var(--text-muted);"><div class="spinner" style="width:24px;height:24px;border:3px solid #e0e0e0;border-top:3px solid var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 12px;"></div>Loading records...</div>
+              <div id="records-content" style="display:none;"></div>
+              <div id="records-empty" style="display:none; text-align:center; padding:48px 24px; color:var(--text-muted);"><i class="ri-file-list-3-line" style="font-size:48px; display:block; margin-bottom:16px; opacity:0.3;"></i><p style="font-size:15px; margin:0 0 8px;">No clinical notes yet</p><p style="font-size:13px; margin:0; opacity:0.7;">Your physician's notes and medical files will appear here once your case is reviewed.</p></div>
             </div>
           </div>
 
@@ -1182,21 +1180,16 @@
               <div class="panel-header">
                 <h3>Payment Methods</h3>
               </div>
-              <div style="text-align:center; padding:32px 24px; color:var(--text-muted);">
-                <i class="ri-bank-card-line" style="font-size:48px; display:block; margin-bottom:16px; opacity:0.3;"></i>
-                <p style="font-size:15px; margin:0 0 8px;">No payment methods on file</p>
-                <p style="font-size:13px; margin:0; opacity:0.7;">Payment information is managed through your checkout process. Contact support to update billing details.</p>
-              </div>
+              <div id="billing-loading" style="text-align:center; padding:32px 0; color:var(--text-muted);"><div class="spinner" style="width:24px;height:24px;border:3px solid #e0e0e0;border-top:3px solid var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 12px;"></div>Loading billing...</div>
+              <div id="payment-methods-content" style="display:none;"></div>
+              <div id="payment-methods-empty" style="display:none; text-align:center; padding:32px 24px; color:var(--text-muted);"><i class="ri-bank-card-line" style="font-size:48px; display:block; margin-bottom:16px; opacity:0.3;"></i><p style="font-size:15px; margin:0 0 8px;">No payment methods on file</p><p style="font-size:13px; margin:0; opacity:0.7;">Payment information is managed through your checkout process.</p></div>
             </div>
             <div class="panel-card">
               <div class="panel-header">
                 <h3>Invoice History</h3>
               </div>
-              <div style="text-align:center; padding:32px 24px; color:var(--text-muted);">
-                <i class="ri-receipt-line" style="font-size:48px; display:block; margin-bottom:16px; opacity:0.3;"></i>
-                <p style="font-size:15px; margin:0 0 8px;">No invoices yet</p>
-                <p style="font-size:13px; margin:0; opacity:0.7;">Your payment receipts and invoices will appear here after your first order is processed.</p>
-              </div>
+              <div id="invoices-content" style="display:none;"></div>
+              <div id="invoices-empty" style="display:none; text-align:center; padding:32px 24px; color:var(--text-muted);"><i class="ri-receipt-line" style="font-size:48px; display:block; margin-bottom:16px; opacity:0.3;"></i><p style="font-size:15px; margin:0 0 8px;">No invoices yet</p><p style="font-size:13px; margin:0; opacity:0.7;">Your receipts will appear here after your first order.</p></div>
             </div>
           </div>
 
@@ -2273,6 +2266,7 @@
     </div>
   </div>
 
+  <script src="hub-tabs.js"></script>
 </body>
 
 </html>
