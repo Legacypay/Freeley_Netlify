@@ -110,22 +110,28 @@ exports.handler = async (event) => {
     }
 
     // ── Step 3b: Email lookup via MDI API ───────────────────────
-    // When blobs don't have results or email is the only parameter,
-    // query MDI partner API for vouchers/encounters by email.
     if (cases.length === 0 && email) {
       console.log(`[PATIENT CASES] Searching MDI API for email: ${email}`);
       try {
-        // Try GET /v1/partner/vouchers?email=<email>
-        const vouchers = await mdiRequest('GET', `/v1/partner/vouchers?email=${encodeURIComponent(email)}`);
-        const voucherList = vouchers.data || vouchers.vouchers || (Array.isArray(vouchers) ? vouchers : []);
+        const rawResponse = await mdiRequest('GET', `/v1/partner/vouchers?email=${encodeURIComponent(email)}`);
+        
+        // LOG RAW RESPONSE for field mapping
+        console.log('[PATIENT CASES] Raw MDI response keys:', JSON.stringify(Object.keys(rawResponse)));
+        const voucherList = rawResponse.data || rawResponse.vouchers || (Array.isArray(rawResponse) ? rawResponse : []);
+        
+        if (voucherList.length > 0) {
+          // Log first voucher's complete structure for field mapping
+          console.log('[PATIENT CASES] First voucher ALL KEYS:', JSON.stringify(Object.keys(voucherList[0])));
+          console.log('[PATIENT CASES] First voucher RAW:', JSON.stringify(voucherList[0]).slice(0, 2000));
+        }
 
         for (const v of voucherList) {
           cases.push({
             case_id: v.encounter_id || v.case_id || null,
-            patient_id: v.patient_id || null,
+            patient_id: v.patient_id || v.patient?.id || null,
             voucher_id: v.id || v.voucher_id || null,
-            product_key: v.product_key || null,
-            product_name: v.offering_name || v.product_name || null,
+            product_key: v.product_key || v.offering_key || null,
+            product_name: v.offering_name || v.product_name || v.offering?.name || null,
             status: v.encounter_status || v.status || 'pending',
             encounter_status: v.encounter_status || null,
             created_at: v.created_at || null,
@@ -146,13 +152,18 @@ exports.handler = async (event) => {
           const encounters = await mdiRequest('GET', `/v1/partner/encounters?email=${encodeURIComponent(email)}`);
           const encounterList = encounters.data || encounters.encounters || (Array.isArray(encounters) ? encounters : []);
 
+          if (encounterList.length > 0) {
+            console.log('[PATIENT CASES] First encounter ALL KEYS:', JSON.stringify(Object.keys(encounterList[0])));
+            console.log('[PATIENT CASES] First encounter RAW:', JSON.stringify(encounterList[0]).slice(0, 2000));
+          }
+
           for (const enc of encounterList) {
             cases.push({
               case_id: enc.id || enc.encounter_id || null,
-              patient_id: enc.patient_id || null,
+              patient_id: enc.patient_id || enc.patient?.id || null,
               voucher_id: enc.voucher_id || null,
-              product_key: enc.product_key || null,
-              product_name: enc.offering_name || enc.product_name || null,
+              product_key: enc.product_key || enc.offering_key || null,
+              product_name: enc.offering_name || enc.product_name || enc.offering?.name || null,
               status: enc.status || 'pending',
               encounter_status: enc.status || null,
               created_at: enc.created_at || null,
@@ -193,6 +204,7 @@ function orderToCase(order, voucherId) {
     patient_id: order.patient_id || null,
     voucher_id: voucherId,
     product_key: order.product_key || null,
+    product_name: order.product_name || null,
     status: order.status || 'pending',
     created_at: order.created_at || null,
     updated_at: order.updated_at || null
