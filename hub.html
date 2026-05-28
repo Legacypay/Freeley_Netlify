@@ -1717,8 +1717,11 @@
         const latest = cases[0];
 
         if (latest.patient_id) sessionStorage.setItem('freeley_patient_id', latest.patient_id);
+        if (latest.patient_email) sessionStorage.setItem('freeley_patient_email', latest.patient_email);
         if (latest.case_id || latest.id) sessionStorage.setItem('freeley_case_id', latest.case_id || latest.id);
-        if (latest.product_key || latest.product) sessionStorage.setItem('freeley_product', latest.product_key || latest.product || '');
+        if (latest.voucher_id) sessionStorage.setItem('freeley_voucher_id', latest.voucher_id);
+        if (latest.product_name) sessionStorage.setItem('freeley_product', latest.product_name);
+        if (latest.product_category) sessionStorage.setItem('freeley_product_category', latest.product_category);
 
         const productKey = latest.product_key || latest.product || '';
         const productName = PRODUCT_NAMES[productKey] || latest.product_name || productKey || 'Your Treatment';
@@ -1740,8 +1743,27 @@
           'glutathione-nasal': 'assets/brand/glut_transparent.png',
           'glutathione-injectable': 'assets/brand/glut_transparent.png'
         };
+        // Also map by product_name (from MDI questionnaire mapping)
+        const nameImgMap = {
+          'Semaglutide': 'assets/brand/sema_transparent.png',
+          'Tirzepatide': 'assets/brand/tirzz_transparent.png',
+          'NAD+ Injection': 'assets/brand/nad_transparent.png',
+          'Sermorelin Injectable': 'assets/brand/serm_transparent.png',
+          'Sermorelin Troche': 'assets/brand/serm_transparent.png',
+          'Sermorelin Nasal Spray': 'assets/brand/serm_transparent.png',
+          'Glutathione Troche': 'assets/brand/glut_transparent.png',
+          'Glutathione Injectable': 'assets/brand/glut_transparent.png'
+        };
+        // Map by product_category as fallback
+        const catImgMap = {
+          'weight-loss': 'assets/brand/sema_transparent.png',
+          'longevity': 'assets/brand/nad_transparent.png',
+          'hair-loss': 'assets/brand/sema_transparent.png',
+          'sexual-wellness': 'assets/brand/sema_transparent.png'
+        };
         const imgEl = document.getElementById('overview-product-img');
-        if (imgMap[productKey]) imgEl.src = imgMap[productKey];
+        const imgSrc = imgMap[productKey] || nameImgMap[productName] || catImgMap[latest.product_category] || null;
+        if (imgSrc) imgEl.src = imgSrc;
         imgEl.alt = productName;
 
         const badge = document.getElementById('overview-status-badge');
