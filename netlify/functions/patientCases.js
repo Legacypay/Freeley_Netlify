@@ -1,9 +1,10 @@
 /**
  * Netlify Function: patientCases
  *
- * Looks up a patient's MDI case data from the mdi-orders blob store.
- * This bridges the gap where checkout stores voucher_id + patient_id
- * but the hub needs case_id (which only arrives via webhook later).
+ * Looks up a patient's MDI case data. Supports three lookup modes:
+ *   1. voucher_id — fast blob lookup
+ *   2. patient_id — blob scan
+ *   3. email — MDI API search via partner/vouchers
  *
  * POST /.netlify/functions/patientCases
  * Headers: { Authorization: 'Bearer <firebase-id-token>' }
@@ -11,13 +12,13 @@
  * Request Body:
  * {
  *   "patient_id": "uuid",        // MDI patient ID
- *   "voucher_id": "uuid"         // MDI voucher ID (optional, faster lookup)
+ *   "voucher_id": "uuid",        // MDI voucher ID (optional, faster lookup)
+ *   "email": "user@example.com"  // Patient email for MDI API search
  * }
  */
 
-const { CORS_HEADERS } = require('./lib/mdi-client');
+const { CORS_HEADERS, mdiRequest } = require('./lib/mdi-client');
 const { verifyFirebaseToken } = require('./lib/verify-firebase-token');
-const { getStore } = require('@netlify/blobs');
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
@@ -60,53 +61,115 @@ exports.handler = async (event) => {
       };
     }
 
-    // ── Step 3: Search mdi-orders blob store ────────────────────
     console.log(`[PATIENT CASES] Looking up: patient=${patient_id || 'N/A'}, voucher=${voucher_id || 'N/A'}, email=${email || 'N/A'}`);
 
-    const store = getStore('mdi-orders');
     const cases = [];
 
-    // Fast path: direct voucher_id lookup
-    if (voucher_id) {
+    // ── Step 3a: Try blob store first (fast path) ──────────────
+    let blobsAvailable = false;
+    if (voucher_id || patient_id) {
       try {
-        const order = await store.get(voucher_id, { type: 'json' });
-        if (order) {
-          console.log(`[PATIENT CASES] Found order by voucher_id: ${voucher_id}, case_id: ${order.case_id || 'none'}`);
-          cases.push(orderToCase(order, voucher_id));
-        }
-      } catch (e) {
-        console.warn(`[PATIENT CASES] Direct voucher lookup failed: ${e.message}`);
-      }
-    }
+        const { getStore } = require('@netlify/blobs');
+        const store = getStore('mdi-orders');
 
-    // If no direct match, scan by patient_id or email
-    if (cases.length === 0 && (patient_id || email)) {
-      try {
-        const { blobs } = await store.list();
-        if (blobs && blobs.length > 0) {
-          for (const blob of blobs) {
-            try {
-              const order = await store.get(blob.key, { type: 'json' });
-              if (!order) continue;
-              // Match by patient_id
-              if (patient_id && order.patient_id === patient_id) {
-                console.log(`[PATIENT CASES] Found order by patient_id: ${blob.key}, case_id: ${order.case_id || 'none'}`);
-                cases.push(orderToCase(order, blob.key));
-              }
-              // Match by email (check order.email and order.patient?.email)
-              else if (email && (order.email === email || (order.patient && order.patient.email === email))) {
-                console.log(`[PATIENT CASES] Found order by email: ${blob.key}, case_id: ${order.case_id || 'none'}`);
-                cases.push(orderToCase(order, blob.key));
-              }
-            } catch { /* skip */ }
+        if (voucher_id) {
+          try {
+            const order = await store.get(voucher_id, { type: 'json' });
+            if (order) {
+              console.log(`[PATIENT CASES] Found order by voucher_id: ${voucher_id}`);
+              cases.push(orderToCase(order, voucher_id));
+            }
+          } catch (e) {
+            console.warn(`[PATIENT CASES] Direct voucher lookup failed: ${e.message}`);
           }
         }
+
+        if (cases.length === 0 && patient_id) {
+          try {
+            const { blobs } = await store.list();
+            if (blobs && blobs.length > 0) {
+              for (const blob of blobs) {
+                try {
+                  const order = await store.get(blob.key, { type: 'json' });
+                  if (order && order.patient_id === patient_id) {
+                    cases.push(orderToCase(order, blob.key));
+                    break;
+                  }
+                } catch { /* skip */ }
+              }
+            }
+          } catch (e) {
+            console.warn(`[PATIENT CASES] Blob scan failed: ${e.message}`);
+          }
+        }
+
+        blobsAvailable = true;
       } catch (e) {
-        console.warn(`[PATIENT CASES] Blob scan failed: ${e.message}`);
+        console.warn(`[PATIENT CASES] Blobs unavailable: ${e.message}`);
       }
     }
 
-    console.log(`[PATIENT CASES] Found ${cases.length} case(s)`);
+    // ── Step 3b: Email lookup via MDI API ───────────────────────
+    // When blobs don't have results or email is the only parameter,
+    // query MDI partner API for vouchers/encounters by email.
+    if (cases.length === 0 && email) {
+      console.log(`[PATIENT CASES] Searching MDI API for email: ${email}`);
+      try {
+        // Try GET /v1/partner/vouchers?email=<email>
+        const vouchers = await mdiRequest('GET', `/v1/partner/vouchers?email=${encodeURIComponent(email)}`);
+        const voucherList = vouchers.data || vouchers.vouchers || (Array.isArray(vouchers) ? vouchers : []);
+
+        for (const v of voucherList) {
+          cases.push({
+            case_id: v.encounter_id || v.case_id || null,
+            patient_id: v.patient_id || null,
+            voucher_id: v.id || v.voucher_id || null,
+            product_key: v.product_key || null,
+            product_name: v.offering_name || v.product_name || null,
+            status: v.encounter_status || v.status || 'pending',
+            encounter_status: v.encounter_status || null,
+            created_at: v.created_at || null,
+            updated_at: v.updated_at || null
+          });
+        }
+
+        if (cases.length > 0) {
+          console.log(`[PATIENT CASES] Found ${cases.length} voucher(s) via MDI API`);
+        } else {
+          console.log(`[PATIENT CASES] No vouchers found via MDI API for: ${email}`);
+        }
+      } catch (e) {
+        console.warn(`[PATIENT CASES] MDI voucher search failed: ${e.message}`);
+
+        // Fallback: try partner/encounters endpoint
+        try {
+          const encounters = await mdiRequest('GET', `/v1/partner/encounters?email=${encodeURIComponent(email)}`);
+          const encounterList = encounters.data || encounters.encounters || (Array.isArray(encounters) ? encounters : []);
+
+          for (const enc of encounterList) {
+            cases.push({
+              case_id: enc.id || enc.encounter_id || null,
+              patient_id: enc.patient_id || null,
+              voucher_id: enc.voucher_id || null,
+              product_key: enc.product_key || null,
+              product_name: enc.offering_name || enc.product_name || null,
+              status: enc.status || 'pending',
+              encounter_status: enc.status || null,
+              created_at: enc.created_at || null,
+              updated_at: enc.updated_at || null
+            });
+          }
+
+          if (cases.length > 0) {
+            console.log(`[PATIENT CASES] Found ${cases.length} encounter(s) via MDI API`);
+          }
+        } catch (e2) {
+          console.warn(`[PATIENT CASES] MDI encounter search also failed: ${e2.message}`);
+        }
+      }
+    }
+
+    console.log(`[PATIENT CASES] Returning ${cases.length} case(s)`);
 
     return {
       statusCode: 200,
