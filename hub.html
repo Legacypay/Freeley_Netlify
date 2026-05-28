@@ -1060,39 +1060,59 @@
         <!-- Main Content Area -->
         <div>
           
-          <!-- OVERVIEW MOCK -->
+          <!-- OVERVIEW — dynamically loaded from MDI -->
           <div id="panel-overview" class="dash-panel active">
-            <div class="panel-card">
-              <div class="panel-header">
-                <h3>Current Treatment Plan</h3>
-                <span class="sub-status">Active</span>
-              </div>
-              <div class="sub-info" style="margin-bottom: 24px;">
-                <img src="assets/brand/tirzz_transparent.png" alt="Tirzepatide" class="sub-img" style="object-fit: contain; border-radius:8px;" loading="lazy" decoding="async">
-                <div>
-                  <div class="sub-name">Tirzepatide + B6 Compound</div>
-                  <div class="sub-desc">10mg weekly injection. 3-month supply.</div>
-                  <div style="font-size:12px; font-weight:500; color:var(--text); margin-top:8px;">Next shipment processing: Sept 14, 2026</div>
+            <!-- Loading state -->
+            <div id="overview-loading" style="text-align:center; padding:48px 0; color:var(--text-muted);">
+              <div class="spinner" style="width:32px;height:32px;border:3px solid #e0e0e0;border-top:3px solid var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px;"></div>
+              Loading your treatment data...
+            </div>
+
+            <!-- Has-case state (hidden until data loads) -->
+            <div id="overview-has-case" style="display:none;">
+              <div class="panel-card">
+                <div class="panel-header">
+                  <h3>Current Treatment Plan</h3>
+                  <span class="sub-status" id="overview-status-badge">Active</span>
+                </div>
+                <div class="sub-info" style="margin-bottom: 24px;">
+                  <img id="overview-product-img" src="assets/brand/tirzz_transparent.png" alt="Treatment" class="sub-img" style="object-fit: contain; border-radius:8px;" loading="lazy" decoding="async">
+                  <div>
+                    <div class="sub-name" id="overview-product-name">Your Treatment</div>
+                    <div class="sub-desc" id="overview-product-desc">Loading...</div>
+                    <div id="overview-updated" style="font-size:12px; font-weight:500; color:var(--text); margin-top:8px;"></div>
+                  </div>
+                </div>
+                <div id="overview-patient-id" style="font-size:11px; color:var(--text-muted); margin-bottom:12px;"></div>
+                <div style="display:flex; gap:12px;">
+                  <button class="req-btn"><i class="ri-focus-3-line"></i> Request Refill / Dosage Change</button>
+                  <button class="req-btn req-btn-outline" onclick="openMessaging()"><i class="ri-customer-service-2-line"></i> Message Care Team</button>
                 </div>
               </div>
-              <div style="display:flex; gap:12px;">
-                <button class="req-btn"><i class="ri-focus-3-line"></i> Request Refill / Dosage Change</button>
-                <button class="req-btn req-btn-outline" onclick="openMessaging()"><i class="ri-customer-service-2-line"></i> Message Care Team</button>
+
+              <div class="panel-card" id="latestMessageCard">
+                <div class="panel-header">
+                  <h3>Latest Provider Message</h3>
+                </div>
+                <div id="latestMessageContent" class="doc-msg" style="margin:0;">
+                  <div style="text-align:center; color:var(--text-muted); padding:20px 0; font-size:14px;">
+                    <i class="ri-chat-3-line" style="font-size:28px; display:block; margin-bottom:8px; opacity:0.4;"></i>
+                    No messages yet. Your care team will reach out once they review your case.
+                  </div>
+                </div>
+                <div style="margin-top:12px; text-align:center;">
+                  <button class="req-btn req-btn-outline" onclick="openMessaging()" style="font-size:13px;"><i class="ri-chat-3-line"></i> Open Messages</button>
+                </div>
               </div>
             </div>
 
-            <div class="panel-card" id="latestMessageCard">
-              <div class="panel-header">
-                <h3>Latest Provider Message</h3>
-              </div>
-              <div id="latestMessageContent" class="doc-msg" style="margin:0;">
-                <div style="text-align:center; color:var(--text-muted); padding:20px 0; font-size:14px;">
-                  <i class="ri-chat-3-line" style="font-size:28px; display:block; margin-bottom:8px; opacity:0.4;"></i>
-                  No messages yet. Your care team will reach out once they review your case.
-                </div>
-              </div>
-              <div style="margin-top:12px; text-align:center;">
-                <button class="req-btn req-btn-outline" onclick="openMessaging()" style="font-size:13px;"><i class="ri-chat-3-line"></i> Open Messages</button>
+            <!-- No-case state -->
+            <div id="overview-no-case" style="display:none;">
+              <div class="panel-card" style="text-align:center; padding:48px 24px;">
+                <i class="ri-capsule-line" style="font-size:48px; color:var(--accent); opacity:0.5; display:block; margin-bottom:16px;"></i>
+                <h3 style="margin-bottom:8px; color:var(--heading);">No Active Treatment</h3>
+                <p style="color:var(--text-muted); font-size:14px; margin-bottom:24px;">Start a new treatment to get personalized care from our medical team.</p>
+                <a href="/quiz" class="req-btn" style="text-decoration:none; display:inline-flex;"><i class="ri-add-line"></i> Start New Treatment</a>
               </div>
             </div>
           </div>
@@ -1371,12 +1391,8 @@
       document.getElementById('dashUserInitial').innerText = formattedName.charAt(0).toUpperCase();
       document.getElementById('dashUserEmail').innerText = email;
 
-      // Trigger MDI status refresh now that Firebase auth is confirmed
-      if (sessionStorage.getItem('freeley_patient_id') || sessionStorage.getItem('freeley_voucher_id')) {
-        setTimeout(() => refreshCaseStatus(), 300);
-        // Also load latest provider message for the overview card
-        setTimeout(() => loadLatestProviderMessage(), 600);
-      }
+      // Load overview cases dynamically (finds cases by email, populates sessionStorage)
+      setTimeout(() => loadOverviewCases(), 200);
     };
 
     // Panel switching logic
@@ -1659,6 +1675,107 @@
         }
       } catch (e) {
         console.warn('[Hub] Could not load latest provider message:', e);
+      }
+    }
+
+    // ── Load Overview Cases (dynamic, by email) ───────────────────
+    async function loadOverviewCases() {
+      const loadingEl = document.getElementById('overview-loading');
+      const hasCaseEl = document.getElementById('overview-has-case');
+      const noCaseEl  = document.getElementById('overview-no-case');
+      if (!loadingEl) return;
+
+      loadingEl.style.display = 'block';
+      hasCaseEl.style.display = 'none';
+      noCaseEl.style.display  = 'none';
+
+      try {
+        const email = document.getElementById('dashUserEmail')?.innerText;
+        if (!email) { noCaseEl.style.display = 'block'; loadingEl.style.display = 'none'; return; }
+
+        const authToken = await getFirebaseIdToken();
+        const res = await fetch('/.netlify/functions/patientCases', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(authToken ? { 'Authorization': 'Bearer ' + authToken } : {})
+          },
+          body: JSON.stringify({ email: email })
+        });
+
+        if (!res.ok) throw new Error('patientCases ' + res.status);
+        const data = await res.json();
+
+        const cases = data.cases || data.data || [];
+        if (!cases.length) {
+          loadingEl.style.display = 'none';
+          noCaseEl.style.display = 'block';
+          return;
+        }
+
+        cases.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+        const latest = cases[0];
+
+        if (latest.patient_id) sessionStorage.setItem('freeley_patient_id', latest.patient_id);
+        if (latest.case_id || latest.id) sessionStorage.setItem('freeley_case_id', latest.case_id || latest.id);
+        if (latest.product_key || latest.product) sessionStorage.setItem('freeley_product', latest.product_key || latest.product || '');
+
+        const productKey = latest.product_key || latest.product || '';
+        const productName = PRODUCT_NAMES[productKey] || latest.product_name || productKey || 'Your Treatment';
+        const statusRaw = latest.status || latest.encounter_status || 'pending';
+        const statusLabel = statusRaw.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+
+        document.getElementById('overview-product-name').textContent = productName;
+        document.getElementById('overview-product-desc').textContent = 'Status: ' + statusLabel;
+
+        const imgMap = {
+          'tirzepatide': 'assets/brand/tirzz_transparent.png',
+          'semaglutide': 'assets/brand/sema_transparent.png',
+          'nad-plus': 'assets/brand/nad_transparent.png',
+          'nad-plus-tablet': 'assets/brand/nad_transparent.png',
+          'sermorelin-injectable': 'assets/brand/serm_transparent.png',
+          'sermorelin-troche': 'assets/brand/serm_transparent.png',
+          'sermorelin-nasal': 'assets/brand/serm_transparent.png',
+          'glutathione-troche': 'assets/brand/glut_transparent.png',
+          'glutathione-nasal': 'assets/brand/glut_transparent.png',
+          'glutathione-injectable': 'assets/brand/glut_transparent.png'
+        };
+        const imgEl = document.getElementById('overview-product-img');
+        if (imgMap[productKey]) imgEl.src = imgMap[productKey];
+        imgEl.alt = productName;
+
+        const badge = document.getElementById('overview-status-badge');
+        badge.textContent = statusLabel;
+        if (statusRaw === 'approved' || statusRaw === 'completed') {
+          badge.style.background = '#e8f5e9'; badge.style.color = '#2e7d32';
+        } else if (statusRaw === 'cancelled') {
+          badge.style.background = '#ffebee'; badge.style.color = '#c62828';
+        } else {
+          badge.style.background = '#fff8e1'; badge.style.color = '#f57f17';
+        }
+
+        const updatedAt = latest.updated_at || latest.created_at;
+        if (updatedAt) {
+          const d = new Date(updatedAt);
+          document.getElementById('overview-updated').textContent = 'Last updated: ' + d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+        } else {
+          document.getElementById('overview-updated').textContent = 'Case submitted — awaiting physician review';
+        }
+
+        if (latest.patient_id) {
+          document.getElementById('overview-patient-id').textContent = 'Patient ID: ' + latest.patient_id;
+        }
+
+        loadingEl.style.display = 'none';
+        hasCaseEl.style.display = 'block';
+
+        setTimeout(() => refreshCaseStatus(), 300);
+        setTimeout(() => loadLatestProviderMessage(), 600);
+
+      } catch (e) {
+        console.warn('[Hub] loadOverviewCases error:', e);
+        loadingEl.style.display = 'none';
+        noCaseEl.style.display = 'block';
       }
     }
 
