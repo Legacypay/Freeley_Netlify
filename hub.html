@@ -1076,7 +1076,7 @@
                   <span class="sub-status" id="overview-status-badge">Active</span>
                 </div>
                 <div class="sub-info" style="margin-bottom: 24px;">
-                  <img id="overview-product-img" src="assets/brand/tirzz_transparent.png" alt="Treatment" class="sub-img" style="object-fit: contain; border-radius:8px;" loading="lazy" decoding="async">
+                  <img id="overview-product-img" src="" alt="" class="sub-img" style="object-fit: contain; border-radius:8px; width:64px; height:64px; background:var(--border-light);" loading="lazy" decoding="async">
                   <div>
                     <div class="sub-name" id="overview-product-name">Your Treatment</div>
                     <div class="sub-desc" id="overview-product-desc">Loading...</div>
@@ -1160,90 +1160,44 @@
             </div>
           </div>
 
-<!-- RECORDS MOCK -->
+<!-- RECORDS — populated by physician -->
           <div id="panel-records" class="dash-panel">
             <div class="panel-card">
               <div class="panel-header">
                 <h3>Clinical Notes & Files</h3>
               </div>
-              
-              <div class="doc-msg">
-                <div class="doc-meta">
-                  <img src="assets/sarah.jpeg" alt="Dr. Lewis" class="doc-avatar" loading="lazy" decoding="async">
-                  <div>
-                    <div class="doc-name">Initial Consultation Transcript</div>
-                    <div class="doc-date">June 12, 2026</div>
-                  </div>
-                </div>
-                <div class="doc-body">
-                  <strong>Chief Complaint:</strong> Patient seeking medical weight management for obesity and metabolic regulation.<br>
-                  <strong>Assessment:</strong> Patient meets BMI criteria for GLP-1 therapy. No contraindications (no history of medullary thyroid carcinoma or MEN2). Bloodwork indicates pre-diabetes.<br>
-                  <strong>Plan:</strong> Start Tirzepatide induction at 2.5mg weekly. Diet and exercise counseling provided. Follow up in 4 weeks.
-                </div>
-              </div>
-
-               <div class="doc-msg" style="border-left-color: var(--border);">
-                <div class="doc-meta">
-                  <div class="doc-avatar" style="background:var(--border-light); color:var(--text-muted); display:flex; align-items:center; justify-content:center;"><i class="ri-flask-fill"></i></div>
-                  <div>
-                    <div class="doc-name">Lab Results — Quest Diagnostics</div>
-                    <div class="doc-date">June 10, 2026</div>
-                  </div>
-                </div>
-                <a href="#" class="file-attachment"><i class="ri-file-text-line"></i> Comprehensive_Metabolic_Panel.pdf</a>
+              <div style="text-align:center; padding:48px 24px; color:var(--text-muted);">
+                <i class="ri-file-list-3-line" style="font-size:48px; display:block; margin-bottom:16px; opacity:0.3;"></i>
+                <p style="font-size:15px; margin:0 0 8px;">No clinical notes yet</p>
+                <p style="font-size:13px; margin:0; opacity:0.7;">Your physician's consultation notes, lab results, and medical files will appear here once your case is reviewed.</p>
               </div>
             </div>
           </div>
 
 
-          <!-- BILLING MOCK -->
+
+          <!-- BILLING — integrated with payment system -->
           <div id="panel-billing" class="dash-panel">
             <div class="panel-card">
               <div class="panel-header">
                 <h3>Payment Methods</h3>
-                <button class="req-btn req-btn-outline">Add Card</button>
               </div>
-              <div style="display:flex; align-items:center; gap:16px; padding: 20px; border: 1px solid var(--border); border-radius: 12px;">
-                <i class="ri-visa-line" style="font-size: 32px; color: #1a1f71;"></i>
-                <div style="flex:1;">
-                  <div style="font-weight: 600; font-size: 15px;">Visa ending in 4242</div>
-                  <div style="font-size:13px; color:var(--text-faint);">Expires 12/28 • Default Payment</div>
-                </div>
+              <div style="text-align:center; padding:32px 24px; color:var(--text-muted);">
+                <i class="ri-bank-card-line" style="font-size:48px; display:block; margin-bottom:16px; opacity:0.3;"></i>
+                <p style="font-size:15px; margin:0 0 8px;">No payment methods on file</p>
+                <p style="font-size:13px; margin:0; opacity:0.7;">Payment information is managed through your checkout process. Contact support to update billing details.</p>
               </div>
             </div>
-
             <div class="panel-card">
               <div class="panel-header">
                 <h3>Invoice History</h3>
               </div>
-              <table style="width:100%; font-size: 14px; text-align: left; border-collapse: collapse;">
-                <tr style="border-bottom: 2px solid var(--border-light);">
-                  <th style="padding: 12px 0;">Date</th>
-                  <th style="padding: 12px 0;">Description</th>
-                  <th style="padding: 12px 0;">Amount</th>
-                  <th style="padding: 12px 0;">Receipt</th>
-                </tr>
-                <tr style="border-bottom: 1px solid var(--border-light);">
-                  <td style="padding: 16px 0; color:var(--text-muted);">Aug 14, 2026</td>
-                  <td style="padding: 16px 0; font-weight:500;">Tirzepatide Qtr Supply</td>
-                  <td style="padding: 16px 0;">$297.00</td>
-                  <td style="padding: 16px 0;"><a href="#" style="color:var(--green);"><i class="ri-download-2-line"></i> PDF</a></td>
-                </tr>
-                <tr style="border-bottom: 1px solid var(--border-light);">
-                  <td style="padding: 16px 0; color:var(--text-muted);">May 14, 2026</td>
-                  <td style="padding: 16px 0; font-weight:500;">Tirzepatide Monthly (Month 2)</td>
-                  <td style="padding: 16px 0;">$119.00</td>
-                  <td style="padding: 16px 0;"><a href="#" style="color:var(--green);"><i class="ri-download-2-line"></i> PDF</a></td>
-                </tr>
-                <tr>
-                  <td style="padding: 16px 0; color:var(--text-muted);">Apr 12, 2026</td>
-                  <td style="padding: 16px 0; font-weight:500;">Initial Consult & Month 1</td>
-                  <td style="padding: 16px 0;">$119.00</td>
-                  <td style="padding: 16px 0;"><a href="#" style="color:var(--green);"><i class="ri-download-2-line"></i> PDF</a></td>
-                </tr>
-              </table>
+              <div style="text-align:center; padding:32px 24px; color:var(--text-muted);">
+                <i class="ri-receipt-line" style="font-size:48px; display:block; margin-bottom:16px; opacity:0.3;"></i>
+                <p style="font-size:15px; margin:0 0 8px;">No invoices yet</p>
+                <p style="font-size:13px; margin:0; opacity:0.7;">Your payment receipts and invoices will appear here after your first order is processed.</p>
+              </div>
             </div>
-
           </div>
 
         </div>
