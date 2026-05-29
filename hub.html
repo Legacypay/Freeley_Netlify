@@ -985,7 +985,7 @@
   <!-- Auth Screen (Visible by default) -->
   <div id="auth-screen">
     <div class="auth-card">
-      <img src="assets/brand/freeley_icon_forest.png" alt="Freeley" class="auth-logo" loading="lazy" decoding="async">
+      <img src="assets/sema.webp" alt="Freeley" class="auth-logo" loading="lazy" decoding="async">
       <h1 class="auth-title" id="authTitle">Welcome back.</h1>
       <p class="auth-subtitle" id="authSubtitle">Sign in to the Freeley Health Hub to view your medical records, active treatments, and messages.</p>
       
@@ -1679,34 +1679,34 @@
         document.getElementById('overview-product-desc').textContent = 'Status: ' + statusLabel;
 
         const imgMap = {
-          'tirzepatide': 'assets/brand/tirzz_transparent.png',
-          'semaglutide': 'assets/brand/sema_transparent.png',
-          'nad-plus': 'assets/brand/nad_transparent.png',
-          'nad-plus-tablet': 'assets/brand/nad_transparent.png',
-          'sermorelin-injectable': 'assets/brand/serm_transparent.png',
-          'sermorelin-troche': 'assets/brand/serm_transparent.png',
-          'sermorelin-nasal': 'assets/brand/serm_transparent.png',
-          'glutathione-troche': 'assets/brand/glut_transparent.png',
-          'glutathione-nasal': 'assets/brand/glut_transparent.png',
-          'glutathione-injectable': 'assets/brand/glut_transparent.png'
+          'tirzepatide': 'assets/tirz.webp',
+          'semaglutide': 'assets/sema.webp',
+          'nad-plus': 'assets/sema.webp',
+          'nad-plus-tablet': 'assets/sema.webp',
+          'sermorelin-injectable': 'assets/sema.webp',
+          'sermorelin-troche': 'assets/sema.webp',
+          'sermorelin-nasal': 'assets/sema.webp',
+          'glutathione-troche': 'assets/sema.webp',
+          'glutathione-nasal': 'assets/sema.webp',
+          'glutathione-injectable': 'assets/sema.webp'
         };
         // Also map by product_name (from MDI questionnaire mapping)
         const nameImgMap = {
-          'Semaglutide': 'assets/brand/sema_transparent.png',
-          'Tirzepatide': 'assets/brand/tirzz_transparent.png',
-          'NAD+ Injection': 'assets/brand/nad_transparent.png',
-          'Sermorelin Injectable': 'assets/brand/serm_transparent.png',
-          'Sermorelin Troche': 'assets/brand/serm_transparent.png',
-          'Sermorelin Nasal Spray': 'assets/brand/serm_transparent.png',
-          'Glutathione Troche': 'assets/brand/glut_transparent.png',
-          'Glutathione Injectable': 'assets/brand/glut_transparent.png'
+          'Semaglutide': 'assets/sema.webp',
+          'Tirzepatide': 'assets/tirz.webp',
+          'NAD+ Injection': 'assets/sema.webp',
+          'Sermorelin Injectable': 'assets/sema.webp',
+          'Sermorelin Troche': 'assets/sema.webp',
+          'Sermorelin Nasal Spray': 'assets/sema.webp',
+          'Glutathione Troche': 'assets/sema.webp',
+          'Glutathione Injectable': 'assets/sema.webp'
         };
         // Map by product_category as fallback
         const catImgMap = {
-          'weight-loss': 'assets/brand/sema_transparent.png',
-          'longevity': 'assets/brand/nad_transparent.png',
-          'hair-loss': 'assets/brand/sema_transparent.png',
-          'sexual-wellness': 'assets/brand/sema_transparent.png'
+          'weight-loss': 'assets/sema.webp',
+          'longevity': 'assets/sema.webp',
+          'hair-loss': 'assets/sema.webp',
+          'sexual-wellness': 'assets/sema.webp'
         };
         const imgEl = document.getElementById('overview-product-img');
         const imgSrc = imgMap[productKey] || nameImgMap[productName] || catImgMap[latest.product_category] || null;
