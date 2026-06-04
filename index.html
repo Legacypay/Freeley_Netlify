@@ -1199,6 +1199,13 @@
 
   <!-- HERO — rebuilt to match Figma Revision 5 (node 149:2494) -->
   <style>
+    /* Hide the auto-injected legacy nav + sticky CTA on the homepage;
+       the Figma hero has its own nav. Footer is still injected by
+       initPage('') so it keeps working. */
+    body > nav#nav,
+    body > .sticky-mobile-cta { display: none !important; }
+    body { padding-top: 0 !important; }
+
     /* Figma color tokens for this hero. Scoped to .fig-hero to avoid
        leaking into other sections. */
     .fig-hero {
@@ -1232,21 +1239,22 @@
       z-index: 0;
     }
 
-    /* Right-side hero image of the couple. */
+    /* Right-side hero image of the couple. Anchored INSIDE
+       .fig-hero__inner (1420px centered container) at the exact
+       Figma coordinates (left: 626 from the 1420px frame). */
     .fig-hero__couple {
       position: absolute;
       top: 113px;
-      left: 50%;
+      left: 626px;
       width: 1029px;
       height: 771px;
-      transform: translateX(calc(710px - 50%));
       z-index: 1;
       pointer-events: none;
     }
     .fig-hero__couple img {
       width: 100%; height: 100%;
       object-fit: contain;
-      object-position: right bottom;
+      object-position: left bottom;
       display: block;
     }
 
@@ -1420,7 +1428,6 @@
     .fig-steps {
       display: flex;
       gap: 40px;
-      margin-bottom: 40px;
     }
     .fig-step {
       display: flex;
@@ -1456,17 +1463,25 @@
       margin-top: 6px;
     }
 
-    /* Stat + Verified row */
+    /* Stat + Verified row — separate absolute block matching Figma
+       (left:170 top:677 width:1080) so it doesn't get squished by the
+       565px content column. */
     .fig-stat-row {
+      position: absolute;
+      left: 170px;
+      top: 677px;
+      width: 1080px;
       display: flex;
       align-items: center;
-      gap: 56px;
-      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 32px;
+      z-index: 3;
     }
     .fig-stat {
       display: flex;
       gap: 14px;
       align-items: flex-start;
+      max-width: 407px;
     }
     .fig-stat__num {
       font-family: 'Inter', sans-serif;
@@ -1474,6 +1489,7 @@
       font-size: 26px;
       color: var(--fig-green-dark);
       flex-shrink: 0;
+      line-height: 1.2;
     }
     .fig-stat__label {
       font-family: 'Inter', sans-serif;
@@ -1486,6 +1502,7 @@
       display: flex;
       align-items: center;
       gap: 28px;
+      flex-shrink: 0;
     }
     .fig-verified__label {
       font-family: 'Inter', sans-serif;
@@ -1499,7 +1516,7 @@
       align-items: center;
       gap: 24px;
     }
-    .fig-verified__badges img { display: block; }
+    .fig-verified__badges img { display: block; height: 49px; width: auto; }
 
     /* Bottom glass CTA bar */
     .fig-cta-bar {
@@ -1605,14 +1622,15 @@
     }
   </style>
   <section class="fig-hero" id="hero">
-    <!-- Couple-in-green hero image (right side) -->
-    <div class="fig-hero__couple" aria-hidden="true">
-      <img src="assets/brand/hero-couple-green.png"
-        alt="" width="1029" height="771"
-        fetchpriority="high" decoding="async">
-    </div>
-
     <div class="fig-hero__inner">
+      <!-- Couple-in-green hero image (right side) — inside .fig-hero__inner
+           so left:626 positions relative to the 1420px frame, not the viewport. -->
+      <div class="fig-hero__couple" aria-hidden="true">
+        <img src="assets/brand/hero-couple-green.png"
+          alt="" width="1029" height="771"
+          fetchpriority="high" decoding="async">
+      </div>
+
       <!-- Top nav -->
       <nav class="fig-hero__nav" aria-label="Primary">
         <a href="/" class="fig-hero__logo" aria-label="Freeley home">
@@ -1696,28 +1714,29 @@
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- Stat + verified row -->
-        <div class="fig-stat-row">
-          <div class="fig-stat">
-            <div class="fig-stat__num">15%</div>
-            <div class="fig-stat__label">Average body weight lost by patients on our physician-guided GLP-1 protocol</div>
-          </div>
-          <div class="fig-verified">
-            <span class="fig-verified__label">Verified &amp; Certified</span>
-            <div class="fig-verified__badges">
-              <a href="https://www.legitscript.com/websites/?checker_keywords=freeley.com" target="_blank" rel="noopener" title="Verify LegitScript Approval">
-                <img src="https://static.legitscript.com/seals/49921676.png"
-                  alt="LegitScript Certified" width="45" height="49"
-                  loading="lazy" decoding="async">
-              </a>
-              <img src="assets/hipaa_badge.png"
-                alt="HIPAA Compliant" width="76" height="43"
+      <!-- Stat + verified row — sibling of fig-hero__content, spans the
+           full 1080px width per Figma. -->
+      <div class="fig-stat-row">
+        <div class="fig-stat">
+          <div class="fig-stat__num">15%</div>
+          <div class="fig-stat__label">Average body weight lost by patients on our physician-guided GLP-1 protocol</div>
+        </div>
+        <div class="fig-verified">
+          <span class="fig-verified__label">Verified &amp; Certified</span>
+          <div class="fig-verified__badges">
+            <a href="https://www.legitscript.com/websites/?checker_keywords=freeley.com" target="_blank" rel="noopener" title="Verify LegitScript Approval">
+              <img src="https://static.legitscript.com/seals/49921676.png"
+                alt="LegitScript Certified" width="45" height="49"
                 loading="lazy" decoding="async">
-              <img src="assets/usa_badge.png"
-                alt="Made in USA" width="82" height="32"
-                loading="lazy" decoding="async">
-            </div>
+            </a>
+            <img src="assets/hipaa_badge.png"
+              alt="HIPAA Compliant" width="76" height="43"
+              loading="lazy" decoding="async">
+            <img src="assets/usa_badge.png"
+              alt="Made in USA" width="82" height="32"
+              loading="lazy" decoding="async">
           </div>
         </div>
       </div>
@@ -1805,77 +1824,145 @@
     </div>
   </section>
 
-  <!-- TREATMENTS -->
-  <section class="treatments-section">
-    <div class="container">
-      <div class="section-header reveal">
-        <span class="eyebrow">Treatments</span>
-        <h2 class="display" style="font-size:clamp(36px,4.5vw,54px);margin-bottom:14px;">Precision medicine<br>for
-          <em>every body</em>
-        </h2>
-        <p
-          style="color:var(--text-muted);font-size:16px;max-width:480px;margin:0 auto;font-weight:300;line-height:1.65;">
-          Clinically validated protocols, compounded to your exact prescription by licensed pharmacies.</p>
-      </div>
-      <div class="treatments-grid">
-        <a href="/weight-loss" class="treatment-card reveal reveal-delay-1">
-          <div class="treatment-card-visual">
-            <img src="assets/brand/semag_transparent.png" class="product-photo" alt="GLP-1 Weight Loss" loading="lazy" decoding="async">
-          </div>
-          <div class="treatment-card-body">
-            <div class="treatment-card-name">GLP-1 Weight Loss</div>
-            <div class="treatment-card-desc">Semaglutide or Tirzepatide, compounded with B12 or Glycine.
-              Clinician-supervised weight loss that actually works.</div>
-            <div class="treatment-card-price">Starting at <strong>$99*</strong>/month</div>
-            <div class="treatment-card-cta">See If You Qualify</div>
-            <div class="treatment-card-plan">Cancel Anytime</div>
-          </div>
-        </a>
-        <a href="/sexual-wellness" class="treatment-card reveal reveal-delay-2">
-          <div class="treatment-card-visual">
-            <img src="assets/brand/freeley_troche_transparent.png" class="product-photo" alt="Sexual Wellness" loading="lazy" decoding="async">
-          </div>
-          <div class="treatment-card-body">
-            <div class="treatment-card-name">Sexual Wellness</div>
-            <div class="treatment-card-desc">Physician-prescribed 3-in-1 ED sublingual troches. Sildenafil, Tadalafil, and
-              Apomorphine compounded for peak performance.</div>
-            <div class="treatment-card-price">Starting at <strong>$59*</strong>/month</div>
-            <div class="treatment-card-cta">See If You Qualify</div>
-            <div class="treatment-card-plan">Cancel Anytime</div>
-          </div>
-        </a>
-        <a href="/hair-loss" class="treatment-card reveal reveal-delay-3">
-          <div class="treatment-card-visual">
-            <img src="assets/brand/cedar_hair1.png" class="product-photo" alt="Hair Loss Treatment" loading="lazy" decoding="async">
-          </div>
-          <div class="treatment-card-body">
-            <div class="treatment-card-name">Hair Loss</div>
-            <div class="treatment-card-desc">Physician-prescribed compounded oral and topical treatments. Finasteride, Minoxidil, and more. Stop hair loss and regrow your hair today.</div>
-            <div class="treatment-card-price">Starting at <strong>$29*</strong>/month</div>
-            <div class="treatment-card-cta">See If You Qualify</div>
-            <div class="treatment-card-plan">Cancel Anytime</div>
-          </div>
-        </a>
-        <a href="/longevity" class="treatment-card reveal reveal-delay-4">
-          <div class="treatment-card-visual">
-            <img src="assets/brand/sermorelin_vial.png" class="product-photo" alt="Longevity & Peptides" loading="lazy" decoding="async">
-          </div>
-          <div class="treatment-card-body">
-            <div class="treatment-card-name">Longevity & Peptides</div>
-            <div class="treatment-card-desc">Sermorelin, NAD+, and more. Science-backed protocols for energy,
-              recovery, and healthy aging.</div>
-            <div class="treatment-card-price">Starting at <strong>$99*</strong>/month</div>
-            <div class="treatment-card-cta">See If You Qualify</div>
-            <div class="treatment-card-plan">Cancel Anytime</div>
-          </div>
-        </a>
-      </div>
-      <!-- PRICING FOOTNOTE -->
-      <p style="text-align: center; font-size: 12px; color: var(--text-faint, #999); line-height: 1.6; max-width: 700px; margin: 24px auto 0; padding: 0 24px;">*Price reflects the 12-month plan. 1-, 3-, and 6-month plan lengths available at higher monthly rates. See checkout for full pricing.</p>
-
-      <!-- COMPLIANCE DISCLAIMER -->
-      <p style="text-align: center; font-size: 12px; color: var(--text-faint, #999); line-height: 1.6; max-width: 700px; margin: 12px auto 0; padding: 0 24px;">Freeley does not manufacture compounded medications. Actual product appearance and labeling of the medication you receive will differ from website images.</p>
+  <!-- TREATMENTS — Figma node 149:2675 (3-card row) -->
+  <style>
+    .fig-cards-section {
+      background: #fff;
+      padding: 64px 180px;
+    }
+    .fig-cards-row {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .fig-card {
+      flex: 0 0 370px;
+      width: 370px;
+      height: 202px;
+      background: var(--fig-cream, #faf8f4);
+      border-radius: 8px;
+      padding: 8px 8px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      align-items: center;
+      text-decoration: none;
+      color: inherit;
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .fig-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.06);
+    }
+    .fig-card__image-wrap {
+      width: 354px;
+      height: 136px;
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .fig-card__image-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .fig-card__image-cta {
+      position: absolute;
+      right: 8px;
+      bottom: 8px;
+      width: 34px;
+      height: 34px;
+    }
+    .fig-card__row {
+      width: 326px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .fig-card__label {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 400;
+      font-size: 20px;
+      color: #000;
+      letter-spacing: -1px;
+      line-height: 1.3;
+    }
+    .fig-card__row-icon {
+      width: 24px;
+      height: 24px;
+    }
+    .fig-cards-footnote {
+      max-width: 700px;
+      margin: 24px auto 0;
+      padding: 0 24px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-faint, #999);
+      line-height: 1.6;
+    }
+    @media (max-width: 1200px) {
+      .fig-cards-section { padding: 48px 24px; }
+    }
+  </style>
+  <section class="fig-cards-section" aria-label="Treatments">
+    <div class="fig-cards-row">
+      <a href="/weight-loss" class="fig-card">
+        <div class="fig-card__image-wrap">
+          <img src="assets/brand/hero-card-weight-loss.png"
+            alt="" width="354" height="136"
+            loading="lazy" decoding="async">
+          <svg class="fig-card__image-cta" viewBox="0 0 34 34" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="17" cy="17" r="17" fill="#C5984E"/>
+            <path d="M19.94 17.75L15.95 21.74C15.78 21.91 15.57 21.99 15.35 21.99C15.13 21.99 14.92 21.91 14.75 21.74C14.42 21.41 14.42 20.87 14.75 20.54L18.13 17.16L14.75 13.78C14.42 13.45 14.42 12.91 14.75 12.58C15.08 12.25 15.62 12.25 15.95 12.58L19.94 16.57C20.27 16.9 20.27 17.42 19.94 17.75Z" fill="white"/>
+          </svg>
+        </div>
+        <div class="fig-card__row">
+          <div class="fig-card__label">Weight Loss</div>
+          <svg class="fig-card__row-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C6.49 2 2 6.49 2 12C2 17.51 6.49 22 12 22C17.51 22 22 17.51 22 12C22 6.49 17.51 2 12 2ZM14.79 12.53L11.26 16.06C11.11 16.21 10.92 16.28 10.73 16.28C10.54 16.28 10.35 16.21 10.2 16.06C9.91 15.77 9.91 15.29 10.2 15L13.2 12L10.2 9C9.91 8.71 9.91 8.23 10.2 7.94C10.49 7.65 10.97 7.65 11.26 7.94L14.79 11.47C15.09 11.76 15.09 12.24 14.79 12.53Z" fill="#C5984E"/>
+          </svg>
+        </div>
+      </a>
+      <a href="/sexual-wellness" class="fig-card">
+        <div class="fig-card__image-wrap">
+          <img src="assets/brand/hero-card-sexual-wellness.png"
+            alt="" width="354" height="136"
+            loading="lazy" decoding="async">
+          <svg class="fig-card__image-cta" viewBox="0 0 34 34" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="17" cy="17" r="17" fill="#C5984E"/>
+            <path d="M19.94 17.75L15.95 21.74C15.78 21.91 15.57 21.99 15.35 21.99C15.13 21.99 14.92 21.91 14.75 21.74C14.42 21.41 14.42 20.87 14.75 20.54L18.13 17.16L14.75 13.78C14.42 13.45 14.42 12.91 14.75 12.58C15.08 12.25 15.62 12.25 15.95 12.58L19.94 16.57C20.27 16.9 20.27 17.42 19.94 17.75Z" fill="white"/>
+          </svg>
+        </div>
+        <div class="fig-card__row">
+          <div class="fig-card__label">Sexual Wellness</div>
+          <svg class="fig-card__row-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C6.49 2 2 6.49 2 12C2 17.51 6.49 22 12 22C17.51 22 22 17.51 22 12C22 6.49 17.51 2 12 2ZM14.79 12.53L11.26 16.06C11.11 16.21 10.92 16.28 10.73 16.28C10.54 16.28 10.35 16.21 10.2 16.06C9.91 15.77 9.91 15.29 10.2 15L13.2 12L10.2 9C9.91 8.71 9.91 8.23 10.2 7.94C10.49 7.65 10.97 7.65 11.26 7.94L14.79 11.47C15.09 11.76 15.09 12.24 14.79 12.53Z" fill="#C5984E"/>
+          </svg>
+        </div>
+      </a>
+      <a href="/hair-loss" class="fig-card">
+        <div class="fig-card__image-wrap">
+          <img src="assets/brand/hero-card-hair-loss.png"
+            alt="" width="354" height="136"
+            loading="lazy" decoding="async">
+          <svg class="fig-card__image-cta" viewBox="0 0 34 34" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="17" cy="17" r="17" fill="#C5984E"/>
+            <path d="M19.94 17.75L15.95 21.74C15.78 21.91 15.57 21.99 15.35 21.99C15.13 21.99 14.92 21.91 14.75 21.74C14.42 21.41 14.42 20.87 14.75 20.54L18.13 17.16L14.75 13.78C14.42 13.45 14.42 12.91 14.75 12.58C15.08 12.25 15.62 12.25 15.95 12.58L19.94 16.57C20.27 16.9 20.27 17.42 19.94 17.75Z" fill="white"/>
+          </svg>
+        </div>
+        <div class="fig-card__row">
+          <div class="fig-card__label">Hair Loss</div>
+          <svg class="fig-card__row-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C6.49 2 2 6.49 2 12C2 17.51 6.49 22 12 22C17.51 22 22 17.51 22 12C22 6.49 17.51 2 12 2ZM14.79 12.53L11.26 16.06C11.11 16.21 10.92 16.28 10.73 16.28C10.54 16.28 10.35 16.21 10.2 16.06C9.91 15.77 9.91 15.29 10.2 15L13.2 12L10.2 9C9.91 8.71 9.91 8.23 10.2 7.94C10.49 7.65 10.97 7.65 11.26 7.94L14.79 11.47C15.09 11.76 15.09 12.24 14.79 12.53Z" fill="#C5984E"/>
+          </svg>
+        </div>
+      </a>
     </div>
+    <!-- COMPLIANCE DISCLAIMER (legally required, kept) -->
+    <p class="fig-cards-footnote">Freeley does not manufacture compounded medications. Actual product appearance and labeling of the medication you receive will differ from website images.</p>
   </section>
 
   <!-- RESULTS & OUTCOMES -->
