@@ -1965,6 +1965,334 @@
     <p class="fig-cards-footnote">Freeley does not manufacture compounded medications. Actual product appearance and labeling of the medication you receive will differ from website images.</p>
   </section>
 
+  <!-- PRECISION MEDICINE — Figma node 149:2701 (4 vial cards) -->
+  <style>
+    .fig-precision {
+      padding: 80px 180px 100px;
+      background: #fff;
+    }
+    .fig-precision__head {
+      max-width: 621px;
+      margin-bottom: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .fig-precision__eyebrow {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 8px;
+      border: 1px solid rgba(23, 34, 42, 0.1);
+      border-radius: 20px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 12px;
+      color: var(--fig-green-mid, #008262);
+      letter-spacing: 0.5px;
+      align-self: flex-start;
+    }
+    .fig-precision__title {
+      font-family: 'Playfair Display', serif;
+      font-weight: 400;
+      font-size: 44px;
+      line-height: 1.3;
+      letter-spacing: -2px;
+      color: var(--fig-charcoal, #17222a);
+      margin: 0;
+    }
+    .fig-precision__title em {
+      font-style: italic;
+      color: var(--fig-gold, #c5984e);
+      display: block;
+    }
+    .fig-precision__sub {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: var(--fig-charcoal, #17222a);
+      margin: 0;
+      max-width: 560px;
+    }
+    .fig-precision__grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+    .fig-vial-card {
+      background: var(--fig-cream, #faf8f4);
+      border-radius: 4px;
+      height: 800px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .fig-vial-card__image {
+      width: 100%;
+      height: 330px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      padding-top: 18px;
+    }
+    .fig-vial-card__image img {
+      max-width: 270px;
+      max-height: 290px;
+      width: auto;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+    .fig-vial-card__body {
+      width: 234px;
+      display: flex;
+      flex-direction: column;
+      gap: 31px;
+      flex: 1;
+      padding-bottom: 24px;
+    }
+    .fig-vial-card__name {
+      font-family: 'Playfair Display', serif;
+      font-weight: 400;
+      font-size: 22px;
+      color: #1c1c1c;
+      margin: 0;
+    }
+    .fig-vial-card__features {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 18px;
+    }
+    .fig-vial-card__feature {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: #1c1c1c;
+      line-height: 1.4;
+    }
+    .fig-vial-card__feature svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+    .fig-vial-card__foot {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: auto;
+    }
+    .fig-vial-card__price-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 3px 0;
+    }
+    .fig-vial-card__price-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: var(--fig-charcoal, #17222a);
+      line-height: 1.4;
+    }
+    .fig-vial-card__price-amount {
+      font-family: 'Playfair Display', serif;
+      font-weight: 400;
+      font-size: 34px;
+      color: var(--fig-gold, #c5984e);
+      line-height: 1;
+    }
+    .fig-vial-card__price-month {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: #999;
+      margin-left: 4px;
+    }
+    .fig-vial-card__cta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 8px 8px 20px;
+      background: var(--fig-green-dark, #004c27);
+      border-radius: 40px;
+      text-decoration: none;
+      color: #fff;
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      transition: transform .15s ease, background .15s ease;
+    }
+    .fig-vial-card__cta:hover {
+      background: #006136;
+      transform: translateY(-1px);
+    }
+    .fig-vial-card__cta-icon {
+      background: #fff;
+      border-radius: 20px;
+      padding: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .fig-vial-card__cta-icon svg {
+      width: 16px;
+      height: 16px;
+    }
+    .fig-vial-card__cancel {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: #999;
+      text-align: center;
+      line-height: 1.4;
+    }
+    .fig-precision__footnotes {
+      max-width: 1080px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: #999;
+      line-height: 1.4;
+    }
+    .fig-precision__footnotes p { margin: 0; }
+    @media (max-width: 1200px) {
+      .fig-precision { padding: 48px 24px; }
+      .fig-precision__grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .fig-precision__grid { grid-template-columns: 1fr; }
+      .fig-vial-card { height: auto; padding-bottom: 32px; }
+      .fig-vial-card__body { padding-top: 16px; }
+    }
+  </style>
+  <section class="fig-precision" aria-label="Treatments">
+    <div class="fig-precision__head">
+      <span class="fig-precision__eyebrow">TREATMENTS</span>
+      <h2 class="fig-precision__title">
+        Precision medicine
+        <em>for every body</em>
+      </h2>
+      <p class="fig-precision__sub">Clinically validated protocols, compounded to your exact prescription by licensed pharmacies.</p>
+    </div>
+    <div class="fig-precision__grid">
+      <!-- GLP-1 Weight Loss -->
+      <a href="/weight-loss" class="fig-vial-card">
+        <div class="fig-vial-card__image">
+          <img src="assets/brand/fig-vial-weight-loss.png" alt="" loading="lazy" decoding="async">
+        </div>
+        <div class="fig-vial-card__body">
+          <h3 class="fig-vial-card__name">GLP-1 Weight Loss</h3>
+          <ul class="fig-vial-card__features" style="list-style: none; padding: 0; margin: 0;">
+            <li class="fig-vial-card__feature"><svg viewBox="0 0 16 16" fill="none"><path d="M8 14.6667C11.6667 14.6667 14.6667 11.6667 14.6667 8C14.6667 4.33333 11.6667 1.33333 8 1.33333C4.33333 1.33333 1.33333 4.33333 1.33333 8C1.33333 11.6667 4.33333 14.6667 8 14.6667Z" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.16667 8L7.05333 9.88667L10.8333 6.11333" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/></svg>Compounded GLP-1</li>
+            <li class="fig-vial-card__feature"><svg viewBox="0 0 16 16" fill="none"><path d="M8 14.6667C11.6667 14.6667 14.6667 11.6667 14.6667 8C14.6667 4.33333 11.6667 1.33333 8 1.33333C4.33333 1.33333 1.33333 4.33333 1.33333 8C1.33333 11.6667 4.33333 14.6667 8 14.6667Z" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.16667 8L7.05333 9.88667L10.8333 6.11333" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/></svg>Physician Supervised</li>
+            <li class="fig-vial-card__feature"><svg viewBox="0 0 16 16" fill="none"><path d="M8 14.6667C11.6667 14.6667 14.6667 11.6667 14.6667 8C14.6667 4.33333 11.6667 1.33333 8 1.33333C4.33333 1.33333 1.33333 4.33333 1.33333 8C1.33333 11.6667 4.33333 14.6667 8 14.6667Z" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.16667 8L7.05333 9.88667L10.8333 6.11333" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/></svg>Medication Included</li>
+            <li class="fig-vial-card__feature"><svg viewBox="0 0 16 16" fill="none"><path d="M8 14.6667C11.6667 14.6667 14.6667 11.6667 14.6667 8C14.6667 4.33333 11.6667 1.33333 8 1.33333C4.33333 1.33333 1.33333 4.33333 1.33333 8C1.33333 11.6667 4.33333 14.6667 8 14.6667Z" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.16667 8L7.05333 9.88667L10.8333 6.11333" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/></svg>Personalized Dosing</li>
+            <li class="fig-vial-card__feature"><svg viewBox="0 0 16 16" fill="none"><path d="M8 14.6667C11.6667 14.6667 14.6667 11.6667 14.6667 8C14.6667 4.33333 11.6667 1.33333 8 1.33333C4.33333 1.33333 1.33333 4.33333 1.33333 8C1.33333 11.6667 4.33333 14.6667 8 14.6667Z" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.16667 8L7.05333 9.88667L10.8333 6.11333" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/></svg>Ongoing Support</li>
+            <li class="fig-vial-card__feature"><svg viewBox="0 0 16 16" fill="none"><path d="M8 14.6667C11.6667 14.6667 14.6667 11.6667 14.6667 8C14.6667 4.33333 11.6667 1.33333 8 1.33333C4.33333 1.33333 1.33333 4.33333 1.33333 8C1.33333 11.6667 4.33333 14.6667 8 14.6667Z" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.16667 8L7.05333 9.88667L10.8333 6.11333" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/></svg>Avg. patients lose 15% body weight</li>
+          </ul>
+          <div class="fig-vial-card__foot">
+            <div class="fig-vial-card__price-row">
+              <span class="fig-vial-card__price-label">Starting at</span>
+              <span><span class="fig-vial-card__price-amount">$99<sup style="font-size:0.5em;">*</sup></span><span class="fig-vial-card__price-month">/month</span></span>
+            </div>
+            <span class="fig-vial-card__cta">See if you Qualify
+              <span class="fig-vial-card__cta-icon"><svg viewBox="0 0 16 16" fill="none"><path d="M9.5 4L13 8L9.5 12M2 8H13" stroke="#004C27" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </span>
+            <span class="fig-vial-card__cancel">Cancel Anytime</span>
+          </div>
+        </div>
+      </a>
+      <!-- Sexual Wellness -->
+      <a href="/sexual-wellness" class="fig-vial-card">
+        <div class="fig-vial-card__image">
+          <img src="assets/brand/fig-vial-sexual-wellness.png" alt="" loading="lazy" decoding="async">
+        </div>
+        <div class="fig-vial-card__body">
+          <h3 class="fig-vial-card__name">Sexual Wellness</h3>
+          <ul class="fig-vial-card__features" style="list-style: none; padding: 0; margin: 0;">
+            <li class="fig-vial-card__feature"><svg viewBox="0 0 16 16" fill="none"><path d="M8 14.6667C11.6667 14.6667 14.6667 11.6667 14.6667 8C14.6667 4.33333 11.6667 1.33333 8 1.33333C4.33333 1.33333 1.33333 4.33333 1.33333 8C1.33333 11.6667 4.33333 14.6667 8 14.6667Z" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.16667 8L7.05333 9.88667L10.8333 6.11333" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/></svg>3-in-1 Sublingual Troche</li>
+            <li class="fig-vial-card__feature"><svg viewBox="0 0 16 16" fill="none"><path d="M8 14.6667C11.6667 14.6667 14.6667 11.6667 14.6667 8C14.6667 4.33333 11.6667 1.33333 8 1.33333C4.33333 1.33333 1.33333 4.33333 1.33333 8C1.33333 11.6667 4.33333 14.6667 8 14.6667Z" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.16667 8L7.05333 9.88667L10.8333 6.11333" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/></svg>Physician Supervised</li>
+            <li class="fig-vial-card__feature"><svg viewBox="0 0 16 16" fill="none"><path d="M8 14.6667C11.6667 14.6667 14.6667 11.6667 14.6667 8C14.6667 4.33333 11.6667 1.33333 8 1.33333C4.33333 1.33333 1.33333 4.33333 1.33333 8C1.33333 11.6667 4.33333 14.6667 8 14.6667Z" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.16667 8L7.05333 9.88667L10.8333 6.11333" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/></svg>Medication Included</li>
+            <li class="fig-vial-card__feature"><svg viewBox="0 0 16 16" fill="none"><path d="M8 14.6667C11.6667 14.6667 14.6667 11.6667 14.6667 8C14.6667 4.33333 11.6667 1.33333 8 1.33333C4.33333 1.33333 1.33333 4.33333 1.33333 8C1.33333 11.6667 4.33333 14.6667 8 14.6667Z" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.16667 8L7.05333 9.88667L10.8333 6.11333" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/></svg>Personalized Dosing</li>
+            <li class="fig-vial-card__feature"><svg viewBox="0 0 16 16" fill="none"><path d="M8 14.6667C11.6667 14.6667 14.6667 11.6667 14.6667 8C14.6667 4.33333 11.6667 1.33333 8 1.33333C4.33333 1.33333 1.33333 4.33333 1.33333 8C1.33333 11.6667 4.33333 14.6667 8 14.6667Z" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.16667 8L7.05333 9.88667L10.8333 6.11333" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/></svg>Ongoing Support</li>
+            <li class="fig-vial-card__feature"><svg viewBox="0 0 16 16" fill="none"><path d="M8 14.6667C11.6667 14.6667 14.6667 11.6667 14.6667 8C14.6667 4.33333 11.6667 1.33333 8 1.33333C4.33333 1.33333 1.33333 4.33333 1.33333 8C1.33333 11.6667 4.33333 14.6667 8 14.6667Z" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.16667 8L7.05333 9.88667L10.8333 6.11333" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/></svg>Fast 15-min onset</li>
+          </ul>
+          <div class="fig-vial-card__foot">
+            <div class="fig-vial-card__price-row">
+              <span class="fig-vial-card__price-label">Starting at</span>
+              <span><span class="fig-vial-card__price-amount">$59<sup style="font-size:0.5em;">*</sup></span><span class="fig-vial-card__price-month">/month</span></span>
+            </div>
+            <span class="fig-vial-card__cta">See if you Qualify
+              <span class="fig-vial-card__cta-icon"><svg viewBox="0 0 16 16" fill="none"><path d="M9.5 4L13 8L9.5 12M2 8H13" stroke="#004C27" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </span>
+            <span class="fig-vial-card__cancel">Cancel Anytime</span>
+          </div>
+        </div>
+      </a>
+      <!-- Hair Loss -->
+      <a href="/hair-loss" class="fig-vial-card">
+        <div class="fig-vial-card__image">
+          <img src="assets/brand/fig-vial-hair-loss.png" alt="" loading="lazy" decoding="async">
+        </div>
+        <div class="fig-vial-card__body">
+          <h3 class="fig-vial-card__name">Hair Loss</h3>
+          <ul class="fig-vial-card__features" style="list-style: none; padding: 0; margin: 0;">
+            <li class="fig-vial-card__feature"><svg viewBox="0 0 16 16" fill="none"><path d="M8 14.6667C11.6667 14.6667 14.6667 11.6667 14.6667 8C14.6667 4.33333 11.6667 1.33333 8 1.33333C4.33333 1.33333 1.33333 4.33333 1.33333 8C1.33333 11.6667 4.33333 14.6667 8 14.6667Z" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.16667 8L7.05333 9.88667L10.8333 6.11333" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/></svg>Finasteride + Minoxidil</li>
+            <li class="fig-vial-card__feature"><svg viewBox="0 0 16 16" fill="none"><path d="M8 14.6667C11.6667 14.6667 14.6667 11.6667 14.6667 8C14.6667 4.33333 11.6667 1.33333 8 1.33333C4.33333 1.33333 1.33333 4.33333 1.33333 8C1.33333 11.6667 4.33333 14.6667 8 14.6667Z" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.16667 8L7.05333 9.88667L10.8333 6.11333" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/></svg>Physician Supervised</li>
+            <li class="fig-vial-card__feature"><svg viewBox="0 0 16 16" fill="none"><path d="M8 14.6667C11.6667 14.6667 14.6667 11.6667 14.6667 8C14.6667 4.33333 11.6667 1.33333 8 1.33333C4.33333 1.33333 1.33333 4.33333 1.33333 8C1.33333 11.6667 4.33333 14.6667 8 14.6667Z" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.16667 8L7.05333 9.88667L10.8333 6.11333" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/></svg>Medication Included</li>
+            <li class="fig-vial-card__feature"><svg viewBox="0 0 16 16" fill="none"><path d="M8 14.6667C11.6667 14.6667 14.6667 11.6667 14.6667 8C14.6667 4.33333 11.6667 1.33333 8 1.33333C4.33333 1.33333 1.33333 4.33333 1.33333 8C1.33333 11.6667 4.33333 14.6667 8 14.6667Z" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.16667 8L7.05333 9.88667L10.8333 6.11333" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/></svg>Oral + Topical Options</li>
+            <li class="fig-vial-card__feature"><svg viewBox="0 0 16 16" fill="none"><path d="M8 14.6667C11.6667 14.6667 14.6667 11.6667 14.6667 8C14.6667 4.33333 11.6667 1.33333 8 1.33333C4.33333 1.33333 1.33333 4.33333 1.33333 8C1.33333 11.6667 4.33333 14.6667 8 14.6667Z" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.16667 8L7.05333 9.88667L10.8333 6.11333" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/></svg>Ongoing Support</li>
+            <li class="fig-vial-card__feature"><svg viewBox="0 0 16 16" fill="none"><path d="M8 14.6667C11.6667 14.6667 14.6667 11.6667 14.6667 8C14.6667 4.33333 11.6667 1.33333 8 1.33333C4.33333 1.33333 1.33333 4.33333 1.33333 8C1.33333 11.6667 4.33333 14.6667 8 14.6667Z" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.16667 8L7.05333 9.88667L10.8333 6.11333" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/></svg>Clinically validated regrowth</li>
+          </ul>
+          <div class="fig-vial-card__foot">
+            <div class="fig-vial-card__price-row">
+              <span class="fig-vial-card__price-label">Starting at</span>
+              <span><span class="fig-vial-card__price-amount">$29<sup style="font-size:0.5em;">*</sup></span><span class="fig-vial-card__price-month">/month</span></span>
+            </div>
+            <span class="fig-vial-card__cta">See if you Qualify
+              <span class="fig-vial-card__cta-icon"><svg viewBox="0 0 16 16" fill="none"><path d="M9.5 4L13 8L9.5 12M2 8H13" stroke="#004C27" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </span>
+            <span class="fig-vial-card__cancel">Cancel Anytime</span>
+          </div>
+        </div>
+      </a>
+      <!-- Longevity & Peptides -->
+      <a href="/longevity" class="fig-vial-card">
+        <div class="fig-vial-card__image">
+          <img src="assets/brand/fig-vial-longevity.png" alt="" loading="lazy" decoding="async">
+        </div>
+        <div class="fig-vial-card__body">
+          <h3 class="fig-vial-card__name">Longevity &amp; Peptides</h3>
+          <ul class="fig-vial-card__features" style="list-style: none; padding: 0; margin: 0;">
+            <li class="fig-vial-card__feature"><svg viewBox="0 0 16 16" fill="none"><path d="M8 14.6667C11.6667 14.6667 14.6667 11.6667 14.6667 8C14.6667 4.33333 11.6667 1.33333 8 1.33333C4.33333 1.33333 1.33333 4.33333 1.33333 8C1.33333 11.6667 4.33333 14.6667 8 14.6667Z" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.16667 8L7.05333 9.88667L10.8333 6.11333" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/></svg>Sermorelin + NAD+</li>
+            <li class="fig-vial-card__feature"><svg viewBox="0 0 16 16" fill="none"><path d="M8 14.6667C11.6667 14.6667 14.6667 11.6667 14.6667 8C14.6667 4.33333 11.6667 1.33333 8 1.33333C4.33333 1.33333 1.33333 4.33333 1.33333 8C1.33333 11.6667 4.33333 14.6667 8 14.6667Z" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.16667 8L7.05333 9.88667L10.8333 6.11333" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/></svg>Physician Supervised</li>
+            <li class="fig-vial-card__feature"><svg viewBox="0 0 16 16" fill="none"><path d="M8 14.6667C11.6667 14.6667 14.6667 11.6667 14.6667 8C14.6667 4.33333 11.6667 1.33333 8 1.33333C4.33333 1.33333 1.33333 4.33333 1.33333 8C1.33333 11.6667 4.33333 14.6667 8 14.6667Z" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.16667 8L7.05333 9.88667L10.8333 6.11333" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/></svg>Medication Included</li>
+            <li class="fig-vial-card__feature"><svg viewBox="0 0 16 16" fill="none"><path d="M8 14.6667C11.6667 14.6667 14.6667 11.6667 14.6667 8C14.6667 4.33333 11.6667 1.33333 8 1.33333C4.33333 1.33333 1.33333 4.33333 1.33333 8C1.33333 11.6667 4.33333 14.6667 8 14.6667Z" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.16667 8L7.05333 9.88667L10.8333 6.11333" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/></svg>Custom protocols per patient</li>
+            <li class="fig-vial-card__feature"><svg viewBox="0 0 16 16" fill="none"><path d="M8 14.6667C11.6667 14.6667 14.6667 11.6667 14.6667 8C14.6667 4.33333 11.6667 1.33333 8 1.33333C4.33333 1.33333 1.33333 4.33333 1.33333 8C1.33333 11.6667 4.33333 14.6667 8 14.6667Z" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.16667 8L7.05333 9.88667L10.8333 6.11333" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/></svg>Ongoing Support</li>
+            <li class="fig-vial-card__feature"><svg viewBox="0 0 16 16" fill="none"><path d="M8 14.6667C11.6667 14.6667 14.6667 11.6667 14.6667 8C14.6667 4.33333 11.6667 1.33333 8 1.33333C4.33333 1.33333 1.33333 4.33333 1.33333 8C1.33333 11.6667 4.33333 14.6667 8 14.6667Z" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.16667 8L7.05333 9.88667L10.8333 6.11333" stroke="#C5984E" stroke-linecap="round" stroke-linejoin="round"/></svg>Energy, recovery, and aging</li>
+          </ul>
+          <div class="fig-vial-card__foot">
+            <div class="fig-vial-card__price-row">
+              <span class="fig-vial-card__price-label">Starting at</span>
+              <span><span class="fig-vial-card__price-amount">$99<sup style="font-size:0.5em;">*</sup></span><span class="fig-vial-card__price-month">/month</span></span>
+            </div>
+            <span class="fig-vial-card__cta">See if you Qualify
+              <span class="fig-vial-card__cta-icon"><svg viewBox="0 0 16 16" fill="none"><path d="M9.5 4L13 8L9.5 12M2 8H13" stroke="#004C27" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </span>
+            <span class="fig-vial-card__cancel">Cancel Anytime</span>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="fig-precision__footnotes">
+      <p>*Price reflects the 12-month plan. 1-, 3-, and 6-month plan lengths available at higher monthly rates. See checkout for full pricing.</p>
+      <p>Freeley does not manufacture compounded medications. Actual product appearance and labeling of the medication you receive will differ from website images.</p>
+    </div>
+  </section>
+
   <!-- RESULTS & OUTCOMES -->
   <section class="results-section" style="padding: 100px 0; background: linear-gradient(180deg, var(--cream) 0%, #e8f0eb 100%); position: relative; overflow: hidden;">
     <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(61,140,94,0.06) 0%, transparent 70%); pointer-events: none;"></div>
