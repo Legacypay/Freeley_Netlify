@@ -2293,6 +2293,1305 @@
     </div>
   </section>
 
+  <!-- PATIENTS SWITCH (testimonials) — Figma node 149:2859 -->
+  <style>
+    .fig-patients-switch {
+      padding: 80px 24px 100px;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+      align-items: flex-start;
+      max-width: 1448px;
+      margin: 0 auto;
+      box-sizing: border-box;
+    }
+    .fig-patients-switch__head {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 0 156px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .fig-patients-switch__eyebrow {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 8px;
+      border: 1px solid rgba(23, 34, 42, 0.1);
+      border-radius: 20px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 12px;
+      color: var(--fig-green-mid, #008262);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      align-self: flex-start;
+      line-height: 1.3;
+    }
+    .fig-patients-switch__title {
+      font-family: 'Playfair Display', serif;
+      font-weight: 400;
+      font-size: 44px;
+      line-height: 1.3;
+      letter-spacing: -2px;
+      color: var(--fig-charcoal, #17222a);
+      margin: 0;
+    }
+    .fig-patients-switch__title em {
+      font-style: italic;
+      color: var(--fig-gold, #c5984e);
+      display: block;
+    }
+    .fig-patients-switch__sub {
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      color: var(--fig-charcoal, #17222a);
+      line-height: 1.4;
+      margin: 0;
+      max-width: 720px;
+    }
+    .fig-patients-switch__grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .fig-testimonial-card {
+      background: var(--fig-cream, #faf8f4);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 44px;
+      align-items: flex-start;
+      box-sizing: border-box;
+      min-height: 340px;
+    }
+    .fig-testimonial-card__stat {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: flex-start;
+    }
+    .fig-testimonial-card__stat-number {
+      font-family: 'Inter', sans-serif;
+      font-style: italic;
+      font-size: 30px;
+      color: var(--fig-gold, #c5984e);
+      line-height: 1;
+      white-space: nowrap;
+    }
+    .fig-testimonial-card__stat-period {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: var(--fig-charcoal, #17222a);
+      opacity: 0.6;
+      line-height: 1.4;
+    }
+    .fig-testimonial-card__body {
+      display: flex;
+      flex-direction: column;
+      gap: 26px;
+      align-items: flex-start;
+      width: 100%;
+    }
+    .fig-testimonial-card__quote {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: #999;
+      line-height: 1.4;
+      margin: 0;
+    }
+    .fig-testimonial-card__attrib {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: flex-start;
+    }
+    .fig-testimonial-card__name {
+      font-family: 'Playfair Display', serif;
+      font-weight: 400;
+      font-size: 24px;
+      letter-spacing: -1px;
+      line-height: 1.3;
+      color: var(--fig-charcoal, #17222a);
+    }
+    .fig-testimonial-card__meta {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: #999;
+      line-height: 1.4;
+    }
+    @media (max-width: 1200px) {
+      .fig-patients-switch { padding: 48px 24px; }
+      .fig-patients-switch__head { padding: 0; }
+      .fig-patients-switch__grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .fig-patients-switch__grid { grid-template-columns: 1fr; }
+      .fig-patients-switch__title { font-size: 36px; letter-spacing: -1px; }
+    }
+  </style>
+  <section class="fig-patients-switch" aria-label="Patient testimonials">
+    <div class="fig-patients-switch__head">
+      <span class="fig-patients-switch__eyebrow">Real Results</span>
+      <h2 class="fig-patients-switch__title">
+        Why patients switch
+        <em>to Freeley</em>
+      </h2>
+      <p class="fig-patients-switch__sub">Real stories from real patients. Names changed for privacy — results and timelines are authentic.</p>
+    </div>
+    <div class="fig-patients-switch__grid">
+      <article class="fig-testimonial-card">
+        <div class="fig-testimonial-card__stat">
+          <span class="fig-testimonial-card__stat-number">-31 lbs</span>
+          <span class="fig-testimonial-card__stat-period">in 3 months</span>
+        </div>
+        <div class="fig-testimonial-card__body">
+          <p class="fig-testimonial-card__quote">"I tried every diet app imaginable. Nothing stuck until my doctor started me on semaglutide through Freeley. The cravings just… stopped. I'm down 31 lbs and my A1C went from 6.4 to 5.6."</p>
+          <div class="fig-testimonial-card__attrib">
+            <span class="fig-testimonial-card__name">Maria K.</span>
+            <span class="fig-testimonial-card__meta">Semaglutide · Austin, TX</span>
+          </div>
+        </div>
+      </article>
+      <article class="fig-testimonial-card">
+        <div class="fig-testimonial-card__stat">
+          <span class="fig-testimonial-card__stat-number">-42 lbs</span>
+          <span class="fig-testimonial-card__stat-period">in 5 months</span>
+        </div>
+        <div class="fig-testimonial-card__body">
+          <p class="fig-testimonial-card__quote">"My provider walked me through every option before recommending tirzepatide. The food noise is gone. I sleep through the night, my blood pressure is normal again, and clothes I haven't worn in years fit me."</p>
+          <div class="fig-testimonial-card__attrib">
+            <span class="fig-testimonial-card__name">James R.</span>
+            <span class="fig-testimonial-card__meta">Tirzepatide · Phoenix, AZ</span>
+          </div>
+        </div>
+      </article>
+      <article class="fig-testimonial-card">
+        <div class="fig-testimonial-card__stat">
+          <span class="fig-testimonial-card__stat-number">-28 lbs</span>
+          <span class="fig-testimonial-card__stat-period">in 4 months</span>
+        </div>
+        <div class="fig-testimonial-card__body">
+          <p class="fig-testimonial-card__quote">"I was nervous to try a GLP-1. My Freeley physician explained the dosing schedule and side effects clearly and checked in weekly. Down 28 lbs and I finally feel in control of my health."</p>
+          <div class="fig-testimonial-card__attrib">
+            <span class="fig-testimonial-card__name">Priya S.</span>
+            <span class="fig-testimonial-card__meta">Semaglutide · Brooklyn, NY</span>
+          </div>
+        </div>
+      </article>
+      <article class="fig-testimonial-card">
+        <div class="fig-testimonial-card__stat">
+          <span class="fig-testimonial-card__stat-number">-37 lbs</span>
+          <span class="fig-testimonial-card__stat-period">in 6 months</span>
+        </div>
+        <div class="fig-testimonial-card__body">
+          <p class="fig-testimonial-card__quote">"After two failed attempts with other programs, Freeley actually felt like a doctor's office — just remote. My prescription arrives on time every month. I've kept the weight off and my labs look great."</p>
+          <div class="fig-testimonial-card__attrib">
+            <span class="fig-testimonial-card__name">David L.</span>
+            <span class="fig-testimonial-card__meta">Tirzepatide · Denver, CO</span>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- TRUSTED & FEATURED IN — Figma node 149:2905 -->
+  <style>
+    .fig-press {
+      padding: 24px 180px 48px;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      gap: 34px;
+      align-items: flex-start;
+      max-width: 1440px;
+      margin: 0 auto;
+      box-sizing: border-box;
+    }
+    .fig-press__label {
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 14px;
+      color: #000;
+      line-height: 1;
+    }
+    .fig-press__row {
+      display: flex;
+      gap: 41px;
+      align-items: center;
+      opacity: 0.2;
+      width: 100%;
+      flex-wrap: wrap;
+    }
+    .fig-press__row img {
+      height: 30px;
+      width: auto;
+      display: block;
+      object-fit: contain;
+    }
+    .fig-press__row img.tall { height: 39px; }
+    @media (max-width: 1200px) {
+      .fig-press { padding: 24px; }
+      .fig-press__row { gap: 24px; justify-content: center; }
+    }
+  </style>
+  <section class="fig-press" aria-label="Trusted and featured in">
+    <p class="fig-press__label">Trusted &amp; Featured In</p>
+    <div class="fig-press__row">
+      <img src="/assets/brand/_figma_v5/press-bloomberg.png" alt="Bloomberg">
+      <img src="/assets/brand/_figma_v5/press-forbes.png" alt="Forbes">
+      <img src="/assets/brand/_figma_v5/press-nyt.png" alt="The New York Times" class="tall">
+      <img src="/assets/brand/_figma_v5/press-techcrunch.png" alt="TechCrunch">
+    </div>
+  </section>
+
+  <!-- WHY PATIENTS CHOOSE FREELEY (comparison table) — Figma node 149:3000 -->
+  <style>
+    .fig-compare {
+      padding: 80px 180px 100px;
+      background: #fff;
+      max-width: 1440px;
+      margin: 0 auto;
+      box-sizing: border-box;
+    }
+    .fig-compare__head {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 40px;
+      align-items: flex-start;
+    }
+    .fig-compare__eyebrow {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 8px;
+      border: 1px solid rgba(23, 34, 42, 0.1);
+      border-radius: 20px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 12px;
+      color: var(--fig-green-mid, #008262);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      line-height: 1.3;
+    }
+    .fig-compare__title {
+      font-family: 'Playfair Display', serif;
+      font-weight: 400;
+      font-size: 44px;
+      line-height: 1.3;
+      letter-spacing: -2px;
+      color: var(--fig-charcoal, #17222a);
+      margin: 0;
+    }
+    .fig-compare__title em {
+      font-style: italic;
+      color: var(--fig-gold, #c5984e);
+    }
+    .fig-compare__table {
+      background: var(--fig-cream, #faf8f4);
+      display: grid;
+      grid-template-columns: 1.6fr repeat(4, 1fr);
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .fig-compare__cell {
+      padding: 18px 20px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      color: #555;
+      line-height: 1.4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 60px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+    .fig-compare__cell--label {
+      justify-content: flex-start;
+      text-align: left;
+      color: var(--fig-charcoal, #17222a);
+      font-size: 14px;
+    }
+    .fig-compare__row {
+      display: contents;
+    }
+    .fig-compare__row--alt .fig-compare__cell {
+      background: #fff;
+    }
+    .fig-compare__header-cell {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      color: #999;
+      padding: 16px 20px;
+      min-height: 49px;
+    }
+    .fig-compare__brand {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--fig-green-dark, #004c27);
+      letter-spacing: -0.5px;
+    }
+    .fig-compare__icon {
+      width: 16px;
+      height: 16px;
+      display: inline-block;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: contain;
+    }
+    .fig-icon-tick {
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'><path d='M8 14.67c3.67 0 6.67-3 6.67-6.67S11.67 1.33 8 1.33 1.33 4.33 1.33 8 4.33 14.67 8 14.67Z' stroke='%23C5984E' stroke-linecap='round' stroke-linejoin='round'/><path d='M5.17 8l1.88 1.89L10.83 6.11' stroke='%23C5984E' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    }
+    .fig-icon-close {
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'><path d='M8 14.67c3.67 0 6.67-3 6.67-6.67S11.67 1.33 8 1.33 1.33 4.33 1.33 8 4.33 14.67 8 14.67Z' stroke='%23D44747' stroke-linecap='round' stroke-linejoin='round'/><path d='M5.88 10.12l4.24-4.24M10.12 10.12L5.88 5.88' stroke='%23D44747' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    }
+    .fig-icon-minus {
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'><path d='M5.33 8h5.33' stroke='%23999' stroke-width='1.2' stroke-linecap='round'/></svg>");
+    }
+    .fig-compare__cta-wrap {
+      display: flex;
+      justify-content: center;
+      padding-top: 32px;
+    }
+    .fig-compare__cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 24px;
+      background: var(--fig-green-dark, #004c27);
+      color: #fff;
+      border-radius: 40px;
+      text-decoration: none;
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      transition: transform .15s ease, background .15s ease;
+    }
+    .fig-compare__cta:hover {
+      background: #006136;
+      transform: translateY(-1px);
+    }
+    .fig-compare__cta-icon {
+      background: #fff;
+      border-radius: 20px;
+      width: 28px;
+      height: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .fig-compare__cta-icon svg {
+      width: 14px;
+      height: 14px;
+    }
+    @media (max-width: 1200px) {
+      .fig-compare { padding: 48px 24px; }
+      .fig-compare__table { grid-template-columns: 1.4fr repeat(4, 1fr); }
+      .fig-compare__cell { padding: 14px 8px; font-size: 12px; }
+      .fig-compare__header-cell { padding: 12px 8px; }
+    }
+    @media (max-width: 720px) {
+      .fig-compare__title { font-size: 32px; letter-spacing: -1px; }
+      .fig-compare__table {
+        grid-template-columns: 1.2fr repeat(4, 1fr);
+        font-size: 11px;
+      }
+      .fig-compare__cell--label { font-size: 12px; }
+      .fig-compare__header-cell { font-size: 10px; }
+      .fig-compare__brand { font-size: 14px; }
+    }
+  </style>
+  <section class="fig-compare" aria-label="Why patients choose Freeley">
+    <div class="fig-compare__head">
+      <span class="fig-compare__eyebrow">Compare</span>
+      <h2 class="fig-compare__title">Why patients choose <em>Freeley</em></h2>
+    </div>
+    <div class="fig-compare__table" role="table">
+      <!-- Header row -->
+      <div class="fig-compare__row" role="row">
+        <div class="fig-compare__cell fig-compare__header-cell fig-compare__cell--label" role="columnheader"></div>
+        <div class="fig-compare__cell fig-compare__header-cell" role="columnheader"><span class="fig-compare__brand">Freeley</span></div>
+        <div class="fig-compare__cell fig-compare__header-cell" role="columnheader">Traditional Clinics</div>
+        <div class="fig-compare__cell fig-compare__header-cell" role="columnheader">Retail Pharmacy</div>
+        <div class="fig-compare__cell fig-compare__header-cell" role="columnheader">Other Telehealth</div>
+      </div>
+      <!-- Row 1: Board-certified physician oversight -->
+      <div class="fig-compare__row fig-compare__row--alt" role="row">
+        <div class="fig-compare__cell fig-compare__cell--label" role="cell">Board-certified physician oversight</div>
+        <div class="fig-compare__cell" role="cell"><span class="fig-compare__icon fig-icon-tick" aria-label="Yes"></span></div>
+        <div class="fig-compare__cell" role="cell"><span class="fig-compare__icon fig-icon-tick" aria-label="Yes"></span></div>
+        <div class="fig-compare__cell" role="cell"><span class="fig-compare__icon fig-icon-minus" aria-label="N/A"></span></div>
+        <div class="fig-compare__cell" role="cell">Varies</div>
+      </div>
+      <!-- Row 2: No membership or hidden fees -->
+      <div class="fig-compare__row" role="row">
+        <div class="fig-compare__cell fig-compare__cell--label" role="cell">No membership or hidden fees</div>
+        <div class="fig-compare__cell" role="cell"><span class="fig-compare__icon fig-icon-tick" aria-label="Yes"></span></div>
+        <div class="fig-compare__cell" role="cell"><span class="fig-compare__icon fig-icon-close" aria-label="No"></span></div>
+        <div class="fig-compare__cell" role="cell"><span class="fig-compare__icon fig-icon-close" aria-label="No"></span></div>
+        <div class="fig-compare__cell" role="cell"><span class="fig-compare__icon fig-icon-tick" aria-label="Yes"></span></div>
+      </div>
+      <!-- Row 3: Same-week consultation -->
+      <div class="fig-compare__row fig-compare__row--alt" role="row">
+        <div class="fig-compare__cell fig-compare__cell--label" role="cell">Same-week consultation</div>
+        <div class="fig-compare__cell" role="cell"><span class="fig-compare__icon fig-icon-tick" aria-label="Yes"></span></div>
+        <div class="fig-compare__cell" role="cell">Rarely</div>
+        <div class="fig-compare__cell" role="cell"><span class="fig-compare__icon fig-icon-close" aria-label="No"></span></div>
+        <div class="fig-compare__cell" role="cell">Some</div>
+      </div>
+      <!-- Row 4: Transparent monthly cost -->
+      <div class="fig-compare__row" role="row">
+        <div class="fig-compare__cell fig-compare__cell--label" role="cell">Transparent monthly cost</div>
+        <div class="fig-compare__cell" role="cell">$99/month</div>
+        <div class="fig-compare__cell" role="cell">$300-500+</div>
+        <div class="fig-compare__cell" role="cell">Varies</div>
+        <div class="fig-compare__cell" role="cell">$199-$399</div>
+      </div>
+      <!-- Row 5: No insurance required -->
+      <div class="fig-compare__row fig-compare__row--alt" role="row">
+        <div class="fig-compare__cell fig-compare__cell--label" role="cell">No insurance required</div>
+        <div class="fig-compare__cell" role="cell"><span class="fig-compare__icon fig-icon-tick" aria-label="Yes"></span></div>
+        <div class="fig-compare__cell" role="cell"><span class="fig-compare__icon fig-icon-close" aria-label="No"></span></div>
+        <div class="fig-compare__cell" role="cell">Varies</div>
+        <div class="fig-compare__cell" role="cell"><span class="fig-compare__icon fig-icon-tick" aria-label="Yes"></span></div>
+      </div>
+      <!-- Row 6: Licensed U.S. pharmacy -->
+      <div class="fig-compare__row" role="row">
+        <div class="fig-compare__cell fig-compare__cell--label" role="cell">Licensed U.S. pharmacy</div>
+        <div class="fig-compare__cell" role="cell"><span class="fig-compare__icon fig-icon-tick" aria-label="Yes"></span></div>
+        <div class="fig-compare__cell" role="cell"><span class="fig-compare__icon fig-icon-tick" aria-label="Yes"></span></div>
+        <div class="fig-compare__cell" role="cell"><span class="fig-compare__icon fig-icon-tick" aria-label="Yes"></span></div>
+        <div class="fig-compare__cell" role="cell">Some</div>
+      </div>
+      <!-- Row 7: Direct shipping to your door -->
+      <div class="fig-compare__row fig-compare__row--alt" role="row">
+        <div class="fig-compare__cell fig-compare__cell--label" role="cell">Direct shipping to your door</div>
+        <div class="fig-compare__cell" role="cell"><span class="fig-compare__icon fig-icon-tick" aria-label="Yes"></span></div>
+        <div class="fig-compare__cell" role="cell"><span class="fig-compare__icon fig-icon-close" aria-label="No"></span></div>
+        <div class="fig-compare__cell" role="cell">Varies</div>
+        <div class="fig-compare__cell" role="cell"><span class="fig-compare__icon fig-icon-tick" aria-label="Yes"></span></div>
+      </div>
+      <!-- Row 8: Lab orders included when clinically indicated -->
+      <div class="fig-compare__row" role="row">
+        <div class="fig-compare__cell fig-compare__cell--label" role="cell">Lab orders included when clinically indicated</div>
+        <div class="fig-compare__cell" role="cell"><span class="fig-compare__icon fig-icon-tick" aria-label="Yes"></span></div>
+        <div class="fig-compare__cell" role="cell"><span class="fig-compare__icon fig-icon-tick" aria-label="Yes"></span></div>
+        <div class="fig-compare__cell" role="cell"><span class="fig-compare__icon fig-icon-tick" aria-label="Yes"></span></div>
+        <div class="fig-compare__cell" role="cell">Some</div>
+      </div>
+      <!-- Row 9: Discreet packaging -->
+      <div class="fig-compare__row fig-compare__row--alt" role="row">
+        <div class="fig-compare__cell fig-compare__cell--label" role="cell">Discreet packaging</div>
+        <div class="fig-compare__cell" role="cell"><span class="fig-compare__icon fig-icon-tick" aria-label="Yes"></span></div>
+        <div class="fig-compare__cell" role="cell"><span class="fig-compare__icon fig-icon-close" aria-label="No"></span></div>
+        <div class="fig-compare__cell" role="cell"><span class="fig-compare__icon fig-icon-tick" aria-label="Yes"></span></div>
+        <div class="fig-compare__cell" role="cell">Varies</div>
+      </div>
+      <!-- Row 10: Cancel anytime — no contracts -->
+      <div class="fig-compare__row" role="row">
+        <div class="fig-compare__cell fig-compare__cell--label" role="cell">Cancel anytime — no contracts</div>
+        <div class="fig-compare__cell" role="cell"><span class="fig-compare__icon fig-icon-tick" aria-label="Yes"></span></div>
+        <div class="fig-compare__cell" role="cell">N/A</div>
+        <div class="fig-compare__cell" role="cell">N/A</div>
+        <div class="fig-compare__cell" role="cell">Varies</div>
+      </div>
+    </div>
+    <div class="fig-compare__cta-wrap">
+      <a href="/quiz" class="fig-compare__cta">
+        Start Your Assessment
+        <span class="fig-compare__cta-icon" aria-hidden="true">
+          <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke="#004c27" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+      </a>
+    </div>
+  </section>
+
+  <!-- NUMBERS THAT SPEAK FOR THEMSELVES (stats) -->
+  <style>
+    .fig-numbers {
+      padding: 80px 180px 100px;
+      background: #fff;
+      max-width: 1440px;
+      margin: 0 auto;
+      box-sizing: border-box;
+    }
+    .fig-numbers__head {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 40px;
+      align-items: flex-start;
+    }
+    .fig-numbers__eyebrow {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 8px;
+      border: 1px solid rgba(23, 34, 42, 0.1);
+      border-radius: 20px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 12px;
+      color: var(--fig-green-mid, #008262);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      line-height: 1.3;
+    }
+    .fig-numbers__title {
+      font-family: 'Playfair Display', serif;
+      font-weight: 400;
+      font-size: 44px;
+      line-height: 1.3;
+      letter-spacing: -2px;
+      color: var(--fig-charcoal, #17222a);
+      margin: 0;
+    }
+    .fig-numbers__title em {
+      font-style: italic;
+      color: var(--fig-gold, #c5984e);
+      display: block;
+    }
+    .fig-numbers__grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .fig-stat-card {
+      background: var(--fig-cream, #faf8f4);
+      padding: 48px 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: flex-start;
+      min-height: 280px;
+      position: relative;
+      overflow: hidden;
+    }
+    .fig-stat-card__number {
+      font-family: 'Playfair Display', serif;
+      font-weight: 400;
+      font-style: italic;
+      font-size: 88px;
+      line-height: 1;
+      color: var(--fig-gold, #c5984e);
+      letter-spacing: -2px;
+    }
+    .fig-stat-card__label {
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      color: var(--fig-charcoal, #17222a);
+      line-height: 1.4;
+      font-weight: 500;
+    }
+    .fig-stat-card__detail {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: #707070;
+      line-height: 1.5;
+      margin-top: 8px;
+    }
+    @media (max-width: 1200px) {
+      .fig-numbers { padding: 48px 24px; }
+      .fig-numbers__grid { grid-template-columns: 1fr; gap: 16px; }
+      .fig-stat-card { min-height: auto; padding: 32px 24px; }
+      .fig-stat-card__number { font-size: 64px; }
+    }
+  </style>
+  <section class="fig-numbers" aria-label="Numbers">
+    <div class="fig-numbers__head">
+      <span class="fig-numbers__eyebrow">By the numbers</span>
+      <h2 class="fig-numbers__title">
+        Numbers that speak
+        <em>for themselves</em>
+      </h2>
+    </div>
+    <div class="fig-numbers__grid">
+      <div class="fig-stat-card">
+        <span class="fig-stat-card__number">96%</span>
+        <span class="fig-stat-card__label">Patient satisfaction</span>
+        <span class="fig-stat-card__detail">Across thousands of GLP-1 patients enrolled in physician-supervised programs through Freeley.</span>
+      </div>
+      <div class="fig-stat-card">
+        <span class="fig-stat-card__number">24hr</span>
+        <span class="fig-stat-card__label">Average physician review</span>
+        <span class="fig-stat-card__detail">Most cases are reviewed by a board-certified provider within one business day of submission.</span>
+      </div>
+      <div class="fig-stat-card">
+        <span class="fig-stat-card__number">48hr</span>
+        <span class="fig-stat-card__label">Typical shipping window</span>
+        <span class="fig-stat-card__detail">Once approved, your prescription ships from a licensed U.S. pharmacy — usually within two days.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT TO EXPECT ON GLP-1 THERAPY (process steps) -->
+  <style>
+    .fig-expect {
+      padding: 100px 180px;
+      background: linear-gradient(180deg, #d8e7df 0%, #c3d8cc 100%);
+      max-width: 1440px;
+      margin: 0 auto;
+      box-sizing: border-box;
+      position: relative;
+      overflow: hidden;
+    }
+    .fig-expect__head {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 56px;
+      max-width: 680px;
+    }
+    .fig-expect__eyebrow {
+      display: inline-flex;
+      padding: 4px 8px;
+      border: 1px solid rgba(23, 34, 42, 0.15);
+      border-radius: 20px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 12px;
+      color: var(--fig-green-dark, #004c27);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      align-self: flex-start;
+    }
+    .fig-expect__title {
+      font-family: 'Playfair Display', serif;
+      font-weight: 400;
+      font-size: 44px;
+      line-height: 1.3;
+      letter-spacing: -2px;
+      color: var(--fig-charcoal, #17222a);
+      margin: 0;
+    }
+    .fig-expect__title em {
+      font-style: italic;
+      color: var(--fig-gold, #c5984e);
+    }
+    .fig-expect__steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+    .fig-expect-step {
+      background: rgba(255,255,255,0.7);
+      backdrop-filter: blur(8px);
+      padding: 32px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      border-radius: 4px;
+    }
+    .fig-expect-step__num {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 40px;
+      color: var(--fig-gold, #c5984e);
+      line-height: 1;
+    }
+    .fig-expect-step__title {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      letter-spacing: -0.5px;
+      line-height: 1.3;
+      color: var(--fig-charcoal, #17222a);
+      margin: 0;
+    }
+    .fig-expect-step__body {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: var(--fig-charcoal, #17222a);
+      line-height: 1.5;
+      opacity: 0.78;
+      margin: 0;
+    }
+    @media (max-width: 1200px) {
+      .fig-expect { padding: 56px 24px; }
+      .fig-expect__steps { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 640px) {
+      .fig-expect__steps { grid-template-columns: 1fr; }
+      .fig-expect__title { font-size: 32px; letter-spacing: -1px; }
+    }
+  </style>
+  <section class="fig-expect" aria-label="What to expect on GLP-1 therapy">
+    <div class="fig-expect__head">
+      <span class="fig-expect__eyebrow">What to expect</span>
+      <h2 class="fig-expect__title">A clear path on <em>GLP-1 therapy</em></h2>
+    </div>
+    <div class="fig-expect__steps">
+      <div class="fig-expect-step">
+        <span class="fig-expect-step__num">01</span>
+        <h3 class="fig-expect-step__title">Week 1</h3>
+        <p class="fig-expect-step__body">Start at the lowest titration dose. Your provider reviews symptoms and side effects between weeks.</p>
+      </div>
+      <div class="fig-expect-step">
+        <span class="fig-expect-step__num">02</span>
+        <h3 class="fig-expect-step__title">Weeks 2–4</h3>
+        <p class="fig-expect-step__body">Hunger and food noise typically begin to decrease. Hydration and protein become essential.</p>
+      </div>
+      <div class="fig-expect-step">
+        <span class="fig-expect-step__num">03</span>
+        <h3 class="fig-expect-step__title">Months 2–3</h3>
+        <p class="fig-expect-step__body">Most patients reach a comfortable dose. Steady weight loss continues with consistent dosing and nutrition.</p>
+      </div>
+      <div class="fig-expect-step">
+        <span class="fig-expect-step__num">04</span>
+        <h3 class="fig-expect-step__title">Beyond 3 months</h3>
+        <p class="fig-expect-step__body">Your physician adjusts dose as needed. Many patients reach maintenance phase by month 6.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FROM VISIT TO DOORSTEP (process) -->
+  <style>
+    .fig-doorstep {
+      padding: 100px 180px;
+      background: var(--fig-cream, #faf8f4);
+      max-width: 1440px;
+      margin: 0 auto;
+      box-sizing: border-box;
+    }
+    .fig-doorstep__head {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 56px;
+      align-items: flex-start;
+    }
+    .fig-doorstep__eyebrow {
+      display: inline-flex;
+      padding: 4px 8px;
+      border: 1px solid rgba(23, 34, 42, 0.1);
+      border-radius: 20px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 12px;
+      color: var(--fig-green-mid, #008262);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .fig-doorstep__title {
+      font-family: 'Playfair Display', serif;
+      font-weight: 400;
+      font-size: 44px;
+      line-height: 1.3;
+      letter-spacing: -2px;
+      color: var(--fig-charcoal, #17222a);
+      margin: 0;
+    }
+    .fig-doorstep__title em {
+      font-style: italic;
+      color: var(--fig-gold, #c5984e);
+    }
+    .fig-doorstep__steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+    .fig-door-step {
+      background: #fff;
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      border-radius: 4px;
+    }
+    .fig-door-step__num {
+      font-family: 'Poppins', sans-serif;
+      font-size: 12px;
+      color: var(--fig-gold, #c5984e);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .fig-door-step__title {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      letter-spacing: -0.5px;
+      line-height: 1.3;
+      color: var(--fig-charcoal, #17222a);
+      margin: 0;
+    }
+    .fig-door-step__body {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: #707070;
+      line-height: 1.5;
+      margin: 0;
+    }
+    @media (max-width: 1200px) {
+      .fig-doorstep { padding: 56px 24px; }
+      .fig-doorstep__steps { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 640px) {
+      .fig-doorstep__steps { grid-template-columns: 1fr; }
+      .fig-doorstep__title { font-size: 32px; letter-spacing: -1px; }
+    }
+  </style>
+  <section class="fig-doorstep" aria-label="From visit to doorstep">
+    <div class="fig-doorstep__head">
+      <span class="fig-doorstep__eyebrow">Process</span>
+      <h2 class="fig-doorstep__title">From visit to doorstep <em>in under a week</em></h2>
+    </div>
+    <div class="fig-doorstep__steps">
+      <div class="fig-door-step">
+        <span class="fig-door-step__num">Step 01</span>
+        <h3 class="fig-door-step__title">Take the assessment</h3>
+        <p class="fig-door-step__body">A short medical questionnaire — five minutes — covers history, goals and any current medications.</p>
+      </div>
+      <div class="fig-door-step">
+        <span class="fig-door-step__num">Step 02</span>
+        <h3 class="fig-door-step__title">Physician review</h3>
+        <p class="fig-door-step__body">A board-certified physician licensed in your state reviews your file, usually within 24 hours.</p>
+      </div>
+      <div class="fig-door-step">
+        <span class="fig-door-step__num">Step 03</span>
+        <h3 class="fig-door-step__title">Pharmacy compounds</h3>
+        <p class="fig-door-step__body">If clinically appropriate, your prescription is sent to a licensed U.S. compounding pharmacy.</p>
+      </div>
+      <div class="fig-door-step">
+        <span class="fig-door-step__num">Step 04</span>
+        <h3 class="fig-door-step__title">Door-to-door delivery</h3>
+        <p class="fig-door-step__body">Cold-chain shipped in discreet packaging — typically arrives within 48 hours of pharmacy approval.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRUST THUMBS — Real Stories / Real Providers / Pharmacy Grade -->
+  <style>
+    .fig-trust {
+      padding: 80px 180px 100px;
+      background: #fff;
+      max-width: 1440px;
+      margin: 0 auto;
+      box-sizing: border-box;
+    }
+    .fig-trust__grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .fig-trust-card {
+      background: var(--fig-cream, #faf8f4);
+      padding: 36px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      align-items: flex-start;
+      border-radius: 4px;
+    }
+    .fig-trust-card__icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(0,76,39,0.1);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--fig-green-dark, #004c27);
+    }
+    .fig-trust-card__title {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      letter-spacing: -0.5px;
+      color: var(--fig-charcoal, #17222a);
+      margin: 0;
+    }
+    .fig-trust-card__body {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: #707070;
+      line-height: 1.5;
+      margin: 0;
+    }
+    @media (max-width: 1200px) {
+      .fig-trust { padding: 56px 24px; }
+      .fig-trust__grid { grid-template-columns: 1fr; }
+    }
+  </style>
+  <section class="fig-trust" aria-label="Trust">
+    <div class="fig-trust__grid">
+      <div class="fig-trust-card">
+        <div class="fig-trust-card__icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3 class="fig-trust-card__title">Real Stories</h3>
+        <p class="fig-trust-card__body">Verified patient outcomes from physician-supervised programs. Names changed for privacy.</p>
+      </div>
+      <div class="fig-trust-card">
+        <div class="fig-trust-card__icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3 class="fig-trust-card__title">Real Providers</h3>
+        <p class="fig-trust-card__body">Every prescription is reviewed and signed by a board-certified physician licensed in your state.</p>
+      </div>
+      <div class="fig-trust-card">
+        <div class="fig-trust-card__icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2L4 6v6c0 5 3.5 9.7 8 11 4.5-1.3 8-6 8-11V6l-8-4z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3 class="fig-trust-card__title">Pharmacy Grade</h3>
+        <p class="fig-trust-card__body">Compounded in licensed U.S. 503A pharmacies. LegitScript certified. Cold-chain shipping nationwide.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- YOUR SAFETY, ENSURED (FAQ) -->
+  <style>
+    .fig-faq {
+      padding: 80px 180px 100px;
+      background: #fff;
+      max-width: 1440px;
+      margin: 0 auto;
+      box-sizing: border-box;
+    }
+    .fig-faq__head {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 40px;
+      align-items: flex-start;
+    }
+    .fig-faq__eyebrow {
+      display: inline-flex;
+      padding: 4px 8px;
+      border: 1px solid rgba(23, 34, 42, 0.1);
+      border-radius: 20px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 12px;
+      color: var(--fig-green-mid, #008262);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .fig-faq__title {
+      font-family: 'Playfair Display', serif;
+      font-weight: 400;
+      font-size: 44px;
+      line-height: 1.3;
+      letter-spacing: -2px;
+      color: var(--fig-charcoal, #17222a);
+      margin: 0;
+    }
+    .fig-faq__title em {
+      font-style: italic;
+      color: var(--fig-gold, #c5984e);
+    }
+    .fig-faq__list {
+      display: flex;
+      flex-direction: column;
+      border-top: 1px solid rgba(23,34,42,0.08);
+    }
+    .fig-faq__item {
+      border-bottom: 1px solid rgba(23,34,42,0.08);
+    }
+    .fig-faq__summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 22px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--fig-charcoal, #17222a);
+    }
+    .fig-faq__summary::-webkit-details-marker { display: none; }
+    .fig-faq__summary::after {
+      content: "+";
+      font-family: 'Inter', sans-serif;
+      font-size: 22px;
+      color: var(--fig-green-dark, #004c27);
+      font-weight: 300;
+      transition: transform .2s ease;
+    }
+    .fig-faq__item[open] .fig-faq__summary::after { content: "−"; }
+    .fig-faq__body {
+      padding: 0 0 24px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: #707070;
+      line-height: 1.6;
+      max-width: 760px;
+    }
+    @media (max-width: 1200px) {
+      .fig-faq { padding: 56px 24px; }
+      .fig-faq__title { font-size: 32px; letter-spacing: -1px; }
+    }
+  </style>
+  <section class="fig-faq" aria-label="Your safety, ensured">
+    <div class="fig-faq__head">
+      <span class="fig-faq__eyebrow">FAQ</span>
+      <h2 class="fig-faq__title">Your safety, <em>ensured</em></h2>
+    </div>
+    <div class="fig-faq__list">
+      <details class="fig-faq__item">
+        <summary class="fig-faq__summary">Are the medications FDA-regulated?</summary>
+        <p class="fig-faq__body">Freeley partners with licensed U.S. compounding pharmacies that operate under FDA-regulated frameworks. Compounded medications are not FDA-approved drug products; they are prepared in licensed pharmacies under a valid prescription from your physician.</p>
+      </details>
+      <details class="fig-faq__item">
+        <summary class="fig-faq__summary">Will I be matched with a real doctor?</summary>
+        <p class="fig-faq__body">Yes. Every patient is reviewed by a board-certified physician licensed in your state. Your provider signs off on the treatment plan before any prescription is sent to the pharmacy.</p>
+      </details>
+      <details class="fig-faq__item">
+        <summary class="fig-faq__summary">What if I have side effects?</summary>
+        <p class="fig-faq__body">Your provider checks in throughout your program and can adjust your dose or pause your prescription at any time. You can message your care team directly through your patient portal.</p>
+      </details>
+      <details class="fig-faq__item">
+        <summary class="fig-faq__summary">Is my health information secure?</summary>
+        <p class="fig-faq__body">Yes. Freeley is HIPAA-compliant. Your data is encrypted in transit and at rest, and is never sold to third parties for advertising.</p>
+      </details>
+      <details class="fig-faq__item">
+        <summary class="fig-faq__summary">Can I cancel anytime?</summary>
+        <p class="fig-faq__body">Yes. There are no contracts and no membership fees. You can pause or cancel your treatment plan at any time from your account.</p>
+      </details>
+      <details class="fig-faq__item">
+        <summary class="fig-faq__summary">Do I need insurance?</summary>
+        <p class="fig-faq__body">No insurance is required. Your monthly cost is transparent and covers your consultation, prescription and shipping.</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- THE FUTURE OF WEIGHT LOSS — final CTA banner -->
+  <style>
+    .fig-final-cta {
+      padding: 80px 180px 100px;
+      background: var(--fig-green-dark, #004c27);
+      color: #fff;
+      max-width: 1440px;
+      margin: 0 auto;
+      box-sizing: border-box;
+      position: relative;
+      overflow: hidden;
+    }
+    .fig-final-cta::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 80% 20%, rgba(197,152,78,0.25), transparent 50%);
+      pointer-events: none;
+    }
+    .fig-final-cta__inner {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      align-items: flex-start;
+      max-width: 720px;
+    }
+    .fig-final-cta__eyebrow {
+      display: inline-flex;
+      padding: 4px 12px;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 20px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 12px;
+      color: var(--fig-gold, #c5984e);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .fig-final-cta__title {
+      font-family: 'Playfair Display', serif;
+      font-weight: 400;
+      font-size: 56px;
+      line-height: 1.15;
+      letter-spacing: -2px;
+      color: #fff;
+      margin: 0;
+    }
+    .fig-final-cta__title em {
+      font-style: italic;
+      color: var(--fig-gold, #c5984e);
+    }
+    .fig-final-cta__sub {
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      color: rgba(255,255,255,0.78);
+      line-height: 1.5;
+      margin: 0;
+      max-width: 540px;
+    }
+    .fig-final-cta__btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 12px 16px 28px;
+      background: var(--fig-gold, #c5984e);
+      color: #fff;
+      border-radius: 40px;
+      text-decoration: none;
+      font-family: 'Poppins', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      transition: transform .15s ease, background .15s ease;
+      margin-top: 8px;
+    }
+    .fig-final-cta__btn:hover {
+      background: #b78640;
+      transform: translateY(-1px);
+    }
+    .fig-final-cta__btn-icon {
+      background: #fff;
+      border-radius: 20px;
+      width: 32px;
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .fig-final-cta__btn-icon svg { width: 14px; height: 14px; }
+    @media (max-width: 1200px) {
+      .fig-final-cta { padding: 56px 24px; }
+      .fig-final-cta__title { font-size: 36px; letter-spacing: -1px; }
+    }
+  </style>
+  <section class="fig-final-cta" aria-label="Get started">
+    <div class="fig-final-cta__inner">
+      <span class="fig-final-cta__eyebrow">Begin today</span>
+      <h2 class="fig-final-cta__title">The future of weight loss <em>starts here</em></h2>
+      <p class="fig-final-cta__sub">See if you qualify for physician-prescribed care. Five-minute assessment — no commitment, no insurance required.</p>
+      <a href="/quiz" class="fig-final-cta__btn">
+        See If You Qualify
+        <span class="fig-final-cta__btn-icon" aria-hidden="true">
+          <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke="#004c27" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+      </a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <style>
+    .fig-footer {
+      padding: 64px 180px 48px;
+      background: var(--fig-green-dark, #004c27);
+      color: #fff;
+      max-width: 1440px;
+      margin: 0 auto;
+      box-sizing: border-box;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .fig-footer__grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr 1fr;
+      gap: 48px;
+      padding-bottom: 48px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .fig-footer__brand img {
+      width: 140px;
+      height: auto;
+      margin-bottom: 16px;
+      filter: brightness(0) invert(1);
+    }
+    .fig-footer__brand p {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.6;
+      max-width: 320px;
+      margin: 0;
+    }
+    .fig-footer__col h4 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--fig-gold, #c5984e);
+      margin: 0 0 16px;
+    }
+    .fig-footer__col ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .fig-footer__col a {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      color: rgba(255,255,255,0.78);
+      text-decoration: none;
+      transition: color .15s ease;
+    }
+    .fig-footer__col a:hover { color: var(--fig-gold, #c5984e); }
+    .fig-footer__legal {
+      padding-top: 32px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 16px;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+    }
+    .fig-footer__legal p { margin: 0; max-width: 760px; line-height: 1.6; }
+    .fig-footer__legal-links { display: flex; gap: 20px; }
+    .fig-footer__legal-links a { color: rgba(255,255,255,0.7); text-decoration: none; }
+    .fig-footer__legal-links a:hover { color: var(--fig-gold, #c5984e); }
+    @media (max-width: 1200px) {
+      .fig-footer { padding: 48px 24px; }
+      .fig-footer__grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 640px) {
+      .fig-footer__grid { grid-template-columns: 1fr; gap: 32px; }
+    }
+  </style>
+  <footer class="fig-footer" aria-label="Site footer">
+    <div class="fig-footer__grid">
+      <div class="fig-footer__brand">
+        <img src="/assets/brand/freeley_logo_transparent_green.png" alt="Freeley">
+        <p>Physician-prescribed, pharmacy-compounded care delivered to your door. Licensed in 50 states.</p>
+      </div>
+      <div class="fig-footer__col">
+        <h4>Treatments</h4>
+        <ul>
+          <li><a href="/weight-loss">Weight Loss</a></li>
+          <li><a href="/sexual-wellness">Sexual Wellness</a></li>
+          <li><a href="/hair-loss">Hair Loss</a></li>
+          <li><a href="/longevity">Longevity</a></li>
+        </ul>
+      </div>
+      <div class="fig-footer__col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="/about">About</a></li>
+          <li><a href="/medical-advisors">Medical Advisors</a></li>
+          <li><a href="/blog">Blog</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="fig-footer__col">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="/faq">FAQ</a></li>
+          <li><a href="/shipping">Shipping</a></li>
+          <li><a href="/returns">Returns</a></li>
+          <li><a href="/account">My Account</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="fig-footer__legal">
+      <p>© <span id="fig-year">2026</span> Freeley. Compounded medications are prepared by licensed U.S. pharmacies and are not FDA-approved drug products. Individual results may vary. This site does not provide medical advice and is not a substitute for professional medical care.</p>
+      <div class="fig-footer__legal-links">
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+        <a href="/hipaa">HIPAA</a>
+      </div>
+    </div>
+  </footer>
+  <script>document.getElementById('fig-year').textContent=new Date().getFullYear();</script>
+
+  <!-- LEGACY HOMEPAGE SECTIONS BELOW — hidden on homepage via .legacy-home-hide -->
+  <style>
+    .legacy-home-hide { display: none !important; }
+  </style>
+  <div class="legacy-home-hide">
   <!-- RESULTS & OUTCOMES -->
   <section class="results-section" style="padding: 100px 0; background: linear-gradient(180deg, var(--cream) 0%, #e8f0eb 100%); position: relative; overflow: hidden;">
     <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(61,140,94,0.06) 0%, transparent 70%); pointer-events: none;"></div>
@@ -2757,6 +4056,7 @@
       }
     }
   </style>
+  </div><!-- /legacy-home-hide -->
   <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
 </body>
 
