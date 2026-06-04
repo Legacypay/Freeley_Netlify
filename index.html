@@ -39,8 +39,9 @@
   }
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Montserrat:wght@400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Montserrat:wght@400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Poppins:wght@400;500;600&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="shared.css">
   <style>
@@ -1196,74 +1197,543 @@
 
 <body>
 
-  <!-- HERO -->
-  <section class="hero">
-    <div class="hero-grain"></div>
-    <div class="hero-orb"></div>
-    <div class="hero-content">
-      <h1>Your Last Diet Didn't Fail.<br><em>Your Biology Did.</em></h1>
-      
-      <!-- Mobile Hero Image — lifestyle shot, no embedded copy/CTAs.
-           Phone mockup composition removed (was duplicating the hero's
-           h1 + CTAs in a second baked-in headline). -->
-      <div class="hero-visual-mobile" style="border-radius: 20px; overflow: hidden; margin-top: 24px;">
-        <img src="assets/brand/hero_lifestyle.png" alt="Real patient living confidently after starting her Freeley program"
-          width="1024" height="600" fetchpriority="high" decoding="async"
-          style="width: 100%; height: auto; display: block; aspect-ratio: 1024 / 600;">
-      </div>
-      <!-- Tight subline: trust + value anchor in one sentence. -->
-      <p class="hero-desc" style="margin-bottom: 32px;">Real doctors. Real Rx. Delivered to your door &mdash; from <strong>$99/month*</strong>.</p>
+  <!-- HERO — rebuilt to match Figma Revision 5 (node 149:2494) -->
+  <style>
+    /* Figma color tokens for this hero. Scoped to .fig-hero to avoid
+       leaking into other sections. */
+    .fig-hero {
+      --fig-bg: #d4dcdf;
+      --fig-charcoal: #17222a;
+      --fig-green-dark: #004c27;
+      --fig-green-mid: #008262;
+      --fig-gold: #c5984e;
+      --fig-cream: #faf8f4;
+      --fig-grey: #707070;
 
-      <!-- Single primary CTA + small secondary text link beneath it. -->
-      <div class="hero-actions" style="margin-bottom: 16px; align-items: center; gap: 16px;">
-        <a href="/quiz" class="hero-cta-pulse">See if you Qualify</a>
-      </div>
-      <a href="/how-it-works" class="hero-arrow-link" style="font-size: 14px; margin-bottom: 24px; display: inline-flex; align-items: center; gap: 6px; opacity: 0.85;">See what's included
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-          <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-      </a>
+      position: relative;
+      background: var(--fig-bg);
+      min-height: 877px;
+      overflow: hidden;
+      padding: 0;
+      display: block;
+      margin-top: 0;
+    }
 
-      <!-- Micro-trust strip directly under CTA — high-converting CTA proximity. -->
-      <div style="font-size: 14px; font-weight: 500; color: rgba(255, 255, 255, 0.75); margin-top: 20px; margin-bottom: 24px; display: flex; align-items: center; justify-content: flex-start; gap: 20px; flex-wrap: wrap;">
-        <span><i class="ri-check-line" style="color: #7dba96; margin-right: 4px; font-size:16px;"></i>No credit card required</span>
-        <span><i class="ri-check-line" style="color: #7dba96; margin-right: 4px; font-size:16px;"></i>Takes 2 minutes</span>
-        <span><i class="ri-check-line" style="color: #7dba96; margin-right: 4px; font-size:16px;"></i>Cancel anytime</span>
-      </div>
+    /* Watermark "F" tiled pattern behind everything. SVG inlined so it
+       scales cleanly with no extra HTTP request. */
+    .fig-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 270' width='600' height='270'><g fill='%23ffffff' opacity='0.30'><text x='0' y='44' font-family='Playfair Display, serif' font-weight='600' font-size='44' letter-spacing='-2'>F</text><circle cx='126' cy='28' r='5'/><circle cx='209' cy='28' r='5'/><text x='258' y='44' font-family='Playfair Display, serif' font-weight='600' font-size='44' letter-spacing='-2'>F</text><circle cx='384' cy='28' r='5'/><circle cx='467' cy='28' r='5'/><text x='516' y='44' font-family='Playfair Display, serif' font-weight='600' font-size='44' letter-spacing='-2'>F</text><circle cx='91' cy='113' r='5'/><circle cx='174' cy='113' r='5'/><text x='223' y='129' font-family='Playfair Display, serif' font-weight='600' font-size='44' letter-spacing='-2'>F</text><circle cx='349' cy='113' r='5'/><circle cx='432' cy='113' r='5'/><text x='481' y='129' font-family='Playfair Display, serif' font-weight='600' font-size='44' letter-spacing='-2'>F</text><text x='0' y='214' font-family='Playfair Display, serif' font-weight='600' font-size='44' letter-spacing='-2'>F</text><circle cx='126' cy='198' r='5'/><circle cx='209' cy='198' r='5'/><text x='258' y='214' font-family='Playfair Display, serif' font-weight='600' font-size='44' letter-spacing='-2'>F</text><circle cx='384' cy='198' r='5'/><circle cx='467' cy='198' r='5'/><text x='516' y='214' font-family='Playfair Display, serif' font-weight='600' font-size='44' letter-spacing='-2'>F</text></g></svg>");
+      background-repeat: repeat;
+      background-size: 600px 270px;
+      pointer-events: none;
+      z-index: 0;
+    }
 
-      <!-- Trustpilot link -->
-      <div style="margin-bottom: 24px; display: flex; justify-content: flex-start;">
-        <a href="https://www.trustpilot.com/review/freeley.com" target="_blank" rel="noopener"
-           style="display: inline-flex; align-items: center; gap: 10px; padding: 10px 18px;
-                  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.18);
-                  border-radius: 999px; color: #fff; text-decoration: none; font-size: 13px;
-                  font-weight: 500; letter-spacing: 0.3px; backdrop-filter: blur(8px);
-                  transition: background 0.2s ease;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="#00b67a" aria-hidden="true">
-            <path d="M12 .587l3.668 7.568L24 9.423l-6 5.85L19.335 24 12 19.897 4.665 24 6 15.273 0 9.423l8.332-1.268z"/>
-          </svg>
-          See us on Trustpilot
-          <span aria-hidden="true" style="opacity: 0.6;">→</span>
-        </a>
-      </div>
+    /* Right-side hero image of the couple. */
+    .fig-hero__couple {
+      position: absolute;
+      top: 113px;
+      left: 50%;
+      width: 1029px;
+      height: 771px;
+      transform: translateX(calc(710px - 50%));
+      z-index: 1;
+      pointer-events: none;
+    }
+    .fig-hero__couple img {
+      width: 100%; height: 100%;
+      object-fit: contain;
+      object-position: right bottom;
+      display: block;
+    }
 
-      <!-- Risk-Free Guarantee — sits in the hero just below the Trustpilot
-           link so it stays close to the primary CTA. -->
-      <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 22px 24px; max-width: 460px; text-align: left; backdrop-filter: blur(8px); box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
-        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
-          <i class="ri-shield-star-fill" style="color: #F7CB45; font-size: 24px;"></i>
-          <span style="font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 2px; color: rgba(255,255,255,0.9); text-transform: uppercase;">Risk-Free Guarantee</span>
-        </div>
-        <div style="font-family: 'DM Sans', sans-serif; font-size: 20px; color: #fff; font-weight: 600; line-height: 1.4;">
-          See results in <span style="color: #6A9984; font-weight: 700;">30 days</span> or you don't pay.
-        </div>
-      </div>
+    /* Inner container caps width at the Figma frame (1420px). */
+    .fig-hero__inner {
+      position: relative;
+      max-width: 1420px;
+      margin: 0 auto;
+      min-height: 877px;
+      z-index: 2;
+    }
 
+    /* Top nav — logo / center menu / Check Eligibility */
+    .fig-hero__nav {
+      position: absolute;
+      top: 34px;
+      left: 170px;
+      right: 170px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 3;
+    }
+    .fig-hero__logo img {
+      height: 31px;
+      width: auto;
+      display: block;
+    }
+    .fig-hero__menu {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--fig-charcoal);
+    }
+    .fig-hero__menu a {
+      color: inherit;
+      text-decoration: none;
+      transition: color .15s ease;
+    }
+    .fig-hero__menu a:hover { color: var(--fig-green-dark); }
+    .fig-hero__menu-dot {
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: var(--fig-charcoal);
+    }
+    .fig-hero__eligibility {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 40px;
+      padding: 0 20px;
+      background: #fff;
+      border-radius: 40px;
+      color: var(--fig-green-dark);
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      box-shadow: 0 4px 7px rgba(0, 76, 39, 0.10);
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .fig-hero__eligibility:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 14px rgba(0, 76, 39, 0.18);
+    }
+
+    /* Left content column */
+    .fig-hero__content {
+      position: absolute;
+      top: 141px;
+      left: 170px;
+      width: 565px;
+      z-index: 3;
+    }
+    .fig-hero__eyebrow {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 8px;
+      border: 1px solid rgba(23, 34, 42, 0.1);
+      border-radius: 20px;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--fig-green-mid);
+      text-transform: uppercase;
+      line-height: 1.3;
+      margin-bottom: 24px;
+    }
+    .fig-hero__h1 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 400;
+      font-size: 54px;
+      line-height: 1.3;
+      letter-spacing: -2px;
+      color: var(--fig-charcoal);
+      margin: 0 0 28px;
+    }
+    .fig-hero__h1 em {
+      font-style: italic;
+      color: var(--fig-gold);
+      display: block;
+    }
+    .fig-hero__sub {
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      line-height: 1.4;
+      color: var(--fig-charcoal);
+      margin: 0 0 36px;
+    }
+
+    /* Weight-loss goal selector */
+    .fig-goal {
+      margin-bottom: 56px;
+    }
+    .fig-goal__eyebrow {
+      display: inline-flex;
+      padding: 4px 8px;
+      border: 1px solid rgba(23, 34, 42, 0.1);
+      border-radius: 20px;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      color: var(--fig-green-mid);
+      text-transform: uppercase;
+      line-height: 1.3;
+      margin-bottom: 20px;
+    }
+    .fig-goal__row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .fig-goal__btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 154px;
+      padding: 10px 20px;
+      background: var(--fig-cream);
+      border: 1px solid var(--fig-green-dark);
+      border-radius: 40px;
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--fig-green-dark);
+      text-decoration: none;
+      transition: background .15s ease, transform .15s ease;
+    }
+    .fig-goal__btn:hover {
+      background: #fff;
+      transform: translateY(-1px);
+    }
+    .fig-goal__btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+    .fig-goal__alt {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: var(--fig-grey);
+    }
+    .fig-goal__alt a {
+      color: var(--fig-green-dark);
+      font-weight: 500;
+      text-decoration: none;
+      margin-left: 6px;
+    }
+    .fig-goal__alt a:hover { text-decoration: underline; }
+
+    /* 3-step process row */
+    .fig-steps {
+      display: flex;
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+    .fig-step {
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+    }
+    .fig-step__num {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--fig-green-dark);
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .fig-step__title {
+      font-family: 'Inter', sans-serif;
+      font-style: italic;
+      font-size: 18px;
+      color: #000;
+      line-height: 1.4;
+      white-space: nowrap;
+    }
+    .fig-step__sub {
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      color: var(--fig-grey);
+      margin-top: 6px;
+    }
+
+    /* Stat + Verified row */
+    .fig-stat-row {
+      display: flex;
+      align-items: center;
+      gap: 56px;
+      flex-wrap: wrap;
+    }
+    .fig-stat {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .fig-stat__num {
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 26px;
+      color: var(--fig-green-dark);
+      flex-shrink: 0;
+    }
+    .fig-stat__label {
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      color: var(--fig-grey);
+      line-height: 1.4;
+      max-width: 343px;
+    }
+    .fig-verified {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+    .fig-verified__label {
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 12px;
+      color: var(--fig-charcoal);
+      white-space: nowrap;
+    }
+    .fig-verified__badges {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .fig-verified__badges img { display: block; }
+
+    /* Bottom glass CTA bar */
+    .fig-cta-bar {
+      position: absolute;
+      bottom: 44px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 1120px;
+      max-width: calc(100% - 60px);
+      padding: 12px 20px;
+      background: rgba(255, 255, 255, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 2px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 3;
+    }
+    .fig-cta-bar__copy {
+      font-family: 'Inter', sans-serif;
+    }
+    .fig-cta-bar__title {
+      font-size: 16px;
+      font-weight: 500;
+      color: #000;
+      letter-spacing: -0.3px;
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+    .fig-cta-bar__sub {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      line-height: 1.2;
+    }
+    .fig-cta-bar__sub-from { color: rgba(0, 0, 0, 0.6); }
+    .fig-cta-bar__sub-price {
+      font-size: 20px;
+      font-weight: 500;
+      color: var(--fig-green-dark);
+      letter-spacing: -0.3px;
+    }
+    .fig-cta-bar__sub-tag { color: var(--fig-charcoal); }
+    .fig-cta-bar__btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 40px;
+      padding: 0 20px;
+      background: var(--fig-gold);
+      color: #fff;
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 40px;
+      text-decoration: none;
+      transition: transform .15s ease, box-shadow .15s ease;
+      box-shadow: 0 4px 12px rgba(197, 152, 78, 0.4);
+    }
+    .fig-cta-bar__btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(197, 152, 78, 0.5);
+    }
+
+    /* Responsive — below 1200px the Figma layout doesn't fit. Fall back
+       to a single column. The "revision 8" mobile design will replace
+       this when delivered. */
+    @media (max-width: 1200px) {
+      .fig-hero { min-height: auto; padding: 32px 0 24px; }
+      .fig-hero__inner { min-height: auto; padding: 0 24px; }
+      .fig-hero__nav { position: static; padding: 0 0 32px; flex-wrap: wrap; gap: 16px; }
+      .fig-hero__menu { display: none; }
+      .fig-hero__content { position: static; width: 100%; max-width: 565px; }
+      .fig-hero__couple {
+        position: relative;
+        top: auto; left: auto;
+        transform: none;
+        width: 100%;
+        max-width: 560px;
+        height: auto;
+        aspect-ratio: 1029 / 771;
+        margin: 32px auto 0;
+      }
+      .fig-hero__couple img { object-position: center; }
+      .fig-hero__h1 { font-size: clamp(36px, 6vw, 54px); }
+      .fig-cta-bar {
+        position: static;
+        transform: none;
+        width: 100%;
+        max-width: 600px;
+        margin: 24px auto 0;
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+      }
+      .fig-cta-bar__btn { width: 100%; }
+      .fig-steps { flex-wrap: wrap; gap: 24px; }
+      .fig-step__title { white-space: normal; }
+      .fig-verified { flex-wrap: wrap; }
+    }
+  </style>
+  <section class="fig-hero" id="hero">
+    <!-- Couple-in-green hero image (right side) -->
+    <div class="fig-hero__couple" aria-hidden="true">
+      <img src="assets/brand/hero-couple-green.png"
+        alt="" width="1029" height="771"
+        fetchpriority="high" decoding="async">
     </div>
-    <div class="hero-visual" style="background: none; box-shadow: none; border-radius: 20px; overflow: hidden;">
-      <img src="assets/brand/hero_lifestyle.png" alt="Real patient living confidently after starting her Freeley program"
-        width="1024" height="600" fetchpriority="high" decoding="async"
-        style="width: 100%; height: auto; display: block; object-fit: cover; aspect-ratio: 1024 / 600;">
+
+    <div class="fig-hero__inner">
+      <!-- Top nav -->
+      <nav class="fig-hero__nav" aria-label="Primary">
+        <a href="/" class="fig-hero__logo" aria-label="Freeley home">
+          <img src="assets/brand/freeley_logo_transparent_green.png"
+            alt="Freeley" width="122" height="31">
+        </a>
+        <div class="fig-hero__menu">
+          <a href="/weight-loss">GLP-1 Weight Loss</a>
+          <span class="fig-hero__menu-dot" aria-hidden="true"></span>
+          <a href="/hair-loss">Hair Loss</a>
+          <span class="fig-hero__menu-dot" aria-hidden="true"></span>
+          <a href="/sexual-wellness">Sexual Wellness</a>
+          <span class="fig-hero__menu-dot" aria-hidden="true"></span>
+          <a href="/longevity">Longevity</a>
+          <span class="fig-hero__menu-dot" aria-hidden="true"></span>
+          <a href="/how-it-works">How it Works</a>
+          <span class="fig-hero__menu-dot" aria-hidden="true"></span>
+          <a href="/pricing">Pricing</a>
+        </div>
+        <a href="/quiz" class="fig-hero__eligibility">Check Eligibility</a>
+      </nav>
+
+      <!-- Left content column -->
+      <div class="fig-hero__content">
+        <span class="fig-hero__eyebrow">Physician-Prescribed</span>
+        <h1 class="fig-hero__h1">
+          Your Last Diet Didn't Fail.
+          <em>Your Biology Did.</em>
+        </h1>
+        <p class="fig-hero__sub">Real doctors. Real Rx. Delivered to your door.</p>
+
+        <!-- Weight-loss goal quick-select -->
+        <div class="fig-goal">
+          <span class="fig-goal__eyebrow">What's your weight loss goal?</span>
+          <div class="fig-goal__row">
+            <a href="/quiz?goal=10-25" class="fig-goal__btn">
+              10–25 lbs
+              <svg viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                <path d="M10.8225 4.4475L15.375 9L10.8225 13.5525M2.625 9H15.2475" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
+            <a href="/quiz?goal=25-50" class="fig-goal__btn">
+              25–50 lbs
+              <svg viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                <path d="M10.8225 4.4475L15.375 9L10.8225 13.5525M2.625 9H15.2475" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
+            <a href="/quiz?goal=50plus" class="fig-goal__btn">
+              50+ lbs
+              <svg viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                <path d="M10.8225 4.4475L15.375 9L10.8225 13.5525M2.625 9H15.2475" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
+          </div>
+          <div class="fig-goal__alt">
+            Not sure?<a href="/quiz">Start the full assessment →</a>
+          </div>
+        </div>
+
+        <!-- 3-step process -->
+        <div class="fig-steps">
+          <div class="fig-step">
+            <div class="fig-step__num">1</div>
+            <div>
+              <div class="fig-step__title">2 Minute Intake</div>
+              <div class="fig-step__sub">Quick &amp; secure</div>
+            </div>
+          </div>
+          <div class="fig-step">
+            <div class="fig-step__num">2</div>
+            <div>
+              <div class="fig-step__title">Physician Reviewed</div>
+              <div class="fig-step__sub">Same Day</div>
+            </div>
+          </div>
+          <div class="fig-step">
+            <div class="fig-step__num">3</div>
+            <div>
+              <div class="fig-step__title">Delivered in 48hrs</div>
+              <div class="fig-step__sub">To your door</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stat + verified row -->
+        <div class="fig-stat-row">
+          <div class="fig-stat">
+            <div class="fig-stat__num">15%</div>
+            <div class="fig-stat__label">Average body weight lost by patients on our physician-guided GLP-1 protocol</div>
+          </div>
+          <div class="fig-verified">
+            <span class="fig-verified__label">Verified &amp; Certified</span>
+            <div class="fig-verified__badges">
+              <a href="https://www.legitscript.com/websites/?checker_keywords=freeley.com" target="_blank" rel="noopener" title="Verify LegitScript Approval">
+                <img src="https://static.legitscript.com/seals/49921676.png"
+                  alt="LegitScript Certified" width="45" height="49"
+                  loading="lazy" decoding="async">
+              </a>
+              <img src="assets/hipaa_badge.png"
+                alt="HIPAA Compliant" width="76" height="43"
+                loading="lazy" decoding="async">
+              <img src="assets/usa_badge.png"
+                alt="Made in USA" width="82" height="32"
+                loading="lazy" decoding="async">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom glass CTA bar -->
+      <div class="fig-cta-bar">
+        <div class="fig-cta-bar__copy">
+          <div class="fig-cta-bar__title">Start Assessment</div>
+          <div class="fig-cta-bar__sub">
+            <span class="fig-cta-bar__sub-from">From</span>
+            <span class="fig-cta-bar__sub-price">$99</span>
+            <span class="fig-cta-bar__sub-tag">Physician-supervised</span>
+          </div>
+        </div>
+        <a href="/quiz" class="fig-cta-bar__btn">Start Your Assessment</a>
+      </div>
     </div>
   </section>
 
