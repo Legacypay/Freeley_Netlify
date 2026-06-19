@@ -12,7 +12,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=DM+Sans:opsz,wght@9..40,400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
   <link rel="stylesheet" href="shared.css">
-  <script src="https://js.stripe.com/v3/"></script>
+  <!-- Authorize.Net Accept.js — tokenizes card data in-browser (card never hits our server).
+       Production credentials use js.authorize.net; a sandbox account would use jstest.authorize.net. -->
+  <script src="https://js.authorize.net/v1/Accept.js" charset="utf-8"></script>
   
   <style>
     /* Checkout specific aesthetic */
@@ -771,17 +773,42 @@
             <svg viewBox="0 0 36 24" width="36" height="24" xmlns="http://www.w3.org/2000/svg"><rect width="36" height="24" rx="4" fill="#F79E1B"/><circle cx="13" cy="12" r="7" fill="#EB001B"/><circle cx="23" cy="12" r="7" fill="#F79E1B" fill-opacity=".8"/></svg>
             <svg viewBox="0 0 36 24" width="36" height="24" xmlns="http://www.w3.org/2000/svg"><rect width="36" height="24" rx="4" fill="#1A1F71"/><path d="M14.6 15.6l-2-5.4-2.2 5.4H8L11.5 7h2.3l3.6 8.6h-2.8zm-2.8-2.6l-1-2.8-1 2.8h2zM21.5 7h4v1.8h-2.3v1.6h2v1.8h-2v1.7h2.5v1.8h-4.2V7zm7.5 8.6l-1.8-5h-.1l-1.8 5h-2.3l3-8.6h2.2l3 8.6h-2.2z" fill="#fff"/></svg>
             <div style="margin-left: 4px;">
-              <svg viewBox="0 0 60 25" width="48" height="20" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="25" rx="4" fill="#635BFF"/><text x="30" y="16" text-anchor="middle" fill="#fff" font-family="system-ui" font-size="10" font-weight="600">stripe</text></svg>
+              <svg viewBox="0 0 90 25" width="72" height="20" xmlns="http://www.w3.org/2000/svg"><rect width="90" height="25" rx="4" fill="#13447e"/><text x="45" y="16" text-anchor="middle" fill="#fff" font-family="system-ui" font-size="9" font-weight="600">Authorize.Net</text></svg>
             </div>
           </div>
         </div>
         
-        <!-- Stripe Elements Container -->
-        <div id="stripe-payment-element" style="padding: 16px 0; min-height: 120px;">
-          <!-- Stripe Elements will mount here -->
-          <div id="stripe-loading" style="text-align: center; padding: 40px 0; color: var(--text-muted); font-size: 14px;">
-            <i class="ri-loader-4-line" style="font-size: 24px; animation: spin 1s linear infinite; display: inline-block; color: var(--forest);"></i>
-            <div style="margin-top: 8px;">Loading secure payment form...</div>
+        <!-- Authorize.Net Accept.js card fields (id kept as stripe-payment-element
+             so the existing test-mode hide logic continues to work). -->
+        <div id="stripe-payment-element" style="padding: 16px 0;">
+          <div style="display: flex; flex-direction: column; gap: 14px;">
+            <div>
+              <label for="an-card-name" style="display:block; font-size:12px; font-weight:500; text-transform:uppercase; letter-spacing:0.5px; color:#555; margin-bottom:6px;">Name on Card</label>
+              <input id="an-card-name" type="text" autocomplete="cc-name" placeholder="Jane Doe"
+                     style="width:100%; border:1px solid rgba(0,0,0,0.12); border-radius:8px; padding:12px 14px; font-size:15px; font-family:'DM Sans',system-ui,sans-serif; box-sizing:border-box;">
+            </div>
+            <div>
+              <label for="an-card-number" style="display:block; font-size:12px; font-weight:500; text-transform:uppercase; letter-spacing:0.5px; color:#555; margin-bottom:6px;">Card Number</label>
+              <input id="an-card-number" type="text" inputmode="numeric" autocomplete="cc-number" maxlength="19" placeholder="1234 5678 9012 3456"
+                     style="width:100%; border:1px solid rgba(0,0,0,0.12); border-radius:8px; padding:12px 14px; font-size:15px; font-family:'DM Sans',system-ui,sans-serif; box-sizing:border-box;">
+            </div>
+            <div style="display:flex; gap:14px;">
+              <div style="flex:1;">
+                <label for="an-exp" style="display:block; font-size:12px; font-weight:500; text-transform:uppercase; letter-spacing:0.5px; color:#555; margin-bottom:6px;">Expiry (MM/YY)</label>
+                <input id="an-exp" type="text" inputmode="numeric" autocomplete="cc-exp" maxlength="7" placeholder="MM / YY"
+                       style="width:100%; border:1px solid rgba(0,0,0,0.12); border-radius:8px; padding:12px 14px; font-size:15px; font-family:'DM Sans',system-ui,sans-serif; box-sizing:border-box;">
+              </div>
+              <div style="flex:1;">
+                <label for="an-cvc" style="display:block; font-size:12px; font-weight:500; text-transform:uppercase; letter-spacing:0.5px; color:#555; margin-bottom:6px;">CVC</label>
+                <input id="an-cvc" type="text" inputmode="numeric" autocomplete="cc-csc" maxlength="4" placeholder="123"
+                       style="width:100%; border:1px solid rgba(0,0,0,0.12); border-radius:8px; padding:12px 14px; font-size:15px; font-family:'DM Sans',system-ui,sans-serif; box-sizing:border-box;">
+              </div>
+              <div style="flex:1;">
+                <label for="an-zip" style="display:block; font-size:12px; font-weight:500; text-transform:uppercase; letter-spacing:0.5px; color:#555; margin-bottom:6px;">Billing ZIP</label>
+                <input id="an-zip" type="text" inputmode="numeric" autocomplete="postal-code" maxlength="10" placeholder="33101"
+                       style="width:100%; border:1px solid rgba(0,0,0,0.12); border-radius:8px; padding:12px 14px; font-size:15px; font-family:'DM Sans',system-ui,sans-serif; box-sizing:border-box;">
+              </div>
+            </div>
           </div>
         </div>
 
@@ -913,12 +940,13 @@
 
   <script>
     // ═══════════════════════════════════════════════════════
-    // STRIPE CONFIGURATION
+    // AUTHORIZE.NET (Accept.js) CONFIGURATION
     // ═══════════════════════════════════════════════════════
-    const STRIPE_PK = 'pk_test_51TDT1XKIOVUvoOvriLqa5tQ4beMTJGiUZwoxlPHmbEej9WRaC9NstZAQ71GZSfvtaI5As1F0DqNtNsQWsZoVuRic00HrYDmCqc';
-    const stripe = Stripe(STRIPE_PK);
-    let elements;
-    let paymentElement;
+    // These two values are PUBLIC by design — Accept.js requires them in the
+    // browser to tokenize the card. The Transaction Key (the secret) lives
+    // ONLY in the Netlify env var AUTHNET_TRANSACTION_KEY, never here.
+    const AUTHNET_API_LOGIN_ID   = '62wCZg38Qp8';
+    const AUTHNET_CLIENT_KEY     = '58A266gP97E8s3eyZAbxtPmr5g3aN2rTggaY53RUM3A7sgDn7Wp9Rb2MK9Wd9Jab';
 
     // ═══════════════════════════════════════════════════════
     // PRICING DATA (must match serverless function)
@@ -1162,7 +1190,7 @@
       compoundOverride = type;
       applyCompoundParams();
       // Re-initialize Stripe when compound changes
-      initStripe();
+      ensurePaymentReady();
     }
 
     applyCompoundParams();
@@ -1234,7 +1262,7 @@
       selectedPlanIndex = index;
       renderPlans();
       // Re-initialize Stripe payment with new amount
-      initStripe();
+      ensurePaymentReady();
     }
 
     function updateSummary() {
@@ -1255,20 +1283,25 @@
     }
 
     // ═══════════════════════════════════════════════════════
-    // STRIPE ELEMENTS INITIALIZATION
+    // AUTHORIZE.NET (Accept.js) PAYMENT
     // ═══════════════════════════════════════════════════════
-    let clientSecret = null;
+    // Accept.js card fields are static (rendered in the HTML above), so there's
+    // no per-amount "init" call like Stripe's PaymentIntent. The price is
+    // computed server-side at charge time by create-authnet-transaction.
 
-    async function initStripe() {
-      const plan = currentConfig.plans[selectedPlanIndex];
-      const compound = (treatmentType === 'weight-loss') ? (compoundOverride || 'semaglutide') : 'default';
+    // Enable the checkout button once the page is ready (Stripe used to do this
+    // via paymentElement.on('ready')). Safe to call repeatedly.
+    function ensurePaymentReady() {
+      const b = document.getElementById('checkout-btn');
+      if (b) b.disabled = false;
+    }
 
-      // Read attribution context written by attribution.js on a previous
-      // public page visit. Localstorage only — no tracking pixel calls
-      // from this HIPAA-sensitive page. The data ends up in
-      // PaymentIntent.metadata so the Stripe webhook can fire
-      // server-side conversion events on payment_intent.succeeded.
-      let attribution = {};
+    // Read first-touch attribution from localStorage (written by attribution.js
+    // on an earlier public page). No tracking pixels fire from this HIPAA page;
+    // the flat attr_* map is forwarded to the server, which fires the
+    // server-side conversion (Meta CAPI + GA4 MP) after a successful charge.
+    function readAttribution() {
+      const attribution = {};
       try {
         const raw = localStorage.getItem('freeley_attribution');
         if (raw) {
@@ -1291,96 +1324,47 @@
           if (l._fbc)     attribution.attr_fbc = String(l._fbc).slice(0, 200);
         }
       } catch (e) { /* localStorage unavailable — proceed without attribution */ }
+      return attribution;
+    }
 
-      try {
-        const response = await fetch('/.netlify/functions/create-payment-intent', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            treatment: treatmentType,
-            plan_months: plan.months,
-            compound: compound,
-            attribution: attribution
-          })
-        });
-
-        const data = await response.json();
-        
-        if (!response.ok) {
-          throw new Error(data.error || 'Failed to initialize payment');
+    // Tokenize the card with Accept.js → resolves to { dataDescriptor, dataValue }.
+    // The raw card number/CVC never leave the browser for our servers.
+    function tokenizeCardWithAcceptJs() {
+      return new Promise((resolve, reject) => {
+        if (typeof Accept === 'undefined' || !Accept.dispatchData) {
+          return reject(new Error('Payment library failed to load. Please refresh and try again.'));
         }
+        const number = (document.getElementById('an-card-number').value || '').replace(/\s+/g, '');
+        const expRaw = (document.getElementById('an-exp').value || '').replace(/\D/g, '');
+        const cvc    = (document.getElementById('an-cvc').value || '').trim();
+        const zip    = (document.getElementById('an-zip').value || '').trim();
+        const name   = (document.getElementById('an-card-name').value || '').trim();
 
-        clientSecret = data.clientSecret;
+        if (number.length < 13) return reject(new Error('Please enter a valid card number.'));
+        if (expRaw.length < 4)  return reject(new Error('Please enter the card expiry as MM/YY.'));
+        if (cvc.length < 3)     return reject(new Error('Please enter the card security code (CVC).'));
 
-        // Create/recreate Elements
-        const appearance = {
-          theme: 'stripe',
-          variables: {
-            colorPrimary: '#1a4a2e',
-            colorBackground: '#f9f9f9',
-            colorText: '#1c1c1c',
-            colorDanger: '#dc2626',
-            fontFamily: '"DM Sans", system-ui, sans-serif',
-            spacingUnit: '4px',
-            borderRadius: '8px'
-          },
-          rules: {
-            '.Input': {
-              border: '1px solid rgba(0,0,0,0.12)',
-              boxShadow: 'none',
-              padding: '12px 14px',
-              fontSize: '15px'
-            },
-            '.Input:focus': {
-              border: '1px solid #1a4a2e',
-              boxShadow: '0 0 0 2px rgba(26,74,46,0.1)'
-            },
-            '.Label': {
-              fontSize: '12px',
-              fontWeight: '500',
-              textTransform: 'uppercase',
-              letterSpacing: '0.5px',
-              color: '#555'
-            }
-          }
+        const month = expRaw.slice(0, 2);
+        const year  = expRaw.slice(2);   // Accept.js accepts 2- or 4-digit year
+
+        const secureData = {
+          authData: { clientKey: AUTHNET_CLIENT_KEY, apiLoginID: AUTHNET_API_LOGIN_ID },
+          cardData: { cardNumber: number, month, year, cardCode: cvc, zip, fullName: name }
         };
 
-        elements = stripe.elements({ clientSecret, appearance });
-        
-        // Clear existing content
-        const container = document.getElementById('stripe-payment-element');
-        container.innerHTML = '';
-
-        paymentElement = elements.create('payment', {
-          layout: 'tabs'
-        });
-        paymentElement.mount('#stripe-payment-element');
-
-        // Enable checkout button once element is ready
-        paymentElement.on('ready', () => {
-          document.getElementById('checkout-btn').disabled = false;
-        });
-
-        paymentElement.on('change', (event) => {
-          const errorEl = document.getElementById('payment-errors');
-          if (event.error) {
-            errorEl.textContent = event.error.message;
-            errorEl.style.display = 'block';
+        Accept.dispatchData(secureData, function (response) {
+          if (response.messages.resultCode === 'Ok') {
+            resolve({
+              dataDescriptor: response.opaqueData.dataDescriptor,
+              dataValue: response.opaqueData.dataValue
+            });
           } else {
-            errorEl.style.display = 'none';
+            const msg = (response.messages.message && response.messages.message[0] && response.messages.message[0].text)
+              || 'Please check your card details and try again.';
+            reject(new Error(msg));
           }
         });
-
-      } catch (error) {
-        console.error('Stripe init error:', error);
-        // Show fallback message
-        const container = document.getElementById('stripe-payment-element');
-        container.innerHTML = `<div style="text-align: center; padding: 24px; color: #991b1b; background: #fee2e2; border-radius: 8px; font-size: 14px;">
-          <i class="ri-error-warning-line" style="font-size: 24px; display: block; margin-bottom: 8px;"></i>
-          Unable to load payment form. Please refresh the page or contact support.
-          <div style="font-size: 12px; color: #999; margin-top: 8px;">${error.message}</div>
-        </div>`;
-      }
+      });
     }
 
     // ═══════════════════════════════════════════════════════
@@ -1578,22 +1562,73 @@
           }
 
         } else {
-          // ── NORMAL MODE: process Stripe payment first ──
-          const { error, paymentIntent } = await stripe.confirmPayment({
-            elements,
-            confirmParams: {
-              return_url: window.location.origin + '/hub.html?payment=success'
-            },
-            redirect: 'if_required'
-          });
+          // ── NORMAL MODE: Authorize.Net via Accept.js ──
+          // 1) Validate patient info up front (block-scoped so the detailed
+          //    field consts are still declared in the submission block below).
+          {
+            const need = ['pt-first-name','pt-last-name','pt-dob','pt-gender','pt-address','pt-city','pt-state','pt-zip','pt-email','pt-phone'];
+            const missing = need.some(id => !(document.getElementById(id).value || '').trim());
+            if (missing) {
+              const ptInfoErr = document.getElementById('patient-info-error');
+              ptInfoErr.textContent = 'Please complete all patient information fields above before submitting.';
+              ptInfoErr.style.display = 'block';
+              document.getElementById('patient-info-box').scrollIntoView({ behavior: 'smooth' });
+              btn.disabled = false; btn.style.opacity = '1'; spinner.style.display = 'none';
+              return;
+            }
+          }
 
-          if (error) {
-            errorEl.textContent = error.message;
+          // 2) Tokenize the card with Accept.js (card data never reaches our server).
+          let opaqueData;
+          try {
+            opaqueData = await tokenizeCardWithAcceptJs();
+          } catch (tokErr) {
+            errorEl.textContent = tokErr.message || 'Please check your card details.';
             errorEl.style.display = 'block';
-            btn.disabled = false;
-            btn.style.opacity = '1';
-            spinner.style.display = 'none';
-          } else if (paymentIntent && paymentIntent.status === 'succeeded') {
+            btn.disabled = false; btn.style.opacity = '1'; spinner.style.display = 'none';
+            return;
+          }
+
+          // 3) Charge via our serverless function (price computed server-side).
+          if (btn.querySelector('#btn-text')) btn.querySelector('#btn-text').textContent = 'Processing payment...';
+          let chargeData;
+          try {
+            const chargeRes = await fetch('/.netlify/functions/create-authnet-transaction', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                treatment: treatmentType,
+                plan_months: currentConfig.plans[selectedPlanIndex].months,
+                compound: (treatmentType === 'weight-loss') ? (compoundOverride || 'semaglutide') : 'default',
+                opaqueData: opaqueData,
+                attribution: readAttribution(),
+                email: (document.getElementById('pt-email').value || '').trim(),
+                firstName: (document.getElementById('pt-first-name').value || '').trim(),
+                lastName: (document.getElementById('pt-last-name').value || '').trim(),
+                phone: (document.getElementById('pt-phone').value || '').trim(),
+                zip: (document.getElementById('an-zip').value || '').trim()
+              })
+            });
+            chargeData = await chargeRes.json();
+          } catch (chargeErr) {
+            errorEl.textContent = 'Network error while processing payment. Please try again.';
+            errorEl.style.display = 'block';
+            btn.disabled = false; btn.style.opacity = '1'; spinner.style.display = 'none';
+            return;
+          }
+
+          if (!chargeData || !chargeData.approved) {
+            errorEl.textContent = (chargeData && chargeData.error) || 'Your card was declined. Please try another card.';
+            errorEl.style.display = 'block';
+            btn.disabled = false; btn.style.opacity = '1'; spinner.style.display = 'none';
+            return;
+          }
+
+          // 4) Charge approved — hand off to the (unchanged) MDI submission block.
+          //    paymentIntent is shaped like Stripe's so the existing code below
+          //    keeps working, now carrying the Authorize.Net transaction id.
+          const paymentIntent = { id: chargeData.transactionId, status: 'succeeded' };
+          {
             // Payment succeeded — validate patient info before MDI submission
             const ptInfoError = document.getElementById('patient-info-error');
             const firstName = document.getElementById('pt-first-name').value.trim();
@@ -1744,7 +1779,7 @@
 
     // Initialize
     renderPlans();
-    if (!IS_TEST_MODE) { initStripe(); }
+    ensurePaymentReady();
   </script>
 </body>
 </html>
