@@ -7,7 +7,7 @@
 // browser handles HTTP 206 range requests directly. The SW returning
 // a cached 200 in response to a Range: request breaks <video>
 // playback (especially Safari/iOS).
-const CACHE_NAME = 'freeley-v3';
+const CACHE_NAME = 'freeley-v4';
 const CORE_ASSETS = [
   '/',
   '/index.html',

@@ -1368,12 +1368,12 @@
     }
 
     // ═══════════════════════════════════════════════════════
-    // TEST MODE BYPASS (skip Stripe when ?testmode=true)
+    // TEST MODE BYPASS (skip the charge only when ?testmode=true)
     // ═══════════════════════════════════════════════════════
-    // SANDBOX: Default to test mode (skip Stripe). Set ?testmode=false to force live payment.
-    // TODO: Flip this to 'false' when going live with real payments.
+    // LIVE: real Authorize.Net payment is the default. Test mode is now OPT-IN
+    // via ?testmode=true (bypasses the charge, submits straight to MDI for QA).
     const testModeParam = new URLSearchParams(window.location.search).get('testmode');
-    const IS_TEST_MODE = testModeParam !== 'false';
+    const IS_TEST_MODE = testModeParam === 'true';
     if (IS_TEST_MODE) {
       // Show test mode banner
       const banner = document.createElement('div');
