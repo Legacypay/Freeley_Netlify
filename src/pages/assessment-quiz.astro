@@ -1,5 +1,8 @@
 ---
 import '../styles/tailwind.css';
+
+const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
 ---
 <!doctype html>
 <html lang="en">
@@ -7,6 +10,11 @@ import '../styles/tailwind.css';
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet" />
@@ -22,7 +30,7 @@ import '../styles/tailwind.css';
     <link rel="stylesheet" href="/style/style.css" />
     <link rel="stylesheet" href="/style/quizstyle.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <title>Freeley Assessment</title>
+    <title>Compounded GLP-1 & Peptide Telehealth | Freeley Wellness</title>
 </head>
 
 <body>
@@ -48,7 +56,7 @@ import '../styles/tailwind.css';
                         <span class="quiz-badge quiz-badge-light"> FREE ASSESSMENT </span>
                         <h2 class="quiz-title">
                             Let's see if Freeley
-                            <span class="highlight">Is right for you</span>
+                            <span class="highlight">&nbsp;Is right for you</span>
                         </h2>
                         <p class="quiz-subtitle">
                             2 minutes. No commitment. • Free if you don't qualify.
@@ -151,7 +159,7 @@ import '../styles/tailwind.css';
                         <div class="step-body">
                             <h2 class="mb-6">
                                 What brings you
-                                <span class="highlight">to Freeley?</span>
+                                <span class="highlight">&nbsp;to Freeley?</span>
                             </h2>
                             <p class="mb-6">Select all that apply to you</p>
                             <div class="options" data-required="true" data-multi-select="true">
@@ -214,7 +222,7 @@ import '../styles/tailwind.css';
                         <div class="step-body">
                             <h2 class="mb-6">
                                 Save your
-                                <span class="highlight">progress</span>
+                                <span class="highlight">&nbsp;progress</span>
                             </h2>
                             <p class="mb-6">
                                 Enter your contact details below. We'll send your results here.
@@ -274,7 +282,7 @@ import '../styles/tailwind.css';
                         <div class="step-body">
                             <h2 class="mb-6">
                                 Tell us about
-                                <span class="highlight">yourself</span>
+                                <span class="highlight">&nbsp;yourself</span>
                             </h2>
                             <p class="mb-6">
                                 This helps us personalize your treatment plan.
@@ -520,7 +528,7 @@ import '../styles/tailwind.css';
                         <div class="step-body">
                             <h2 class="mb-6">
                                 What are you
-                                <span class="highlight">experiencing?</span>
+                                <span class="highlight">&nbsp;experiencing?</span>
                             </h2>
                             <p class="mb-12">Select all symptoms that apply</p>
                             <div class="options grid grid-cols-1 md:grid-cols-3 text-center gap-2 mb-4" data-required="true" data-multi-select="true">
@@ -580,7 +588,7 @@ import '../styles/tailwind.css';
                         <div class="step-body">
                             <h2 class="mb-6">
                                 Clinical
-                                <span class="highlight">Snapshot</span>
+                                <span class="highlight">&nbsp;Snapshot</span>
                             </h2>
                             <p class="mb-12">
                                 This information is required for our physicians to safely evaluate your candidacy for treatment.
@@ -625,7 +633,7 @@ import '../styles/tailwind.css';
                     <div class="step-body">
                         <h2 class="mb-6">
                             Clinical
-                            <span class="highlight">Snapshot</span>
+                            <span class="highlight">&nbsp;Snapshot</span>
                         </h2>
                         <p class="mb-12">
                             This information is required for our physicians to safely evaluate your candidacy for treatment.
@@ -665,7 +673,7 @@ import '../styles/tailwind.css';
                     <div class="step-body">
                         <h2 class="mb-6">
                             Clinical
-                            <span class="highlight">Snapshot</span>
+                            <span class="highlight">&nbsp;Snapshot</span>
                         </h2>
                         <p class="mb-12">
                             This information is required for our physicians to safely evaluate your candidacy for treatment.
@@ -710,7 +718,7 @@ import '../styles/tailwind.css';
                 <div class="step-body">
                     <h2 class="mb-6">
                         Clinical
-                        <span class="highlight">Snapshot</span>
+                        <span class="highlight">&nbsp;Snapshot</span>
                     </h2>
                     <p class="mb-12">
                         This information is required for our physicians to safely evaluate your candidacy for treatment.
@@ -805,7 +813,7 @@ import '../styles/tailwind.css';
                 <div class="step-body">
                     <h2 class="mb-6">
                         Preferred
-                        <span class="highlight">treatment format</span>
+                        <span class="highlight">&nbsp;treatment format</span>
                     </h2>
                     <p class="mb-12">
                         Helps us tailor dosing and delivery to your routine.
@@ -864,7 +872,7 @@ import '../styles/tailwind.css';
                 <div class="step-body">
                     <h2 class="mb-6">
                         Anything for
-                        <span class="highlight">your physician?</span>
+                        <span class="highlight">&nbsp;your physician?</span>
                     </h2>
                     <p class="mb-12">
                         Your responses are reviewed by a licensed, board-certified physician who will evaluate whether treatment is appropriate for you.
@@ -947,7 +955,7 @@ import '../styles/tailwind.css';
                 <div class="result-wrapper">
                     <h2 class="global--green">
                         Your personalized
-                        <span class="highlight">treatment plan</span>
+                        <span class="highlight">&nbsp;treatment plan</span>
                     </h2>
                     <p>Physician review within 24 hours.</p>
                     <div class="treatment-card">
@@ -1289,6 +1297,11 @@ import '../styles/tailwind.css';
         </div>
     </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js" is:inline></script>
+    <script define:vars={{ supabaseUrl, supabaseAnonKey }}>
+      window.__SUPABASE_URL__ = supabaseUrl;
+      window.__SUPABASE_ANON_KEY__ = supabaseAnonKey;
+    </script>
     <script src="/quiz-scripts/asw.js" is:inline></script>
 </body>
 

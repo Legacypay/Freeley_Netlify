@@ -161,14 +161,19 @@
      font-weight: 400;
      transition: 0.3s;
      cursor: pointer;
+     display: flex;
+     align-items: center;
+     justify-content: center;
  }
- 
+
  .quiz-start-btn:hover {
      background: #c5984e;
  }
- 
+
  .quiz-start-btn span {
      margin-left: 10px;
+     display: inline-flex;
+     align-items: center;
  }
  
  .quiz-start-btn:disabled {

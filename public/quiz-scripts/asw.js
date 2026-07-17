@@ -80,6 +80,42 @@ const PRODUCTS = {
 const DEFAULT_PRODUCT = PRODUCTS['weight loss'];
 
 // ============================================================
+// SUPABASE LEAD CAPTURE
+// ============================================================
+// Config comes from PUBLIC_SUPABASE_URL / PUBLIC_SUPABASE_ANON_KEY
+// (set as Netlify site env vars), injected at build time by the
+// assessment-quiz.astro frontmatter via define:vars — this file is a
+// static /public passthrough with no build step of its own, so it
+// can't read import.meta.env directly.
+let _supabaseClient = null;
+function getSupabaseClient() {
+  if (!_supabaseClient && window.supabase && window.__SUPABASE_URL__ && window.__SUPABASE_ANON_KEY__) {
+    _supabaseClient = window.supabase.createClient(window.__SUPABASE_URL__, window.__SUPABASE_ANON_KEY__);
+  }
+  return _supabaseClient;
+}
+
+function getQuizSessionId() {
+  let id = sessionStorage.getItem('freeley_quiz_session_id');
+  if (!id) {
+    id = crypto.randomUUID();
+    sessionStorage.setItem('freeley_quiz_session_id', id);
+  }
+  return id;
+}
+
+// Upserts the funnel_leads row by session id (same id across calls).
+// Fire-and-forget — never blocks quiz navigation on network/DB state.
+function saveLeadToSupabase(fields) {
+  const client = getSupabaseClient();
+  if (!client) return;
+  client.rpc('save_funnel_lead', { p_id: getQuizSessionId(), ...fields })
+    .then(({ error }) => {
+      if (error) console.error('Supabase save_funnel_lead error:', error.message);
+    });
+}
+
+// ============================================================
 // MULTI-SELECT VARIABLES
 // ============================================================
 
@@ -596,6 +632,13 @@ function validateStep2AndGo() {
   error.classList.remove('show');
   email.classList.remove('validation-error');
   phone.classList.remove('validation-error');
+
+  saveLeadToSupabase({
+    p_email: email.value.trim(),
+    p_phone: phone.value.trim(),
+    p_goals: getSelectedOptionsTexts(1)
+  });
+
   goToStep(3);
 }
 
@@ -793,6 +836,26 @@ function saveQuizData() {
   try {
     const quizData = collectAllQuizData();
     sessionStorage.setItem('freeley_quiz_data', JSON.stringify(quizData));
+
+    saveLeadToSupabase({
+      p_email: quizData.email,
+      p_phone: quizData.phone,
+      p_goals: getSelectedOptionsTexts(1),
+      p_age: quizData.age ? parseInt(quizData.age, 10) : null,
+      p_sex: quizData.sex || null,
+      p_height_inches: quizData.heightInInches || null,
+      p_us_state: quizData.state || null,
+      p_symptoms: quizData.symptoms,
+      p_allergies: quizData.allergies || null,
+      p_medications: quizData.medications || null,
+      p_conditions: quizData.conditions || null,
+      p_surgeries: quizData.surgeries || null,
+      p_activity_level: quizData.activityLevel || null,
+      p_treatment_format: quizData.treatmentFormat || null,
+      p_physician_notes: quizData.physicianNotes || null,
+      p_completed_at: quizData.completedAt,
+      p_product_group: quizData.productGroup || null
+    });
 
     const quizAnswersArray = convertToQuizAnswersArray(quizData);
     sessionStorage.setItem('quiz_answers', JSON.stringify(quizAnswersArray));
