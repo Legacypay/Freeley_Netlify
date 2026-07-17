@@ -844,6 +844,7 @@ function saveQuizData() {
       p_age: quizData.age ? parseInt(quizData.age, 10) : null,
       p_sex: quizData.sex || null,
       p_height_inches: quizData.heightInInches || null,
+      p_current_weight_lbs: quizData.goalWeight ? parseInt(quizData.goalWeight, 10) : null,
       p_us_state: quizData.state || null,
       p_symptoms: quizData.symptoms,
       p_allergies: quizData.allergies || null,
