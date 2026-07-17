@@ -225,12 +225,12 @@ function buildCarouselUI() {
         });
     }
 }
-document.getElementById("prevImageBtn") ? .addEventListener("click", () => {
+document.getElementById("prevImageBtn")?.addEventListener("click", () => {
     currentIdx =
         (currentIdx - 1 + productImages.length) % productImages.length;
     updateProductCarousel(currentIdx);
 });
-document.getElementById("nextImageBtn") ? .addEventListener("click", () => {
+document.getElementById("nextImageBtn")?.addEventListener("click", () => {
     currentIdx = (currentIdx + 1) % productImages.length;
     updateProductCarousel(currentIdx);
 });
