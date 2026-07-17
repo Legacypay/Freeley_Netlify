@@ -27,7 +27,7 @@ document.querySelectorAll(
         quizIframe.style.background = '#0000004D';
 
         // Load with cache-busting
-        quizIframe.src = './assessment-quiz.html?t=' + Date.now();
+        quizIframe.src = '/assessment-quiz?t=' + Date.now();
 
         quizIframe.onload = function() {
             loader.style.display = 'none';
