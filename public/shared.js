@@ -1,0 +1,277 @@
+// shared.js - Freeley shared components
+
+const NAV_HTML = (activePage = '') => `
+<nav class="nav" id="nav">
+  <a href="/" class="nav-logo">Freeley<span>.</span></a>
+  <div class="nav-links">
+    <a href="/weight-loss" ${activePage === 'weight-loss' ? 'class="active"' : ''}>GLP-1 Weight Loss</a>
+    <a href="/hair-loss" ${activePage === 'hair-loss' ? 'class="active"' : ''}>Hair Loss</a>
+    <a href="/sexual-wellness" ${activePage === 'sexual-wellness' ? 'class="active"' : ''}>Sexual Wellness</a>
+    <a href="/longevity" ${activePage === 'longevity' ? 'class="active"' : ''}>Longevity</a>
+    <a href="/how-it-works" ${activePage === 'how' ? 'class="active"' : ''}>How It Works</a>
+    <a href="/pricing" ${activePage === 'pricing' ? 'class="active"' : ''}>Pricing</a>
+  </div>
+  <div class="nav-right">
+    <a href="/hub" class="nav-login">Sign In</a>
+    <a href="/quiz" class="nav-cta">Start My Free Visit →</a>
+  </div>
+  <button class="nav-mobile-toggle" onclick="toggleMobileNav()" aria-label="Menu">
+    <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+      <path d="M3 6h16M3 11h16M3 16h16" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  </button>
+</nav>
+<div class="mobile-nav" id="mobileNav">
+  <a href="/">Home</a>
+  <a href="/weight-loss">GLP-1 Weight Loss</a>
+  <a href="/hair-loss">Hair Loss</a>
+  <a href="/sexual-wellness">Sexual Wellness</a>
+  <a href="/longevity">Longevity</a>
+  <a href="/how-it-works">How It Works</a>
+  <a href="/pricing">Pricing</a>
+  <a href="/quiz" class="mobile-cta">Start My Free Visit →</a>
+</div>
+`;
+
+const FOOTER_HTML = `
+<footer>
+  <div class="footer-grid">
+    <div>
+      <a href="/" class="footer-brand-logo"><img src="assets/brand/freeley_logo_white.svg" alt="Freeley" height="34"></a>
+      <p class="footer-brand-desc">Healthcare technology connecting patients to licensed physicians and compounding pharmacies — on your terms.</p>
+      <p class="footer-brand-desc" style="margin-top: 12px; font-size: 13px; opacity: 0.8;">
+        Freeley Health LLC<br>
+        7700 Camino Real, Suite 400<br>
+        Boca Raton, FL 33433<br>
+        Phone: +1 (904) 686-6960
+      </p>
+      <div class="footer-social">
+        <a href="https://www.instagram.com/freeleyhealth" target="_blank" rel="noopener noreferrer" title="Instagram">IG</a>
+        <a href="https://www.tiktok.com/@freeley.health" target="_blank" rel="noopener noreferrer" title="TikTok">TT</a>
+        <a href="https://x.com/freeley_health" target="_blank" rel="noopener noreferrer" title="X">𝕏</a>
+        <a href="https://www.facebook.com/freeleyhealth" target="_blank" rel="noopener noreferrer" title="Facebook">FB</a>
+        <a href="https://www.reddit.com/r/freeley" target="_blank" rel="noopener noreferrer" title="Reddit">Re</a>
+      </div>
+      <div style="display:flex; gap:16px; margin-top:32px; align-items:center; opacity:0.8;">
+        <img src="assets/usa_badge.png" alt="Made in USA" style="height:36px; width:auto; mix-blend-mode: screen;">
+        <img src="assets/hipaa_badge.png" alt="HIPAA Compliant" style="height:36px; width:auto; mix-blend-mode: screen;">
+        <a href="https://www.legitscript.com/websites/?checker_keywords=freeley.com" target="_blank" title="Verify LegitScript Approval for www.freeley.com" style="display:inline-flex; align-items:center;">
+          <img src="https://static.legitscript.com/seals/49921676.png" alt="LegitScript Certified" width="73" height="79" style="mix-blend-mode: screen;" />
+        </a>
+      </div>
+      <p style="margin-top: 12px; font-size: 11px; color: rgba(255,255,255,0.4); letter-spacing: 0.5px;">✓ LegitScript Certified Healthcare Platform</p>
+      <div style="margin-top: 24px; max-width: 280px;">
+        <!-- TrustBox widget - Review Collector -->
+        <div class="trustpilot-widget" data-locale="en-US" data-template-id="56278e9abfbbba0bdcd568bc" data-businessunit-id="69c2e98765a7a37ca4e3a6f1" data-style-height="52px" data-style-width="100%" data-token="b465654a-b786-48db-9158-f4d79c3e190a">
+          <a href="https://www.trustpilot.com/review/freeley.com" target="_blank" rel="noopener">Trustpilot</a>
+        </div>
+        <!-- End TrustBox widget -->
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Treatments</h4>
+      <a href="/weight-loss">GLP-1 Weight Loss</a>
+      <a href="/hair-loss">Hair Loss</a>
+      <a href="/sexual-wellness">Sexual Wellness</a>
+      <a href="/longevity">Longevity & Peptides</a>
+      <a href="/pricing">Pricing</a>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <a href="/how-it-works">How It Works</a>
+      <a href="/about">About Freeley</a>
+      <a href="/quality">Quality & Trust</a>
+      <a href="/partner-pharmacies">Partner Pharmacies</a>
+      <a href="/blog">Blog & Insights</a>
+      <a href="/faq">FAQ</a>
+      <a href="/contact">Contact Us</a>
+    </div>
+    <div class="footer-col">
+      <h4>Legal</h4>
+      <a href="/privacy">Privacy Policy</a>
+      <a href="/terms">Terms of Service</a>
+      <a href="/hipaa">HIPAA Notice</a>
+      <a href="/telehealth">Telehealth Consent</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-disclaimer">Freeley is a healthcare technology platform that facilitates connections between patients and independently licensed telemedicine providers through our clinical partner <strong><a href="https://mdintegrations.com" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">MD Integrations</a></strong>, and PCAB-accredited 503A compounding pharmacies, including <strong>Strive Pharmacy</strong>, available nationwide across all 50 U.S. states. Freeley does not practice medicine, employ physicians, or dispense medications. All treatment decisions and prescriptions are made solely by board-certified, US-licensed physicians. Compounded medications are not FDA-approved, and are independent of any name-brand medications. Results vary. FSA/HSA eligibility varies.</p>
+    <div class="footer-copy">© 2025 Freeley Health LLC (DBA Freeley) · <a href="https://www.legitscript.com/websites/?checker_keywords=freeley.com" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">LegitScript Certified</a></div>
+  </div>
+</footer>
+<script type="text/javascript" src="//widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js" async></script>
+`;
+
+const STICKY_MOBILE_CTA = `
+<div class="sticky-mobile-cta" id="stickyMobileCta">
+  <div class="sticky-cta-content">
+    <div class="sticky-cta-text">
+       <span class="sticky-cta-title">GLP-1 Weight Loss</span>
+       <span class="sticky-cta-price">Starts at $194/mo</span>
+    </div>
+    <a href="/quiz" class="btn btn-primary" style="padding: 12px 24px; font-weight: 600;">See if you Qualify</a>
+  </div>
+</div>
+`;
+
+
+
+const MOBILE_NAV_STYLES = `
+.mobile-nav {
+  display: none; position: fixed; top: 72px; left: 0; right: 0; z-index: 199;
+  background: rgba(7,21,16,0.98); backdrop-filter: blur(20px);
+  padding: 24px; flex-direction: column; gap: 4px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.mobile-nav.open { display: flex; }
+.mobile-nav a { color: rgba(255,255,255,0.7); text-decoration: none; padding: 12px 16px; border-radius: 10px; font-size: 15px; transition: all 0.2s; }
+.mobile-nav a:hover { color: #fff; background: rgba(255,255,255,0.06); }
+.mobile-nav .mobile-cta { background: var(--green-light); color: #fff !important; text-align: center; margin-top: 8px; font-weight: 500; }
+`;
+
+function toggleMobileNav() {
+  document.getElementById('mobileNav').classList.toggle('open');
+}
+
+function initPage(activePage) {
+  // Inject nav + footer
+  document.body.insertAdjacentHTML('afterbegin', NAV_HTML(activePage));
+  document.body.insertAdjacentHTML('beforeend', FOOTER_HTML);
+  document.body.insertAdjacentHTML('beforeend', STICKY_MOBILE_CTA);
+  
+    const currentMonthSpan = document.getElementById('currentMonthStr');
+  if (currentMonthSpan) {
+    currentMonthSpan.textContent = new Date().toLocaleString('default', { month: 'long' });
+  }
+  // Mobile nav styles + Urgency/Sticky CSS
+  const style = document.createElement('style');
+  style.textContent = MOBILE_NAV_STYLES + `
+  /* Tidio chatbot adjustment to prevent covering mobile layout */
+  @media (max-width: 768px) {
+    #tidio-chat-iframe, #tidio-chat {
+      bottom: 80px !important;
+    }
+  }
+  
+  .sticky-mobile-cta {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: rgba(7, 21, 16, 0.95); backdrop-filter: blur(14px);
+    border-top: 1px solid rgba(255,255,255,0.08); padding: 16px 24px;
+    z-index: 200; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    display: none; padding-bottom: max(16px, env(safe-area-inset-bottom));
+  }
+  @media (max-width: 768px) {
+    .sticky-mobile-cta { display: block; }
+    .sticky-mobile-cta.visible { transform: translateY(0); }
+  }
+  .sticky-cta-content { display: flex; justify-content: space-between; align-items: center; max-width: 480px; margin: 0 auto; }
+  .sticky-cta-text { display: flex; flex-direction: column; }
+  .sticky-cta-title { font-size: 11px; color: rgba(255,255,255,0.6); margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.5px; font-weight:600;}
+  .sticky-cta-price { font-size: 15px; font-weight: 700; color: #fff; }
+  `;
+  document.head.appendChild(style);
+
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+      }
+    });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // FAQ accordion (rec #14) — delegated handler so it works for
+  // any .faq-q / .faq-a pair on the page, including ones inserted later.
+  document.addEventListener('click', function (e) {
+    const q = e.target.closest('.faq-q');
+    if (!q) return;
+    const item = q.closest('.faq-item');
+    if (!item) return;
+    item.classList.toggle('open');
+    q.setAttribute('aria-expanded', item.classList.contains('open') ? 'true' : 'false');
+  });
+  // Keyboard support — Enter/Space on a focused .faq-q toggles it.
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const q = e.target.closest && e.target.closest('.faq-q');
+    if (!q) return;
+    e.preventDefault();
+    q.click();
+  });
+  // Make .faq-q tabbable + announce as buttons.
+  document.querySelectorAll('.faq-q').forEach(function (q) {
+    if (!q.hasAttribute('tabindex')) q.setAttribute('tabindex', '0');
+    if (!q.hasAttribute('role')) q.setAttribute('role', 'button');
+    if (!q.hasAttribute('aria-expanded')) q.setAttribute('aria-expanded', 'false');
+  });
+
+  // Nav scroll effect & Sticky Mobile CTA visibility
+  window.addEventListener('scroll', () => {
+    const nav = document.getElementById('nav');
+    const stickyCta = document.getElementById('stickyMobileCta');
+    if (window.scrollY > 40) {
+        nav.style.background = 'rgba(7,21,16,0.98)';
+        nav.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+    } else {
+        nav.style.background = 'rgba(7,21,16,0.94)';
+        nav.style.borderBottom = 'none';
+    }
+    
+    // Show sticky cta after scrolling down a bit (mobile only)
+    if (stickyCta && window.innerWidth <= 768) {
+      if (window.scrollY > 400) {
+        stickyCta.classList.add('visible');
+      } else {
+        stickyCta.classList.remove('visible');
+      }
+    }
+  });
+  // Structured Data (MedicalWebPage)
+  const schemaScript = document.createElement('script');
+  schemaScript.type = 'application/ld+json';
+  schemaScript.text = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "MedicalOrganization",
+    "name": "Freeley Health",
+    "url": "https://freeley.com",
+    "logo": "https://freeley.com/favicon.png",
+    "description": "Healthcare technology connecting patients to licensed physicians and compounding pharmacies.",
+    "medicalSpecialty": ["Telehealth", "Weight Management", "Sexual Health"]
+  });
+  document.head.appendChild(schemaScript);
+
+  // Tidio Live Chat Snippet (Web Only, Disabled for Mobile App Users)
+  if (!(window.Capacitor && window.Capacitor.isNativePlatform())) {
+    const tidioScript = document.createElement('script');
+    tidioScript.src = "//code.tidio.co/uoolj1kuzrueusvezow212gd5vlgazas.js"; 
+    tidioScript.async = true;
+    document.body.appendChild(tidioScript);
+  }
+
+  // Detect Capacitor Native App
+  if (window.Capacitor && window.Capacitor.isNativePlatform()) {
+      document.body.classList.add('mobile-app-mode');
+      
+      // Morph marketing website into an Existing User Hub app
+      const primaryCta = document.querySelector('.hero-cta-pulse') || document.querySelector('.hero-btn');
+      if (primaryCta) {
+          primaryCta.textContent = 'Sign In to Freeley Hub';
+          primaryCta.href = 'https://hub.freeley.com'; 
+      }
+      
+      const secondaryCta = document.querySelector('.hero-arrow-link');
+      if (secondaryCta) {
+          secondaryCta.innerHTML = 'View our other offerings <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3.33334 8H12.6667"/><path d="M8 3.33334L12.6667 8L8 12.6667"/></svg>';
+          secondaryCta.onclick = (e) => {
+              e.preventDefault();
+              const grid = document.querySelector('.treatments-grid');
+              if(grid) grid.scrollIntoView({behavior: 'smooth', block: 'start'});
+          };
+      }
+      
+      // Eradicate any extra marketing distractions like Trustpilot
+      const trustpilot = document.querySelector('.trustpilot-widget');
+      if (trustpilot) trustpilot.style.display = 'none';
+  }
+}

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 165 165" width="165" height="165">
+  <circle cx="82" cy="82" r="80" fill="#F3EAE1"/>
+  <!-- F letterform - centered -->
+  <rect x="52" y="28" width="14" height="108" fill="#1B4A2D"/>
+  <rect x="52" y="28" width="56" height="10" fill="#1B4A2D"/>
+  <rect x="44" y="28" width="8" height="5" fill="#1B4A2D"/>
+  <rect x="108" y="28" width="6" height="5" fill="#1B4A2D" rx="1"/>
+  <rect x="52" y="72" width="44" height="8" fill="#1B4A2D"/>
+  <rect x="96" y="72" width="5" height="5" fill="#1B4A2D" rx="1"/>
+  <rect x="44" y="131" width="8" height="5" fill="#1B4A2D"/>
+  <rect x="66" y="131" width="8" height="5" fill="#1B4A2D"/>
+</svg>

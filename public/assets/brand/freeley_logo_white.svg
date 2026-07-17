@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 120" width="400" height="120">
+  <!-- Leaf icon - white version -->
+  <path d="M 45 20 C 65 15, 80 30, 78 55 C 76 75, 60 88, 42 90 C 35 85, 30 75, 28 60 C 25 40, 30 25, 45 20 Z"
+        fill="#F5F2EB" opacity="0.9"/>
+  <path d="M 48 28 C 62 24, 72 36, 70 56 C 68 70, 57 80, 45 82 C 40 78, 37 70, 36 58 C 34 43, 38 32, 48 28 Z"
+        fill="#F5F2EB" opacity="0.5"/>
+  <text x="39" y="72" font-family="Georgia, serif" font-size="52" font-weight="bold"
+        fill="#0D5A46" letter-spacing="-2">F</text>
+  <text x="100" y="68" font-family="Georgia, serif" font-size="46"
+        font-weight="normal" fill="#F5F2EB" letter-spacing="3">FREELEY</text>
+  <text x="101" y="88" font-family="Arial, sans-serif" font-size="11"
+        font-weight="300" fill="#A8C5B8" letter-spacing="4">HEALTH</text>
+  <line x1="100" y1="76" x2="355" y2="76" stroke="#B89B62" stroke-width="0.8" opacity="0.6"/>
+</svg>

@@ -1,0 +1,42 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/brand/mask-group5@2x.png';
+---
+
+<header>
+  <div class="container">
+    <nav class="navbar-custom">
+      <div class="flex items-center w-full">
+        <a href="/" class="navbar-brand-custom">
+          <Image src={logo} alt="Freeley logo" loading="eager" />
+        </a>
+        <div class="navbar-nav-custom hidden lg:flex justify-end mr-0 md:mr-12">
+          <a href="/weight-loss" class="navbar-link">GLP-1 Weight Loss</a>
+          <span class="navbar-separator">•</span>
+          <a href="/hair-loss" class="navbar-link">Hair Loss</a>
+          <span class="navbar-separator">•</span>
+          <a href="/sexual-wellness" class="navbar-link">Sexual Wellness</a>
+          <span class="navbar-separator">•</span>
+          <a href="/longevity" class="navbar-link">Longevity</a>
+          <span class="navbar-separator">•</span>
+          <a href="/how-it-works" class="navbar-link">How it Works</a>
+          <span class="navbar-separator">•</span>
+          <a href="/pricing" class="navbar-link">Pricing</a>
+        </div>
+        <div class="navbar-actions">
+          <button class="btn-check-eligibility p-0" id="start-assessment-header">
+            Check Eligibility
+          </button>
+        </div>
+      </div>
+      <div id="mobile-nav-menu" class="navbar-nav-custom lg:hidden mt-3" style="display: none">
+        <a href="/weight-loss" class="navbar-link block mb-2">GLP-1 Weight Loss</a>
+        <a href="/hair-loss" class="navbar-link block mb-2">Hair Loss</a>
+        <a href="/sexual-wellness" class="navbar-link block mb-2">Sexual Wellness</a>
+        <a href="/longevity" class="navbar-link block mb-2">Longevity</a>
+        <a href="/how-it-works" class="navbar-link block mb-2">How it Works</a>
+        <a href="/pricing" class="navbar-link block mb-2">Pricing</a>
+      </div>
+    </nav>
+  </div>
+</header>

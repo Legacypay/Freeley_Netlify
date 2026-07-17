@@ -1,0 +1,1431 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+
+/* Page shell (replaces Bootstrap's .container / .container-fluid) */
+
+.container,
+.container-fluid {
+    width: 100%;
+    margin-inline: auto;
+    padding-inline: 0.75rem;
+}
+
+@media (min-width: 576px) {
+    .container {
+        max-width: 540px;
+    }
+}
+
+@media (min-width: 768px) {
+    .container {
+        max-width: 720px;
+    }
+}
+
+@media (min-width: 992px) {
+    .container {
+        max-width: 960px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1140px;
+    }
+}
+
+@media (min-width: 1400px) {
+    .container {
+        max-width: 1320px;
+    }
+}
+
+
+/* Smooth scrolling for anchor links */
+
+html {
+    scroll-behavior: smooth;
+}
+
+
+/* Improved default typography */
+
+/* Type system: Playfair Display = display headings (h1-h3) · Poppins = body
+   copy (p) · Inter = UI chrome (buttons, badges, nav, stats). body's base
+   font-family below is the Playfair Display fallback for un-styled text
+   nodes; p elements override it to Poppins further down this file. */
+
+body {
+    font-family: "Playfair Display", serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+h1 {
+    font-weight: 400;
+    font-style: Regular;
+    font-size: 54px;
+    line-height: 130%;
+    letter-spacing: -2px;
+}
+
+h2 {
+    font-family: Playfair Display;
+    font-weight: 400;
+    font-style: Regular;
+    font-size: 44px;
+    line-height: 130%;
+    letter-spacing: -2px;
+    vertical-align: middle;
+}
+
+@media(max-width: 767.98px) {
+    h2 {
+        font-size: 34px;
+    }
+}
+
+h3 {
+    font-family: Playfair Display;
+    font-weight: 400;
+    font-style: Regular;
+    font-size: 34px;
+    leading-trim: NONE;
+    line-height: 110.00000000000001%;
+    letter-spacing: 0%;
+    text-align: center;
+    vertical-align: middle;
+}
+
+p {
+    font-family: Poppins;
+    font-weight: 400;
+    font-style: Regular;
+    font-size: 14px;
+    line-height: 130%;
+    letter-spacing: 0%;
+    vertical-align: middle;
+    color: #17222A;
+}
+
+p.text-light {
+    color: #ffffff;
+}
+
+.highlight {
+    color: var(--primary-color-primary);
+    font-weight: 600;
+}
+
+.section--description {
+    font-family: Inter;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 150%;
+    letter-spacing: 0%;
+    color: #17222A;
+    opacity: 0.6;
+}
+
+.text-14-inter {
+    font-family: Inter;
+    font-weight: 400;
+    font-style: Regular;
+    font-size: 14px;
+    line-height: 130%;
+    letter-spacing: 0%;
+    vertical-align: middle;
+    color: #17222A;
+    /* opacity: .6; */
+}
+
+.text-14-inter.dark {
+    color: #17222A;
+    opacity: 1;
+}
+
+.text-12 {
+    font-family: Inter;
+    font-weight: 400;
+    font-style: Regular;
+    font-size: 12px;
+    line-height: 140%;
+    letter-spacing: 0%;
+    vertical-align: middle;
+    color: #17222A;
+}
+
+.z-1 {
+    z-index: 1;
+}
+
+.z-2 {
+    z-index: 2;
+}
+
+@media(max-width: 767.98px) {
+    h1 {
+        font-size: 44px;
+    }
+}
+
+
+/* Better media defaults */
+
+img,
+picture,
+video,
+canvas {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+
+/* Remove default list styles (safe - won't break Bootstrap navs) */
+
+:where(ul, ol):where(:not([class*="list-"]):not([class*="navbar"]):not([class*="dropdown"])) {
+    padding-left: 1.5rem;
+}
+
+
+/* Remove default button styles where needed */
+
+button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+#quiz--container iframe {
+    width: 100%;
+    border: none !important;
+    border-radius: 0 !important;
+    background: #0000004D !important;
+}
+
+/* The quiz modal relied on Bootstrap's .modal for its overlay behavior
+   (hidden by default, fixed full-screen, above everything). Bootstrap
+   was dropped in the Astro migration, so without these rules the modal
+   renders as a plain in-flow div buried mid-page. The open/close JS
+   toggles display directly. */
+
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1055;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.modal-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border: none !important;
+    border-top: 1px solid rgb(0 0 0) !important;
+    border-bottom: 1px solid rgb(0 0 0) !important;
+    border-left: 1px solid rgb(0 0 0) !important;
+    border-radius: 0 !important;
+}
+
+.modal-content .close {
+    position: absolute;
+    cursor: pointer;
+    top: 25px;
+    right: 25px;
+    width: 25px;
+    height: 25px;
+    z-index: 1;
+}
+
+
+/* Responsive table container */
+
+.table-responsive-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+
+/* Utility Classes (low-specificity, Bootstrap-compatible) */
+
+
+/* Text utilities */
+
+.text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.text-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.text-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+
+/* Spacing utilities (only where Bootstrap classes aren't used) */
+
+.mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+/* Flex utilities */
+
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flex-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* Grid utilities */
+
+.grid-center {
+    display: grid;
+    place-items: center;
+}
+
+
+/* Position utilities */
+
+.sticky-top {
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+}
+
+
+/* Visibility */
+
+.visually-hidden:not(:focus):not(:active) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+
+/* Responsive images */
+
+.img-fluid-custom {
+    max-width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+
+/* Aspect ratio helper */
+
+.aspect-ratio-16-9 {
+    aspect-ratio: 16 / 9;
+}
+
+.aspect-ratio-4-3 {
+    aspect-ratio: 4 / 3;
+}
+
+.aspect-ratio-square {
+    aspect-ratio: 1 / 1;
+}
+
+
+/* Object fit helpers */
+
+.object-cover {
+    object-fit: cover;
+}
+
+.object-contain {
+    object-fit: contain;
+}
+
+
+/* Scroll margin for fixed headers (Bootstrap navbar offset) */
+
+.scroll-mt {
+    scroll-margin-top: 70px;
+}
+
+
+/* Basic link styles that don't override Bootstrap */
+
+a:not([class*="btn"]):not([class*="nav-link"]):not([class*="dropdown-item"]) {
+    color: #2563eb;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+a:not([class*="btn"]):not([class*="nav-link"]):not([class*="dropdown-item"]):hover {
+    color: #1d4ed8;
+    text-decoration: underline;
+}
+
+
+/* Better form element defaults (won't conflict with Bootstrap forms) */
+
+input,
+textarea,
+select {
+    font-family: inherit;
+}
+
+
+/* Remove number input spinners */
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+
+/* Loading spinner (custom, not Bootstrap's) */
+
+.spinner-custom {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #e5e7eb;
+    border-top-color: #3b82f6;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* Fade animations */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+
+
+/* Skip to content link (accessibility) */
+
+.skip-to-content {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: #000;
+    color: white;
+    padding: 8px;
+    /* z-index scale for this project: 1 = raised, 99 = mobile sticky nav,
+       1020 = sticky-top, 1030 = always-on-top UI (skip-link, this element) */
+    z-index: 1030;
+    text-decoration: none;
+}
+
+.skip-to-content:focus {
+    top: 0;
+}
+
+
+/* Selection color */
+
+::selection {
+    background-color: #004c27;
+    color: white;
+}
+
+
+/* WebKit implementation for Chrome, Safari, Edge */
+
+::-webkit-scrollbar {
+    width: 4px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #004c27;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #C5984E;
+}
+
+
+/* Print styles (basic) */
+
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    body {
+        background: white;
+        color: black;
+    }
+    a {
+        text-decoration: underline;
+    }
+}
+
+
+/* Cta styling */
+
+
+/* CTA Styling */
+
+.cta--global {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+    width: auto;
+    padding: 10px 30px;
+    border-radius: 40px;
+    background: #004C27;
+    text-decoration: none;
+    transition: background 0.35s ease, box-shadow 0.35s ease, transform 0.35s ease;
+    box-shadow: 0 8px 18px rgba(0, 76, 39, .18);
+}
+
+
+/* Shine Effect */
+
+.cta--global::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(255, 255, 255, .35), transparent);
+    transform: skewX(-25deg);
+    transition: left .6s ease;
+}
+
+.cta--global span {
+    position: relative;
+    z-index: 2;
+    font-family: Inter;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 100%;
+    color: #fff;
+    transition: color .3s ease;
+}
+
+.cta--global:hover {
+    text-decoration: none !important;
+    /* Lightness-based elevation instead of a coloured halo glow. */
+    background: linear-gradient(135deg, #0a6b38 0%, #d4a574 100%);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .25);
+}
+
+.cta--global:hover::before {
+    left: 150%;
+}
+
+.cta--global:active {
+    transform: translateY(-1px) scale(.98);
+}
+
+@media(max-width: 767.98px) {
+    .cta--global span {
+        font-size: 14px;
+    }
+}
+
+
+/**----------------------
+ * Swiper slider Css for patient
+ * ---------------------*/
+
+
+/* Only slider-related CSS - no body/container/header styles */
+
+.swiper {
+    overflow: visible !important;
+    width: 100%;
+}
+
+.swiper-wrapper {
+    overflow: visible !important;
+}
+
+.swiper-slide {
+    width: auto !important;
+    max-width: 380px;
+    height: auto;
+    overflow: visible;
+}
+
+@media(max-width: 767.98px) {
+    .swiper-slide {
+        max-width: 350px !important;
+    }
+}
+
+
+/* Desktop by default */
+
+.desktop {
+    display: block !important;
+}
+
+.mobile {
+    display: none !important;
+}
+
+
+/* Mobile */
+
+@media (max-width: 767.98px) {
+    .desktop {
+        display: none !important;
+    }
+    .mobile {
+        display: block !important;
+    }
+}
+
+
+/**---------------------------
+ * Global green button
+ * --------------------------*/
+
+.global--qua--button {
+    font-family: Inter;
+    display: inline-flex;
+    align-items: center;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    gap: 10px;
+    background: var(--secondary-color);
+    border-radius: 200px;
+    padding: 10px 15px 10px 35px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #fff !important;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    text-decoration: none;
+    font-weight: 500;
+    font-style: Medium;
+    line-height: 100%;
+    letter-spacing: 0%;
+}
+
+.global--qua--button:hover {
+    text-decoration: none !important;
+}
+
+.btn--icon {
+    width: 35px;
+    height: 35px;
+}
+
+.global--qua--button.secondory {
+    border: 1px solid #FFFFFF33 !important;
+    background: transparent !important;
+    color: #ffffff !important;
+    padding: 18px 0;
+}
+
+@media(max-width: 767.98px) {
+    .global--qua--button {
+        justify-content: space-between;
+    }
+}
+
+.common--questions,
+.why--choose,
+.our--team {
+    background: linear-gradient(180deg, #E7EAF0 0%, #F3F4EF 100%);
+}
+
+.bg--green {
+    background-color: #004c27;
+}
+
+.global--green {
+    color: #004c27 !important;
+}
+
+.text-black {
+    color: #000;
+}
+
+@media (max-width: 767.98px) {
+    .mobile-fixed {
+        position: fixed !important;
+        top: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        border-radius: 0;
+        z-index: 99 !important;
+        animation: slideDown .3s ease;
+    }
+    .mobile-fixed.container {
+        width: 100% !important;
+        padding: 0 !important;
+        backdrop-filter: blur(15px) !important;
+    }
+    .mobile-fixed .left {
+        display: none !important;
+    }
+    .mobile-fixed .right {
+        margin: 0 !important;
+        justify-content: center !important;
+    }
+    .sticky-placeholder {
+        display: none;
+    }
+    .quiz-popup {
+        padding: 70px 10px !important;
+    }
+    .blur--bg .right {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+    .blur--bg .right a {
+        width: 100%;
+    }
+}
+
+.quiz-badge {
+    width: fit-content !important;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+
+/* For responsive */
+
+@media (max-width: 767.98px) {
+    #quiz--container iframe {
+        min-height: 500px;
+    }
+}
+
+
+/* Hide scrollbar for iframe */
+
+#quiz--container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#quiz--container iframe {
+    height: 100vh !important;
+    backdrop-filter: blur(14px) !important;
+}
+
+
+/* Hide scrollbar for webkit browsers (Chrome, Safari, Opera) */
+
+#quiz--container iframe::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+
+/* If you want to style the iframe body content */
+
+#quiz--container {
+    border: 0 !important;
+    border-radius: 0 !important;
+    margin: 0;
+    scrollbar-width: none !important;
+    /* Firefox */
+    -ms-overflow-style: none !important;
+    /* IE and Edge */
+}
+
+#quiz--container iframe::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+.modal {
+    overflow: hidden !important;
+}
+
+
+/**
+    Home New section design
+*/
+
+.numbers--item {
+    min-height: 309px;
+    width: 100%;
+    background: linear-gradient(180deg, #E7EAF0 0%, #F3F4EF 100%);
+    position: relative;
+    padding: 25px 30px;
+    overflow: hidden;
+}
+
+.numbers--item .text-content {
+    position: relative;
+    z-index: 1;
+}
+
+.numbers--item .numbers--text {
+    font-family: Inter;
+    font-weight: 400;
+    font-size: 64px;
+    line-height: 130%;
+    letter-spacing: -2px;
+    vertical-align: middle;
+    color: #17222A;
+}
+
+.numbers--item .green--text {
+    font-family: Inter;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    vertical-align: middle;
+    color: #008262;
+}
+
+.numbers--item .dark {
+    font-family: Inter;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 140%;
+    letter-spacing: 0%;
+    color: #000000;
+}
+
+
+/* First column - the .col-md-7 */
+
+#rhemsleves-main .grid>div:nth-child(1) .numbers--item.item--1 {
+    background: linear-gradient(101.13deg, #D2CBC2 33.46%, #F0E9E0 100%);
+}
+
+#rhemsleves-main .grid>div:nth-child(1) .numbers--item.item--1:before {
+    content: '';
+    background-image: url('./assets/home/white-ellipse.png');
+    background-repeat: no-repeat;
+    background-size: contain;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 340px;
+    height: 100%;
+}
+
+#rhemsleves-main .grid>div:nth-child(1) .numbers--item.item--1:after {
+    content: '';
+    background-image: url('./assets/home/girl-belly.png');
+    background-repeat: no-repeat;
+    background-size: contain;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 369px;
+    height: 100%;
+}
+
+
+/* Second column - the .col-md-5 */
+
+#rhemsleves-main .grid>div:nth-child(2) .numbers--item.item--2 {
+    background: radial-gradient(139.32% 139.32% at 50% 100%, #F6EEE0 0%, #FFDAAD 100%);
+    /* Different color */
+}
+
+#rhemsleves-main .grid>div:nth-child(2) .numbers--item.item--2:after {
+    content: '';
+    background-image: url('./assets/home/24hr.Avg.physician.esponse.png');
+    background-repeat: no-repeat;
+    background-size: contain;
+    position: absolute;
+    top: 22px;
+    right: 22px;
+    width: 180px;
+    height: 100%;
+}
+
+
+/* Third column - another .col-md-7 */
+
+#rhemsleves-main .grid>div:nth-child(3) .numbers--item.item--3 {
+    background: radial-gradient(107.61% 107.61% at 50.12% 100%, #F8FEFF 0%, #C7D0E4 100%);
+}
+
+#rhemsleves-main .grid>div:nth-child(3) .numbers--item.item--3:after {
+    content: '';
+    background-image: url('./assets/home/96_Patient satisfaction.png');
+    background-repeat: no-repeat;
+    background-position: center -250px;
+    background-size: calc(100% + 100px);
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%);
+    width: 100%;
+    height: 100%;
+}
+
+#rhemsleves-main .grid>div:nth-child(3) .numbers--item.item--3:before {
+    content: '';
+    background-image: url('./assets/home/ellipse_35.png');
+    background-repeat: no-repeat;
+    background-size: contain;
+    position: absolute;
+    bottom: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 64%;
+    border-radius: 50%;
+}
+
+
+/* Fourth column - another .col-md-5 */
+
+#rhemsleves-main .grid>div:nth-child(4) .numbers--item.item--4 {
+    background: linear-gradient(180deg, #E7EAF0 0%, #F3F4EF 100%);
+}
+
+#rhemsleves-main .grid>div:nth-child(4) .numbers--item.item--4:after {
+    content: '';
+    background-image: url('./assets/home/48hr_Door-to-Door_Delivery.png');
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: right center;
+    position: absolute;
+    top: 0;
+    right: 30px;
+    width: 100%;
+    height: 110%;
+}
+
+@media(max-width: 767.98px) {
+    #rhemsleves-main .grid>div:nth-child(1) .numbers--item.item--1:after {
+        background-image: url('./assets/home/girl-belly-mobile.png');
+        background-position: right;
+    }
+    #rhemsleves-main .grid>div:nth-child(2) .numbers--item.item--2:after {
+        width: 150px;
+    }
+    #rhemsleves-main .grid>div:nth-child(4) .numbers--item.item--4:after {
+        right: -180px;
+    }
+    #rhemsleves-main .grid>div:nth-child(3) .numbers--item.item--3:after {
+        background-size: calc(100% + 210px);
+    }
+    #rhemsleves-main .grid>div {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+}
+
+@media (min-width: 767.98px) {
+    /* Individual item styling */
+    .homepage .gorgeous--item {
+        min-height: 500px;
+        padding: 35px;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .pixel-600 .gorgeous--item {
+        min-height: 600px;
+    }
+    .homepage.three-in-1 .gorgeous--item,
+    .homepage.small-text .gorgeous--item {
+        min-height: 469px;
+    }
+    .homepage.three-in-1 .gorgeous--item h2,
+    .homepage.small-text .gorgeous--item h2 {
+        font-size: 24px;
+    }
+    .gorgeous--items h2 {
+        letter-spacing: 0%;
+    }
+    /* Background image layer */
+    .homepage .gorgeous--item::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1;
+        width: 440px;
+        height: 100%;
+        background-repeat: no-repeat;
+        background-size: 110%;
+        background-position: center 90px;
+    }
+    /* Keep text above the background image */
+    .homepage .gorgeous--item h2 {
+        position: relative;
+        z-index: 2;
+        font-family: "Playfair Display", serif;
+        font-weight: 400;
+        font-size: 34px;
+        line-height: 110%;
+        text-align: center;
+        color: #17222A;
+    }
+    /* ===== First Item ===== */
+    /* Selector uses >div (not .col-md-4) so it keeps matching both the
+       still-Bootstrap pages (index.astro, sexual-wellness.astro) and the
+       Tailwind-converted hair-loss.astro, whose column wrappers are plain
+       divs either way. */
+    .homepage .gorgeous--items>div:nth-child(1) .gorgeous--item {
+        background-color: #C6CCDA;
+    }
+    .homepage .gorgeous--items>div:nth-child(1) .gorgeous--item::before {
+        background-image: url("./assets/home/Real_Doctors.png");
+    }
+    /* ===== Second Item ===== */
+    .homepage .gorgeous--items>div:nth-child(2) .gorgeous--item {
+        background-color: #D2CBC2;
+    }
+    .homepage .gorgeous--items>div:nth-child(2) .gorgeous--item::before {
+        background-image: url("./assets/home/Real_Providers.png");
+    }
+    /* ===== Third Item ===== */
+    .homepage .gorgeous--items>div:nth-child(3) .gorgeous--item {
+        background-color: #D1D9DC;
+    }
+    .homepage .gorgeous--items>div:nth-child(3) .gorgeous--item::before {
+        background-image: url("./assets/home/Pharmacy_Grade.png");
+    }
+    /* =======================================
+     Sexual Wellness page image overrides
+     ======================================= */
+    .sexual--wellness .homepage .gorgeous--items>div:nth-child(1) .gorgeous--item::before {
+        background-image: url("./assets/sw/Targeted_Absorption.png");
+        background-size: 190%;
+        background-position: center -40px;
+    }
+    .sexual--wellness .homepage .gorgeous--items>div:nth-child(2) .gorgeous--item::before {
+        background-image: url("./assets/sw/Primes_Arousal_Pathways.png");
+        background-size: 190%;
+        background-position: center -40px;
+    }
+    .sexual--wellness .homepage .gorgeous--items>div:nth-child(3) .gorgeous--item::before {
+        background-image: url("./assets/sw/Control_&_Confidence.png");
+        background-size: 190%;
+        background-position: center -40px;
+    }
+    .sexual--wellness .homepage.three-in-1 .gorgeous--items>div:nth-child(1) .gorgeous--item {
+        background: linear-gradient(180deg, #E7EAF0 0%, #F3F4EF 100%);
+    }
+    .sexual--wellness .homepage.three-in-1 .gorgeous--items>div:nth-child(2) .gorgeous--item {
+        background: linear-gradient(119.47deg, #D2CBC2 3.65%, #F0E9E0 109.47%);
+    }
+    .sexual--wellness .homepage.three-in-1 .gorgeous--items>div:nth-child(3) .gorgeous--item {
+        background: radial-gradient(160.98% 160.98% at 50% 100%, #F6EEE0 0%, #FFDAAD 100%);
+    }
+    .sexual--wellness .homepage.three-in-1 .gorgeous--items>div:nth-child(1) .gorgeous--item::before {
+        background-image: url("./assets/sw/Sildenafil_(FastOnset).png");
+        background-size: 100%;
+        background-position: center top;
+    }
+    .sexual--wellness .homepage.three-in-1 .gorgeous--items>div:nth-child(2) .gorgeous--item::before {
+        background-image: url("./assets/sw/Tadalafil_(36-hour_window).png");
+        background-size: 100%;
+        background-position: center top;
+    }
+    .sexual--wellness .homepage.three-in-1 .gorgeous--items>div:nth-child(3) .gorgeous--item::before {
+        background-image: url("./assets/sw/Apomorphine_(Mentalreadiness).png");
+        background-size: 170%;
+        background-position: center -270px;
+    }
+    /* =======================================
+   Weight Lose page image overrides
+   ======================================= */
+    /* Slide 1 */
+    .weight--lose .homepage .gorgeous--items .swiper-slide:nth-child(1) .gorgeous--item {
+        background: #C6CCDA;
+    }
+    .weight--lose .homepage .gorgeous--items .swiper-slide:nth-child(1) .gorgeous--item::before {
+        background-image: url("./assets/wl/QuietsThe_FoodNoise_.png");
+        background-size: 150%;
+        background-position: center 0px;
+    }
+    /* Slide 2 */
+    .weight--lose .homepage .gorgeous--items .swiper-slide:nth-child(2) .gorgeous--item {
+        background: linear-gradient(119.47deg, #D2CBC2 3.65%, #F0E9E0 109.47%);
+    }
+    .weight--lose .homepage .gorgeous--items .swiper-slide:nth-child(2) .gorgeous--item::before {
+        background-image: url("./assets/wl/Compounded_securely_in_503A_Pharmacies.png");
+        background-size: 100%;
+        background-position: center 0;
+    }
+    /* Slide 3 */
+    .weight--lose .homepage .gorgeous--items .swiper-slide:nth-child(3) .gorgeous--item {
+        background-color: #D2CBC2;
+    }
+    .weight--lose .homepage .gorgeous--items .swiper-slide:nth-child(3) .gorgeous--item::before {
+        background-image: url("./assets/wl/YouStayFullLonger.png");
+        background-size: 150%;
+        background-position: center 0px;
+    }
+    /* Slide 4 */
+    .weight--lose .homepage .gorgeous--items .swiper-slide:nth-child(4) .gorgeous--item {
+        background: radial-gradient(160.98% 160.98% at 50% 100%, #F6EEE0 0%, #FFDAAD 100%);
+    }
+    .weight--lose .homepage .gorgeous--items .swiper-slide:nth-child(4) .gorgeous--item::before {
+        background-image: url("./assets/wl/OverseenbyBoard-CertifiedPhysicians.png");
+        background-size: 120%;
+        background-position: center bottom;
+    }
+    /* Slide 5 */
+    .weight--lose .homepage .gorgeous--items .swiper-slide:nth-child(5) .gorgeous--item {
+        background-color: #D1D9DC;
+        background-size: 150%;
+        background-position: center 0px;
+    }
+    .weight--lose .homepage .gorgeous--items .swiper-slide:nth-child(5) .gorgeous--item::before {
+        background-image: url("./assets/wl/ImprovesMetabolicHealth.png");
+        background-size: 150%;
+        background-position: center 0px;
+    }
+    /* =======================================
+     Hair lose page image overrides
+     ======================================= */
+    .page--hair--loss .homepage .gorgeous--items>div:nth-child(1) .gorgeous--item::before {
+        background-image: url("./assets/hl/Stops_Shedding_In_Its_Tracks.png");
+        background-size: 190%;
+        background-position: center -40px;
+    }
+    .page--hair--loss .homepage .gorgeous--items>div:nth-child(2) .gorgeous--item::before {
+        background-image: url("./assets/hl/Reactivates_Dormant_Follicles.png");
+        background-size: 120%;
+        background-position: center -55px;
+    }
+    .page--hair--loss .homepage .gorgeous--items>div:nth-child(3) .gorgeous--item::before {
+        background-image: url("./assets/hl/No_Awkward_Waiting_Rooms.png");
+        background-size: 190%;
+        background-position: center -55px;
+    }
+    .page--hair--loss .homepage.small-text .gorgeous--items>div:nth-child(1) .gorgeous--item {
+        background: linear-gradient(180deg, #E7EAF0 0%, #F3F4EF 100%);
+    }
+    .page--hair--loss .homepage.small-text .gorgeous--items>div:nth-child(2) .gorgeous--item {
+        background: linear-gradient(119.47deg, #D2CBC2 3.65%, #F0E9E0 109.47%);
+    }
+    .page--hair--loss .homepage.small-text .gorgeous--items>div:nth-child(3) .gorgeous--item {
+        background: radial-gradient(160.98% 160.98% at 50% 100%, #F6EEE0 0%, #FFDAAD 100%);
+    }
+    .page--hair--loss .homepage.small-text .gorgeous--items>div:nth-child(1) .gorgeous--item::before {
+        background-image: url("./assets/hl/Physician-prescribed_ingredients.png");
+        background-size: 100%;
+        background-position: center top;
+    }
+    .page--hair--loss .homepage.small-text .gorgeous--items>div:nth-child(2) .gorgeous--item::before {
+        background-image: url("./assets/hl/8_out_of_10_see_visible_regrowth.png");
+        background-size: 140%;
+        background-position: center -100px;
+    }
+    .page--hair--loss .homepage.small-text .gorgeous--items>div:nth-child(3) .gorgeous--item::before {
+        background-image: url("./assets/hl/Works_seamlessly_into_your_routine.png");
+        background-size: 170%;
+        background-position: center -55px;
+    }
+}
+
+
+/* =======================================
+    longevity page image overrides Mobile Desktop Both
+     ======================================= */
+
+
+/* Individual item styling */
+
+.longevity .homepage .gorgeous--item {
+    min-height: 500px;
+    padding: 35px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.longevity .homepage.three-in-1 .gorgeous--item,
+.longevity .homepage.small-text .gorgeous--item {
+    min-height: 469px;
+}
+
+.longevity .homepage.three-in-1 .gorgeous--item h2,
+.longevity .homepage.small-text .gorgeous--item h2 {
+    font-size: 24px;
+}
+
+.longevity .gorgeous--items h2 {
+    letter-spacing: 0%;
+}
+
+
+/* Background image layer */
+
+.longevity .homepage .gorgeous--item::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+    width: 440px;
+    height: 100%;
+    background-repeat: no-repeat;
+    background-size: 110%;
+    background-position: center 90px;
+}
+
+
+/* Keep text above the background image */
+
+.longevity .homepage .gorgeous--item h2 {
+    position: relative;
+    z-index: 2;
+    font-family: "Playfair Display", serif;
+    font-weight: 400;
+    font-size: 34px;
+    line-height: 110%;
+    text-align: center;
+    color: #17222A;
+}
+
+.longevity .homepage .gorgeous--items>div:nth-child(1) .gorgeous--item::before {
+    background-image: url("./assets/l/Cellular_Energy.png");
+    background-size: 125%;
+    background-position: center -300px;
+}
+
+.longevity .homepage .gorgeous--items>div:nth-child(2) .gorgeous--item::before {
+    background-image: url("./assets/l/Deep,Restorative Sleep.png");
+    background-size: 170%;
+    background-position: center -40px;
+}
+
+.longevity .homepage .gorgeous--items>div:nth-child(3) .gorgeous--item::before {
+    background-image: url("./assets/l/Detox_&_Immunity.png");
+    background-size: 190%;
+    background-position: center -55px;
+}
+
+.longevity .homepage.small-text .gorgeous--items>div:nth-child(1) .gorgeous--item {
+    background: linear-gradient(180deg, #E7EAF0 0%, #F3F4EF 100%);
+}
+
+.longevity .homepage.small-text .gorgeous--items>div:nth-child(2) .gorgeous--item {
+    background: linear-gradient(119.47deg, #D2CBC2 3.65%, #F0E9E0 109.47%);
+}
+
+.longevity .homepage.small-text .gorgeous--items>div:nth-child(3) .gorgeous--item {
+    background: radial-gradient(160.98% 160.98% at 50% 100%, #F6EEE0 0%, #FFDAAD 100%);
+}
+
+.longevity .homepage.small-text .gorgeous--items>div:nth-child(1) .gorgeous--item::before {
+    background-image: url("./assets/l/Sermorelin_(Youthful_markers).png");
+    background-size: 100%;
+    background-position: center center;
+}
+
+.longevity .homepage.small-text .gorgeous--items>div:nth-child(2) .gorgeous--item::before {
+    background-image: url("./assets/l/NAD+_(Cellular_engine_repair).png");
+    background-size: 130%;
+    background-position: center -40px;
+}
+
+.longevity .homepage.small-text .gorgeous--items>div:nth-child(3) .gorgeous--item::before {
+    background-image: url("./assets/l/Glutathione_(Immunity_&_Detox).png");
+    background-size: 120%;
+    background-position: center -55px;
+}
+
+
+/* =======================================
+   HIW Page Image Overrides
+   Mobile + Desktop
+======================================= */
+
+
+/* Individual item styling */
+
+.hiw .homepage .gorgeous--item {
+    min-height: 500px;
+    padding: 35px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hiw .homepage.three-in-1 .gorgeous--item,
+.hiw .homepage.small-text .gorgeous--item {
+    min-height: 469px;
+}
+
+.hiw .homepage.three-in-1 .gorgeous--item h2,
+.hiw .homepage.small-text .gorgeous--item h2 {
+    font-size: 24px;
+}
+
+.hiw .gorgeous--items h2 {
+    letter-spacing: 0%;
+}
+
+
+/* Background image layer */
+
+.hiw .homepage .gorgeous--item::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+    width: 440px;
+    height: 100%;
+    background-repeat: no-repeat;
+    background-size: 110%;
+    background-position: center 90px;
+}
+
+
+/* Keep text above the background image */
+
+.hiw .homepage .gorgeous--item h2 {
+    position: relative;
+    z-index: 2;
+    font-family: "Playfair Display", serif;
+    font-weight: 400;
+    font-size: 34px;
+    line-height: 110%;
+    text-align: center;
+    color: #17222A;
+}
+
+
+/* =======================================
+   Default Images
+======================================= */
+
+
+/* =======================================
+   Small Text Backgrounds
+======================================= */
+
+.hiw .homepage.small-text .physician-messaging .gorgeous--item {
+    background: linear-gradient(119.47deg, #D2CBC2 3.65%, #F0E9E0 109.47%);
+}
+
+.hiw .homepage.small-text .progress-dashboard .gorgeous--item {
+    background: linear-gradient(180deg, #E7EAF0 0%, #F3F4EF 100%);
+}
+
+.hiw .homepage.small-text .smart-reminders .gorgeous--item {
+    background: radial-gradient(160.98% 160.98% at 50% 100%, #F6EEE0 0%, #FFDAAD 100%);
+}
+
+.hiw .homepage.small-text .document-vault .gorgeous--item {
+    background: radial-gradient(171.32% 171.32% at 50.12% 100%, #F8FEFF 0%, #C7D0E4 100%);
+}
+
+
+/* =======================================
+   Small Text Images
+======================================= */
+
+.hiw .homepage.small-text .physician-messaging .gorgeous--item::before {
+    background-image: url("./assets/howItsWork/Physician Messaging.png");
+    background-size: 120%;
+    background-position: center -300px;
+}
+
+.hiw .homepage.small-text .progress-dashboard .gorgeous--item::before {
+    background-image: url("./assets/howItsWork/Progress Dashboard.png");
+    background-size: 100%;
+    background-position: center -50px;
+}
+
+.hiw .homepage.small-text .smart-reminders .gorgeous--item::before {
+    background-image: url("./assets/howItsWork/Smart Reminders.png");
+    background-size: 200%;
+    background-position: -235px -160px;
+}
+
+.hiw .homepage.small-text .document-vault .gorgeous--item::before {
+    background-image: url("./assets/howItsWork/Document Vault.png");
+    background-size: 200%;
+    background-position: center -295px;
+}

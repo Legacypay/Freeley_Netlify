@@ -1,0 +1,645 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Playfair+Display:wght@700;800;900&display=swap');
+
+:root {
+  --green-deep: #071510;
+  --green-dark: #0d2818;
+  --green: #1a4a2e;
+  --green-mid: #2d6b47;
+  --green-light: #3d8c5e;
+  --green-bright: #4aa870;
+  --green-pale: #e8f0eb;
+  --green-mist: #f2f7f4;
+  --black: #0a0a0a;
+  --charcoal: #1a1a1a;
+  --off-white: #f8f5f0;
+  --cream: #faf8f4;
+  --gold: #c9a96e;
+  --text: #1c1c1c;
+  --text-muted: #666;
+  --text-faint: #999;
+  --border: rgba(0,0,0,0.08);
+  --border-light: rgba(0,0,0,0.05);
+  --shadow-sm: 0 2px 12px rgba(0,0,0,0.06);
+  --shadow-md: 0 8px 32px rgba(0,0,0,0.1);
+  --shadow-lg: 0 20px 60px rgba(0,0,0,0.12);
+  --radius: 20px;
+  --radius-sm: 12px;
+  --radius-pill: 50px;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; font-size: 16px; }
+
+/* Global Icon Styling for a more premium, visible look */
+.lucide {
+  stroke-width: 2.2px;
+  width: 1em;
+  height: 1em;
+}
+
+.premium-icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--green-pale);
+  color: var(--green-mid);
+  border-radius: 50%;
+}
+
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background-image: url("assets/brand/freeley_pattern_light.jpg"); background-size: cover; background-attachment: fixed; background-color: var(--cream);
+  color: var(--text);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.65; /* CRO playbook rec: readability — was browser default ~1.5 */
+}
+
+/* ── NAV ── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 48px; height: 72px;
+  background: rgba(7,21,16,0.94);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  transition: background 0.3s;
+}
+.nav-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 30px; font-weight: 800; letter-spacing: 0.3px;
+  color: #fff; text-decoration: none;
+  display: flex; align-items: center; gap: 4px;
+}
+.nav-logo span { color: var(--green-light); font-weight: 800; }
+.nav-links {
+  display: flex; gap: 8px; align-items: center;
+}
+.nav-links a {
+  color: rgba(255,255,255,0.65); text-decoration: none;
+  font-size: 13.5px; letter-spacing: 0.2px; font-weight: 400;
+  padding: 8px 14px; border-radius: 8px;
+  transition: color 0.2s, background 0.2s;
+}
+.nav-links a:hover { color: #fff; background: rgba(255,255,255,0.06); }
+.nav-links a.active { color: #fff; }
+.nav-right { display: flex; align-items: center; gap: 12px; }
+.nav-login {
+  color: rgba(255,255,255,0.6); text-decoration: none;
+  font-size: 13.5px; padding: 8px 16px; border-radius: 8px;
+  transition: color 0.2s;
+}
+.nav-login:hover { color: #fff; }
+.nav-cta {
+  background: var(--green-light); color: #fff;
+  padding: 9px 22px; border-radius: var(--radius-pill);
+  font-size: 13.5px; font-weight: 500; text-decoration: none;
+  transition: all 0.2s; white-space: nowrap;
+  border: none; cursor: pointer; font-family: 'DM Sans', sans-serif;
+}
+.nav-cta:hover { background: var(--green-bright); transform: translateY(-1px); }
+.nav-mobile-toggle { display: none; background: none; border: none; cursor: pointer; color: #fff; }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 14px 32px; border-radius: var(--radius-pill);
+  font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500;
+  cursor: pointer; text-decoration: none; border: none;
+  transition: all 0.25s; letter-spacing: 0.2px;
+}
+.btn-primary { background: var(--green-light); color: #fff; box-shadow: 0 6px 24px rgba(61,140,94,0.3); }
+.btn-primary:hover { background: var(--green-bright); transform: translateY(-2px); box-shadow: 0 10px 32px rgba(61,140,94,0.4); }
+.btn-dark { background: var(--charcoal); color: #fff; }
+.btn-dark:hover { background: #2a2a2a; transform: translateY(-2px); }
+.btn-outline-white { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.3); }
+.btn-outline-white:hover { background: rgba(255,255,255,0.1); }
+.btn-outline { background: transparent; color: var(--text); border: 1.5px solid var(--border); }
+.btn-outline:hover { border-color: var(--green-light); color: var(--green-light); }
+.btn-lg { padding: 18px 44px; font-size: 16px; }
+.btn-sm { padding: 10px 22px; font-size: 13px; }
+
+@keyframes pulse-cta-glow {
+  0% { box-shadow: 0 0 0 0 rgba(106, 153, 132, 0.6); }
+  70% { box-shadow: 0 0 0 24px rgba(106, 153, 132, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(106, 153, 132, 0); }
+}
+.hero-cta-pulse {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 56px;
+  font-size: 22px;
+  font-weight: 600;
+  font-family: var(--dm-sans, 'DM Sans', sans-serif);
+  background: #6A9984;
+  color: #fff;
+  border-radius: 100px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  animation: pulse-cta-glow 2.5s infinite;
+}
+.hero-cta-pulse:hover {
+  background: #fff;
+  color: #1B492D;
+  transform: translateY(-4px);
+  animation: none;
+  box-shadow: 0 20px 40px rgba(106, 153, 132, 0.3);
+}
+
+/* CRO playbook rec #4: mobile CTAs must be full-width and thumb-friendly.
+   48×48 minimum touch target, generous padding so the tap zone is honest. */
+@media (max-width: 768px) {
+  .hero-cta-pulse {
+    display: flex;
+    width: 100%;
+    max-width: 360px;
+    padding: 18px 32px;
+    font-size: 18px;
+    min-height: 56px;
+  }
+  /* Generic .hero-btn / .hpc-cta / .gp-cta across treatment pages too. */
+  .hero-btn, .hpc-cta, .gp-cta {
+    width: 100%;
+    min-height: 56px;
+    padding: 18px 28px !important;
+    font-size: 16px !important;
+  }
+}
+
+/* ── CTA BUTTON HIERARCHY ──
+   CRO playbook rec: clear primary vs. secondary vs. tertiary actions.
+   Use .btn-primary for the single most-important action per viewport.
+   Use .btn-secondary for parallel options ("Learn more"). Use
+   .btn-text for tertiary text-link actions. */
+.btn,
+.btn-primary,
+.btn-secondary,
+.btn-text {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px; font-weight: 600;
+  text-decoration: none; cursor: pointer;
+  border-radius: 999px;
+  transition: transform 0.15s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+  white-space: nowrap;
+}
+.btn-primary {
+  padding: 14px 28px;
+  background: var(--green-dark, #1B492D);
+  color: #fff;
+  border: 1px solid var(--green-dark, #1B492D);
+  box-shadow: 0 4px 16px rgba(13, 40, 24, 0.15);
+}
+.btn-primary:hover {
+  background: var(--green-mid, #2c6e49);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(13, 40, 24, 0.25);
+}
+.btn-secondary {
+  padding: 13px 26px;
+  background: transparent;
+  color: var(--green-dark, #1B492D);
+  border: 1.5px solid var(--green-dark, #1B492D);
+}
+.btn-secondary:hover {
+  background: var(--green-dark, #1B492D);
+  color: #fff;
+  transform: translateY(-2px);
+}
+.btn-text {
+  padding: 8px 4px;
+  background: transparent;
+  color: var(--text);
+  border: none;
+  border-radius: 0;
+  font-size: 14px;
+}
+.btn-text:hover { color: var(--green-dark, #1B492D); }
+.btn-text::after { content: "→"; transition: transform 0.2s ease; }
+.btn-text:hover::after { transform: translateX(3px); }
+
+/* Mobile: any .btn-* in mobile becomes full-width like the older CTAs. */
+@media (max-width: 768px) {
+  .btn-primary, .btn-secondary {
+    width: 100%; min-height: 56px; padding: 18px 28px; font-size: 16px;
+  }
+}
+
+/* ── FAQ ACCORDION (rec #14) ──
+   Auto-binds to any .faq-q / .faq-a pattern. Answers are collapsed by
+   default; clicking the question (or pressing Enter/Space) toggles
+   the parent .faq-item's .open state. Reduces mobile scroll fatigue
+   and gives users control over what they read. */
+.faq-q {
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.faq-q i,
+.faq-q svg {
+  transition: transform 0.25s ease;
+}
+.faq-a {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.3s ease, opacity 0.25s ease, margin 0.25s ease;
+  margin-top: 0;
+}
+.faq-item.open .faq-a {
+  max-height: 600px;
+  opacity: 1;
+  margin-top: 8px;
+}
+.faq-item.open .faq-q i.ri-add-line { transform: rotate(45deg); }
+.faq-item.open .faq-q svg { transform: rotate(180deg); }
+
+/* ── MICRO-INTERACTIONS (rec #17) ──
+   Subtle polish that makes the site feel premium without distracting
+   from the conversion flow. Honors prefers-reduced-motion for the
+   interactions that involve translation (the gentle decorative
+   marquee is the only exception). */
+
+/* Card lift on hover — applies to common card patterns. */
+.treatment-card,
+.benefit-item,
+.faq-item,
+.med-card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.2s ease;
+}
+@media (hover: hover) {
+  .treatment-card:hover,
+  .med-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.08);
+  }
+  .benefit-item:hover {
+    transform: translateY(-2px);
+  }
+}
+
+/* Smooth scroll on anchor jumps (already in html { scroll-behavior }
+   but enforced again here for older Safari). */
+html { scroll-behavior: smooth; }
+
+/* Premium focus ring — replace dotted browser default for keyboard users
+   without taking it away (accessibility regression risk). */
+:focus-visible {
+  outline: 2px solid var(--green-light, #7dba96);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+button:focus-visible,
+a:focus-visible {
+  outline-offset: 4px;
+}
+
+/* Image hover zoom for treatment/product cards. */
+@media (hover: hover) {
+  .treatment-card-visual img,
+  .product-photo {
+    transition: transform 0.4s ease;
+  }
+  .treatment-card:hover .treatment-card-visual img,
+  .treatment-card:hover .product-photo {
+    transform: scale(1.04);
+  }
+}
+
+/* Soft-pulse for primary attention-grabbing badges. */
+@keyframes soft-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(125, 186, 150, 0.35); }
+  50%      { box-shadow: 0 0 0 10px rgba(125, 186, 150, 0); }
+}
+.attention-pulse { animation: soft-pulse 2.4s ease-in-out infinite; }
+
+/* Respect reduce-motion for the transform-based interactions
+   (keyboard focus rings stay unaffected). */
+@media (prefers-reduced-motion: reduce) {
+  .treatment-card, .benefit-item, .faq-item, .med-card,
+  .treatment-card-visual img, .product-photo {
+    transition: none;
+  }
+  .treatment-card:hover, .med-card:hover, .benefit-item:hover,
+  .treatment-card:hover .treatment-card-visual img,
+  .treatment-card:hover .product-photo {
+    transform: none;
+  }
+  .attention-pulse { animation: none; }
+}
+
+/* ── TYPOGRAPHY ── */
+.display {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300; line-height: 1.05; letter-spacing: -0.5px;
+}
+.display em { font-style: italic; color: var(--green-mid); }
+.display-white em { color: #7dba96; }
+
+.eyebrow {
+  font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--green-light); font-weight: 500; display: block; margin-bottom: 12px;
+}
+
+/* CRO playbook rec #8: stronger heading hierarchy. Most pages don't
+   set explicit h1/h2/h3 sizes — they rely on browser defaults which
+   make h1 and h2 feel too similar. These defaults apply only when a
+   heading hasn't been given an explicit class or inline style. */
+h1:not([class]):not([style*="font-size"]) {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(40px, 5vw, 64px);
+  font-weight: 300; line-height: 1.08; letter-spacing: -0.5px;
+  margin-bottom: 20px;
+}
+h2:not([class]):not([style*="font-size"]) {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(28px, 3.4vw, 42px);
+  font-weight: 400; line-height: 1.18; letter-spacing: -0.3px;
+  margin-bottom: 16px;
+}
+h3:not([class]):not([style*="font-size"]) {
+  font-family: 'DM Sans', sans-serif;
+  font-size: clamp(18px, 2vw, 22px);
+  font-weight: 600; line-height: 1.35;
+  margin-bottom: 12px;
+}
+/* Secondary / supporting text: visually quieter so the primary
+   content carries the eye toward CTAs. */
+.text-muted, .secondary-text { color: var(--text-muted); font-size: 14px; line-height: 1.65; }
+small { color: var(--text-muted); font-size: 12px; line-height: 1.5; }
+
+/* ── LAYOUT ── */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 48px; }
+.section { padding: 100px 0; }
+
+/* CRO playbook rec: any <section> without its own padding gets a
+   sensible default (80px desktop / 60px mobile). Sections that
+   intentionally set inline padding still win — this is a floor for
+   un-styled sections, not a forced override. */
+section:not([style*="padding"]) { padding-top: 80px; padding-bottom: 80px; }
+@media (max-width: 768px) {
+  section:not([style*="padding"]) { padding-top: 60px; padding-bottom: 60px; }
+}
+
+/* ── FOOTER ── */
+footer {
+  background-image: url("assets/brand/freeley_pattern_dark.jpg"); background-size: cover; background-color: var(--black); padding: 72px 48px 40px;
+}
+.footer-grid {
+  max-width: 1200px; margin: 0 auto;
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 64px;
+  padding-bottom: 56px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.footer-brand-logo {
+  display: block; margin-bottom: 12px; text-decoration: none;
+}
+.footer-brand-desc { font-size: 13.5px; color: rgba(255,255,255,0.5); line-height: 1.7; max-width: 280px; margin-bottom: 28px; }
+.footer-social { display: flex; gap: 10px; }
+.footer-social a {
+  width: 38px; height: 38px; border-radius: 10px;
+  background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; text-decoration: none; transition: all 0.2s;
+}
+.footer-social a:hover { background: var(--green-light); color: #fff; }
+.footer-col h4 {
+  color: rgba(255,255,255,0.75); font-size: 11px; letter-spacing: 2px;
+  text-transform: uppercase; margin-bottom: 20px; font-weight: 600;
+}
+.footer-col a {
+  display: block; color: rgba(255,255,255,0.45); text-decoration: none;
+  margin-bottom: 13px; font-size: 14px; transition: color 0.2s;
+}
+.footer-col a:hover { color: rgba(255,255,255,0.85); }
+.footer-bottom {
+  max-width: 1200px; margin: 32px auto 0;
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 24px; flex-wrap: wrap;
+}
+.footer-disclaimer { font-size: 11px; color: rgba(255,255,255,0.25); line-height: 1.7; max-width: 720px; }
+.footer-copy { font-size: 12px; color: rgba(255,255,255,0.35); white-space: nowrap; }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-14px)} }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.9)} }
+@keyframes shimmer { 0%{background-position:-200% center} 100%{background-position:200% center} }
+@keyframes spin { to{transform:rotate(360deg)} }
+
+.reveal { opacity:0; transform:translateY(28px); transition:opacity 0.75s ease,transform 0.75s ease; }
+.reveal.visible { opacity:1; transform:translateY(0); }
+.reveal-delay-1 { transition-delay:0.1s; }
+.reveal-delay-2 { transition-delay:0.2s; }
+.reveal-delay-3 { transition-delay:0.3s; }
+.reveal-delay-4 { transition-delay:0.4s; }
+
+/* ── MOBILE ── */
+@media (max-width: 960px) {
+  .nav { padding: 0 24px; }
+  .nav-links { display: none; }
+  .nav-login { display: none; }
+  .nav-cta { display: none; }
+  .nav-mobile-toggle { display: block; }
+  .container { padding: 0 24px; }
+  .section { padding: 72px 0; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
+  footer { padding: 56px 24px 32px; }
+}
+@media (max-width: 640px) {
+  .footer-grid { grid-template-columns: 1fr; }
+}
+
+/* ── FLOATING MOBILE CTA (DISABLED) ── */
+.floating-mobile-cta, .sticky-cta-bar, .sticky-mobile-cta, .sticky-atc {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  footer {
+    padding-bottom: 32px;
+  }
+}
+
+.treatment-card-price strong,
+.treatment-card-price,
+.gp-price,
+.hpc-price,
+.pc-price,
+.stat-val,
+.hero-stat-val,
+.hero-proof-val,
+.tg-week,
+.step-number,
+.plan-price-large,
+.item-price,
+.grand-total span,
+.totals-row span,
+.plan-savings strong {
+  font-family: 'Georgia', serif !important;
+}
+
+/* ─── Video Hero Component ─── */
+.video-hero {
+  position: relative;
+  overflow: hidden;
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--green-dark);
+}
+.video-hero-bg {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 100%; min-height: 100%;
+  width: auto; height: auto;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+  z-index: 1;
+}
+.video-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(7, 21, 16, 0.6) 0%,
+    rgba(7, 21, 16, 0.4) 50%,
+    rgba(7, 21, 16, 0.7) 100%
+  );
+  z-index: 2;
+}
+.video-hero-content {
+  position: relative;
+  z-index: 3;
+  text-align: center;
+  color: #fff;
+}
+.video-hero-content h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(44px, 6vw, 80px);
+  font-weight: 300;
+  margin-bottom: 16px;
+}
+.video-hero-content h1 em { font-style: italic; color: #7dba96; }
+.video-hero-content p {
+  color: rgba(255,255,255,0.6);
+  font-size: 18px; max-width: 560px; margin: 0 auto;
+  font-weight: 300; line-height: 1.6;
+}
+
+/* ⚠️ DO NOT change this rule to `display: none`. The previous version
+   was `.video-hero-bg { display: none }` which removed the entire
+   video element from layout for ANY visitor whose OS had Reduce
+   Motion enabled (macOS Accessibility, Windows Animation effects,
+   battery-saver modes, some screen recorders, certain extensions).
+   The video kept decoding internally; CSS just hid it — looked like
+   a black hero with no playback. Spent a full debugging cycle on
+   this 2026-05-14. The poster image (data-fallback) is the proper
+   fallback for reduced-motion users. */
+@media (prefers-reduced-motion: reduce) {
+  .video-hero-bg { animation: none; }
+}
+
+/* ─── Mobile Tap Target Improvements ─── */
+/* Google recommends minimum 48dp touch targets */
+@media (max-width: 768px) {
+  /* Buttons & links */
+  .hero-btn,
+  .nav-cta,
+  .quiz-next,
+  .plan-cta,
+  .mbs-cta,
+  .referral-cta,
+  .exit-submit {
+    min-height: 48px;
+    padding-top: 14px;
+    padding-bottom: 14px;
+  }
+
+  /* Plan selection cards */
+  .plan-card,
+  .pricing-card,
+  .treatment-card {
+    padding: 20px 18px;
+    min-height: 60px;
+  }
+
+  /* FAQ accordion */
+  .faq-q {
+    min-height: 48px;
+    padding: 16px 0;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Nav links */
+  nav a,
+  .sidebar-link,
+  .footer-links a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* Quiz option cards */
+  .option-card {
+    padding: 20px 18px;
+    min-height: 60px;
+  }
+
+  /* Radio/checkbox tap areas */
+  input[type="radio"],
+  input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+  }
+
+  /* Trust strip scroll hint */
+  /* Trust strip scroll hint */
+  .sp-trust-strip {
+    padding: 12px 16px;
+  }
+}
+
+/* ── NATIVE APP GLOBAL OVERRIDES ── */
+body.mobile-app-mode .nav,
+body.mobile-app-mode footer,
+body.mobile-app-mode .site-footer,
+body.mobile-app-mode .exit-overlay,
+body.mobile-app-mode .social-proof-nudge,
+body.mobile-app-mode .sp-toast,
+body.mobile-app-mode #tidio-chat-iframe,
+body.mobile-app-mode #tidio-chat {
+  display: none !important;
+}
+
+body.mobile-app-mode {
+  padding-top: calc(env(safe-area-inset-top) + 12px);
+  padding-bottom: env(safe-area-inset-bottom);
+  overflow-x: hidden !important;
+  width: 100vw !important;
+}
+
+html {
+  overflow-x: hidden !important;
+}
+
+@keyframes floatTilt {
+  0% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-8px) rotate(1.5deg); }
+  50% { transform: translateY(-12px) rotate(0deg); }
+  75% { transform: translateY(-8px) rotate(-1.5deg); }
+  100% { transform: translateY(0) rotate(0deg); }
+}
+
+.floating-vial {
+  animation: floatTilt 6.5s ease-in-out infinite;
+  will-change: transform;
+}
