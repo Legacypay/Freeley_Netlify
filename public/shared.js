@@ -96,7 +96,7 @@ const FOOTER_HTML = `
   </div>
   <div class="footer-bottom">
     <p class="footer-disclaimer">Freeley is a healthcare technology platform that facilitates connections between patients and independently licensed telemedicine providers through our clinical partner <strong><a href="https://mdintegrations.com" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">MD Integrations</a></strong>, and PCAB-accredited 503A compounding pharmacies, including <strong>Strive Pharmacy</strong>, available nationwide across all 50 U.S. states. Freeley does not practice medicine, employ physicians, or dispense medications. All treatment decisions and prescriptions are made solely by board-certified, US-licensed physicians. Compounded medications are not FDA-approved, and are independent of any name-brand medications. Results vary. FSA/HSA eligibility varies.</p>
-    <div class="footer-copy">© 2025 Freeley Health LLC (DBA Freeley) · <a href="https://www.legitscript.com/websites/?checker_keywords=freeley.com" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">LegitScript Certified</a></div>
+    <div class="footer-copy">© ${new Date().getFullYear()} Freeley Health LLC (DBA Freeley) · <a href="https://www.legitscript.com/websites/?checker_keywords=freeley.com" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">LegitScript Certified</a></div>
   </div>
 </footer>
 <script type="text/javascript" src="//widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js" async></script>
