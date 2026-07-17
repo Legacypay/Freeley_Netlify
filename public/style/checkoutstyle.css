@@ -392,6 +392,7 @@
  
  ._group>div {
      flex: 1;
+     min-width: 0;
  }
  
  ._sidepanel {
