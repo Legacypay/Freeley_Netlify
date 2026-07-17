@@ -1,0 +1,417 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout title="Blogs">
+  <Fragment slot="head">
+    <!-- Font playfair display embed -->
+    <link rel="stylesheet" href="/style/blogsstyle.css" />
+  </Fragment>
+
+    <main>
+
+        <!-- Header -->
+        <Header />
+
+        <section>
+            <div id="quiz--modal" class="modal">
+                <div class="modal-content">
+                    <span class="close" id="close--quiz"><img src="/assets/icons/close.png" /></span>
+                    <div class="processing-loader" id="loader"></div>
+                    <div id="quiz--container"></div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ARTICLES HUB SECTION -->
+        <section class="hub-section py-5">
+            <div class="container custom-container">
+
+                <!-- Section Header -->
+                <div class="max-w-header mb-6">
+                    <h2 class="serif-heading">Your Guide to <span class="italic-tan">Smarter Weight Loss</span></h2>
+                    <p class="section-intro mt-4">
+                        Expert insights, real stories, and science-backed tips to help you feel confident, healthy, and in control—one step at a time.
+                    </p>
+                </div>
+
+                <!-- Category Pill Filters Navigation - TABS WORKING WITH JAVASCRIPT -->
+                <div class="filter-pills-row flex flex-wrap gap-2 mb-12">
+                    <button class="pill-btn active" data-filter="all">All</button>
+                    <button class="pill-btn" data-filter="Longevity">Longevity</button>
+                    <button class="pill-btn" data-filter="Men's Health">Men's Health</button>
+                    <button class="pill-btn" data-filter="Weight Loss">Weight Loss</button>
+                </div>
+
+                <!-- 3-Column Articles Matrix Grid Layout -->
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-6" id="articlesGrid">
+                    <!-- Article cards will be dynamically filtered here -->
+                </div>
+            </div>
+        </section>
+
+        <!-------------------------------------
+        ************** FOOTER ******************
+        -------------------------------------->
+        <div class="container-fluid">
+<div class="footer--header grid grid-cols-1 md:grid-cols-12 items-center pb-12 gap-y-6">
+                    <div class="md:col-span-6 flex flex-col gap-4">
+                        <h2 class="text-5xl leading-tight mb-0 font-normal">
+                            Feel better,<br />
+                            <span class="italic">starting today</span>
+                        </h2>
+                        <p class="text-white/50 text-14-inter">
+                            Personalized care for every part of you from weight to skin, sleep to sexual health.
+                        </p>
+                    </div>
+
+                    <div class="md:col-span-6 flex flex-col items-start md:items-end gap-6">
+                        <div>
+                            <a href="javascript:void(0)" id="start-assessment" class="global--qua--button bg-white px-4 pr-2 w-full">
+                                <img class="btn--icon" src="/assets/home/icons/icon-right-green.svg" /> Start Your Assessment
+                            </a>
+                        </div>
+
+                        <div class="flex flex-wrap justify-start md:justify-end gap-3 text-white/50 text-sm">
+                            <div class="flex text-white items-center gap-1 text-14-inter">
+                                <span class="text-white"><svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 18 18"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M9 1.5C4.8675 1.5 1.5 4.8675 1.5 9C1.5 13.1325 4.8675 16.5 9 16.5C13.1325 16.5 16.5 13.1325 16.5 9C16.5 4.8675 13.1325 1.5 9 1.5ZM12.585 7.275L8.3325 11.5275C8.2275 11.6325 8.085 11.6925 7.935 11.6925C7.785 11.6925 7.6425 11.6325 7.5375 11.5275L5.415 9.405C5.1975 9.1875 5.1975 8.8275 5.415 8.61C5.6325 8.3925 5.9925 8.3925 6.21 8.61L7.935 10.335L11.79 6.48C12.0075 6.2625 12.3675 6.2625 12.585 6.48C12.8025 6.6975 12.8025 7.05 12.585 7.275Z"
+                        fill="white"
+                      />
+                    </svg>
+                  </span> No credit card required
+                            </div>
+                            <div class="flex text-white items-center gap-1 text-14-inter">
+                                <span class=""><svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 18 18"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M9 1.5C4.8675 1.5 1.5 4.8675 1.5 9C1.5 13.1325 4.8675 16.5 9 16.5C13.1325 16.5 16.5 13.1325 16.5 9C16.5 4.8675 13.1325 1.5 9 1.5ZM12.585 7.275L8.3325 11.5275C8.2275 11.6325 8.085 11.6925 7.935 11.6925C7.785 11.6925 7.6425 11.6325 7.5375 11.5275L5.415 9.405C5.1975 9.1875 5.1975 8.8275 5.415 8.61C5.6325 8.3925 5.9925 8.3925 6.21 8.61L7.935 10.335L11.79 6.48C12.0075 6.2625 12.3675 6.2625 12.585 6.48C12.8025 6.6975 12.8025 7.05 12.585 7.275Z"
+                        fill="white"
+                      />
+                    </svg>
+                  </span> Takes 2 minutes
+                            </div>
+                            <div class="flex text-white items-center gap-1 text-14-inter">
+                                <span class="text-white"><svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 18 18"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M9 1.5C4.8675 1.5 1.5 4.8675 1.5 9C1.5 13.1325 4.8675 16.5 9 16.5C13.1325 16.5 16.5 13.1325 16.5 9C16.5 4.8675 13.1325 1.5 9 1.5ZM12.585 7.275L8.3325 11.5275C8.2275 11.6325 8.085 11.6925 7.935 11.6925C7.785 11.6925 7.6425 11.6325 7.5375 11.5275L5.415 9.405C5.1975 9.1875 5.1975 8.8275 5.415 8.61C5.6325 8.3925 5.9925 8.3925 6.21 8.61L7.935 10.335L11.79 6.48C12.0075 6.2625 12.3675 6.2625 12.585 6.48C12.8025 6.6975 12.8025 7.05 12.585 7.275Z"
+                        fill="white"
+                      />
+                    </svg>
+                  </span> Cancel anytime
+                            </div>
+                        </div>
+                    </div>
+                </div>
+</div>
+
+<Footer />
+    </main>
+    <!-- Footer Links -->
+    <script src="/style/script.js" is:inline></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" is:inline></script>
+    <script is:inline>
+        // ========== TAB / FILTER FUNCTIONALITY FOR ARTICLES ==========
+        // No extra CSS, no footer changes — only making the filter tabs work
+
+        // Full articles dataset (12 unique items, matching original structure but with varied categories for realistic filtering)
+        const articles = [{
+            id: 1,
+            category: "Weight Loss",
+            title: "The Ultimate Guide to Men's Health Telemedicine",
+            metaTag: "Weight Loss",
+            img: "/assets/blogs/article-img.png"
+        }, {
+            id: 2,
+            category: "Longevity",
+            title: "Longevity Secrets: How to Thrive at Every Age",
+            metaTag: "Longevity",
+            img: "/assets/blogs/article-img.png"
+        }, {
+            id: 3,
+            category: "Men's Health",
+            title: "Men's Health: Optimizing Testosterone Naturally",
+            metaTag: "Men's Health",
+            img: "/assets/blogs/article-img.png"
+        }, {
+            id: 4,
+            category: "Weight Loss",
+            title: "GLP-1 Medications: What You Need to Know",
+            metaTag: "Weight Loss",
+            img: "/assets/blogs/article-img.png"
+        }, {
+            id: 5,
+            category: "Weight Loss",
+            title: "Breaking Plateaus: Science-Backed Weight Loss",
+            metaTag: "Weight Loss",
+            img: "/assets/blogs/article-img.png"
+        }, {
+            id: 6,
+            category: "Men's Health",
+            title: "Sexual Wellness & Telehealth: Modern Solutions",
+            metaTag: "Men's Health",
+            img: "/assets/blogs/article-img.png"
+        }, {
+            id: 7,
+            category: "Longevity",
+            title: "Peptide Therapy for Cellular Longevity",
+            metaTag: "Longevity",
+            img: "/assets/blogs/article-img.png"
+        }, {
+            id: 8,
+            category: "Longevity",
+            title: "Epigenetics and Aging: New Frontiers",
+            metaTag: "Longevity",
+            img: "/assets/blogs/article-img.png"
+        }, {
+            id: 9,
+            category: "Men's Health",
+            title: "Hair Loss Treatments: What Works in 2025",
+            metaTag: "Men's Health",
+            img: "/assets/blogs/article-img.png"
+        }, {
+            id: 10,
+            category: "Weight Loss",
+            title: "Intermittent Fasting for Metabolic Health",
+            metaTag: "Weight Loss",
+            img: "/assets/blogs/article-img.png"
+        }, {
+            id: 11,
+            category: "Longevity",
+            title: "Biomarkers of Aging: Track Your Health",
+            metaTag: "Longevity",
+            img: "/assets/blogs/article-img.png"
+        }, {
+            id: 12,
+            category: "Men's Health",
+            title: "Stress & Cortisol: Impact on Male Vitality",
+            metaTag: "Men's Health",
+            img: "/assets/blogs/article-img.png"
+        }];
+
+        // Get DOM elements
+        const filterButtons = document.querySelectorAll('.pill-btn');
+        const articlesGrid = document.getElementById('articlesGrid');
+
+        // Function to render articles based on selected category
+        function renderArticles(category) {
+            let filteredArticles = [];
+            if (category === 'all') {
+                filteredArticles = articles;
+            } else {
+                filteredArticles = articles.filter(article => article.category === category);
+            }
+
+            // Build HTML grid for each card
+            let html = '';
+            filteredArticles.forEach((article, idx) => {
+                // staggered animation delay
+                let delayVal = (idx % 3) * 0.1;
+                html += `
+                <div class="sm:col-span-6 lg:col-span-4">
+                    <article class="article-hub-card h-full bg-white p-2 overflow-hidden shadow-sm flex flex-col">
+                        <div class="card-img-frame">
+                            <img src="${article.img}" alt="Article Visual Reference" class="max-w-full h-auto card-thumbnail">
+                        </div>
+                        <div class="card-body-content p-6 flex flex-col grow">
+                <div class="bordered--heading inline-block px-4 mr-auto mb-4">
+                            <span class="uppercase">${article.metaTag}</span>
+                        </div>
+                            <h3 class="card-serif-title mb-6">${article.title}</h3>
+                            <a href="javascript:void(0)" class="read-more-link mt-auto font-medium no-underline">Read Article →</a>
+                        </div>
+                    </article>
+                </div>
+            `;
+            });
+
+            // If no articles, display a friendly message
+            if (filteredArticles.length === 0) {
+                html = `<div class="text-center py-12"><p class="text-[var(--text-muted-gray)]">No articles found in this category. Check back soon!</p></div>`;
+            }
+
+            articlesGrid.innerHTML = html;
+        }
+
+        // Add click event listeners to each filter tab
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Update active class on buttons
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+
+                // Get filter value
+                const filterValue = this.getAttribute('data-filter');
+                renderArticles(filterValue);
+            });
+        });
+
+        // Initial render (show all articles)
+        renderArticles('all');
+
+        // Preserve existing swiper initialization (no interference)
+        const swiper = new Swiper('.everything_managed .swiper', {
+            slidesPerView: 'auto',
+            spaceBetween: 24,
+            freeMode: false,
+            grabCursor: true,
+            mousewheel: false,
+            centeredSlides: false,
+        });
+
+        new Swiper('.transformation-slider.swiper', {
+            slidesPerView: 2.2,
+            spaceBetween: 24,
+            freeMode: false,
+            grabCursor: true,
+            mousewheel: false,
+            centeredSlides: false,
+        });
+
+
+
+        const modal = document.getElementById('quiz--modal');
+        const loader = document.getElementById('loader');
+        const quizContainer = document.getElementById('quiz--container');
+        let quizIframe = null;
+
+        document.querySelectorAll(
+            '#start-assessment, #start-full-assessment, #start-assessment-header'
+        ).forEach(button => {
+            button.addEventListener('click', () => {
+                // If iframe exists, remove it first
+                if (quizIframe) {
+                    quizIframe.remove();
+                    quizIframe = null;
+                }
+
+                modal.style.display = 'block';
+                loader.style.display = 'block';
+                quizContainer.innerHTML = '';
+
+                // Create new iframe
+                quizIframe = document.createElement('iframe');
+                quizIframe.style.width = '100%';
+                quizIframe.style.height = '605px';
+                quizIframe.style.border = 'none';
+                quizIframe.style.borderRadius = '0';
+                quizIframe.style.display = 'none';
+                quizIframe.style.background = '#0000004D';
+
+                // Load with cache-busting
+                quizIframe.src = '/assessment-quiz?t=' + Date.now();
+
+                quizIframe.onload = function() {
+                    loader.style.display = 'none';
+                    quizIframe.style.display = 'block';
+
+                    // Apply styles to iframe body (if you have access)
+                    try {
+                        const iframeDoc = quizIframe.contentDocument || quizIframe.contentWindow.document;
+                        if (iframeDoc) {
+                            const style = iframeDoc.createElement('style');
+                            style.textContent = `
+                            body {
+                                background: #0000004D !important;
+                                border: 0 !important;
+                                border-radius: 0 !important;
+                                height: 100vh;
+                                margin: 0;
+                            }
+                        `;
+                            iframeDoc.head.appendChild(style);
+                        }
+                    } catch (e) {
+                        // Cross-origin restrictions may prevent this
+                        console.log('Cannot style iframe body due to CORS');
+                    }
+                };
+
+                quizIframe.onerror = function() {
+                    loader.style.display = 'none';
+                    quizContainer.innerHTML = '<p>Unable to load quiz.</p>';
+                };
+
+                quizContainer.appendChild(quizIframe);
+            });
+        });
+
+        function closeQuiz() {
+            // Hide modal
+            modal.style.display = 'none';
+
+            // Remove iframe completely
+            if (quizIframe) {
+                // Clear iframe content
+                try {
+                    quizIframe.src = 'about:blank';
+                    quizIframe.contentWindow.document.write('');
+                    quizIframe.contentWindow.document.clear();
+                } catch (e) {}
+
+                // Remove from DOM
+                quizIframe.remove();
+                quizIframe = null;
+            }
+
+            // Clear container
+            quizContainer.innerHTML = '';
+            loader.style.display = 'none';
+        }
+
+        document
+            .getElementById('close--quiz')
+            .addEventListener('click', closeQuiz);
+
+        // Close on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modal.style.display === 'block') {
+                closeQuiz();
+            }
+        });
+
+        // Close when clicking outside
+        window.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeQuiz();
+            }
+        });
+    </script>
+    <!--Start of Tawk.to Script-->
+    <script type="text/javascript" is:inline>
+        var Tawk_API = Tawk_API || {},
+            Tawk_LoadStart = new Date();
+        (function() {
+            var s1 = document.createElement("script"),
+                s0 = document.getElementsByTagName("script")[0];
+            s1.async = true;
+            s1.src = 'https://embed.tawk.to/6a454f1fb271bd1d477e9990/1jsfbq5mb';
+            s1.charset = 'UTF-8';
+            s1.setAttribute('crossorigin', '*');
+            s0.parentNode.insertBefore(s1, s0);
+        })();
+    </script>
+    <!--End of Tawk.to Script-->
+
+</Layout>

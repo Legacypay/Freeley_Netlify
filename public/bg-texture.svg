@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="501" height="284" viewBox="0 0 501 284">
+  <style>
+    .f-text {
+      font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+      font-size: 44px;
+      font-weight: 600;
+      fill: #ffffff;
+      fill-opacity: 0.3;
+      letter-spacing: -2px;
+      text-anchor: middle;
+    }
+    .dot {
+      fill: #ffffff;
+      fill-opacity: 0.3;
+    }
+  </style>
+
+  <!-- Row A (y = 30) -->
+  <text x="0" y="44" class="f-text">F</text>
+  <circle cx="167" cy="30" r="5" class="dot" />
+  <circle cx="334" cy="30" r="5" class="dot" />
+  <text x="501" y="44" class="f-text">F</text>
+
+  <!-- Row B (y = 172) -->
+  <circle cx="0" cy="172" r="5" class="dot" />
+  <circle cx="167" cy="172" r="5" class="dot" />
+  <text x="334" y="186" class="f-text">F</text>
+  <circle cx="501" cy="172" r="5" class="dot" />
+</svg>

@@ -1,0 +1,1753 @@
+---
+import '../styles/tailwind.css';
+---
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="/global.css" />
+    <link rel="stylesheet" href="/style/style.css" />
+    <link rel="stylesheet" href="/style/quiz2style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <title>Freeley Assessment</title>
+
+</head>
+
+<body>
+    <div class="quiz-popup">
+        <div class="quiz-card">
+            <!-- Step 0 - Hero with equal 50/50 columns -->
+            <div class="quiz-step active" data-step="0">
+                <div class="step--content">
+                    <div class="hero-with-image">
+                        <div class="step-image-col flex-col text-center">
+
+                            <span class="quiz-badge">MULTI STEP</span>
+                            <div class="quiz-hero-content">
+                                <h2>
+                                    Start Your
+                                    <span>Assessment</span>
+                                </h2>
+                            </div>
+
+                        </div>
+                        <div class="step-content-col">
+                            <div class="logo-image">
+                                <img src="/assets/mask-group5@2x.png" />
+                            </div>
+                            <div class="quiz-content">
+                                <span class="quiz-badge quiz-badge-light"> FREE ASSESSMENT </span>
+                                <h2 class="quiz-title">
+                                    Let's see if Freeley
+                                    <span class="highlight">Is right for you</span>
+                                </h2>
+                                <p class="quiz-subtitle">
+                                    2 minutes. No commitment. • Free if you don't qualify.
+                                </p>
+                                <div class="features-grid">
+                                    <div class="feature-item">
+                                        <div class="feature-icon">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M20.3 7.3L9 18.6L3.7 13.3" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                                        </div>
+                                        <span class="feature-text">HIPAA Protected</span>
+                                    </div>
+                                    <div class="feature-item">
+                                        <div class="feature-icon">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M20.3 7.3L9 18.6L3.7 13.3" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                                        </div>
+                                        <span class="feature-text">Reviewed by physicians</span>
+                                    </div>
+                                    <div class="feature-item">
+                                        <div class="feature-icon">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M20.3 7.3L9 18.6L3.7 13.3" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                                        </div>
+                                        <span class="feature-text">Results in 24 hrs</span>
+                                    </div>
+                                </div>
+                                <button class="quiz-start-btn" onclick="goToStep(1)">
+                Start
+                <span>
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10.8223 4.44922L15.3748 9.00172L10.8223 13.5542" stroke="#FAF8F4" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2.625 9H15.2475" stroke="#FAF8F4" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </span>
+              </button>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Step 1 with equal 50/50 columns -->
+            <div class="quiz-step" data-step="1">
+                <div class="step--content">
+                    <div class="step-with-image">
+                        <div class="step-image-col">
+                            <h2 class="step--text text-white">Give $50, Get $50</h2>
+                            <p>Share Freeley with a friend. When they start their plan, you both save $50 on your next month.</p>
+                        </div>
+                        <div class="step-content-col">
+                            <div class="quiz-content">
+                                <div class="quiz-header flex items-end flex-wrap gap-4">
+                                    <div class="step-back" onclick="goToStep(0)">
+                                        <span class="arrow-back"></span>&nbsp;Back
+                                    </div>
+                                    <div class="step-navigator">
+                                        <div class="flex flex-wrap justify-between">
+                                            <span class="step-progress italic">Progress</span>
+                                            <span class="current-step">1/15</span>
+                                        </div>
+                                        <div class="bar">
+                                            <div class="progress" style="width:8%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="step-body">
+                                    <h2 class="mb-6">
+                                        What brings you
+                                        <span class="highlight">to Freeley?</span>
+                                    </h2>
+                                    <div class="options" data-required="true" data-single-select="true">
+                                        <div class="option--item">
+                                            <div class="option--title">Weight loss</div>
+                                            <div class="option-details italic">GLP-1 medications, supervised</div>
+                                        </div>
+                                        <div class="option--item">
+                                            <div class="option--title">Sexual wellness</div>
+                                            <div class="option-details italic">Performance, stamina, confidence</div>
+                                        </div>
+                                        <div class="option--item">
+                                            <div class="option--title">Hair loss</div>
+                                            <div class="option-details italic">Prevent thinning, stimulate regrowth</div>
+                                        </div>
+                                        <div class="option--item">
+                                            <div class="option--title">Longevity & performance</div>
+                                            <div class="option-details italic">Peptides, NAD+, anti-aging</div>
+                                        </div>
+                                    </div>
+                                    <div class="error-message">Please select an option to continue</div>
+                                </div>
+                                <div class="quiz-buttons">
+                                    <button class="quiz-btn quiz-btn-primary" onclick="validateSelectionAndGo(1, 2)">Continue</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="quiz-step" data-step="2">
+                <div class="step--content">
+                    <div class="step-with-image">
+                        <div class="step-image-col">
+                            <h2 class="step--text text-white">Give $50, Get $50</h2>
+                            <p>Share Freeley with a friend. When they start their plan, you both save $50 on your next month.</p>
+
+                        </div>
+                        <div class="step-content-col">
+                            <div class="quiz-content">
+                                <div class="quiz-header flex items-end flex-wrap gap-4">
+                                    <div class="step-back" onclick="goToStep(1)">
+                                        <span class="arrow-back"></span>&nbsp;Back
+                                    </div>
+                                    <div class="step-navigator">
+                                        <div class="flex flex-wrap justify-between">
+                                            <span class="step-progress italic">Progress</span>
+                                            <span class="current-step">2/15</span>
+                                        </div>
+                                        <div class="bar">
+                                            <div class="progress" style="width:16%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="step-body">
+                                    <h2 class="mb-6">
+                                        What's your biggest
+                                        <span class="highlight">Obstacle?</span>
+                                    </h2>
+                                    <div class="options" data-required="true" data-single-select="true">
+                                        <div class="option--item">
+                                            <div class="option--title">Cravings & hunger</div>
+                                            <div class="option-details italic">Hard to stop eating even when full</div>
+                                        </div>
+                                        <div class="option--item">
+                                            <div class="option--title">Slow metabolism</div>
+                                            <div class="option-details italic">Weight doesn't move even with effort</div>
+                                        </div>
+                                        <div class="option--item">
+                                            <div class="option--title">No time</div>
+                                            <div class="option-details italic">Too busy for meal prep or workouts</div>
+                                        </div>
+                                        <div class="option--item">
+                                            <div class="option--title">Low motivation</div>
+                                            <div class="option-details italic">Hard to stay consistent long-term</div>
+                                        </div>
+                                    </div>
+                                    <div class="error-message">Please select an option to continue</div>
+                                </div>
+                                <div class="quiz-buttons">
+                                    <button class="quiz-btn quiz-btn-primary" onclick="validateSelectionAndGo(2, 3)">Continue</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="quiz-step" data-step="3">
+                <div class="step--content">
+                    <div class="step-with-image">
+                        <div class="step-image-col">
+                            <h2 class="step--text text-white">Give $50, Get $50</h2>
+                            <p>Share Freeley with a friend. When they start their plan, you both save $50 on your next month.</p>
+
+                        </div>
+                        <div class="step-content-col">
+                            <div class="quiz-content">
+                                <div class="quiz-header flex items-end flex-wrap gap-4">
+                                    <div class="step-back" onclick="goToStep(2)">
+                                        <span class="arrow-back"></span>&nbsp;Back
+                                    </div>
+                                    <div class="step-navigator">
+                                        <div class="flex flex-wrap justify-between">
+                                            <span class="step-progress italic">Progress</span>
+                                            <span class="current-step">3/15</span>
+                                        </div>
+                                        <div class="bar">
+                                            <div class="progress" style="width:25%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="step-body">
+                                    <h2 class="mb-6">
+                                        How quickly do you hope
+                                        <span class="highlight">see results?</span>
+                                    </h2>
+                                    <div class="options" data-required="true" data-single-select="true">
+                                        <div class="option--item">
+                                            <div class="option--title">As fast as possible</div>
+                                            <div class="option-details italic">I'm ready to commit fully</div>
+                                        </div>
+                                        <div class="option--item">
+                                            <div class="option--title">1–3 months</div>
+                                            <div class="option-details italic">Steady, sustainable progress</div>
+                                        </div>
+                                        <div class="option--item">
+                                            <div class="option--title">No rush</div>
+                                            <div class="option-details italic">I want to do this the right way</div>
+                                        </div>
+                                    </div>
+                                    <div class="error-message">Please select an option to continue</div>
+                                </div>
+                                <div class="quiz-buttons">
+                                    <button class="quiz-btn quiz-btn-primary" onclick="validateSelectionAndGo(3, 4)">Continue</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="quiz-step" data-step="4">
+                <div class="step--content">
+                    <div class="step-with-image">
+                        <div class="step-image-col">
+                            <h2 class="step--text text-white">Give $50, Get $50</h2>
+                            <p>Share Freeley with a friend. When they start their plan, you both save $50 on your next month.</p>
+
+                        </div>
+                        <div class="step-content-col">
+                            <div class="quiz-content">
+                                <div class="quiz-header flex items-end flex-wrap gap-4">
+                                    <div class="step-back" onclick="goToStep(3)">
+                                        <span class="arrow-back"></span>&nbsp;Back
+                                    </div>
+                                    <div class="step-navigator">
+                                        <div class="flex flex-wrap justify-between">
+                                            <span class="step-progress italic">Progress</span>
+                                            <span class="current-step">4/15</span>
+                                        </div>
+                                        <div class="bar">
+                                            <div class="progress" style="width:33%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="step-body">
+                                    <h2 class="mb-6">
+                                        How old
+                                        <span class="highlight">are you?</span>
+                                    </h2>
+                                    <p class="mb-12">Your age helps us tailor dosing recommendations.</p>
+                                    <div class="text--input">
+                                        <input type="number" name="age" placeholder="e.g. 34" id="ageInput" required min="18" max="100" />
+                                    </div>
+                                    <div class="error-message" id="ageError">Please enter a valid age (18-100)</div>
+                                </div>
+                                <div class="quiz-buttons">
+                                    <button class="quiz-btn quiz-btn-primary" onclick="validateAndGo(4, 5)">Continue</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 5 -->
+            <div class="quiz-step" data-step="5">
+                <div class="step--content">
+                    <div class="step-with-image">
+                        <div class="step-image-col">
+                            <h2 class="step--text text-white">Give $50, Get $50</h2>
+                            <p>Share Freeley with a friend. When they start their plan, you both save $50 on your next month.</p>
+                        </div>
+                        <div class="step-content-col">
+                            <div class="quiz-content">
+                                <div class="quiz-header flex items-end flex-wrap gap-4">
+                                    <div class="step-back" onclick="goToStep(4)">
+                                        <span class="arrow-back"></span>&nbsp;Back
+                                    </div>
+                                    <div class="step-navigator">
+                                        <div class="flex flex-wrap justify-between">
+                                            <span class="step-progress italic">Progress</span>
+                                            <span class="current-step">5/15</span>
+                                        </div>
+                                        <div class="bar">
+                                            <div class="progress" style="width:41%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="step-body">
+                                    <h2 class="mb-6">
+                                        What's your
+                                        <span class="highlight">biological sex?</span>
+                                    </h2>
+                                    <p class="mb-12">Used only for clinical screening purposes.</p>
+                                    <div class="options flex text-center gap-2" data-required="true" data-single-select="true">
+                                        <div class="option--item mb-0 flex-1">
+                                            <div class="option--title">Male</div>
+                                            <div class="option-details italic">
+                                                <svg width="41" height="41" viewBox="0 0 41 41" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M38.852 0H26.708C25.476 0 24.508 0.968 24.508 2.2C24.508 3.432 25.476 4.4 26.708 4.4H33.484L25.388 12.496C19.14 7.832 10.252 8.272 4.62 13.904C-1.54 20.064 -1.54 30.184 4.62 36.344C10.78 42.504 20.9 42.504 27.06 36.344C32.692 30.712 33.22 21.736 28.468 15.576L36.564 7.48V14.344C36.564 15.576 37.532 16.544 38.764 16.544C39.996 16.544 40.964 15.576 40.964 14.344V2.2C41.052 0.968 40.084 0 38.852 0ZM24.068 33.264C19.58 37.752 12.276 37.752 7.788 33.264C3.3 28.776 3.3 21.472 7.788 16.984C12.276 12.496 19.58 12.496 24.068 16.984C28.556 21.472 28.556 28.776 24.068 33.264Z" fill="#008262"/>
+                          </svg>
+                                            </div>
+                                        </div>
+                                        <div class="option--item mb-0 flex-1">
+                                            <div class="option--title">Female</div>
+                                            <div class="option-details italic">
+                                                <svg width="30" height="44" viewBox="0 0 30 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M24.9446 24.9368C30.6435 19.2397 30.6435 9.96991 24.9446 4.27286C19.2457 -1.42429 9.97309 -1.42429 4.27415 4.27286C-1.42471 9.96991 -1.42471 19.2397 4.27415 24.9368C6.68641 27.3483 9.739 28.7387 12.8897 29.1087V34.0005H9.45068C8.50098 34.0005 7.73115 34.7702 7.73115 35.7195C7.73115 36.6689 8.50098 37.4385 9.45068 37.4385H12.8897V42.2809C12.8898 43.2303 13.6596 44 14.6094 44C15.5591 44 16.3289 43.2303 16.3289 42.2809V37.4385H19.7681C20.7178 37.4385 21.4876 36.6689 21.4876 35.7195C21.4876 34.7702 20.7178 34.0005 19.7681 34.0005H16.3289V29.1088C19.4798 28.7387 22.5323 27.3483 24.9446 24.9368ZM6.706 22.5057C2.34803 18.1491 2.34803 11.0605 6.706 6.70386C11.0639 2.34743 18.1547 2.34717 22.5128 6.70386C26.8708 11.0605 26.8708 18.1491 22.5128 22.5057C18.1549 26.8622 11.064 26.8622 6.706 22.5057Z" fill="#008262"/>
+                          </svg>
+                                            </div>
+                                        </div>
+                                        <div class="option--item mb-0 flex-1">
+                                            <div class="option--title"><small>Prefer not to say</small></div>
+                                            <div class="option-details italic">
+                                                <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M34.7122 0V2.69388H37.751L31.8228 8.31497C29.7241 6.16739 26.7977 4.83192 23.5649 4.83192C19.2162 4.83192 15.4216 7.2478 13.4512 10.8076C13.2824 10.8002 13.1128 10.7957 12.9421 10.7957C6.57257 10.7957 1.39062 15.9777 1.39062 22.3473C1.39062 28.2611 5.858 33.1505 11.5951 33.8198V37.3997H7.56231V40.0935H11.5953V44H14.2892V40.0935H18.4981V37.3996H14.2892V33.8197C18.0659 33.3791 21.292 31.1098 23.0559 27.923C23.2247 27.9304 23.3942 27.9348 23.5648 27.9348C29.9344 27.9348 35.1164 22.7529 35.1164 16.3834C35.1164 14.2189 34.5175 12.1919 33.4775 10.4585L39.9158 4.35368V7.69948H42.6097V0H34.7122ZM12.9423 31.2048C8.05817 31.2048 4.08468 27.2313 4.08468 22.3471C4.08468 17.6533 7.75464 13.8013 12.3757 13.5082C12.1393 14.4277 12.0134 15.3911 12.0134 16.3834C12.0134 21.5795 15.4623 25.9848 20.191 27.4317C18.5869 29.7119 15.9358 31.2048 12.9423 31.2048ZM21.4025 24.9734C17.5603 24.0058 14.7074 20.5217 14.7074 16.3834C14.7074 15.4694 14.8466 14.5872 15.1049 13.757C18.9471 14.7247 21.7999 18.2089 21.7999 22.3472C21.7999 23.2612 21.6606 24.1433 21.4025 24.9734ZM24.1316 25.2222C24.368 24.3027 24.4938 23.3394 24.4938 22.3471C24.4938 17.151 21.045 12.7456 16.3163 11.2987C17.9204 9.01863 20.5716 7.52563 23.5651 7.52563C28.4493 7.52563 32.4227 11.4991 32.4227 16.3833C32.4226 21.0771 28.7526 24.9292 24.1316 25.2222Z" fill="#008262"/>
+                          </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="error-message">Please select an option to continue</div>
+                                </div>
+                                <div class="quiz-buttons">
+                                    <button class="quiz-btn quiz-btn-primary" onclick="validateSelectionAndGo(5, 6)">Continue</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 6 -->
+            <div class="quiz-step" data-step="6">
+                <div class="step--content">
+                    <div class="step-with-image">
+                        <div class="step-image-col">
+                            <h2 class="step--text text-white">Give $50, Get $50</h2>
+                            <p>Share Freeley with a friend. When they start their plan, you both save $50 on your next month.</p>
+                        </div>
+                        <div class="step-content-col">
+                            <div class="quiz-content">
+                                <div class="quiz-header flex items-end flex-wrap gap-4">
+                                    <div class="step-back" onclick="goToStep(5)">
+                                        <span class="arrow-back"></span>&nbsp;Back
+                                    </div>
+                                    <div class="step-navigator">
+                                        <div class="flex flex-wrap justify-between">
+                                            <span class="step-progress italic">Progress</span>
+                                            <span class="current-step">6/15</span>
+                                        </div>
+                                        <div class="bar">
+                                            <div class="progress" style="width:50%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="step-body">
+                                    <h2 class="mb-6">
+                                        What's your
+                                        <span class="highlight">height?</span>
+                                    </h2>
+                                    <p class="mb-12">Used to calculate your BMI and medication dosing.</p>
+                                    <div class="text--input">
+                                        <input type="text" name="height" placeholder="e.g. 5.9" id="heightInput" required />
+                                    </div>
+                                    <div class="error-message" id="heightError">Please enter your height (e.g., 5.9)</div>
+                                </div>
+                                <div class="quiz-buttons">
+                                    <button class="quiz-btn quiz-btn-primary" onclick="validateAndGo(6, 7)">Continue</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 7 -->
+            <div class="quiz-step" data-step="7">
+                <div class="step--content">
+                    <div class="step-with-image">
+                        <div class="step-image-col">
+                            <h2 class="step--text text-white">Give $50, Get $50</h2>
+                            <p>Share Freeley with a friend. When they start their plan, you both save $50 on your next month.</p>
+                        </div>
+                        <div class="step-content-col">
+                            <div class="quiz-content">
+                                <div class="quiz-header flex items-end flex-wrap gap-4">
+                                    <div class="step-back" onclick="goToStep(6)">
+                                        <span class="arrow-back"></span>&nbsp;Back
+                                    </div>
+                                    <div class="step-navigator">
+                                        <div class="flex flex-wrap justify-between">
+                                            <span class="step-progress italic">Progress</span>
+                                            <span class="current-step">7/15</span>
+                                        </div>
+                                        <div class="bar">
+                                            <div class="progress" style="width:58%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="step-body">
+                                    <h2 class="mb-6">
+                                        What's your
+                                        <span class="highlight">goal weight?</span>
+                                    </h2>
+                                    <p class="mb-12">In pounds (lbs). Even a realistic estimate helps us personalize your plan.</p>
+                                    <div class="text--input">
+                                        <input type="text" name="goalWeight" placeholder="e.g. 175 lbs" id="goalWeightInput" required />
+                                    </div>
+                                    <div class="error-message" id="goalWeightError">Please enter your goal weight</div>
+                                </div>
+                                <div class="quiz-buttons">
+                                    <button class="quiz-btn quiz-btn-primary" onclick="validateAndGo(7, 8)">Continue</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 8 -->
+            <div class="quiz-step" data-step="8">
+                <div class="step--content">
+                    <div class="step-with-image">
+                        <div class="step-image-col">
+                            <h2 class="step--text text-white">Give $50, Get $50</h2>
+                            <p>Share Freeley with a friend. When they start their plan, you both save $50 on your next month.</p>
+                        </div>
+                        <div class="step-content-col">
+                            <div class="quiz-content">
+                                <div class="quiz-header flex items-end flex-wrap gap-4">
+                                    <div class="step-back" onclick="goToStep(7)">
+                                        <span class="arrow-back"></span>&nbsp;Back
+                                    </div>
+                                    <div class="step-navigator">
+                                        <div class="flex flex-wrap justify-between">
+                                            <span class="step-progress italic">Progress</span>
+                                            <span class="current-step">8/15</span>
+                                        </div>
+                                        <div class="bar">
+                                            <div class="progress" style="width:66%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="step-body">
+                                    <h2 class="mb-6">
+                                        What are you
+                                        <span class="highlight">experiencing?</span>
+                                    </h2>
+                                    <p class="mb-12">Select all symptoms that apply</p>
+                                    <div class="options m-0" data-required="true" data-multi-select="true">
+                                        <div class="option--item" data-value="Fatigue & low energy">
+                                            <div class="option--title">Fatigue & low energy</div>
+                                        </div>
+                                        <div class="option--item" data-value="Difficulty losing weight">
+                                            <div class="option--title">Difficulty losing weight</div>
+                                        </div>
+                                        <div class="option--item" data-value="Brain fog">
+                                            <div class="option--title">Brain fog</div>
+                                        </div>
+                                        <div class="option--item" data-value="Poor sleep quality">
+                                            <div class="option--title">Poor sleep quality</div>
+                                        </div>
+                                        <div class="option--item" data-value="Low mood / irritability">
+                                            <div class="option--title">Low mood / irritability</div>
+                                        </div>
+                                    </div>
+                                    <div class="error-message" id="step8Error">Please select at least one symptom</div>
+                                </div>
+                                <div class="quiz-buttons">
+                                    <button class="quiz-btn quiz-btn-primary" onclick="validateSelectionAndGo(8, 9)">Continue</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 9 -->
+            <div class="quiz-step" data-step="9">
+                <div class="step--content">
+                    <div class="step-with-image">
+                        <div class="step-image-col">
+                            <h2 class="step--text text-white">Give $50, Get $50</h2>
+                            <p>Share Freeley with a friend. When they start their plan, you both save $50 on your next month.</p>
+                        </div>
+                        <div class="step-content-col">
+                            <div class="quiz-content">
+                                <div class="quiz-header flex items-end flex-wrap gap-4">
+                                    <div class="step-back" onclick="goToStep(8)">
+                                        <span class="arrow-back"></span>&nbsp;Back
+                                    </div>
+                                    <div class="step-navigator">
+                                        <div class="flex flex-wrap justify-between">
+                                            <span class="step-progress italic">Progress</span>
+                                            <span class="current-step">9/15</span>
+                                        </div>
+                                        <div class="bar">
+                                            <div class="progress" style="width:75%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="step-body">
+                                    <h2 class="mb-6">
+                                        Your
+                                        <span class="highlight">lifestyle</span><br> How active are you?
+                                    </h2>
+                                    <p class="mb-12">Helps us tailor dosing and delivery to your routine.</p>
+                                    <div class="options m-0" data-required="true" data-single-select="true">
+                                        <div class="option--item">
+                                            <div class="option--title mb-0">Sedentary</div>
+                                        </div>
+                                        <div class="option--item">
+                                            <div class="option--title mb-0">Moderately active</div>
+                                        </div>
+                                        <div class="option--item">
+                                            <div class="option--title mb-0">Very active</div>
+                                        </div>
+                                    </div>
+                                    <div class="error-message">Please select an option to continue</div>
+                                </div>
+                                <div class="quiz-buttons">
+                                    <button class="quiz-btn quiz-btn-primary" onclick="validateSelectionAndGo(9, 10)">Continue</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 10 -->
+            <div class="quiz-step" data-step="10">
+                <div class="step--content">
+                    <div class="step-with-image">
+                        <div class="step-image-col">
+                            <h2 class="step--text text-white">Give $50, Get $50</h2>
+                            <p>Share Freeley with a friend. When they start their plan, you both save $50 on your next month.</p>
+                        </div>
+                        <div class="step-content-col">
+                            <div class="quiz-content">
+                                <div class="quiz-header flex items-end flex-wrap gap-4">
+                                    <div class="step-back" onclick="goToStep(9)">
+                                        <span class="arrow-back"></span>&nbsp;Back
+                                    </div>
+                                    <div class="step-navigator">
+                                        <div class="flex flex-wrap justify-between">
+                                            <span class="step-progress italic">Progress</span>
+                                            <span class="current-step">10/15</span>
+                                        </div>
+                                        <div class="bar">
+                                            <div class="progress" style="width:83%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="step-body">
+                                    <h2 class="mb-6">
+                                        Your
+                                        <span class="highlight">lifestyle</span><br> Preferred treatment format
+                                    </h2>
+                                    <p class="mb-12">Helps us tailor dosing and delivery to your routine.</p>
+                                    <div class="options m-0" data-required="true" data-single-select="true">
+                                        <div class="option--item">
+                                            <div class="option--title">Injectable</div>
+                                            <div class="option-details italic">Weekly subcutaneous</div>
+                                        </div>
+                                        <div class="option--item">
+                                            <div class="option--title">Oral / sublingual</div>
+                                            <div class="option-details italic">Pills or dissolving tablets</div>
+                                        </div>
+                                        <div class="option--item">
+                                            <div class="option--title">No preference</div>
+                                            <div class="option-details italic">Let the physician decide</div>
+                                        </div>
+                                    </div>
+                                    <div class="error-message">Please select an option to continue</div>
+                                </div>
+                                <div class="quiz-buttons">
+                                    <button class="quiz-btn quiz-btn-primary" onclick="validateSelectionAndGo(10, 11)">Continue</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 11 -->
+            <div class="quiz-step" data-step="11">
+                <div class="step--content">
+                    <div class="step-with-image">
+                        <div class="step-image-col">
+                            <h2 class="step--text text-white">Give $50, Get $50</h2>
+                            <p>Share Freeley with a friend. When they start their plan, you both save $50 on your next month.</p>
+                        </div>
+                        <div class="step-content-col">
+                            <div class="quiz-content">
+                                <div class="quiz-header flex items-end flex-wrap gap-4">
+                                    <div class="step-back" onclick="goToStep(10)">
+                                        <span class="arrow-back"></span>&nbsp;Back
+                                    </div>
+                                    <div class="step-navigator">
+                                        <div class="flex flex-wrap justify-between">
+                                            <span class="step-progress italic">Progress</span>
+                                            <span class="current-step">11/15</span>
+                                        </div>
+                                        <div class="bar">
+                                            <div class="progress" style="width:91%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="step-body">
+                                    <h2 class="mb-6">
+                                        A few medical
+                                        <span class="highlight">Questions</span>
+                                    </h2>
+                                    <p class="mb-12">Required for physician review. All info is confidential</p>
+                                    <div class="options m-0" data-required="true">
+                                        <div class="medical-question" data-question-group="pregnant">
+                                            <h4>Currently pregnant or breastfeeding?</h4>
+                                            <div class="yes-no-grid">
+                                                <button class="answer-btn" data-question="pregnant">Yes</button>
+                                                <button class="answer-btn" data-question="pregnant">No</button>
+                                            </div>
+                                            <div class="why-ask">
+                                                <i class="fa-solid fa-circle-info"></i> Why we ask
+                                            </div>
+                                        </div>
+                                        <div class="medical-question" data-question-group="thyroid">
+                                            <h4>History of medullary thyroid carcinoma or MEN2?</h4>
+                                            <div class="yes-no-grid">
+                                                <button class="answer-btn" data-question="thyroid">Yes</button>
+                                                <button class="answer-btn" data-question="thyroid">No</button>
+                                            </div>
+                                            <div class="why-ask">
+                                                <i class="fa-solid fa-circle-info"></i> Why we ask
+                                            </div>
+                                        </div>
+                                        <div class="medical-question" data-question-group="pancreas">
+                                            <h4>Ever diagnosed with pancreatitis?</h4>
+                                            <div class="yes-no-grid">
+                                                <button class="answer-btn" data-question="pancreas">Yes</button>
+                                                <button class="answer-btn" data-question="pancreas">No</button>
+                                            </div>
+                                            <div class="why-ask">
+                                                <i class="fa-solid fa-circle-info"></i> Why we ask
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="error-message" id="medicalError">Please answer all medical questions</div>
+                                </div>
+                                <div class="quiz-buttons">
+                                    <button class="quiz-btn quiz-btn-primary" onclick="validateMedicalQuestions()">Continue</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 12 -->
+            <div class="quiz-step" data-step="12">
+                <div class="step--content">
+                    <div class="step-with-image">
+                        <div class="step-image-col">
+                            <h2 class="step--text text-white">Give $50, Get $50</h2>
+                            <p>Share Freeley with a friend. When they start their plan, you both save $50 on your next month.</p>
+                        </div>
+                        <div class="step-content-col">
+                            <div class="quiz-content">
+                                <div class="quiz-header flex items-end flex-wrap gap-4">
+                                    <div class="step-back" onclick="goToStep(11)">
+                                        <span class="arrow-back"></span>&nbsp;Back
+                                    </div>
+                                    <div class="step-navigator">
+                                        <div class="flex flex-wrap justify-between">
+                                            <span class="step-progress italic">Progress</span>
+                                            <span class="current-step">12/15</span>
+                                        </div>
+                                        <div class="bar">
+                                            <div class="progress" style="width:100%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="step-body">
+                                    <h2 class="mb-6">
+                                        How active
+                                        <span class="highlight">are you?</span>
+                                    </h2>
+                                    <p class="mb-12">Helps us tailor dosing and delivery to your routine.</p>
+                                    <div class="options m-0" data-required="true" data-single-select="true">
+                                        <div class="option--item">
+                                            <div class="option--title">Sedentary</div>
+                                            <div class="option-details italic">Mostly sitting, little exercise</div>
+                                        </div>
+                                        <div class="option--item">
+                                            <div class="option--title">Moderately active</div>
+                                            <div class="option-details italic">Exercise 1–3 times per week</div>
+                                        </div>
+                                        <div class="option--item">
+                                            <div class="option--title">Very active</div>
+                                            <div class="option-details italic">Exercise 4+ times per week</div>
+                                        </div>
+                                    </div>
+                                    <div class="error-message">Please select an option to continue</div>
+                                </div>
+                                <div class="quiz-buttons">
+                                    <button class="quiz-btn quiz-btn-primary" onclick="validateSelectionAndGo(12, 13)">Continue</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 13 -->
+            <div class="quiz-step" data-step="13">
+                <div class="step--content">
+                    <div class="step-with-image">
+                        <div class="step-image-col">
+                            <h2 class="step--text text-white">Give $50, Get $50</h2>
+                            <p>Share Freeley with a friend. When they start their plan, you both save $50 on your next month.</p>
+                        </div>
+                        <div class="step-content-col">
+                            <div class="quiz-content">
+                                <div class="quiz-header flex items-end flex-wrap gap-4">
+                                    <div class="step-back" onclick="goToStep(12)">
+                                        <span class="arrow-back"></span>&nbsp;Back
+                                    </div>
+                                    <div class="step-navigator">
+                                        <div class="flex flex-wrap justify-between">
+                                            <span class="step-progress italic">Progress</span>
+                                            <span class="current-step">13/15</span>
+                                        </div>
+                                        <div class="bar">
+                                            <div class="progress" style="width:100%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="step-body">
+                                    <h2 class="mb-6">
+                                        Preferred
+                                        <span class="highlight">treatment format?</span>
+                                    </h2>
+                                    <p class="mb-12">We'll match you to what works best for your lifestyle</p>
+                                    <div class="options m-0" data-required="true" data-single-select="true">
+                                        <div class="option--item">
+                                            <div class="option--title">Injectable</div>
+                                            <div class="option-details italic">Weekly subcutaneous injection</div>
+                                        </div>
+                                        <div class="option--item">
+                                            <div class="option--title">Oral / sublingual</div>
+                                            <div class="option-details italic">Daily pill or dissolving tablet</div>
+                                        </div>
+                                        <div class="option--item">
+                                            <div class="option--title">No preference</div>
+                                            <div class="option-details italic">Let my physician decide</div>
+                                        </div>
+                                    </div>
+                                    <div class="error-message">Please select an option to continue</div>
+                                </div>
+                                <div class="quiz-buttons">
+                                    <button class="quiz-btn quiz-btn-primary" onclick="validateSelectionAndGo(13, 14)">Continue</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 14 -->
+            <div class="quiz-step" data-step="14">
+                <div class="step--content">
+                    <div class="step-with-image">
+                        <div class="step-image-col">
+                            <h2 class="step--text text-white">Give $50, Get $50</h2>
+                            <p>Share Freeley with a friend. When they start their plan, you both save $50 on your next month.</p>
+                        </div>
+                        <div class="step-content-col">
+                            <div class="quiz-content">
+                                <div class="quiz-header flex items-end flex-wrap gap-4">
+                                    <div class="step-back" onclick="goToStep(13)">
+                                        <span class="arrow-back"></span>&nbsp;Back
+                                    </div>
+                                    <div class="step-navigator">
+                                        <div class="flex flex-wrap justify-between">
+                                            <span class="step-progress italic">Progress</span>
+                                            <span class="current-step">14/15</span>
+                                        </div>
+                                        <div class="bar">
+                                            <div class="progress" style="width:100%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="step-body">
+                                    <h2 class="mb-6">
+                                        Where are
+                                        <span class="highlight">you located?</span>
+                                    </h2>
+                                    <p class="mb-12">Freeley is available in most US states.</p>
+                                    <div class="text--input">
+                                        <input type="text" name="state" placeholder="Your State" id="stateInput" required />
+                                    </div>
+                                    <div class="error-message" id="stateError">Please enter your state</div>
+                                </div>
+                                <div class="quiz-buttons">
+                                    <button class="quiz-btn quiz-btn-primary" onclick="validateAndGo(14, 15)">Continue</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 15 -->
+            <div class="quiz-step" data-step="15">
+                <div class="step--content">
+                    <div class="step-with-image">
+                        <div class="step-image-col">
+                            <h2 class="step--text text-white">Give $50, Get $50</h2>
+                            <p>Share Freeley with a friend. When they start their plan, you both save $50 on your next month.</p>
+                        </div>
+                        <div class="step-content-col">
+                            <div class="quiz-content">
+                                <div class="quiz-header flex items-end flex-wrap gap-4">
+                                    <div class="step-back" onclick="goToStep(14)">
+                                        <span class="arrow-back"></span>&nbsp;Back
+                                    </div>
+                                    <div class="step-navigator">
+                                        <div class="flex flex-wrap justify-between">
+                                            <span class="step-progress italic">Progress</span>
+                                            <span class="current-step">15/15</span>
+                                        </div>
+                                        <div class="bar">
+                                            <div class="progress" style="width:100%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="step-body">
+                                    <h2 class="mb-6">
+                                        Anything for
+                                        <span class="highlight">your physician?</span>
+                                    </h2>
+                                    <p class="mb-12">Optional — but helpful. Share any medications, conditions, or previous treatments.</p>
+                                    <div class="text--input">
+                                        <textarea class="text--box" cols="10" placeholder="e.g. I tried ozempic before and had nausea. I'm also taking metformin . . ."></textarea>
+                                        <div class="why-ask">
+                                            <i class="fa-solid fa-circle-info"></i> A licensed physician will evaluate whether treatment is medically appropriate. Prescriptions are not guaranteed.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="quiz-buttons">
+                                    <button class="quiz-btn quiz-btn-primary" onclick="goToStep(16)">View my Result</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Processing step -->
+            <div class="quiz-step" data-step="16">
+                <div class="step--content">
+                    <div class="step-with-image">
+                        <div class="step-image-col">
+                            <h2 class="step--text text-white">Give $50, Get $50</h2>
+                            <p>Share Freeley with a friend. When they start their plan, you both save $50 on your next month.</p>
+                        </div>
+                        <div class="step-content-col">
+                            <div class="quiz-content">
+                                <div class="processing-step">
+                                    <div class="processing-loader"></div>
+                                    <h2 class="processing-title">Analyzing your responses...</h2>
+                                    <p class="processing-subtitle">This takes just a moment</p>
+                                    <div class="processing-list">
+                                        <div class="processing-item">
+                                            <span class="icon-check"></span>
+                                            <span>Checking eligibility...</span>
+                                        </div>
+                                        <div class="processing-item">
+                                            <span class="icon-check"></span>
+                                            <span>Reviewing medical history...</span>
+                                        </div>
+                                        <div class="processing-item">
+                                            <span class="icon-check"></span>
+                                            <span>Matching licensed physicians...</span>
+                                        </div>
+                                        <div class="processing-item">
+                                            <span class="icon-check"></span>
+                                            <span>Personalizing your plan...</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 17 - Result -->
+            <div class="quiz-step" data-step="17">
+                <div class="step--content">
+                    <div class="step-with-image">
+                        <div class="step-image-col">
+                            <h2 class="step--text text-white">Give $50, Get $50</h2>
+                            <p>Share Freeley with a friend. When they start their plan, you both save $50 on your next month.</p>
+                        </div>
+                        <div class="step-content-col">
+                            <div class="quiz-content">
+                                <div class="quiz-content result-screen">
+                                    <div class="quiz-header flex items-end flex-wrap gap-4">
+                                        <div class="quality-badge">
+                                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 16.5C13.125 16.5 16.5 13.125 16.5 9C16.5 4.875 13.125 1.5 9 1.5C4.875 1.5 1.5 4.875 1.5 9C1.5 13.125 4.875 16.5 9 16.5Z" stroke="#004C27" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <path d="M5.8125 9.00141L7.935 11.1239L12.1875 6.87891" stroke="#004C27" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                  </svg>
+                                            <span>Your Quality</span>
+                                        </div>
+                                    </div>
+                                    <div class="result-wrapper">
+                                        <h2>
+                                            Your personalized<br>
+                                            <span class="highlight">treatment plan</span>
+                                        </h2>
+                                        <p>
+                                            Physician review within 24 hours.
+                                        </p>
+                                        <div class="treatment-card">
+                                            <div class="grid grid-cols-1 lg:grid-cols-12 gap-x-6 gap-y-6 items-center">
+                                                <div class="lg:col-span-5">
+                                                    <div class="product-image-box">
+                                                        <span class="recommended-tag">
+                                    Recommended Plan
+                                </span>
+                                                        <img src="/assets/quiz/product.png" alt="" class="max-w-full h-auto">
+                                                    </div>
+                                                </div>
+                                                <div class="lg:col-span-7">
+                                                    <h3 class="product-title mb-6 text-left">
+                                                        3-in-1 ED Troche
+                                                    </h3>
+                                                    <div class="price-row">
+                                                        <span class="price">$89.00</span>
+                                                        <span class="month">Month</span>
+                                                    </div>
+                                                    <div class="processing-list">
+                                                        <div class="processing-item">
+                                                            <span class="icon-check"></span>
+                                                            <span>Dissolves under the tongue (Sublingual)</span>
+                                                        </div>
+                                                        <div class="processing-item">
+                                                            <span class="icon-check"></span>
+                                                            <span>Sildenafil + Tadalafil + Apomorphine</span>
+                                                        </div>
+                                                        <div class="processing-item">
+                                                            <span class="icon-check"></span>
+                                                            <span>Physician consultation &amp; fast shipping included</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="approval-note mt-4">
+                                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M8.0026 14.6693C11.6693 14.6693 14.6693 11.6693 14.6693 8.0026C14.6693 4.33594 11.6693 1.33594 8.0026 1.33594C4.33594 1.33594 1.33594 4.33594 1.33594 8.0026C1.33594 11.6693 4.33594 14.6693 8.0026 14.6693Z" stroke="#A57C00" stroke-linecap="round" stroke-linejoin="round"></path>
+                                    <path d="M8 5.33594V8.66927" stroke="#A57C00" stroke-linecap="round" stroke-linejoin="round"></path>
+                                    <path d="M7.99609 10.6641H8.00208" stroke="#A57C00" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                </svg> Prescription subject to physician approval.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="testimonial-box">
+                                                <p>
+                                                    "Lost 22 lbs in 3 months. The physician check-ins kept me accountable and the injections were easier than I expected."
+                                                </p>
+                                                <span>
+                            Sarah M., verified patient - Lost 22 lbs
+                        </span>
+                                            </div>
+                                        </div>
+                                        <button id="goToCheckoutBtn" class="quiz-start-btn">
+                    Proceed to Checkout
+                    <span><i class="fas fa-arrow-right"></i></span>
+                </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 18 - Checkout -->
+            <div class="quiz-step" data-step="18">
+                <div class="step--content">
+                    <div class="step-with-image">
+                        <div class="step-image-col">
+                            <h2 class="step--text text-white">Give $50, Get $50</h2>
+                            <p>Share Freeley with a friend. When they start their plan, you both save $50 on your next month.</p>
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect x='45' y='70' width='110' height='60' rx='10' fill='%23c99a56' opacity='0.15'/%3E%3Ccircle cx='100' cy='100' r='20' fill='%23004c27' opacity='0.4'/%3E%3C/svg%3E"
+                                alt="checkout" />
+                        </div>
+                        <div class="step-content-col">
+                            <div class="quiz-content">
+                                <div class="quiz-header flex items-end flex-wrap gap-4">
+                                    <div class="step-back" onclick="goToStep(17)">
+                                        <span class="arrow-back"></span>&nbsp;Back
+                                    </div>
+                                    <div class="step-navigator">
+                                        <div class="flex flex-wrap justify-between">
+                                            <span class="step-progress italic">Checkout</span>
+                                            <span class="current-step">Final Step</span>
+                                        </div>
+                                        <div class="bar">
+                                            <div class="progress" style="width:100%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="checkout-container">
+                                    <h2 class="text-center mb-4" style="font-family:'Playfair Display';color:#004c27;">
+                                        Complete Your <span class="highlight">Order</span>
+                                    </h2>
+                                    <p class="text-center text-gray-500" style="font-family:'Inter';font-size:14px;">
+                                        Secure checkout powered by Authorize.Net
+                                    </p>
+                                    <div class="order-summary-box" id="order-summary">
+                                        <h5 style="font-family:'Inter';font-weight:600;color:#004c27;margin-bottom:12px;">Order Summary</h5>
+                                        <div class="summary-item">
+                                            <span>Treatment Plan</span>
+                                            <span id="summary-treatment">Weight Loss</span>
+                                        </div>
+                                        <div class="summary-item">
+                                            <span>Duration</span>
+                                            <span id="summary-duration">3 Months</span>
+                                        </div>
+                                        <div class="summary-item">
+                                            <span>Total</span>
+                                            <span class="summary-total" id="summary-total-price">$299.00</span>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+                                        <div class="md:col-span-6">
+                                            <label for="pt-first-name">First Name</label>
+                                            <input type="text" id="pt-first-name" class="form-control" placeholder="John" required />
+                                        </div>
+                                        <div class="md:col-span-6">
+                                            <label for="pt-last-name">Last Name</label>
+                                            <input type="text" id="pt-last-name" class="form-control" placeholder="Doe" required />
+                                        </div>
+                                        <div class="md:col-span-6">
+                                            <label for="pt-email">Email Address</label>
+                                            <input type="email" id="pt-email" class="form-control" placeholder="john@example.com" required />
+                                        </div>
+                                        <div class="md:col-span-6">
+                                            <label for="pt-phone">Phone Number</label>
+                                            <input type="tel" id="pt-phone" class="form-control" placeholder="(555) 123-4567" required />
+                                        </div>
+                                        <div class="md:col-span-12">
+                                            <label for="pt-address">Street Address</label>
+                                            <input type="text" id="pt-address" class="form-control" placeholder="123 Main St" required />
+                                        </div>
+                                        <div class="md:col-span-6">
+                                            <label for="pt-city">City</label>
+                                            <input type="text" id="pt-city" class="form-control" placeholder="New York" required />
+                                        </div>
+                                        <div class="md:col-span-3">
+                                            <label for="pt-state">State</label>
+                                            <input type="text" id="pt-state" class="form-control" placeholder="NY" required />
+                                        </div>
+                                        <div class="md:col-span-3">
+                                            <label for="pt-zip">ZIP Code</label>
+                                            <input type="text" id="pt-zip" class="form-control" placeholder="10001" required />
+                                        </div>
+                                    </div>
+                                    <div style="margin-top:25px;">
+                                        <h5 style="font-family:'Inter';font-weight:600;color:#004c27;margin-bottom:12px;">Payment Details</h5>
+                                        <div id="stripe-payment-element">
+                                            <div class="mb-4">
+                                                <label for="an-card-name">Name on Card</label>
+                                                <input type="text" id="an-card-name" class="card-field" placeholder="John Doe" />
+                                            </div>
+                                            <div class="mb-4">
+                                                <label for="an-card-number">Card Number</label>
+                                                <input type="text" id="an-card-number" class="card-field" placeholder="4111 1111 1111 1111" />
+                                            </div>
+                                            <div class="checkout-row">
+                                                <div class="mb-4">
+                                                    <label for="an-exp">Expiry (MM/YY)</label>
+                                                    <input type="text" id="an-exp" class="card-field" placeholder="MM/YY" />
+                                                </div>
+                                                <div class="mb-4">
+                                                    <label for="an-cvc">CVC</label>
+                                                    <input type="text" id="an-cvc" class="card-field" placeholder="123" />
+                                                </div>
+                                            </div>
+                                            <div class="mb-4">
+                                                <label for="an-zip">Billing ZIP</label>
+                                                <input type="text" id="an-zip" class="card-field" placeholder="10001" />
+                                            </div>
+                                        </div>
+                                        <div class="consent-check">
+                                            <input type="checkbox" id="consent-check" />
+                                            <label for="consent-check">
+                          I agree to the <a href="javascript:void(0)">Terms of Service</a> and 
+                          <a href="javascript:void(0)">Privacy Policy</a>. I understand this is a 
+                          medical consultation and my information is protected by HIPAA.
+                        </label>
+                                        </div>
+                                        <div id="payment-errors" class="payment-errors"></div>
+                                        <div id="payment-success" class="payment-success">
+                                            <i class="fas fa-check-circle"></i> Payment successful! Your order is being processed.
+                                        </div>
+                                        <button id="checkout-btn" class="quiz-start-btn" style="margin-top:15px;" disabled>
+                        <span class="btn-text">Pay Now</span>
+                        <span class="checkout-spinner" id="checkout-spinner"></span>
+                      </button>
+                                        <p class="text-center text-gray-500 mt-4" style="font-family:'Inter';font-size:12px;">
+                                            <i class="fas fa-lock"></i> Secure transaction. Your card is never stored.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="quiz-footer">
+                <div class="lg:w-1/4 flex items-end footer-social mt-6 lg:mt-0">
+                    <a href="javascript:void(0)" class="footer-social-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M13.0291 2.00098C14.1545 2.00284 14.7248 2.0088 15.2176 2.02347L15.4117 2.02981C15.6359 2.03778 15.8571 2.04778 16.1238 2.06028C17.1879 2.10945 17.9138 2.27778 18.5513 2.52528C19.2104 2.77945 19.7671 3.12278 20.3229 3.67862C20.8779 4.23445 21.2213 4.79278 21.4763 5.45028C21.7229 6.08695 21.8913 6.81362 21.9413 7.87778C21.9532 8.14445 21.9628 8.36565 21.9707 8.58989L21.977 8.78398C21.9916 9.27672 21.9983 9.84711 22.0004 10.9725L22.0012 11.7181C22.0013 11.8092 22.0013 11.9032 22.0013 12.0002L22.0012 12.2823L22.0006 13.028C21.9987 14.1534 21.9928 14.7238 21.9781 15.2165L21.9717 15.4106C21.9638 15.6349 21.9538 15.8561 21.9413 16.1227C21.8921 17.1869 21.7229 17.9127 21.4763 18.5502C21.2221 19.2094 20.8779 19.7661 20.3229 20.3219C19.7671 20.8769 19.2079 21.2202 18.5513 21.4752C17.9138 21.7219 17.1879 21.8902 16.1238 21.9402C15.8571 21.9521 15.6359 21.9618 15.4117 21.9696L15.2176 21.9759C14.7248 21.9906 14.1545 21.9972 13.0291 21.9994L12.2834 22.0002C12.1923 22.0002 12.0983 22.0002 12.0013 22.0002H11.7192L10.9735 21.9995C9.84807 21.9977 9.27769 21.9917 8.78494 21.977L8.59086 21.9707C8.36661 21.9627 8.14541 21.9527 7.87875 21.9402C6.81458 21.8911 6.08958 21.7219 5.45125 21.4752C4.79291 21.2211 4.23541 20.8769 3.67958 20.3219C3.12375 19.7661 2.78125 19.2069 2.52625 18.5502C2.27875 17.9127 2.11125 17.1869 2.06125 16.1227C2.04937 15.8561 2.03968 15.6349 2.03183 15.4106L2.02554 15.2165C2.01091 14.7238 2.00424 14.1534 2.00208 13.028L2.00195 10.9725C2.00381 9.84711 2.00976 9.27672 2.02443 8.78398L2.03078 8.58989C2.03875 8.36565 2.04875 8.14445 2.06125 7.87778C2.11041 6.81278 2.27875 6.08778 2.52625 5.45028C2.78041 4.79195 3.12375 4.23445 3.67958 3.67862C4.23541 3.12278 4.79375 2.78028 5.45125 2.52528C6.08875 2.27778 6.81375 2.11028 7.87875 2.06028C8.14541 2.04841 8.36661 2.03872 8.59086 2.03087L8.78494 2.02458C9.27769 2.00994 9.84807 2.00327 10.9735 2.00111L13.0291 2.00098ZM12.0013 7.00028C9.23835 7.00028 7.00125 9.23981 7.00125 12.0002C7.00125 14.7631 9.24078 17.0002 12.0013 17.0002C14.7642 17.0002 17.0013 14.7607 17.0013 12.0002C17.0013 9.23738 14.7617 7.00028 12.0013 7.00028ZM12.0013 9.00028C13.6582 9.00028 15.0013 10.3429 15.0013 12.0002C15.0013 13.6571 13.6586 15.0002 12.0013 15.0002C10.3444 15.0002 9.00125 13.6576 9.00125 12.0002C9.00125 10.3433 10.3439 9.00028 12.0013 9.00028ZM17.2513 5.50028C16.562 5.50028 16.0013 6.06019 16.0013 6.74943C16.0013 7.43868 16.5612 7.99945 17.2513 7.99945C17.9405 7.99945 18.5013 7.43955 18.5013 6.74943C18.5013 6.06019 17.9396 5.49942 17.2513 5.50028Z" fill="#ffffff"></path>
+              </svg>
+                    </a>
+                    <a href="javascript:void(0)" class="footer-social-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15.4024 21V14.0344H17.7347L18.0838 11.3265H15.4024V9.59765C15.4024 8.81364 15.62 8.27934 16.7443 8.27934L18.1783 8.27867V5.85676C17.9302 5.82382 17.0791 5.75006 16.0888 5.75006C14.0213 5.75006 12.606 7.01198 12.606 9.32952V11.3265H10.2677V14.0344H12.606V21H4C3.44772 21 3 20.5523 3 20V4C3 3.44772 3.44772 3 4 3H20C20.5523 3 21 3.44772 21 4V20C21 20.5523 20.5523 21 20 21H15.4024Z" fill="#ffffff"></path>
+              </svg>
+                    </a>
+                    <a href="javascript:void(0)" class="footer-social-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6.94146 4.99993C6.94109 5.81424 6.44706 6.54702 5.69232 6.85273C4.93758 7.15845 4.07285 6.97605 3.50588 6.39155C2.93891 5.80704 2.78293 4.93715 3.11148 4.19207C3.44004 3.44699 4.18752 2.9755 5.00146 2.99993C6.08253 3.03238 6.94195 3.91837 6.94146 4.99993ZM7.00146 8.47993H3.00146V20.9999H7.00146V8.47993ZM13.3215 8.47993H9.34146V20.9999H13.2815V14.4299C13.2815 10.7699 18.0515 10.4299 18.0515 14.4299V20.9999H22.0015V13.0699C22.0015 6.89993 14.9415 7.12993 13.2815 10.1599L13.3215 8.47993Z" fill="#ffffff"></path>
+              </svg>
+                    </a>
+                    <a href="javascript:void(0)" class="footer-social-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17.6874 3.0625L12.6907 8.77425L8.37045 3.0625H2.11328L9.58961 12.8387L2.50378 20.9375H5.53795L11.0068 14.6886L15.7863 20.9375H21.8885L14.095 10.6342L20.7198 3.0625H17.6874ZM16.6232 19.1225L5.65436 4.78217H7.45745L18.3034 19.1225H16.6232Z" fill="#ffffff"></path>
+              </svg>
+                    </a>
+                    <a href="javascript:void(0)" class="footer-social-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12.002 22C6.4791 22 2.00195 17.5228 2.00195 12C2.00195 6.47715 6.4791 2 12.002 2C17.5248 2 22.002 6.47715 22.002 12C22.002 17.5228 17.5248 22 12.002 22ZM18.672 12C18.651 11.425 18.2942 10.916 17.7608 10.7C17.2275 10.4841 16.6171 10.6016 16.202 11C15.0644 10.2267 13.7272 9.7995 12.352 9.77L13.002 6.65L15.142 7.1C15.1945 7.58851 15.5942 7.96647 16.0849 7.99172C16.5755 8.01696 17.0119 7.68201 17.1143 7.20147C17.2167 6.72094 16.9548 6.23719 16.4965 6.06019C16.0382 5.88318 15.5191 6.06536 15.272 6.49L12.822 6C12.741 5.98224 12.6564 5.99763 12.5868 6.04272C12.5173 6.08781 12.4688 6.15886 12.452 6.24L11.712 9.71C10.3199 9.73099 8.96422 10.1585 7.81195 10.94C7.39069 10.5436 6.77515 10.4333 6.24247 10.6588C5.70979 10.8842 5.36041 11.4028 5.35164 11.9812C5.34287 12.5595 5.67635 13.0885 6.20195 13.33C6.19069 13.4765 6.19069 13.6235 6.20195 13.77C6.20195 16.01 8.81195 17.83 12.032 17.83C15.252 17.83 17.862 16.01 17.862 13.77C17.8732 13.6235 17.8732 13.4765 17.862 13.33C18.3656 13.0797 18.6807 12.5623 18.672 12ZM8.67195 13C8.67195 12.4477 9.11966 12 9.67195 12C10.2243 12 10.672 12.4477 10.672 13C10.672 13.5523 10.2243 14 9.67195 14C9.40673 14 9.15238 13.8946 8.96484 13.7071C8.7773 13.5196 8.67195 13.2652 8.67195 13ZM14.482 15.75C13.7725 16.2847 12.8996 16.5568 12.012 16.52C11.1244 16.5568 10.2515 16.2847 9.54195 15.75C9.45385 15.6427 9.46154 15.486 9.55974 15.3878C9.65793 15.2896 9.8146 15.2819 9.92195 15.37C10.5232 15.811 11.2571 16.0333 12.002 16C12.7478 16.0406 13.4851 15.8254 14.092 15.39C14.1634 15.3203 14.2666 15.2941 14.3627 15.3211C14.4587 15.3482 14.5331 15.4244 14.5577 15.5211C14.5823 15.6178 14.5534 15.7203 14.482 15.79V15.75ZM14.302 14.04C13.7497 14.04 13.302 13.5923 13.302 13.04C13.302 12.4877 13.7497 12.04 14.302 12.04C14.8543 12.04 15.302 12.4877 15.302 13.04C15.313 13.3138 15.2111 13.5802 15.0202 13.7767C14.8292 13.9733 14.566 14.083 14.292 14.08L14.302 14.04Z" fill="#ffffff"></path>
+              </svg>
+                    </a>
+                </div>
+                <div class="flex justify-start md:justify-end items-end md:items-center gap-4 md:gap-12 protocol--imgs">
+                    <div class="flex-1">
+                        <img src="/assets/49921676.png" alt="LegitScript certification badge" class="max-w-full h-auto">
+                    </div>
+                    <div class="flex-1">
+                        <img src="/assets/hipaa_badge_white.png" alt="HIPAA compliance badge" class="max-w-full h-auto">
+                    </div>
+                    <div class="flex-1">
+                        <img src="/assets/usa_badge.png" alt="USA-based badge" class="max-w-full h-auto">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script is:inline>
+        // ============================================================
+        // NAVIGATION & VALIDATION - EXACTLY AS ORIGINAL
+        // ============================================================
+
+        let isTransitioning = false;
+
+        function goToStep(stepNumber) {
+            if (isTransitioning) return;
+
+            const currentActive = document.querySelector('.quiz-step.active');
+            const targetStep = document.querySelector(`.quiz-step[data-step="${stepNumber}"]`);
+
+            if (!targetStep) return;
+            if (currentActive === targetStep) return;
+
+            isTransitioning = true;
+
+            if (currentActive) {
+                currentActive.classList.add('slide-out');
+                setTimeout(() => {
+                    currentActive.classList.remove('active', 'slide-out');
+                }, 300);
+            }
+
+            setTimeout(() => {
+                targetStep.classList.add('active');
+                targetStep.style.animation = 'none';
+                targetStep.offsetHeight;
+                targetStep.style.animation = '';
+
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+
+                if (stepNumber === 16) {
+                    setTimeout(() => {
+                        document.querySelectorAll('.quiz-step').forEach(step => {
+                            step.classList.remove('active', 'slide-out');
+                        });
+                        const resultStep = document.querySelector('.quiz-step[data-step="17"]');
+                        if (resultStep) {
+                            resultStep.classList.add('active');
+                            resultStep.style.animation = 'none';
+                            resultStep.offsetHeight;
+                            resultStep.style.animation = '';
+                            window.scrollTo({
+                                top: 0,
+                                behavior: 'smooth'
+                            });
+                        }
+                        isTransitioning = false;
+                    }, 2500);
+                } else {
+                    setTimeout(() => {
+                        isTransitioning = false;
+                    }, 400);
+                }
+            }, 150);
+        }
+
+        function validateSelectionAndGo(currentStep, nextStep) {
+            const stepElement = document.querySelector(`.quiz-step[data-step="${currentStep}"]`);
+            if (!stepElement) return;
+
+            let isValid = true;
+
+            const optionsContainer = stepElement.querySelector('.options[data-required="true"]');
+            if (optionsContainer) {
+                const selected = optionsContainer.querySelectorAll('.option--item.active');
+                const errorMsg = optionsContainer.closest('.step-body') ?.querySelector('.error-message');
+
+                if (selected.length === 0) {
+                    isValid = false;
+                    if (errorMsg) {
+                        errorMsg.classList.add('show');
+                        optionsContainer.querySelectorAll('.option--item').forEach(opt => {
+                            opt.classList.add('required-error');
+                            setTimeout(() => opt.classList.remove('required-error'), 1500);
+                        });
+                    }
+                } else {
+                    if (errorMsg) errorMsg.classList.remove('show');
+                }
+            }
+
+            if (isValid) {
+                goToStep(nextStep);
+            }
+        }
+
+        function validateAndGo(currentStep, nextStep) {
+            const stepElement = document.querySelector(`.quiz-step[data-step="${currentStep}"]`);
+            if (!stepElement) return;
+
+            let isValid = true;
+
+            const inputs = stepElement.querySelectorAll('.text--input input[required]');
+            inputs.forEach(input => {
+                const errorMsgId = input.id + 'Error';
+                const errorMsg = document.getElementById(errorMsgId);
+                if (!input.value.trim()) {
+                    isValid = false;
+                    input.classList.add('validation-error');
+                    if (errorMsg) errorMsg.classList.add('show');
+                } else {
+                    input.classList.remove('validation-error');
+                    if (errorMsg) errorMsg.classList.remove('show');
+                }
+            });
+
+            const ageInput = document.getElementById('ageInput');
+            if (ageInput && ageInput.value.trim()) {
+                const age = parseInt(ageInput.value);
+                const ageError = document.getElementById('ageError');
+                if (isNaN(age) || age < 18 || age > 100) {
+                    isValid = false;
+                    ageInput.classList.add('validation-error');
+                    if (ageError) ageError.classList.add('show');
+                } else {
+                    ageInput.classList.remove('validation-error');
+                    if (ageError) ageError.classList.remove('show');
+                }
+            }
+
+            if (isValid) {
+                goToStep(nextStep);
+            }
+        }
+
+        function validateMedicalQuestions() {
+            const step11 = document.querySelector('.quiz-step[data-step="11"]');
+            if (!step11) return;
+
+            const medicalQuestions = step11.querySelectorAll('.medical-question');
+            let allAnswered = true;
+            medicalQuestions.forEach(q => {
+                const answered = q.querySelector('.answer-btn.active');
+                if (!answered) allAnswered = false;
+            });
+
+            const medicalError = document.getElementById('medicalError');
+            if (!allAnswered) {
+                medicalError.classList.add('show');
+                medicalQuestions.forEach(q => {
+                    if (!q.querySelector('.answer-btn.active')) {
+                        q.style.border = '2px solid #dc3545';
+                        setTimeout(() => q.style.border = '', 1500);
+                    }
+                });
+            } else {
+                medicalError.classList.remove('show');
+                goToStep(12);
+            }
+        }
+
+        // ============================================================
+        // OPTION CLICK HANDLER - EXACTLY AS ORIGINAL
+        // ============================================================
+        document.querySelectorAll('.option--item').forEach(item => {
+            item.addEventListener('click', function() {
+                const parentOptions = this.closest('.options');
+                if (!parentOptions) return;
+
+                const isMultiSelect = parentOptions.dataset.multiSelect === 'true';
+
+                if (isMultiSelect) {
+                    this.classList.toggle('active');
+                    const selected = parentOptions.querySelectorAll('.option--item.active');
+                    const errorMsg = parentOptions.closest('.step-body') ?.querySelector('.error-message');
+                    if (selected.length > 0 && errorMsg) {
+                        errorMsg.classList.remove('show');
+                    }
+                } else {
+                    parentOptions.querySelectorAll('.option--item').forEach(opt => {
+                        opt.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    const errorMsg = parentOptions.closest('.step-body') ?.querySelector('.error-message');
+                    if (errorMsg) errorMsg.classList.remove('show');
+                }
+            });
+        });
+
+        document.querySelectorAll('.answer-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const grid = this.closest('.yes-no-grid');
+                if (grid) {
+                    grid.querySelectorAll('.answer-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                }
+
+                const question = this.closest('.medical-question');
+                if (question) {
+                    question.style.border = '';
+                }
+
+                const step11 = document.querySelector('.quiz-step[data-step="11"]');
+                if (step11 && step11.classList.contains('active')) {
+                    const allQuestions = step11.querySelectorAll('.medical-question');
+                    let allAnswered = true;
+                    allQuestions.forEach(q => {
+                        const activeBtns = q.querySelectorAll('.answer-btn.active');
+                        if (activeBtns.length === 0) {
+                            allAnswered = false;
+                        }
+                    });
+                    const medicalError = document.getElementById('medicalError');
+                    if (allAnswered) {
+                        medicalError.classList.remove('show');
+                    }
+                }
+            });
+        });
+
+        document.querySelectorAll('.text--input input').forEach(input => {
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    const step = this.closest('.quiz-step');
+                    if (step) {
+                        const nextBtn = step.querySelector('.quiz-btn-primary');
+                        if (nextBtn) {
+                            nextBtn.click();
+                        }
+                    }
+                }
+            });
+            input.addEventListener('input', function() {
+                this.classList.remove('validation-error');
+                const errorMsgId = this.id + 'Error';
+                const errorMsg = document.getElementById(errorMsgId);
+                if (errorMsg) errorMsg.classList.remove('show');
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.quiz-step').forEach(step => {
+                step.classList.remove('active', 'slide-out');
+            });
+            const heroStep = document.querySelector('.quiz-step[data-step="0"]');
+            if (heroStep) {
+                heroStep.classList.add('active');
+            }
+
+            setupCheckout();
+        });
+
+        // ============================================================
+        // CHECKOUT FUNCTIONALITY - EXACTLY AS ORIGINAL
+        // ============================================================
+
+        function setupCheckout() {
+            const checkoutBtn = document.getElementById('checkout-btn');
+            const consentCheck = document.getElementById('consent-check');
+
+            if (consentCheck && checkoutBtn) {
+                consentCheck.addEventListener('change', function() {
+                    checkoutBtn.disabled = !this.checked;
+                });
+            }
+
+            const goToCheckoutBtn = document.getElementById('goToCheckoutBtn');
+            if (goToCheckoutBtn) {
+                goToCheckoutBtn.addEventListener('click', function() {
+                    saveQuizData();
+                    goToStep(18);
+                    populateOrderSummary();
+                });
+            }
+
+            if (checkoutBtn) {
+                checkoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    processPayment();
+                });
+            }
+        }
+
+        function saveQuizData() {
+            try {
+                const quizData = collectAllQuizData();
+                sessionStorage.setItem('freeley_quiz_data', JSON.stringify(quizData));
+
+                const quizAnswersArray = convertToQuizAnswersArray(quizData);
+                sessionStorage.setItem('quiz_answers', JSON.stringify(quizAnswersArray));
+
+                console.log('✅ Quiz data saved:', quizData);
+            } catch (error) {
+                console.error('Error saving quiz data:', error);
+            }
+        }
+
+        function collectAllQuizData() {
+            return {
+                primaryGoal: getSelectedOptionText(1),
+                obstacle: getSelectedOptionText(2),
+                timeline: getSelectedOptionText(3),
+                age: getInputValue('ageInput'),
+                sex: getSelectedOptionText(5),
+                height: getInputValue('heightInput'),
+                goalWeight: getInputValue('goalWeightInput'),
+                symptoms: getSelectedOptionsTexts(8),
+                activityLevel: getSelectedOptionText(9),
+                treatmentFormat: getSelectedOptionText(10),
+                medicalHistory: getMedicalAnswers(),
+                activityLevel2: getSelectedOptionText(12),
+                treatmentFormat2: getSelectedOptionText(13),
+                state: getInputValue('stateInput'),
+                physicianNotes: getTextareaValue(),
+                completedAt: new Date().toISOString(),
+                source: 'freeley_quiz'
+            };
+        }
+
+        function convertToQuizAnswersArray(quizData) {
+            const mapping = [{
+                key: 'primaryGoal',
+                question: 'Primary health goals'
+            }, {
+                key: 'obstacle',
+                question: 'Biggest obstacle'
+            }, {
+                key: 'timeline',
+                question: 'Expected timeline for results'
+            }, {
+                key: 'age',
+                question: 'Age'
+            }, {
+                key: 'sex',
+                question: 'Biological sex'
+            }, {
+                key: 'height',
+                question: 'Height'
+            }, {
+                key: 'goalWeight',
+                question: 'Goal weight'
+            }, {
+                key: 'symptoms',
+                question: 'Experiencing symptoms'
+            }, {
+                key: 'activityLevel',
+                question: 'Activity level'
+            }, {
+                key: 'treatmentFormat',
+                question: 'Preferred treatment format'
+            }, {
+                key: 'activityLevel2',
+                question: 'Activity level (second)'
+            }, {
+                key: 'treatmentFormat2',
+                question: 'Preferred treatment format (second)'
+            }, {
+                key: 'state',
+                question: 'Location state'
+            }, {
+                key: 'physicianNotes',
+                question: 'Physician notes'
+            }];
+
+            const answers = [];
+            mapping.forEach(item => {
+                let value = quizData[item.key];
+                if (Array.isArray(value)) {
+                    value = value.join(', ');
+                }
+                if (value && value !== '') {
+                    answers.push({
+                        question: item.question,
+                        answer: String(value),
+                        type: typeof value === 'string' ? 'string' : 'text'
+                    });
+                }
+            });
+
+            if (quizData.medicalHistory) {
+                Object.entries(quizData.medicalHistory).forEach(([key, value]) => {
+                    if (value && value !== 'Not answered') {
+                        const questionMap = {
+                            pregnant: 'Currently pregnant or breastfeeding?',
+                            thyroid: 'History of medullary thyroid carcinoma or MEN2?',
+                            pancreas: 'Ever diagnosed with pancreatitis?'
+                        };
+                        answers.push({
+                            question: questionMap[key] || key,
+                            answer: String(value),
+                            type: 'string'
+                        });
+                    }
+                });
+            }
+
+            return answers;
+        }
+
+        function getSelectedOptionText(stepNumber) {
+            const step = document.querySelector(`.quiz-step[data-step="${stepNumber}"]`);
+            if (!step) return '';
+            const activeOption = step.querySelector('.option--item.active');
+            if (!activeOption) return '';
+            const title = activeOption.querySelector('.option--title');
+            return title ? title.textContent.trim() : '';
+        }
+
+        function getSelectedOptionsTexts(stepNumber) {
+            const step = document.querySelector(`.quiz-step[data-step="${stepNumber}"]`);
+            if (!step) return [];
+            const activeOptions = step.querySelectorAll('.option--item.active');
+            return Array.from(activeOptions).map(opt => {
+                const title = opt.querySelector('.option--title');
+                return title ? title.textContent.trim() : '';
+            });
+        }
+
+        function getInputValue(id) {
+            const input = document.getElementById(id);
+            return input ? input.value.trim() : '';
+        }
+
+        function getTextareaValue() {
+            const textarea = document.querySelector('.text--box');
+            return textarea ? textarea.value.trim() : '';
+        }
+
+        function getMedicalAnswers() {
+            const step11 = document.querySelector('.quiz-step[data-step="11"]');
+            if (!step11) return {};
+            const questions = step11.querySelectorAll('.medical-question');
+            const answers = {};
+            questions.forEach(q => {
+                const group = q.dataset.questionGroup || 'unknown';
+                const activeBtn = q.querySelector('.answer-btn.active');
+                answers[group] = activeBtn ? activeBtn.textContent.trim() : 'Not answered';
+            });
+            return answers;
+        }
+
+        function populateOrderSummary() {
+            const treatment = getSelectedOptionText(1) || 'Weight Loss';
+            const duration = getSelectedOptionText(3) || '3 Months';
+            let price = '$299.00';
+
+            if (treatment.toLowerCase().includes('weight')) {
+                price = '$299.00';
+            } else if (treatment.toLowerCase().includes('sexual')) {
+                price = '$249.00';
+            } else if (treatment.toLowerCase().includes('hair')) {
+                price = '$199.00';
+            } else if (treatment.toLowerCase().includes('longevity')) {
+                price = '$349.00';
+            }
+
+            document.getElementById('summary-treatment').textContent = treatment;
+            document.getElementById('summary-duration').textContent = duration;
+            document.getElementById('summary-total-price').textContent = price;
+        }
+
+        function processPayment() {
+            const btn = document.getElementById('checkout-btn');
+            const spinner = document.getElementById('checkout-spinner');
+            const btnText = btn.querySelector('.btn-text');
+            const errorsEl = document.getElementById('payment-errors');
+            const successEl = document.getElementById('payment-success');
+
+            if (!validateCheckoutForm()) {
+                errorsEl.textContent = 'Please fill in all required fields.';
+                errorsEl.classList.add('show');
+                return;
+            }
+
+            btn.disabled = true;
+            btnText.classList.add('hide');
+            spinner.classList.add('show');
+            errorsEl.classList.remove('show');
+            successEl.classList.remove('show');
+
+            setTimeout(() => {
+                spinner.classList.remove('show');
+                btnText.classList.remove('hide');
+                btn.disabled = false;
+
+                successEl.classList.add('show');
+                successEl.innerHTML = '<i class="fas fa-check-circle"></i> Payment successful! Your order is being processed.';
+
+                const orderData = {
+                    transactionId: 'TXN-' + Date.now(),
+                    amount: document.getElementById('summary-total-price').textContent,
+                    treatment: document.getElementById('summary-treatment').textContent,
+                    timestamp: new Date().toISOString()
+                };
+                sessionStorage.setItem('freeley_transaction', JSON.stringify(orderData));
+
+                setTimeout(() => {
+                    window.location.href = '/?payment=success&pi=' + orderData.transactionId;
+                }, 3000);
+
+            }, 2000);
+        }
+
+        function validateCheckoutForm() {
+            const required = [
+                'pt-first-name', 'pt-last-name', 'pt-email', 'pt-phone',
+                'pt-address', 'pt-city', 'pt-state', 'pt-zip',
+                'an-card-name', 'an-card-number', 'an-exp', 'an-cvc', 'an-zip'
+            ];
+
+            let valid = true;
+            required.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el || !el.value.trim()) {
+                    valid = false;
+                    if (el) el.style.borderColor = '#dc3545';
+                } else {
+                    if (el) el.style.borderColor = '';
+                }
+            });
+
+            const consent = document.getElementById('consent-check');
+            if (!consent || !consent.checked) {
+                valid = false;
+            }
+
+            return valid;
+        }
+
+        document.querySelectorAll('#checkout-container input').forEach(input => {
+            input.addEventListener('input', function() {
+                this.style.borderColor = '';
+            });
+        });
+    </script>
+</body>
+
+</html>

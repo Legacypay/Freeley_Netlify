@@ -1,0 +1,1440 @@
+---
+import '../styles/tailwind.css';
+---
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Checkout · Freeley</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=DM+Sans:opsz,wght@9..40,400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"
+    />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/global.css" />
+    <link rel="stylesheet" href="/style/style.css" />
+    <link rel="stylesheet" href="/style/checkoutstyle.css" />
+</head>
+
+<body class="_palette _canvas">
+    <header style="background-color: #d4dcdf">
+        <div class="container">
+            <nav class="navbar-custom">
+                <div class="flex items-center w-full" style="
+              flex-direction: row;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            ">
+                    <a href="/" class="navbar-brand-custom">
+                        <img src="/assets/mask-group5@2x.png" />
+                    </a>
+                    <div class="navbar-nav-custom hidden lg:flex justify-end mr-0 md:mr-12">
+                        <a href="/weight-loss" class="navbar-link">GLP-1 Weight Loss</a
+              >
+              <span class="navbar-separator">•</span>
+              <a href="/hair-loss" class="navbar-link">Hair Loss</a>
+                        <span class="navbar-separator">•</span>
+                        <a href="/sexual-wellness" class="navbar-link">Sexual Wellness</a
+              >
+              <span class="navbar-separator">•</span>
+              <a href="/longevity" class="navbar-link">Longevity</a>
+                        <span class="navbar-separator">•</span>
+                        <a href="/how-it-works" class="navbar-link">How it Works</a>
+                        <span class="navbar-separator">•</span>
+                        <a href="/pricing" class="navbar-link">Pricing</a>
+                    </div>
+                    <div class="navbar-actions">
+                        <button class="btn-check-eligibility p-0">
+                Check Eligibility
+              </button>
+                    </div>
+                </div>
+                <div class="navbar-nav-custom lg:hidden mt-3" style="display: none">
+                    <a href="/weight-loss" class="navbar-link block mb-2">GLP-1 Weight Loss</a
+            >
+            <a href="/hair-loss" class="navbar-link block mb-2"
+              >Hair Loss</a
+            >
+            <a href="/sexual-wellness" class="navbar-link block mb-2"
+              >Sexual Wellness</a
+            >
+            <a href="/longevity" class="navbar-link block mb-2"
+              >Longevity</a
+            >
+            <a href="/how-it-works" class="navbar-link block mb-2"
+              >How it Works</a
+            >
+            <a href="/pricing" class="navbar-link block mb-2">Pricing</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Checkout Content -->
+    <div class="_layout">
+        <!-- Left Column -->
+        <div>
+            <h1 class="_heading">Review & Checkout</h1>
+
+            <div class="_grid2">
+                <div class="_point">
+                    <i class="ri-money-dollar-circle-line"></i> All Dosages Same Price
+                </div>
+                <div class="_point">
+                    <i class="ri-medicine-bottle-line"></i> Everything Included
+                </div>
+                <div class="_point">
+                    <i class="ri-shield-check-line"></i> No Price Increases
+                </div>
+                <div class="_point">
+                    <i class="ri-user-heart-line"></i> No Membership Fees
+                </div>
+            </div>
+
+            <div id="compoundSelector" class="_hidden">
+                <div class="_section" style="margin-top: 0; margin-bottom: 16px; color: var(--charcoal)">
+                    Select your GLP-1 Medication:
+                </div>
+                <div style="display: flex; gap: 12px; flex-wrap: wrap">
+                    <button id="cmp-sema" onclick="setCheckoutCompound('sema')" style="
+                flex: 1;
+                padding: 16px;
+                border-radius: 12px;
+                border: 2px solid var(--forest);
+                background: rgba(27, 73, 45, 0.05);
+                color: var(--forest);
+                font-family: var(--poppins);
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s;
+              ">
+              Semaglutide
+            </button>
+                    <button id="cmp-tirz" onclick="setCheckoutCompound('tirz')" style="
+                flex: 1;
+                padding: 16px;
+                border-radius: 12px;
+                border: 2px solid var(--border);
+                background: rgba(255, 255, 255, 0.5);
+                color: var(--text-muted);
+                font-family: var(--poppins);
+                font-size: 14px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.2s;
+              ">
+              Tirzepatide
+            </button>
+                </div>
+            </div>
+
+            <div class="_section">Choose your payment plan:</div>
+            <div id="plan-selector"></div>
+
+            <div class="_section">Patient Information</div>
+            <div class="_panel" id="patient-info-box" style="margin-bottom: 32px">
+                <p style="
+              font-size: 13px;
+              color: var(--text-muted);
+              margin: 0 0 20px;
+              line-height: 1.5;
+            ">
+                    Required to create your secure medical file and submit to your assigned physician.
+                </p>
+
+                <div style="display: flex; gap: 12px; margin-bottom: 16px">
+                    <div style="flex: 1">
+                        <label style="
+                  display: block;
+                  font-size: 12px;
+                  font-weight: 500;
+                  text-transform: uppercase;
+                  letter-spacing: 0.5px;
+                  color: #555;
+                  margin-bottom: 6px;
+                ">First Name *</label
+              >
+              <input
+                type="text"
+                id="pt-first-name"
+                placeholder="John"
+                class="_field"
+              />
+            </div>
+            <div style="flex: 1">
+              <label
+                style="
+                  display: block;
+                  font-size: 12px;
+                  font-weight: 500;
+                  text-transform: uppercase;
+                  letter-spacing: 0.5px;
+                  color: #555;
+                  margin-bottom: 6px;
+                "
+                >Last Name *</label
+              >
+              <input
+                type="text"
+                id="pt-last-name"
+                placeholder="Doe"
+                class="_field"
+              />
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 12px; margin-bottom: 16px">
+            <div style="flex: 1">
+              <label
+                style="
+                  display: block;
+                  font-size: 12px;
+                  font-weight: 500;
+                  text-transform: uppercase;
+                  letter-spacing: 0.5px;
+                  color: #555;
+                  margin-bottom: 6px;
+                "
+                >Date of Birth *</label
+              >
+              <input type="date" id="pt-dob" class="_field" />
+            </div>
+            <div style="flex: 1">
+              <label
+                style="
+                  display: block;
+                  font-size: 12px;
+                  font-weight: 500;
+                  text-transform: uppercase;
+                  letter-spacing: 0.5px;
+                  color: #555;
+                  margin-bottom: 6px;
+                "
+                >Gender *</label
+              >
+              <select id="pt-gender" class="_field">
+                <option value="">Select...</option>
+                <option value="1">Male</option>
+                <option value="2">Female</option>
+                <option value="9">Prefer not to say</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 16px">
+            <label
+              style="
+                display: block;
+                font-size: 12px;
+                font-weight: 500;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                color: #555;
+                margin-bottom: 6px;
+              "
+              >Street Address *</label
+            >
+            <input
+              type="text"
+              id="pt-address"
+              placeholder="123 Main St"
+              class="_field"
+            />
+          </div>
+
+          <div style="display: flex; gap: 12px; margin-bottom: 16px">
+            <div style="flex: 2">
+              <label
+                style="
+                  display: block;
+                  font-size: 12px;
+                  font-weight: 500;
+                  text-transform: uppercase;
+                  letter-spacing: 0.5px;
+                  color: #555;
+                  margin-bottom: 6px;
+                "
+                >City *</label
+              >
+              <input
+                type="text"
+                id="pt-city"
+                placeholder="Florida"
+                class="_field"
+              />
+            </div>
+            <div style="flex: 1">
+              <label
+                style="
+                  display: block;
+                  font-size: 12px;
+                  font-weight: 500;
+                  text-transform: uppercase;
+                  letter-spacing: 0.5px;
+                  color: #555;
+                  margin-bottom: 6px;
+                "
+                >State *</label
+              >
+              <input
+                type="text"
+                id="pt-state"
+                placeholder="FL"
+                maxlength="2"
+                class="_field"
+                style="text-transform: uppercase"
+              />
+            </div>
+            <div style="flex: 1">
+              <label
+                style="
+                  display: block;
+                  font-size: 12px;
+                  font-weight: 500;
+                  text-transform: uppercase;
+                  letter-spacing: 0.5px;
+                  color: #555;
+                  margin-bottom: 6px;
+                "
+                >Zip *</label
+              >
+              <input
+                type="text"
+                id="pt-zip"
+                placeholder="33101"
+                maxlength="5"
+                class="_field"
+              />
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 12px">
+            <div style="flex: 1">
+              <label
+                style="
+                  display: block;
+                  font-size: 12px;
+                  font-weight: 500;
+                  text-transform: uppercase;
+                  letter-spacing: 0.5px;
+                  color: #555;
+                  margin-bottom: 6px;
+                "
+                >Email *</label
+              >
+              <input
+                type="email"
+                id="pt-email"
+                placeholder="John@example.com"
+                class="_field"
+              />
+            </div>
+            <div style="flex: 1">
+              <label
+                style="
+                  display: block;
+                  font-size: 12px;
+                  font-weight: 500;
+                  text-transform: uppercase;
+                  letter-spacing: 0.5px;
+                  color: #555;
+                  margin-bottom: 6px;
+                "
+                >Phone *</label
+              >
+              <input
+                type="tel"
+                id="pt-phone"
+                placeholder="(555) 123-4567"
+                class="_field"
+              />
+            </div>
+          </div>
+
+          <div
+            id="patient-info-error"
+            style="
+              display: none;
+              margin-top: 14px;
+              background: #fee2e2;
+              border: 1px solid #fca5a5;
+              color: #991b1b;
+              padding: 10px 14px;
+              border-radius: 8px;
+              font-size: 13px;
+            "
+          ></div>
+        </div>
+
+        <!-- Payment Section - Now Visible -->
+        <div class="_section">Enter Payment Details</div>
+
+        <div class="_panel">
+          <div class="_head">
+            <div class="_caption">
+              <i
+                class="ri-lock-2-line"
+                style="color: var(--forest); margin-right: 6px"
+              ></i
+              >Secure Payment
+            </div>
+            <div style="display: flex; gap: 8px; align-items: center">
+              <svg viewBox="0 0 36 24" width="36" height="24">
+                <rect width="36" height="24" rx="4" fill="#15243C" />
+                <path
+                  d="M12.64 16.5H9.98V7.51h2.66v8.99zm14.12 0h-2.66V7.51h2.66v8.99zM18.8 12.3l-2.02-3.13-2 3.12v4.21h-2.65V7.51h2.65v4.2l1.9-2.95h3.04l-2.28 3.51 2.37 4.23h-3.01z"
+                  fill="#fff"
+                />
+              </svg>
+              <svg viewBox="0 0 36 24" width="36" height="24">
+                <rect width="36" height="24" rx="4" fill="#F79E1B" />
+                <circle cx="13" cy="12" r="7" fill="#EB001B" />
+                <circle
+                  cx="23"
+                  cy="12"
+                  r="7"
+                  fill="#F79E1B"
+                  fill-opacity=".8"
+                />
+              </svg>
+              <svg viewBox="0 0 36 24" width="36" height="24">
+                <rect width="36" height="24" rx="4" fill="#1A1F71" />
+                <path
+                  d="M14.6 15.6l-2-5.4-2.2 5.4H8L11.5 7h2.3l3.6 8.6h-2.8zm-2.8-2.6l-1-2.8-1 2.8h2zM21.5 7h4v1.8h-2.3v1.6h2v1.8h-2v1.7h2.5v1.8h-4.2V7zm7.5 8.6l-1.8-5h-.1l-1.8 5h-2.3l3-8.6h2.2l3 8.6h-2.2z"
+                  fill="#fff"
+                />
+              </svg>
+              <div style="margin-left: 4px">
+                <svg viewBox="0 0 90 25" width="72" height="20">
+                  <rect width="90" height="25" rx="4" fill="#13447e" />
+                  <text
+                    x="45"
+                    y="16"
+                    text-anchor="middle"
+                    fill="#fff"
+                    font-family="system-ui"
+                    font-size="9"
+                    font-weight="600"
+                  >
+                    Authorize.Net
+                  </text>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div id="stripe-payment-element" style="padding: 16px 0">
+            <div style="display: flex; flex-direction: column; gap: 14px">
+              <div>
+                <label
+                  style="
+                    display: block;
+                    font-size: 12px;
+                    font-weight: 500;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                    color: #555;
+                    margin-bottom: 6px;
+                  "
+                  >Name on Card</label
+                ><input
+                  id="an-card-name"
+                  type="text"
+                  autocomplete="cc-name"
+                  placeholder="John Doe"
+                  class="_field"
+                />
+              </div>
+              <div>
+                <label
+                  style="
+                    display: block;
+                    font-size: 12px;
+                    font-weight: 500;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                    color: #555;
+                    margin-bottom: 6px;
+                  "
+                  >Card Number</label
+                ><input
+                  id="an-card-number"
+                  type="text"
+                  inputmode="numeric"
+                  autocomplete="cc-number"
+                  maxlength="19"
+                  placeholder="1234 5678 9012 3456"
+                  class="_field"
+                />
+              </div>
+              <div style="display: flex; gap: 14px">
+                <div style="flex: 1">
+                  <label
+                    style="
+                      display: block;
+                      font-size: 12px;
+                      font-weight: 500;
+                      text-transform: uppercase;
+                      letter-spacing: 0.5px;
+                      color: #555;
+                      margin-bottom: 6px;
+                    "
+                    >Expiry (MM/YY)</label
+                  ><input
+                    id="an-exp"
+                    type="text"
+                    inputmode="numeric"
+                    autocomplete="cc-exp"
+                    maxlength="7"
+                    placeholder="MM / YY"
+                    class="_field"
+                  />
+                </div>
+                <div style="flex: 1">
+                  <label
+                    style="
+                      display: block;
+                      font-size: 12px;
+                      font-weight: 500;
+                      text-transform: uppercase;
+                      letter-spacing: 0.5px;
+                      color: #555;
+                      margin-bottom: 6px;
+                    "
+                    >CVC</label
+                  ><input
+                    id="an-cvc"
+                    type="text"
+                    inputmode="numeric"
+                    autocomplete="cc-csc"
+                    maxlength="4"
+                    placeholder="123"
+                    class="_field"
+                  />
+                </div>
+                <div style="flex: 1">
+                  <label
+                    style="
+                      display: block;
+                      font-size: 12px;
+                      font-weight: 500;
+                      text-transform: uppercase;
+                      letter-spacing: 0.5px;
+                      color: #555;
+                      margin-bottom: 6px;
+                    "
+                    >Billing ZIP</label
+                  ><input
+                    id="an-zip"
+                    type="text"
+                    inputmode="numeric"
+                    autocomplete="postal-code"
+                    maxlength="10"
+                    placeholder="33101"
+                    class="_field"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              gap: 16px;
+              margin-top: 20px;
+              padding-top: 16px;
+              border-top: 1px solid var(--border);
+            "
+          >
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 11px;
+                color: #888;
+              "
+            >
+              <i
+                class="ri-lock-2-fill"
+                style="color: var(--forest); font-size: 14px"
+              ></i
+              >256-bit SSL
+            </div>
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 11px;
+                color: #888;
+              "
+            >
+              <i
+                class="ri-shield-check-fill"
+                style="color: var(--forest); font-size: 14px"
+              ></i
+              >HIPAA compliant
+            </div>
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 11px;
+                color: #888;
+              "
+            >
+              <i
+                class="ri-eye-off-fill"
+                style="color: var(--forest); font-size: 14px"
+              ></i
+              >PCI Level 1
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column (Order Summary) -->
+      <div>
+        <div class="_sidepanel">
+          <div class="_sideHead">Order summary</div>
+
+          <!-- Products Container - displays all selected products -->
+          <div id="products-container"></div>
+
+          <!-- Physician Consultation -->
+          <div class="_entry">
+            <div class="_entryLeft">
+              <div class="_iconWrap"><i class="ri-nurse-fill"></i></div>
+              <div>
+                <div class="_entryName">Physician Consultation</div>
+                <div class="_entryDesc">
+                  Consult with Board-certified experts
+                </div>
+              </div>
+            </div>
+            <div
+              class="_entryPrice"
+              style="font-size: 15px; font-family: var(--poppins)"
+            >
+              $20.00
+            </div>
+          </div>
+
+          <!-- Plan Line Item -->
+          <div class="_entry">
+            <div class="_entryLeft">
+              <div class="_iconWrap"><i class="ri-macbook-line"></i></div>
+              <div>
+                <div class="_entryName" id="summary-plan-name">
+                  Dummy Wellness Plan
+                </div>
+                <div class="_entryDesc">Tailored recommendations</div>
+              </div>
+            </div>
+            <div
+              class="_entryPrice"
+              style="font-size: 15px; font-family: var(--poppins)"
+            >
+              Included
+            </div>
+          </div>
+
+          <div class="_terms">
+            *The clinician consultation fee of $20.00 is included in the program
+            cost and is paid directly to our independent doctor network
+            partners. This fee is processed regardless of whether you qualify
+            for treatment or receive a prescription. If your consultation
+            results in a denial, you will not be responsible for this payment.
+            By completing this purchase you agree to the
+            <a href="javascript:void(0)">Terms of Service</a> and
+            <a href="javascript:void(0)">Privacy Policy</a>.
+          </div>
+
+          <div class="_coupon">
+            <input type="text" placeholder="Promo Code" />
+            <button type="button">APPLY</button>
+          </div>
+
+          <div class="_calc">
+            <div class="_calcRow">
+              <span>Shipping</span
+              ><span style="font-weight: 600; color: var(--forest)">FREE</span>
+            </div>
+            <div class="_calcRow">
+              <span>Subtotal</span><span id="totals-subtotal">$0.00</span>
+            </div>
+            <div class="_calcRow _totalBig">
+              <span>Total</span><span id="totals-total">$0.00</span>
+            </div>
+          </div>
+
+          <div
+            style="
+              margin-top: 24px;
+              margin-bottom: 24px;
+              padding: 16px;
+              background: rgba(26, 74, 46, 0.05);
+              border-radius: 12px;
+              border: 1px solid rgba(26, 74, 46, 0.1);
+            "
+          >
+            <label
+              style="
+                display: flex;
+                gap: 12px;
+                cursor: pointer;
+                align-items: flex-start;
+              "
+            >
+              <input
+                type="checkbox"
+                id="consent-check"
+                style="
+                  width: 18px;
+                  height: 18px;
+                  margin-top: 2px;
+                  accent-color: var(--forest);
+                "
+              />
+              <span
+                style="
+                  font-size: 13px;
+                  color: var(--charcoal);
+                  line-height: 1.5;
+                "
+              >
+                I have read and agree to the
+                <strong
+                  ><a
+                    href="javascript:void(0)"
+                    target="_blank"
+                    style="color: var(--forest); text-decoration: underline"
+                    >Telehealth Consent</a
+                  ></strong
+                >
+                and understand that my treatment may be rejected based on the
+                clinician's medical judgment.
+              </span>
+            </label>
+                    </div>
+
+                    <div id="payment-errors" role="alert" style="
+              display: none;
+              background: #fee2e2;
+              border: 1px solid #fca5a5;
+              color: #991b1b;
+              padding: 12px 16px;
+              border-radius: 8px;
+              font-size: 13px;
+              margin-bottom: 12px;
+            "></div>
+
+                    <button class="_submit" id="checkout-btn" type="button" disabled style="position: relative; overflow: hidden">
+            <i class="ri-lock-2-line" style="margin-right: 8px"></i
+            ><span id="btn-text"> Checkout</span>
+          </button>
+                    <div id="checkout-spinner" style="
+              display: none;
+              text-align: center;
+              margin-top: 12px;
+              font-size: 13px;
+              color: var(--forest);
+            ">
+                        <i class="ri-loader-4-line" style="
+                font-size: 18px;
+                animation: _spin 1s linear infinite;
+                display: inline-block;
+                margin-right: 6px;
+              "></i
+            >Processing your payment...
+          </div>
+          <div
+            style="
+              text-align: center;
+              margin-top: 12px;
+              font-size: 11px;
+              color: #999;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 6px;
+            "
+          >
+            <i
+              class="ri-shield-star-line"
+              style="font-size: 14px; color: var(--forest)"
+            ></i
+            >Your information is encrypted and never stored on our servers
+          </div>
+
+          <div
+            style="
+              margin-top: 20px;
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 12px;
+              font-size: 11px;
+              color: var(--text-muted);
+              text-transform: uppercase;
+              text-align: center;
+              line-height: 1.4;
+              letter-spacing: 0.5px;
+              font-weight: 500;
+            "
+          >
+            <div
+              style="
+                background: rgba(61, 140, 94, 0.06);
+                padding: 14px;
+                border-radius: 12px;
+                border: 1px solid rgba(61, 140, 94, 0.15);
+              "
+            >
+              <i
+                class="ri-truck-fill"
+                style="
+                  font-size: 20px;
+                  color: var(--forest);
+                  display: block;
+                  margin-bottom: 6px;
+                "
+              ></i> Free Overnight<br />Shipping
+                    </div>
+                    <div style="
+                background: rgba(61, 140, 94, 0.06);
+                padding: 14px;
+                border-radius: 12px;
+                border: 1px solid rgba(61, 140, 94, 0.15);
+              ">
+                        <i class="ri-money-dollar-circle-fill" style="
+                  font-size: 20px;
+                  color: var(--forest);
+                  display: block;
+                  margin-bottom: 6px;
+                "></i> No Hidden<br />Fees
+                    </div>
+                </div>
+
+                <div class="_fsaTag">
+                    Eligible for FSA / HSA
+                    <i class="ri-secure-payment-line" style="font-size: 18px; color: var(--forest)"></i>
+                </div>
+
+                <a href="javascript:void(0)" target="_blank" rel="noopener" style="
+              display: inline-flex;
+              align-items: center;
+              gap: 8px;
+              margin-top: 24px;
+              padding: 10px 16px;
+              background: #f5f5f0;
+              border: 1px solid var(--border);
+              border-radius: 999px;
+              color: var(--charcoal);
+              text-decoration: none;
+              font-size: 12px;
+              font-weight: 500;
+            ">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="#00b67a">
+              <path
+                d="M12 .587l3.668 7.568L24 9.423l-6 5.85L19.335 24 12 19.897 4.665 24 6 15.273 0 9.423l8.332-1.268z"
+              />
+            </svg> See us on Trustpilot
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script is:inline>
+        // ═══════════════════════════════════════════════════════
+        // PRODUCT DATA – loaded from sessionStorage
+        // ═══════════════════════════════════════════════════════
+
+        let selectedProducts = [];
+        let selectedPlanMonths = 3; // Default: 3 Months
+        let productTotalPrice = 0;
+
+        /**
+         * Load products from sessionStorage (set by quiz)
+         */
+        function loadProductsFromSession() {
+            try {
+                // Try to load from checkout_product_data first
+                const productData = JSON.parse(
+                    sessionStorage.getItem("checkout_product_data"),
+                );
+                if (productData) {
+                    if (
+                        productData.isBundle &&
+                        productData.allProducts &&
+                        productData.allProducts.length > 0
+                    ) {
+                        selectedProducts = productData.allProducts.map((p) => ({
+                            id: p.id || "product-" + Date.now(),
+                            name: p.title || "Treatment",
+                            description: p.description || "",
+                            image: p.image || "/assets/checkout/hair-lose.png",
+                            // Use the individual product's price, don't override it
+                            price: parseFloat((p.price || "$0").replace(/[$,]/g, "")) || 0,
+                            benefits: p.benefits || [],
+                        }));
+                        // REMOVE the block that averages prices - this was causing all products to show the same price
+                        renderProducts();
+                        renderPlanSelector();
+                        updateTotals();
+                        return;
+                    }
+
+                    // Single product
+                    if (productData.name) {
+                        selectedProducts = [{
+                            id: productData.treatmentType || "default",
+                            name: productData.name || "Treatment Plan",
+                            description: productData.desc || "",
+                            image: productData.image ||
+                                "/assets/checkout/hair-lose.png",
+                            price: parseFloat(productData.monthlyPrice) || 49.99,
+                            benefits: [],
+                        }, ];
+                        renderProducts();
+                        renderPlanSelector();
+                        updateTotals();
+                        return;
+                    }
+                }
+
+                // Rest of the function remains the same...
+            } catch (e) {
+                console.log("No product data found, using defaults");
+                selectedProducts = [{
+                    id: "default",
+                    name: "Treatment Plan",
+                    description: "Personalized treatment",
+                    image: "/assets/checkout/hair-lose.png",
+                    price: 49.99,
+                    benefits: [],
+                }, ];
+                renderProducts();
+                renderPlanSelector();
+                updateTotals();
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // PRICING DATA (fallback)
+        // ═══════════════════════════════════════════════════════
+
+        const pricingData = {
+            "weight-loss": {
+                name: "Weight Loss Program",
+                desc: "GLP-1 compounded medication",
+                planName: "Weight Loss Plan",
+                image: "/assets/checkout/hair-lose.png",
+                plans: [{
+                    months: 1,
+                    base: 49.99,
+                    overridePrice: 49.99,
+                    recommended: false,
+                }, {
+                    months: 3,
+                    base: 49.99,
+                    overridePrice: 39.99,
+                    recommended: false,
+                }, {
+                    months: 6,
+                    base: 49.99,
+                    overridePrice: 29.99,
+                    recommended: true
+                }, ],
+            },
+            "sexual-wellness": {
+                name: "Sexual Wellness",
+                desc: "Sublingual tablet",
+                planName: "Sexual Wellness Protocol",
+                image: "/assets/checkout/freeley_troche_transparent.png",
+                plans: [{
+                    months: 1,
+                    base: 89,
+                    overridePrice: 89,
+                    recommended: false
+                }, {
+                    months: 3,
+                    base: 89,
+                    overridePrice: 79,
+                    recommended: false
+                }, {
+                    months: 6,
+                    base: 89,
+                    overridePrice: 69,
+                    recommended: true
+                }, ],
+            },
+            "hair-loss": {
+                name: "Hair Restoration",
+                desc: "Hair growth compound",
+                planName: "Hair Restoration Plan",
+                image: "/assets/checkout/freeley_troche_transparent.png",
+                plans: [{
+                    months: 1,
+                    base: 49,
+                    overridePrice: 49,
+                    recommended: false
+                }, {
+                    months: 3,
+                    base: 49,
+                    overridePrice: 39,
+                    recommended: false
+                }, {
+                    months: 6,
+                    base: 49,
+                    overridePrice: 34,
+                    recommended: true
+                }, ],
+            },
+            longevity: {
+                name: "Longevity & Performance",
+                desc: "Recovery peptides",
+                planName: "Longevity Plan",
+                image: "/assets/checkout/sermorelin_vial.png",
+                plans: [{
+                    months: 1,
+                    base: 149,
+                    overridePrice: 149,
+                    recommended: false
+                }, {
+                    months: 3,
+                    base: 149,
+                    overridePrice: 129,
+                    recommended: false
+                }, {
+                    months: 6,
+                    base: 149,
+                    overridePrice: 109,
+                    recommended: true
+                }, ],
+            },
+        };
+
+        // ═══════════════════════════════════════════════════════
+        // RENDER FUNCTIONS
+        // ═══════════════════════════════════════════════════════
+
+        /**
+         * Render all selected products in the order summary
+         */
+        function renderProducts() {
+            const container = document.getElementById("products-container");
+            if (!container) return;
+
+            if (!selectedProducts || selectedProducts.length === 0) {
+                container.innerHTML = `
+      <div class="_entry">
+        <div class="_entryLeft">
+          <div class="_iconWrap"><i class="ri-medicine-bottle-line"></i></div>
+          <div>
+            <div class="_entryName">No products selected</div>
+            <div class="_entryDesc">Please complete the quiz</div>
+          </div>
+        </div>
+      </div>
+    `;
+                return;
+            }
+
+            let html = "";
+            selectedProducts.forEach((product, index) => {
+                // Use the product's individual price, not a shared value
+                const priceDisplay = product.price ?
+                    `$${product.price.toFixed(2)}` :
+                    "$0.00";
+                const imageSrc =
+                    product.image || "/assets/checkout/hair-lose.png";
+                const name = product.name || "Treatment";
+                const desc = product.description || "Compounded medication";
+
+                html += `
+      <div class="_entry-product">
+        <div class="_entryLeft">
+          <img src="${imageSrc}" alt="${name}" class="_thumbnail-sm" />
+          <div>
+            <div class="_entryName">${name}</div>
+            <div class="_entryDesc">${desc}</div>
+          </div>
+        </div>
+        <div class="_entryPrice">${priceDisplay}<span style="font-size:11px; color:#999; font-weight:400; margin-left:2px;">/mo</span></div>
+      </div>
+    `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        /**
+         * Render plan selector with collapsible cards (accordion behavior)
+         */
+        function renderPlanSelector() {
+            const container = document.getElementById("plan-selector");
+            if (!container) return;
+
+            // Define plan options with benefits
+            const planOptions = [{
+                months: 1,
+                label: "Pay Monthly",
+                badge: "",
+                savingPercent: 0
+            }, {
+                months: 3,
+                label: "Pay For 3 Months",
+                badge: "SAVE 10%",
+                savingPercent: 10,
+            }, {
+                months: 6,
+                label: "Pay For 6 Months",
+                badge: "BEST VALUE",
+                savingPercent: 31,
+            }, ];
+
+            const baseMonthlyPrice = selectedProducts.reduce(
+                (sum, p) => sum + (p.price || 0),
+                0,
+            );
+
+            // Benefits to show for all plans
+            const benefits = [
+                "🎓 <strong>Exclusive Access</strong> to the Patient Hub Program",
+                "💰 <strong>Maximum savings</strong> - lowest price per month",
+                "🛡️ <strong>Risk-Free Consultation</strong>",
+                "🚚 <strong>Free Overnight Shipping</strong> to all states",
+                "⏸️ <strong>Cancel or pause anytime</strong>",
+            ];
+
+            let html = "";
+            planOptions.forEach((option) => {
+                        const isActive = selectedPlanMonths === option.months;
+                        const discount = option.savingPercent / 100;
+                        const discountedPrice = baseMonthlyPrice * (1 - discount);
+                        const totalPrice = discountedPrice * option.months;
+                        const perDay = (discountedPrice / 30).toFixed(2);
+                        const savingTag =
+                            option.savingPercent > 0 ? `(Save ${option.savingPercent}%)` : "";
+
+                        const badgeHtml = option.badge ?
+                            `<div class="badge-red">${option.badge}</div>` :
+                            "";
+
+                        html += `
+          <div class="plan-card ${isActive ? "active" : ""}" onclick="selectPlan(${option.months})" data-months="${option.months}">
+            ${badgeHtml ? `<div class="plan-badges">${badgeHtml}</div>` : ""}
+            <div class="plan-card-header">
+              <div class="plan-left">
+                <div class="radio-circle"></div>
+                <div>
+                  <div class="plan-name">${option.label} <span class="saving-tag">${savingTag}</span></div>
+                  <div class="plan-desc">$${totalPrice.toFixed(2)} Total for ${option.months} ${option.months === 1 ? "Month" : "Months"}</div>
+                </div>
+              </div>
+              <div class="plan-right">
+                <div class="plan-price-large">${baseMonthlyPrice > discountedPrice ? "<s>$" + Math.floor(baseMonthlyPrice) + "</s>" : ""}$${Math.floor(discountedPrice)}<small>/mo</small></div>
+                <div class="plan-price-small">$${perDay} USD / DAY</div>
+              </div>
+            </div>
+            <div class="plan-benefits">
+              ${benefits.map((b) => `<div class="benefit-line">${b}</div>`).join("")}
+            </div>
+          </div>
+        `;
+        });
+
+        container.innerHTML = html;
+      }
+
+      /**
+       * Select a plan by months - updates selection and totals
+       */
+      function selectPlan(months) {
+        selectedPlanMonths = months;
+        renderPlanSelector(); // Re-render to update active state
+        updateTotals(); // Update prices
+        enableCheckout(); // Enable button if consent is checked
+      }
+
+      /**
+       * Update subtotal and total
+       */
+      function updateTotals() {
+        const baseMonthlyPrice = selectedProducts.reduce(
+          (sum, p) => sum + (p.price || 0),
+          0,
+        );
+        const discount =
+          selectedPlanMonths === 3 ? 0.1 : selectedPlanMonths === 6 ? 0.2 : 0;
+        const discountedPrice = baseMonthlyPrice * (1 - discount);
+        const total = discountedPrice * selectedPlanMonths;
+        const consultFee = 20.0;
+        const grandTotal = total + consultFee;
+
+        // Update display
+        const subtotalEl = document.getElementById("totals-subtotal");
+        const totalEl = document.getElementById("totals-total");
+        const btnText = document.getElementById("btn-text");
+
+        if (subtotalEl) subtotalEl.textContent = `$${total.toFixed(2)}`;
+        if (totalEl) totalEl.textContent = `$${grandTotal.toFixed(2)}`;
+        if (btnText)
+          btnText.textContent = `Checkout — $${grandTotal.toFixed(2)}`;
+
+        productTotalPrice = grandTotal;
+      }
+
+      /**
+       * Enable checkout button when consent is checked
+       */
+      function enableCheckout() {
+        const btn = document.getElementById("checkout-btn");
+        const consent = document.getElementById("consent-check");
+        if (btn && consent) {
+          btn.disabled = !consent.checked;
+        }
+      }
+
+      // ═══════════════════════════════════════════════════════
+      // PAYMENT VALIDATION & SUBMISSION
+      // ═══════════════════════════════════════════════════════
+
+      /**
+       * Validate all checkout form fields
+       */
+      function validateCheckoutForm() {
+        const fields = [
+          { id: "pt-first-name", label: "First Name" },
+          { id: "pt-last-name", label: "Last Name" },
+          { id: "pt-dob", label: "Date of Birth" },
+          { id: "pt-gender", label: "Gender" },
+          { id: "pt-address", label: "Street Address" },
+          { id: "pt-city", label: "City" },
+          { id: "pt-state", label: "State" },
+          { id: "pt-zip", label: "ZIP Code" },
+          { id: "pt-email", label: "Email" },
+          { id: "pt-phone", label: "Phone" },
+          { id: "an-card-name", label: "Name on Card" },
+          { id: "an-card-number", label: "Card Number" },
+          { id: "an-exp", label: "Expiry" },
+          { id: "an-cvc", label: "CVC" },
+          { id: "an-zip", label: "Billing ZIP" },
+        ];
+
+        let isValid = true;
+        const errorEl = document.getElementById("patient-info-error");
+        const errors = [];
+
+        fields.forEach((field) => {
+          const el = document.getElementById(field.id);
+          if (!el) return;
+          const val = el.value.trim();
+          if (!val) {
+            isValid = false;
+            el.style.borderColor = "#dc2626";
+            errors.push(field.label);
+          } else {
+            el.style.borderColor = "";
+          }
+        });
+
+        // Validate card number (basic)
+        const cardNum = document.getElementById("an-card-number");
+        if (cardNum) {
+          const clean = cardNum.value.replace(/\s/g, "");
+          if (clean.length < 15 || clean.length > 16 || !/^\d+$/.test(clean)) {
+            isValid = false;
+            cardNum.style.borderColor = "#dc2626";
+            errors.push("Valid Card Number");
+          }
+        }
+
+        // Validate expiry
+        const exp = document.getElementById("an-exp");
+        if (exp) {
+          const expVal = exp.value.replace(/\s/g, "");
+          if (!/^\d{2}\/\d{2}$/.test(expVal)) {
+            isValid = false;
+            exp.style.borderColor = "#dc2626";
+            errors.push("Valid Expiry (MM/YY)");
+          }
+        }
+
+        // Validate CVC
+        const cvc = document.getElementById("an-cvc");
+        if (cvc) {
+          const cvcVal = cvc.value.replace(/\s/g, "");
+          if (cvcVal.length < 3 || cvcVal.length > 4 || !/^\d+$/.test(cvcVal)) {
+            isValid = false;
+            cvc.style.borderColor = "#dc2626";
+            errors.push("Valid CVC");
+          }
+        }
+
+        // Validate consent
+        const consent = document.getElementById("consent-check");
+        if (!consent || !consent.checked) {
+          isValid = false;
+          if (consent) {
+            consent.parentElement.style.border = "1px solid #dc2626";
+            consent.parentElement.style.background = "#fef2f2";
+          }
+          errors.push("Telehealth Consent");
+        } else {
+          if (consent) {
+            consent.parentElement.style.border = "";
+            consent.parentElement.style.background = "";
+          }
+        }
+
+        if (!isValid && errorEl) {
+          errorEl.textContent = `Please fill in all required fields: ${errors.join(", ")}`;
+          errorEl.style.display = "block";
+          document
+            .getElementById("patient-info-box")
+            .scrollIntoView({ behavior: "smooth" });
+        } else if (errorEl) {
+          errorEl.style.display = "none";
+        }
+
+        return isValid;
+      }
+
+      /**
+       * Process payment (demo)
+       */
+      async function processPayment() {
+        const btn = document.getElementById("checkout-btn");
+        const spinner = document.getElementById("checkout-spinner");
+        const errorEl = document.getElementById("payment-errors");
+
+        if (!validateCheckoutForm()) {
+          return;
+        }
+
+        btn.disabled = true;
+        btn.style.opacity = "0.7";
+        spinner.style.display = "block";
+        errorEl.style.display = "none";
+
+        try {
+          await new Promise((resolve) => setTimeout(resolve, 2000));
+
+          const orderData = {
+            transactionId: "TXN-" + Date.now(),
+            amount: productTotalPrice.toFixed(2),
+            products: selectedProducts.map((p) => p.name),
+            planMonths: selectedPlanMonths,
+            timestamp: new Date().toISOString(),
+          };
+
+          sessionStorage.setItem(
+            "freeley_transaction",
+            JSON.stringify(orderData),
+          );
+          window.location.href =
+            "/?payment=success&pi=" + orderData.transactionId;
+        } catch (err) {
+          errorEl.textContent = "Something went wrong. Please try again.";
+          errorEl.style.display = "block";
+          btn.disabled = false;
+          btn.style.opacity = "1";
+          spinner.style.display = "none";
+        }
+      }
+
+      // ═══════════════════════════════════════════════════════
+      // EVENT BINDING
+      // ═══════════════════════════════════════════════════════
+
+      document.addEventListener("DOMContentLoaded", function () {
+        loadProductsFromSession();
+
+        const consent = document.getElementById("consent-check");
+        if (consent) {
+          consent.addEventListener("change", function () {
+            enableCheckout();
+            if (this.checked) {
+              this.parentElement.style.border = "";
+              this.parentElement.style.background = "";
+            }
+          });
+        }
+
+        const checkoutBtn = document.getElementById("checkout-btn");
+        if (checkoutBtn) {
+          checkoutBtn.addEventListener("click", processPayment);
+        }
+
+        document.querySelectorAll("._field").forEach((el) => {
+          el.addEventListener("input", function () {
+            this.style.borderColor = "";
+            const errorEl = document.getElementById("patient-info-error");
+            if (errorEl) errorEl.style.display = "none";
+          });
+        });
+
+        const cardInput = document.getElementById("an-card-number");
+        if (cardInput) {
+          cardInput.addEventListener("input", function () {
+            let val = this.value.replace(/\D/g, "");
+            if (val.length > 16) val = val.slice(0, 16);
+            const parts = val.match(/.{1,4}/g);
+            if (parts) {
+              this.value = parts.join(" ");
+            } else {
+              this.value = val;
+            }
+            this.style.borderColor = "";
+          });
+        }
+
+        const expInput = document.getElementById("an-exp");
+        if (expInput) {
+          expInput.addEventListener("input", function () {
+            let val = this.value.replace(/\D/g, "");
+            if (val.length > 4) val = val.slice(0, 4);
+            if (val.length >= 2) {
+              this.value = val.slice(0, 2) + "/" + val.slice(2);
+            } else {
+              this.value = val;
+            }
+            this.style.borderColor = "";
+          });
+        }
+
+        const cvcInput = document.getElementById("an-cvc");
+        if (cvcInput) {
+          cvcInput.addEventListener("input", function () {
+            let val = this.value.replace(/\D/g, "");
+            if (val.length > 4) val = val.slice(0, 4);
+            this.value = val;
+            this.style.borderColor = "";
+          });
+        }
+
+        enableCheckout();
+      });
+
+      // Expose functions globally for inline onclick
+      window.selectPlan = selectPlan;
+      window.setCheckoutCompound = function (type) {
+        console.log("Compound selected:", type);
+      };
+      window.loadProductFromQuiz = loadProductsFromSession;
+    </script>
+</body>
+
+</html>

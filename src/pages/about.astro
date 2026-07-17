@@ -1,0 +1,519 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout title="About" bodyClass="about">
+  <Fragment slot="head">
+    <!-- Font playfair display embed -->
+    <link rel="stylesheet" href="/style/aboutstyle.css" />
+  </Fragment>
+
+    <main>
+
+        <!-- Header -->
+        <Header />
+
+        <section class="hero-section text-center" style="margin-top: -93px;">
+            <div class="container">
+                <div class="bordered--heading inline-block px-4">
+                    <span class="uppercase">About Freeley</span>
+                </div>
+                <h1 class="hero-title mt-4">Healthcare thatfits <br><span>your life</span></h1>
+                <p class="hero-subtitle text-14-inter mx-auto mt-6">
+                    Healthcare transparency you can see. Clinical protocols you can trust. Nationwide coverage you can rely on.
+                </p>
+            </div>
+        </section>
+
+
+        <section>
+            <div id="quiz--modal" class="modal">
+                <div class="modal-content">
+                    <span class="close" id="close--quiz"><img src="/assets/icons/close.png" /></span>
+                    <div class="processing-loader" id="loader"></div>
+                    <div id="quiz--container"></div>
+                </div>
+            </div>
+        </section>
+
+
+
+        <!-- ==========================================
+         SECTION 1: PHILOSOPHY & STATISTICS COUNTERS
+         ========================================== -->
+        <section class="philosophy-section py-12 bg-white">
+            <div class="container custom-container">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+
+                    <!-- Left Narrative Column -->
+                    <div class="lg:col-span-7 pr-12">
+                        <div class="bordered--heading inline-block px-4 mb-4">
+                            <span class="uppercase">HOW IT WORKS</span>
+                        </div>
+                        <h2 class="section-title mb-4">Real medicine, <br><span class="highlight">Without the
+                                friction</span></h2>
+
+                        <div class="narrative-body mt-6">
+                            <p>At Freeley, we believe healthcare shouldn't be about rushed 15-minute appointments, waiting rooms, or fighting with insurance companies. It's about empowering you to achieve your best health — on your terms.</p>
+                            <p>Our telehealth infrastructure seamlessly connects you to customized, compounded treatments formulated specifically for your body and your goals. Every prescription is reviewed by a board-certified physician and filled by a
+                                licensed 503A pharmacy.</p>
+                        </div>
+                    </div>
+
+                    <!-- Right Cards Column -->
+                    <div class="lg:col-span-5">
+                        <!-- Quote Callout Card -->
+                        <div class="quote-card p-6 mb-6">
+                            <p class="quote-text">"We don't just prescribe medication — we build treatment partnerships that evolve with our patients."</p>
+                            <span class="quote-author">— The Freeley Medical Team</span>
+                        </div>
+
+                        <!-- Highlight Matrix List Box -->
+                        <div class="matrix-card p-6">
+                            <h4 class="matrix-title mb-4">What makes us different:</h4>
+                            <ul class="matrix-list list-none pl-0 m-0">
+                                <li>Same price regardless of dosage</li>
+                                <li>All medications compounded in licensed pharmacies</li>
+                                <li>No algorithms — only human physicians prescribe</li>
+                                <li>Quarterly lab monitoring included</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Horizontal Statistics Counter Matrix Container -->
+                <div class="stats-grid-row grid grid-cols-12 gap-6 mt-12 pt-6 text-center sm:text-left">
+                    <div class="col-span-6 md:col-span-3 stat-item">
+                        <h3 class="stat-number">2,400+</h3>
+                        <p class="stat-label">Patients served</p>
+                    </div>
+                    <div class="col-span-6 md:col-span-3 stat-item">
+                        <h3 class="stat-number">4.9</h3>
+                        <p class="stat-label">Average rating</p>
+                    </div>
+                    <div class="col-span-6 md:col-span-3 stat-item">
+                        <h3 class="stat-number">4</h3>
+                        <p class="stat-label">Treatment categories</p>
+                    </div>
+                    <div class="col-span-6 md:col-span-3 stat-item no-border">
+                        <h3 class="stat-number">50</h3>
+                        <p class="stat-label">States licensed</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ==========================================
+         SECTION 2: BRAND INTEGRITY BLOCK
+         ========================================== -->
+        <section class="process py-12">
+            <div class="container ">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-x-6 pt-12">
+                    <div class="md:col-span-6 py-12 process--col--left">
+                        <div class="bordered--heading inline-block px-4 mb-4">
+                            <span class="uppercase">The Process</span>
+                        </div>
+                        <div class="section--title">
+                            <h2>
+                                What we<br>
+                                <span class="highlight">Stand for</span>
+                            </h2>
+                        </div>
+                    </div>
+                    <div class="md:col-span-5 md:col-start-8 flex justify-center process--col--right">
+
+                        <!-- Image Doctor Card -->
+
+                        <img src="/assets/about/dr.png" alt="">
+
+                    </div>
+                </div>
+            </div>
+            <div class="container py-6">
+                <div class="process--items">
+                    <div class="w-full md:w-1/4 flex flex-col gap-6 pb-4 process--item">
+                        <div class="process--icon">
+                            <img src="/assets/icons/radical.png">
+                        </div>
+                        <div class="process--title">
+                            Radical Transparency
+                        </div>
+                        <div class="process--desc">
+                            No hidden fees, no bait-and-switch pricing, no surprise charges. Every cost is disclosed upfront before you commit.
+                        </div>
+                    </div>
+                    <div class="w-full md:w-1/4 flex flex-col gap-6 pb-4 process--item">
+                        <div class="process--icon">
+                            <img src="/assets/icons/clanical.png">
+                        </div>
+                        <div class="process--title">
+                            Clinical Integrity
+                        </div>
+                        <div class="process--desc">
+                            If a treatment isn't right for you, your physician will say so. We never push products over patient safety.
+                        </div>
+                    </div>
+                    <div class="w-full md:w-1/4 flex flex-col gap-6 pb-4 process--item">
+                        <div class="process--icon">
+                            <img src="/assets/icons/accessible.png">
+                        </div>
+                        <div class="process--title">
+                            Accessible Premium Care
+                        </div>
+                        <div class="process--desc">
+                            World-class compounded medications at accessible, transparent pricing, with the same clinical oversight and quality.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ==========================================
+         SECTION 3: INFRASTRUCTURE CORE CARDS
+         ========================================== -->
+        <section class="everything_managed overflow-hidden pt-12 mb-12 pl-2 md:pl-0">
+            <div class="container">
+                <div class="results-header">
+                    <div class="bordered--heading inline-block px-4">
+                        <span class="uppercase">WHY FREELEY</span>
+                    </div>
+                    <h1 class="hero-title mt-4 mb-12">Built to be<br> <span>different</span></h1>
+
+                </div>
+                <!-- Swiper Container -->
+                <div class="swiper results-grid">
+                    <div class="swiper-wrapper">
+                        <!-- Card 1 -->
+                        <div class="swiper-slide">
+                            <div class="result-item">
+                                <img src="/assets/about/card1.png">
+                            </div>
+                        </div>
+                        <!-- Card 2 -->
+                        <div class="swiper-slide">
+                            <div class="result-item">
+                                <img src="/assets/about/card2.png">
+                            </div>
+                        </div>
+                        <!-- Card 3 -->
+                        <div class="swiper-slide">
+                            <div class="result-item">
+                                <img src="/assets/about/card3.png">
+                            </div>
+                        </div>
+                        <!-- Card 4 -->
+                        <div class="swiper-slide">
+                            <div class="result-item">
+                                <img src="/assets/about/card1.png">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+
+        <section class="cta--sec py-12 hidden md:block">
+            <div class="container py-4">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-x-6 items-center">
+                    <div class="md:col-span-6">
+                        <div class="section--title">
+                            <h2 class="text-light">Your Body Deserves Better Than Guesswork. Live Freeley.</h2>
+                        </div>
+
+                        <p class="text-light mb-12">
+                            Start with a free medical visit. No commitment. No insurance required.
+                        </p>
+                    </div>
+
+                    <div class="md:col-span-6" style="min-height: 300px;display: flex;align-items: end;">
+                        <div class="ctas flex flex-col md:flex-row items-center md:items-start gap-4 w-full">
+                            <a href="javascript:void(0)" id="start-quiz-btn2" class="global--qua--button bg-white global--green">
+                                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="32" height="32" rx="16" fill="#004C27"/>
+<path d="M17.6201 11.9531L21.6668 15.9998L17.6201 20.0465" stroke="white" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M10.333 16H21.553" stroke="white" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+</svg> Start Your Assessment
+                            </a>
+
+                            <a href="javascript:void(0)" class="global--qua--button secondory px-5">
+                        Or browse plan pricing
+                    </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta--sec-home-mobile py-12 mobile">
+            <div class="container py-12">
+                <div class="w-full">
+                    <div>
+                        <div class="section--title">
+                            <h2 class="text-light">Start with a free medical visit. No commitment. No insurance required.</h2>
+                        </div>
+                        <p class="text-light mb-12">
+                            Start with a free medical visit. No commitment. No insurance required.
+                        </p>
+                    </div>
+                    <div class="ctas flex flex-col md:flex-row items-center md:items-start gap-4 w-full">
+                        <a href="javascript:void(0)" class="global--qua--button bg-white global--green w-full">
+                            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="32" height="32" rx="16" fill="#004C27"/>
+<path d="M17.6201 11.9531L21.6668 15.9998L17.6201 20.0465" stroke="white" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M10.333 16H21.553" stroke="white" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+</svg> Start Your Assessment
+                        </a>
+
+                        <a href="javascript:void(0)" class="global--qua--button secondory px-6 w-full">
+                        Or browse plan pricing
+                    </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-------------------------------------
+        ************** FOOTER ******************
+        -------------------------------------->
+        <div class="container-fluid">
+<div class="footer--header grid grid-cols-12 gap-6 items-center pb-12">
+                    <div class="col-span-12 md:col-span-6 flex flex-col gap-4">
+                        <h2 class="text-5xl leading-tight mb-0 font-normal">
+                            Feel better,<br />
+                            <span class="italic">starting today</span>
+                        </h2>
+                        <p class="text-white/50 text-14-inter">
+                            Personalized care for every part of you from weight to skin, sleep to sexual health.
+                        </p>
+                    </div>
+
+                    <div class="col-span-12 md:col-span-6 flex flex-col items-start md:items-end gap-6">
+                        <div>
+                            <a href="javascript:void(0)" id="start-assessment" class="global--qua--button bg-white px-4 pr-2 w-full">
+                                <img class="btn--icon" src="/assets/home/icons/icon-right-green.svg" /> Start Your Assessment
+                            </a>
+                        </div>
+
+                        <div class="flex flex-wrap justify-start md:justify-end gap-4 text-white/50 text-sm">
+                            <div class="flex text-white items-center gap-1 text-14-inter">
+                                <span class="text-white"><svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 18 18"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M9 1.5C4.8675 1.5 1.5 4.8675 1.5 9C1.5 13.1325 4.8675 16.5 9 16.5C13.1325 16.5 16.5 13.1325 16.5 9C16.5 4.8675 13.1325 1.5 9 1.5ZM12.585 7.275L8.3325 11.5275C8.2275 11.6325 8.085 11.6925 7.935 11.6925C7.785 11.6925 7.6425 11.6325 7.5375 11.5275L5.415 9.405C5.1975 9.1875 5.1975 8.8275 5.415 8.61C5.6325 8.3925 5.9925 8.3925 6.21 8.61L7.935 10.335L11.79 6.48C12.0075 6.2625 12.3675 6.2625 12.585 6.48C12.8025 6.6975 12.8025 7.05 12.585 7.275Z"
+                        fill="white"
+                      />
+                    </svg>
+                  </span> No credit card required
+                            </div>
+                            <div class="flex text-white items-center gap-1 text-14-inter">
+                                <span class=""><svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 18 18"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M9 1.5C4.8675 1.5 1.5 4.8675 1.5 9C1.5 13.1325 4.8675 16.5 9 16.5C13.1325 16.5 16.5 13.1325 16.5 9C16.5 4.8675 13.1325 1.5 9 1.5ZM12.585 7.275L8.3325 11.5275C8.2275 11.6325 8.085 11.6925 7.935 11.6925C7.785 11.6925 7.6425 11.6325 7.5375 11.5275L5.415 9.405C5.1975 9.1875 5.1975 8.8275 5.415 8.61C5.6325 8.3925 5.9925 8.3925 6.21 8.61L7.935 10.335L11.79 6.48C12.0075 6.2625 12.3675 6.2625 12.585 6.48C12.8025 6.6975 12.8025 7.05 12.585 7.275Z"
+                        fill="white"
+                      />
+                    </svg>
+                  </span> Takes 2 minutes
+                            </div>
+                            <div class="flex text-white items-center gap-1 text-14-inter">
+                                <span class="text-white"><svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 18 18"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M9 1.5C4.8675 1.5 1.5 4.8675 1.5 9C1.5 13.1325 4.8675 16.5 9 16.5C13.1325 16.5 16.5 13.1325 16.5 9C16.5 4.8675 13.1325 1.5 9 1.5ZM12.585 7.275L8.3325 11.5275C8.2275 11.6325 8.085 11.6925 7.935 11.6925C7.785 11.6925 7.6425 11.6325 7.5375 11.5275L5.415 9.405C5.1975 9.1875 5.1975 8.8275 5.415 8.61C5.6325 8.3925 5.9925 8.3925 6.21 8.61L7.935 10.335L11.79 6.48C12.0075 6.2625 12.3675 6.2625 12.585 6.48C12.8025 6.6975 12.8025 7.05 12.585 7.275Z"
+                        fill="white"
+                      />
+                    </svg>
+                  </span> Cancel anytime
+                            </div>
+                        </div>
+                    </div>
+                </div>
+</div>
+
+<Footer />
+    </main>
+    <!-- Footer Links -->
+    <script src="/style/script.js" is:inline></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" is:inline></script>
+    <script is:inline>
+        const swiper = new Swiper('.everything_managed .swiper', {
+            slidesPerView: 'auto',
+            spaceBetween: 24,
+            freeMode: false,
+            grabCursor: true,
+            autoplay: {
+                delay: 5000,
+            },
+            direction: 'horizontal',
+            loop: true,
+            mousewheel: false,
+            centeredSlides: false,
+        });
+
+        new Swiper('.transformation-slider.swiper', {
+            slidesPerView: 2.2,
+            spaceBetween: 24,
+            freeMode: false,
+            autoplay: {
+                delay: 5000,
+            },
+            direction: 'horizontal',
+            loop: true,
+            grabCursor: true,
+            mousewheel: false,
+            centeredSlides: false,
+        });
+    </script>
+
+
+
+    <script is:inline>
+        const modal = document.getElementById('quiz--modal');
+        const loader = document.getElementById('loader');
+        const quizContainer = document.getElementById('quiz--container');
+        let quizIframe = null;
+
+        document.querySelectorAll(
+            '#start-assessment, #start-assessment-header, #start-quiz-btn2'
+        ).forEach(button => {
+            button.addEventListener('click', () => {
+                // If iframe exists, remove it first
+                if (quizIframe) {
+                    quizIframe.remove();
+                    quizIframe = null;
+                }
+
+                modal.style.display = 'block';
+                loader.style.display = 'block';
+                quizContainer.innerHTML = '';
+
+                // Create new iframe
+                quizIframe = document.createElement('iframe');
+                quizIframe.style.width = '100%';
+                quizIframe.style.height = '605px';
+                quizIframe.style.border = 'none';
+                quizIframe.style.borderRadius = '0';
+                quizIframe.style.display = 'none';
+                quizIframe.style.background = '#0000004D';
+
+                // Load with cache-busting
+                quizIframe.src = '/assessment-quiz?t=' + Date.now();
+
+                quizIframe.onload = function() {
+                    loader.style.display = 'none';
+                    quizIframe.style.display = 'block';
+
+                    // Apply styles to iframe body (if you have access)
+                    try {
+                        const iframeDoc = quizIframe.contentDocument || quizIframe.contentWindow.document;
+                        if (iframeDoc) {
+                            const style = iframeDoc.createElement('style');
+                            style.textContent = `
+                            body {
+                                background: #0000004D !important;
+                                border: 0 !important;
+                                border-radius: 0 !important;
+                                height: 100vh;
+                                margin: 0;
+                            }
+                        `;
+                            iframeDoc.head.appendChild(style);
+                        }
+                    } catch (e) {
+                        // Cross-origin restrictions may prevent this
+                        console.log('Cannot style iframe body due to CORS');
+                    }
+                };
+
+                quizIframe.onerror = function() {
+                    loader.style.display = 'none';
+                    quizContainer.innerHTML = '<p>Unable to load quiz.</p>';
+                };
+
+                quizContainer.appendChild(quizIframe);
+            });
+        });
+
+        function closeQuiz() {
+            // Hide modal
+            modal.style.display = 'none';
+
+            // Remove iframe completely
+            if (quizIframe) {
+                // Clear iframe content
+                try {
+                    quizIframe.src = 'about:blank';
+                    quizIframe.contentWindow.document.write('');
+                    quizIframe.contentWindow.document.clear();
+                } catch (e) {}
+
+                // Remove from DOM
+                quizIframe.remove();
+                quizIframe = null;
+            }
+
+            // Clear container
+            quizContainer.innerHTML = '';
+            loader.style.display = 'none';
+        }
+
+        document
+            .getElementById('close--quiz')
+            .addEventListener('click', closeQuiz);
+
+        // Close on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modal.style.display === 'block') {
+                closeQuiz();
+            }
+        });
+
+        // Close when clicking outside
+        window.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeQuiz();
+            }
+        });
+    </script>
+
+
+    <!--Start of Tawk.to Script-->
+    <script type="text/javascript" is:inline>
+        var Tawk_API = Tawk_API || {},
+            Tawk_LoadStart = new Date();
+        (function() {
+            var s1 = document.createElement("script"),
+                s0 = document.getElementsByTagName("script")[0];
+            s1.async = true;
+            s1.src = 'https://embed.tawk.to/6a454f1fb271bd1d477e9990/1jsfbq5mb';
+            s1.charset = 'UTF-8';
+            s1.setAttribute('crossorigin', '*');
+            s0.parentNode.insertBefore(s1, s0);
+        })();
+    </script>
+    <!--End of Tawk.to Script-->
+
+</Layout>

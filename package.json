@@ -5,7 +5,10 @@
   "main": "dummy.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:mobile": "mkdir -p www && rsync -a --exclude='.git' --exclude='node_modules' --exclude='.venv' --exclude='www' --exclude='ios' --exclude='android' ./ www/ && npx cap sync"
+    "build:mobile": "mkdir -p www && rsync -a --exclude='.git' --exclude='node_modules' --exclude='.venv' --exclude='www' --exclude='ios' --exclude='android' ./ www/ && npx cap sync",
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
   },
   "keywords": [],
   "author": "",
@@ -17,10 +20,15 @@
     "@capacitor/core": "^8.3.0",
     "@capacitor/ios": "^8.3.0",
     "@capacitor/push-notifications": "^8.0.3",
-    "@netlify/blobs": "^10.7.4",
+    "@netlify/blobs": "^10.7.9",
+    "@supabase/supabase-js": "^2.110.7",
+    "@tailwindcss/vite": "^4.3.2",
+    "astro": "^7.0.9",
     "gray-matter": "^4.0.3",
     "marked": "^17.0.4",
-    "stripe": "^20.4.1"
+    "sharp": "^0.35.3",
+    "stripe": "^20.4.1",
+    "tailwindcss": "^4.3.2"
   },
   "devDependencies": {
     "@capacitor/assets": "^3.0.5",

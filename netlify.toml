@@ -1,6 +1,13 @@
 [build]
-  command = "npm install && node build_blog.js"
-  publish = "."
+  # 2026-07-17 Astro migration: now builds the Astro site (src/) instead of
+  # the old static root. Legacy pages (130+ blog posts, about/contact/etc
+  # with no Astro equivalent yet) were copied as-is into public/ — Astro
+  # passes through public/ untouched, so they keep serving at their exact
+  # original URLs. KNOWN GAP: build_blog.js (regenerates blog HTML from
+  # content/blog/*.md) is not wired into this build yet — new/edited blog
+  # posts need manual re-sync into public/ until that's automated.
+  command = "npm run build"
+  publish = "dist"
 
 [build.processing]
   # Enable pretty URLs — strips .html from URLs
@@ -66,7 +73,10 @@
     # 'unsafe-inline' is required because the site has inline <script> and
     # inline onclick handlers throughout. Tightening to nonces/hashes is a
     # future cleanup. Allowlist covers Stripe, Firebase, MDI, analytics, fonts.
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://www.googletagmanager.com https://www.google-analytics.com https://connect.facebook.net https://widget.trustpilot.com https://*.gstatic.com https://www.gstatic.com https://apis.google.com https://accounts.google.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.clarity.ms https://*.clarity.ms https://code.tidio.co https://*.tidio.co https://*.tidiochat.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://*.tidio.co https://*.tidiochat.com; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://*.tidio.co https://*.tidiochat.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://api.stripe.com https://api.mdintegrations.com https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://*.cloudfunctions.net wss://*.firebaseio.com https://www.gstatic.com https://*.gstatic.com https://apis.google.com https://accounts.google.com https://www.google-analytics.com https://www.googletagmanager.com https://*.facebook.com https://widget.trustpilot.com https://www.clarity.ms https://*.clarity.ms https://*.tidio.co https://*.tidiochat.com wss://*.tidio.co wss://*.tidiochat.com; frame-src https://js.stripe.com https://hooks.stripe.com https://*.stripe.com https://*.mdintegrations.com https://*.firebaseapp.com https://*.firebaseauth.com https://accounts.google.com https://content.googleapis.com https://widget.trustpilot.com https://*.trustpilot.com https://*.tidio.co https://*.tidiochat.com; worker-src 'self' blob:; base-uri 'self'; object-src 'none'; form-action 'self' https://accounts.google.com https://*.firebaseapp.com https://*.stripe.com; frame-ancestors 'none'; upgrade-insecure-requests"
+    # 2026-07-17: added Supabase (new lead-capture DB + patient-hub auth) and
+    # Tawk.to (chat widget used on the Astro pages — legacy pages still use
+    # Tidio, both allowlisted until that's consolidated to one).
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://www.googletagmanager.com https://www.google-analytics.com https://connect.facebook.net https://widget.trustpilot.com https://*.gstatic.com https://www.gstatic.com https://apis.google.com https://accounts.google.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.clarity.ms https://*.clarity.ms https://code.tidio.co https://*.tidio.co https://*.tidiochat.com https://embed.tawk.to https://*.tawk.to; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://*.tidio.co https://*.tidiochat.com; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://*.tidio.co https://*.tidiochat.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://api.stripe.com https://api.mdintegrations.com https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://*.cloudfunctions.net wss://*.firebaseio.com https://www.gstatic.com https://*.gstatic.com https://apis.google.com https://accounts.google.com https://www.google-analytics.com https://www.googletagmanager.com https://*.facebook.com https://widget.trustpilot.com https://www.clarity.ms https://*.clarity.ms https://*.tidio.co https://*.tidiochat.com wss://*.tidio.co wss://*.tidiochat.com https://*.supabase.co wss://*.supabase.co https://*.tawk.to wss://*.tawk.to; frame-src https://js.stripe.com https://hooks.stripe.com https://*.stripe.com https://*.mdintegrations.com https://*.firebaseapp.com https://*.firebaseauth.com https://accounts.google.com https://content.googleapis.com https://widget.trustpilot.com https://*.trustpilot.com https://*.tidio.co https://*.tidiochat.com; worker-src 'self' blob:; base-uri 'self'; object-src 'none'; form-action 'self' https://accounts.google.com https://*.firebaseapp.com https://*.stripe.com; frame-ancestors 'none'; upgrade-insecure-requests"
 
 # Tighten cache for HTML — short TTL so pricing/copy changes ship fast.
 [[headers]]

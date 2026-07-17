@@ -1,0 +1,569 @@
+              :root {
+                 --primary-color: #C5984E;
+                 --secondary-color: #004C27;
+                 --text-color-secondary: #008262;
+                 --primary-color-primary: #C5984E;
+             }
+             
+              :root {
+                 --bg-cream: #F8F6F2;
+                 --dark-green: #004c27;
+                 --muted-green: #008262;
+                 --light-box: #EBF2EE;
+                 --text-main: #2B332E;
+                 --timeline-grey: #D5DDD8;
+                 --lightblack-text: #17222a;
+             }
+             
+             .btn-dark-green {
+                 background-color: var(--dark-green);
+                 color: white !important;
+                 border-radius: 30px;
+                 padding: 15px 50px 15px 25px;
+                 font-size: 14px;
+                 font-weight: 500;
+                 border: none;
+                 transition: background 0.3s ease;
+                 position: relative;
+             }
+             
+             .btn-dark-green-no-icon {
+                 padding: 8px 25px 8px 25px;
+             }
+             
+             .btn-dark-green span {
+                 position: absolute;
+                 right: 3px;
+                 top: 50%;
+                 transform: translate(0px, -50%);
+                 border-radius: 50%;
+                 background: white;
+                 overflow: hidden;
+             }
+             
+             .btn-dark-green:hover {
+                 background-color: #0b2218;
+             }
+             
+             .hero_button {
+                 opacity: 1;
+                 gap: 2px;
+                 border-radius: 40px;
+                 padding: 8px 20px;
+                 background: #f8faf4;
+                 display: flex;
+                 flex-direction: row;
+                 flex-wrap: nowrap;
+                 justify-content: center;
+                 align-content: center;
+             }
+             
+             .hero_button a {
+                 margin: 0 !important;
+                 height: auto;
+             }
+             
+             .hero_footer {
+                 display: flex;
+                 flex-direction: row;
+                 flex-wrap: wrap;
+                 align-content: center;
+                 justify-content: center;
+                 align-items: center;
+                 margin-top: 2rem;
+                 padding: 5px;
+                 gap: 35px;
+             }
+             
+             .hero_footer div.sec1-div {
+                 display: flex;
+                 flex-direction: row;
+                 flex-wrap: nowrap;
+                 align-content: center;
+                 align-items: center;
+                 justify-content: center;
+                 gap: 8px;
+                 font-family: Inter;
+                 font-weight: 400;
+                 font-style: Regular;
+                 font-size: 12px;
+                 leading-trim: NONE;
+                 line-height: 100%;
+                 letter-spacing: 0%;
+                 vertical-align: middle;
+                 color: #000000;
+             }
+             /* Hero Section */
+             
+             .hero-section {
+                 /* background: linear-gradient(180deg, #F3F6F3 0%, #FFFFFF 100%); */
+                 padding: 120px 0 0px 0;
+                 background: linear-gradient(180deg, #E7EAF0 0%, #F3F4EF 100%);
+             }
+             
+             .badge-sub {
+                 font-family: 'Inter';
+                 font-size: 12px;
+                 letter-spacing: 2px;
+                 color: var(--muted-green);
+                 font-weight: 400;
+                 border: 1px solid #17222A1A;
+                 opacity: 1;
+                 padding-top: 4px;
+                 padding-right: 8px;
+                 padding-bottom: 4px;
+                 padding-left: 8px;
+                 gap: 10px;
+                 border-width: 1px;
+                 border-radius: 20px;
+                 max-width: fit-content;
+             }
+             
+             .hero-title {
+                 font-size: 44px;
+                 color: #000000;
+                 font-weight: 500;
+                 line-height: 1.15;
+             }
+             
+             .hero-title span {
+                 font-style: italic;
+                 color: #C38B67;
+                 /* Soft terra-cotta highlight color from standard premium layouts */
+             }
+             
+             .hero-subtitle {
+                 max-width: 580px;
+                 color: #17222a;
+                 font-size: 17px;
+                 line-height: 1.6;
+             }
+             
+             section.hero-section .container {
+                 max-width: 722px;
+                 height: 550px;
+                 top: 138px;
+                 left: 359px;
+                 opacity: 1;
+                 border-top-left-radius: 40px;
+                 border-top-right-radius: 40px;
+                 border-width: 1px;
+                 display: flex;
+                 flex-direction: column;
+                 flex-wrap: wrap;
+                 align-content: center;
+                 justify-content: center;
+                 align-items: center;
+                 border: 1px solid #FFFFFF;
+                 background: radial-gradient(111.37% 111.38% at 52.28% 71.14%, rgba(255, 255, 255, 0) 50%, #FFFFFF 100%);
+             }
+             /* new section */
+             /* Styling Architecture Initialization */
+             
+              :root {
+                 --brand-dark-green: #113425;
+                 --text-charcoal: #2A332E;
+                 --text-muted-gray: #56645E;
+                 --accent-gold-tan: #C38B67;
+                 --border-emerald: #A9B8B0;
+                 --calc-container-bg: #F4F6F4;
+                 --card-surface-light: #EDEEF2;
+                 --badge-pill-txt: #3D5A4E;
+                 --grid-card-gray: #EFF1F0;
+             }
+             
+             body {
+                 color: var(--text-charcoal);
+                 background-color: #FFFFFF;
+                 -webkit-font-smoothing: antialiased;
+             }
+             
+             h1,
+             h2,
+             h3,
+             .logo {
+                 font-family: Playfair Display;
+             }
+             /* Typography Styles */
+             
+             .section-title {
+                 font-family: 'Playfair Display', serif;
+                 font-size: 2.8rem;
+                 font-weight: 400;
+                 line-height: 1.15;
+                 color: var(--brand-dark-green);
+             }
+             
+             .section-title .italic-gold {
+                 font-style: italic;
+                 color: var(--accent-gold-tan);
+             }
+             
+             .badge-pill {
+                 font-size: 11px;
+                 font-weight: 600;
+                 letter-spacing: 0.05em;
+                 color: var(--badge-pill-txt);
+                 border: 1px solid var(--border-emerald);
+                 padding: 6px 16px;
+                 border-radius: 50px;
+             }
+             /* SECTION 1: CALCULATOR MODULE */
+             
+             .shadow-block {
+                 background-color: var(--calc-container-bg);
+             }
+             
+             .form-label-custom {
+                 font-size: 11px;
+                 font-weight: 700;
+                 letter-spacing: 0.08em;
+                 color: #A2AEA8;
+                 margin-bottom: 8px;
+                 display: block;
+             }
+             
+             .custom-select {
+                 font-family: Inter;
+                 border: none !important;
+                 border-radius: 50px !important;
+                 padding: 14px 24px !important;
+                 font-size: 14px;
+                 font-weight: 500;
+                 color: var(--text-charcoal);
+                 background-color: #FFFFFF;
+                 box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+             }
+             /* Card Statement Panel Outputs */
+             
+             .calc-card {
+                 background-color: var(--card-surface-light);
+                 border-radius: 28px;
+                 min-height: 100%;
+                 z-index: 2;
+                 display: flex;
+                 flex-direction: column;
+                 justify-content: space-between;
+                 padding: 2rem 3rem;
+                 border-top-left-radius: 40px;
+                 border-top-right-radius: 40px;
+                 border-width: 1px;
+                 background: radial-gradient(111.37% 111.38% at 52.28% 71.14%, rgba(255, 255, 255, 0) 50%, #FFFFFF 100%);
+                 border: 1px solid #FFFFFF;
+             }
+             
+             .badge-pill-light {
+                 font-size: 10px;
+                 font-weight: 700;
+                 letter-spacing: 0.05em;
+                 color: #5D6B64;
+                 background-color: rgba(255, 255, 255, 0.5);
+                 padding: 6px 14px;
+                 border-radius: 50px;
+             }
+             
+             .display-savings-amount {
+                 font-family: Inter;
+                 font-size: 54px;
+                 color: var(--secondary-color);
+                 letter-spacing: -0.02em;
+                 line-height: 1;
+             }
+             
+             .savings-duration-lbl {
+                 font-size: 14px;
+                 font-weight: 500;
+             }
+             /* Background watermark styling tracking image_961e9e.png context */
+             
+             .bg-currency-symbol {
+                 position: absolute;
+                 right: 0;
+                 left: 0;
+                 top: 15%;
+                 font-size: 18rem;
+                 font-family: 'Playfair Display', serif;
+                 font-weight: 700;
+                 color: rgba(255, 255, 255, 0.35);
+                 line-height: 1;
+                 pointer-events: none;
+                 z-index: 0;
+             }
+             
+             .bg-currency-symbol svg {
+                 width: 100% !important;
+             }
+             
+             .calc_content {
+                 z-index: 2;
+             }
+             
+             .breakdown-list {
+                 position: relative;
+                 z-index: 1;
+             }
+             
+             .breakdown-lbl {
+                 font-size: 14px;
+                 color: var(--text-muted-gray);
+             }
+             
+             .breakdown-val {
+                 font-size: 14px;
+             }
+             
+             .global--qua--button.secondory {
+                 border: 1px solid #FFFFFF33!important;
+                 background: transparent !important;
+                 color: #ffffff !important;
+                 padding: 18px 0;
+                 justify-content: start;
+             }
+             /* SECTION 2: PROMISE MATRIX MODULE */
+             
+             .promise-description {
+                 font-size: 14px;
+                 line-height: 1.6;
+                 color: var(--text-muted-gray);
+             }
+             
+             .legitscript-wrapper {
+                 padding-top: 20px;
+             }
+             
+             .legit-text {
+                 font-family: Inter;
+                 font-weight: 500;
+                 font-style: Medium;
+                 font-size: 14px;
+                 line-height: 130%;
+                 letter-spacing: 0%;
+                 text-align: right;
+                 text-transform: uppercase;
+                 color: #000;
+             }
+             /* Structural Layout Feature Cards Grid */
+             
+             .promise-card {
+                 background: linear-gradient(180deg, #E7EAF0 0%, #F3F4EF 100%);
+                 min-height: 328px;
+                 position: relative;
+                 overflow: hidden;
+                 display: flex;
+                 align-content: space-between;
+                 flex-direction: column;
+                 justify-content: end;
+             }
+             
+             .promise-card .text-content {
+                 position: relative;
+                 z-index: 1;
+             }
+             
+             .promise-card.item-1:before {
+                 content: '';
+                 position: absolute;
+                 top: 0;
+                 left: 0;
+                 width: 100%;
+                 height: 100%;
+                 background-image: url(../assets/pricing/Licensed_Pharmacy.png);
+                 background-repeat: no-repeat;
+                 background-position: center 15px;
+                 background-size: 90%;
+             }
+             
+             .promise-card.item-2:before {
+                 content: '';
+                 position: absolute;
+                 top: 0;
+                 left: 0;
+                 width: 100%;
+                 height: 100%;
+                 background-image: url(../assets/pricing/Physician-Prescribed.png);
+                 background-repeat: no-repeat;
+                 background-position: center 15px;
+                 background-size: 70%;
+             }
+             
+             .promise-card.item-3:before {
+                 content: '';
+                 position: absolute;
+                 top: 0;
+                 left: 0;
+                 width: 100%;
+                 height: 100%;
+                 background-image: url(../assets/pricing/Third-Party_Tested.png);
+                 background-repeat: no-repeat;
+                 background-position: center 15px;
+                 background-size: 65%;
+             }
+             
+             .promise-card h3 {
+                 font-family: Playfair Display;
+                 font-weight: 400;
+                 font-size: 20px;
+                 line-height: 100%;
+                 letter-spacing: 0%;
+                 text-align: left;
+                 color: #1C1C1C;
+                 margin-bottom: 18px;
+             }
+             
+             .promise-card .card-details {
+                 font-family: Inter;
+                 font-weight: 400;
+                 font-style: Regular;
+                 font-size: 14px;
+                 line-height: 140%;
+                 letter-spacing: 0%;
+                 color: #17222A;
+                 text-align: left;
+                 opacity: 0.6;
+             }
+             
+             .promise-avatar-frame {
+                 width: 100%;
+                 height: 110px;
+                 /* border-radius: 50%;
+    background-color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 0 12px rgba(0,0,0,0.02); */
+             }
+             
+             .promise-avatar-frame svg {
+                 margin: 0 auto;
+                 width: 128px;
+                 /* height: 140px; */
+             }
+             
+             .mock-avatar-doc {
+                 width: 100%;
+                 position: absolute;
+                 top: 5%;
+                 width: 80%;
+                 left: 50%;
+                 transform: translate(-50%, 0%);
+             }
+             
+             .mock-avatar-doc svg {
+                 width: 100%;
+             }
+             
+             .calculator-section {
+                 background: linear-gradient(180deg, #E7EAF0 0%, #F3F4EF 100%);
+             }
+             /* Media Queries for Viewport Scaling Adaptations */
+             
+             @media (max-width: 991.98px) {
+                 .section-title {
+                     font-size: 2.2rem;
+                 }
+                 .display-savings-amount {
+                     font-size: 2.8rem;
+                 }
+             }
+             /* Mobile responsive - Hero section (Simple, transparent pricing) */
+             
+             @media (max-width: 768px) {
+                 section.hero-section .container {
+                     max-width: 100%;
+                     width: 100%;
+                     height: auto;
+                     padding: 40px 20px;
+                     top: auto;
+                     left: auto;
+                     border-top-left-radius: 24px;
+                     border-top-right-radius: 24px;
+                 }
+                 .hero-title {
+                     font-size: 2rem;
+                 }
+                 .hero-subtitle {
+                     font-size: 14px;
+                     max-width: 100%;
+                     padding: 0 10px;
+                 }
+                 .hero_button {
+                     padding: 6px 14px;
+                     gap: 2px;
+                 }
+                 .hero_button a {
+                     font-size: 13px;
+                     padding: 6px 16px;
+                 }
+                 .hero_footer {
+                     flex-direction: column;
+                     gap: 12px;
+                     align-items: flex-start;
+                     margin-top: 1.5rem;
+                     padding: 0 10px;
+                 }
+                 .hero_footer div.sec1-div {
+                     gap: 6px;
+                 }
+             }
+             
+             .form-select:focus {
+                 box-shadow: none !important;
+             }
+             
+             section.cta--sec {
+                 background-repeat: no-repeat;
+                 background-size: cover;
+                 background-position: 0 -135px;
+                 position: relative;
+                 /* max-width: 1350px; */
+                 min-height: 380px;
+                 max-width: 1600px;
+                 margin: auto auto;
+             }
+             
+             .cta--sec-home-mobile {
+                 min-height: 725px;
+                 background-color: #81B3D8;
+                 position: relative
+             }
+             
+             .cta--sec-home-mobile>.container {
+                 position: relative;
+                 z-index: 1;
+             }
+             
+             .cta--sec-home-mobile:before {
+                 content: '';
+                 position: absolute;
+                 top: 0;
+                 left: 0;
+                 width: 100%;
+                 height: 100%;
+                 background-size: cover;
+                 background-repeat: no-repeat;
+                 background-image: url('../assets/frame_399.png');
+             }
+             
+             .cta--sec-home-mobile:after {
+                 content: '';
+                 position: absolute;
+                 left: 0;
+                 bottom: 0;
+                 width: 100%;
+                 height: 70%;
+                 background-size: cover;
+                 background-position: bottom;
+                 background-repeat: no-repeat;
+                 background-image: url(../assets/home/cta-girl-mob.svg);
+             }
+             
+             .cta--sec-home-mobile .secondory {
+                 justify-content: flex-end;
+             }
+             
+             .cta--sec-home-mobile .col-md-6 {
+                 display: flex;
+                 flex-direction: column;
+                 justify-content: space-between;
+                 min-height: 530px;
+             }

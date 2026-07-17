@@ -1,6 +1,10 @@
 # Local Netlify folder
 .netlify
 node_modules/
+
+# Astro build output/cache
+dist/
+.astro/
 .venv/
 .venv_imgtools/
 www/

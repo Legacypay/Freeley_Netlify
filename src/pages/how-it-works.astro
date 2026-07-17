@@ -1,0 +1,720 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout title="How it Works" bodyClass="hiw">
+  <Fragment slot="head">
+    <!-- Font playfair display embed -->
+    <link rel="stylesheet" href="/style/worksstyle.css" />
+  </Fragment>
+
+
+    <Header />
+    <section class="hero-section text-center" style="margin-top: -93px;">
+        <div class="container">
+            <div class="bordered--heading inline-block px-4">
+                <span class="text-uppercase">HOW IT WORKS</span>
+            </div>
+            <h1 class="hero-title mt-4">From your couch<br>to your <span>doorstep</span></h1>
+            <p class="hero-subtitle mx-auto mt-6">
+                The entire Freeley experience — from your first visit to your first refill — is designed to be effortless, fast, and fully remote.
+            </p>
+            <a href="javascript:void(0)" class="global--qua--button py-1 px-4 pe-1 md:mt-0 flex">
+                <img class="btn--icon" src="/assets/icons/arrow-right.svg">
+                <small>See if you Quality</small>
+            </a>
+        </div>
+    </section>
+    <section>
+        <div id="quiz--modal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="close--quiz"><img src="/assets/icons/close.png" /></span>
+                <div class="processing-loader" id="loader"></div>
+                <div id="quiz--container"></div>
+            </div>
+        </div>
+    </section>
+    <section class="timeline-section">
+        <div class="container custom-container relative">
+
+            <div class="timeline-line"></div>
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-x-6 timeline-row">
+                <div class="md:col-span-5 text-content order-2 md:order-1">
+
+                    <div class="step-number flex md:hidden">1</div>
+
+                    <h2 class="step-title pe-0 md:pe-12">Complete Your Health Intake</h2>
+                    <p class="step-text">Answer a brief, HIPAA-secure health questionnaire on any device. We ask about your goals, symptoms, medical history, current medications, and lifestyle preferences. No appointment. No waiting room.</p>
+                    <div class="tip-box">
+                        <strong>Tip:</strong> Have your current medication list handy if applicable — it speeds up physician review.
+                    </div>
+                </div>
+                <div class="md:col-span-2 text-center relative order-1 md:order-2 my-6 md:my-0">
+                    <div class="step-number">1</div>
+                </div>
+                <div class="md:col-span-5 order-3">
+                    <div class="img-container gray-bg">
+
+                        <!-- imgage line 1 -->
+
+                        <img src="/assets/howItsWork/Complete_Your_Health_Intake.png" alt="">
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-x-6 timeline-row">
+                <div class="md:col-span-5 order-3 md:order-1">
+                    <div class="img-container gray-bg">
+                        <!-- imgage line 2 -->
+
+                        <img src="/assets/howItsWork/Physician_Reviews_Your_Profile.png" alt="">
+
+                    </div>
+                </div>
+                <div class="md:col-span-2 text-center relative order-1 md:order-2 my-6 md:my-0">
+                    <div class="step-number">2</div>
+                </div>
+                <div class="md:col-span-5 text-content order-2 md:order-3">
+                    <div class="step-number flex md:hidden">2</div>
+                    <h2 class="step-title pe-0 md:pe-12">Physician Reviews Your Profile</h2>
+                    <p class="step-text">A board-certified physician licensed in your state reviews your intake, evaluates your eligibility, and designs your personalized treatment protocol. They may request additional information or labs before finalizing your plan.</p>
+                    <div class="tip-box">
+                        <strong>Note:</strong> All decisions are made by licensed physicians — never an algorithm or AI replacement.
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-x-6 timeline-row">
+                <div class="md:col-span-5 text-content order-2 md:order-1">
+                    <div class="step-number flex md:hidden">3</div>
+                    <h2 class="step-title pe-0 md:pe-12">You Receive Your Treatment Plan</h2>
+                    <p class="step-text">Once approved, your physician's treatment plan is sent to your Freeley account. This includes your diagnosis, prescribed medication, dosage, titration schedule, and care instructions. You can message your physician with any questions
+                        before agreeing.</p>
+                    <div class="tip-box">
+                        <strong>Your plan includes:</strong> Medication name, dose, delivery format, titration schedule, and refill cadence.
+                    </div>
+                </div>
+                <div class="md:col-span-2 text-center relative order-1 md:order-2 my-6 md:my-0">
+                    <div class="step-number">3</div>
+                </div>
+                <div class="md:col-span-5 order-3">
+                    <div class="img-container gray-bg flex justify-center" style="min-height: 300px;">
+                        <!-- imgage line 3 -->
+
+                        <img src="/assets/howItsWork/You_Receive_Your_Treatment_Plan.png" alt="">
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-x-6 timeline-row">
+                <div class="md:col-span-5 order-3 md:order-1">
+                    <div class="img-container gray-bg flex justify-center" style="min-height: 300px;">
+                        <!-- imgage line 4 -->
+
+                        <img src="/assets/howItsWork/Pharmacy Compounds Your Medication.png" alt="">
+                    </div>
+                </div>
+                <div class="md:col-span-2 text-center relative order-1 md:order-2 my-6 md:my-0">
+                    <div class="step-number">4</div>
+                </div>
+                <div class="md:col-span-5 text-content order-2 md:order-3">
+                    <div class="step-number flex md:hidden">4</div>
+                    <h2 class="step-title pe-0 md:pe-12">Pharmacy Compounds Your Medication</h2>
+                    <p class="step-text">Your prescription is routed to one of our 503B-licensed compounding pharmacy partners. Your medication is compounded fresh from pharmaceutical-grade ingredients to exact specifications. Quality tested and verified before shipment.</p>
+                    <div class="tip-box">
+                        <strong>Quality standard:</strong> USP 797 compliant. Tested for potency, sterility, and purity.
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-x-6 timeline-row">
+                <div class="md:col-span-5 text-content order-2 md:order-1">
+                    <div class="step-number flex md:hidden active-step">5</div>
+                    <h2 class="step-title pe-0 md:pe-12">Delivered to Your Door</h2>
+                    <p class="step-text">Your medication ships in discreet, climate-controlled packaging with detailed instructions, supplies (if applicable), and your physician's contact for follow-up. Track your shipment in real time through your Freeley account.</p>
+                    <div class="tip-box">
+                        <strong>Packaging:</strong> Unmarked exterior. No indication of pharmaceutical contents on outside of package.
+                    </div>
+                </div>
+                <div class="md:col-span-2 text-center relative order-1 md:order-2 my-6 md:my-0">
+                    <div class="step-number">5</div>
+                </div>
+                <div class="md:col-span-5 order-3">
+                    <div class="img-container gray-bg">
+                        <!-- imgage line 5 -->
+
+                        <img src="/assets/howItsWork/Delivered_to_Your_Door.png" alt="">
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-x-6 timeline-row">
+                <div class="md:col-span-5 order-3 md:order-1">
+                    <div class="img-container gray-bg">
+                        <!-- imgage line 6 -->
+
+                        <img src="/assets/howItsWork/Ongoing_Care_&_Automatic_Refills.png" alt="">
+
+                    </div>
+                </div>
+                <div class="md:col-span-2 text-center relative order-1 md:order-2 my-6 md:my-0">
+                    <div class="step-number">6</div>
+                </div>
+                <div class="md:col-span-5 text-content order-2 md:order-3">
+                    <div class="step-number flex md:hidden">6</div>
+                    <h2 class="step-title pe-0 md:pe-12">Ongoing Care & Automatic Refills</h2>
+                    <p class="step-text">Your physician monitors your progress, adjusts your dosage as needed, and refills automatically so you never run out. Monthly check-ins keep your treatment optimized. Quarterly labs ensure you're always in a safe and effective range.</p>
+                    <div class="tip-box">
+                        <strong>Included:</strong> Monthly check-ins, dosage adjustments, lab monitoring, and unlimited physician messaging.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+
+
+    <!-- carousel 1 -->
+    <section class="everything_managed overflow-hidden mb-12 ps-2 md:ps-0">
+        <div class="container">
+            <div class="results-header">
+                <div class="bordered--heading inline-block px-4">
+                    <span class="text-uppercase">THE PLATFORM</span>
+                </div>
+                <h1 class="hero-title mt-4 mb-12">Everything managed<br> <span>in one place</span></h1>
+
+            </div>
+            <!-- Swiper Container -->
+
+
+            <!-- Desktop Swiper -->
+            <div class="swiper ok--section desktop pb-5 homepage small-text desktop">
+                <div class="swiper-wrapper gorgeous--items">
+
+                    <!-- Slide 1 -->
+                    <div class="swiper-slide physician-messaging">
+                        <div class="gorgeous--item flex items-end">
+                            <div class="text-content flex flex-col justify-end items-start h-full w-full relative z-1">
+                                <h2 class="text-left mb-4 pe-12">Physician Messaging</h2>
+                                <div class="text-14-inter dark">
+                                    Your physician monitors your progress, adjusts your dosage as needed, and refills automatically so you never run out. Monthly check-ins keep your treatment optimized. Quarterly labs ensure you're always in a safe and effective range.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slide 2 -->
+                    <div class="swiper-slide progress-dashboard">
+                        <div class="gorgeous--item flex items-end">
+                            <div class="text-content flex flex-col justify-end items-start h-full w-full relative z-1">
+                                <h2 class="text-left mb-4 pe-12">Progress Dashboard</h2>
+                                <div class="text-14-inter dark">
+                                    Track your weight, lab values, and treatment history over time. Visual charts make it easy to see your progress and share with your physician.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slide 3 -->
+                    <div class="swiper-slide smart-reminders">
+                        <div class="gorgeous--item flex items-end">
+                            <div class="text-content flex flex-col justify-end items-start h-full w-full relative z-1">
+                                <h2 class="text-left mb-4 pe-12">Smart Reminders</h2>
+                                <div class="text-14-inter dark">
+                                    Dosing reminders, refill notifications, and lab scheduling alerts — all configurable to your preferences. Never miss a dose or a check-in.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slide 4 -->
+                    <div class="swiper-slide document-vault">
+                        <div class="gorgeous--item flex items-end">
+                            <div class="text-content flex flex-col justify-end items-start h-full w-full relative z-1">
+                                <h2 class="text-left mb-4 pe-12">Document Vault</h2>
+                                <div class="text-14-inter dark">
+                                    All your prescriptions, lab results, and physician notes are securely stored and accessible anytime. Export and share with your PCP as needed.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+    <!-- carousel 2 -->
+    <section class="pharmacy-section py-12">
+        <div class="container custom-container">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+
+                <!-- Left Content Column -->
+                <div class="px-2">
+
+                    <div class="bordered--heading inline-block px-4">
+                        <span class="text-uppercase">PHARMACY STANDARDS</span>
+                    </div>
+                    <h1 class="hero-title mt-4">Only the best<br><span>pharmacy partners</span></h1>
+                    <p class="hero-subtitle mx-auto mt-6">
+                        We only partner with 503A-licensed compounding pharmacies that meet the highest standards of quality, safety, and compliance.
+                    </p>
+
+                    <!-- Grid of Badges -->
+                    <div class="badge-grid flex flex-wrap gap-2">
+                        <span class="feature-badge">503A Licensed</span>
+                        <span class="feature-badge">USP 797 Compliant</span>
+                        <span class="feature-badge">State Board Approved</span>
+                        <span class="feature-badge">PCAB Accredited</span>
+                        <span class="feature-badge">Third-Party Tested</span>
+                        <span class="feature-badge">Cold Chain Verified</span>
+                    </div>
+                </div>
+
+                <!-- Right Specifications Card Column -->
+                <div class="px-2">
+                    <div class="spec-card">
+                        <h3 class="card-heading">Medication specifications</h3>
+
+                        <div class="embeded--map overflow-hidden">
+                            <div class="mapouter">
+                                <div class="gmap_canvas"><iframe class="gmap_iframe" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=600&amp;height=140&amp;hl=en&amp;q=Florida&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"></iframe>
+                                    <a href="https://embed-googlemap.com">embed google map</a>
+                                </div>
+                                <style>
+                                    .mapouter {
+                                        position: relative;
+                                        text-align: right;
+                                        width: 600px;
+                                        height: 140px;
+                                    }
+                                    
+                                    .gmap_canvas {
+                                        overflow: hidden;
+                                        background: none!important;
+                                        width: 600px;
+                                        height: 140px;
+                                    }
+                                    
+                                    .gmap_iframe {
+                                        width: 600px!important;
+                                        height: 140px!important;
+                                    }
+                                </style>
+                            </div>
+                        </div>
+
+
+                        <div class="spec-table mt-6 mb-6">
+                            <div class="spec-row flex justify-between">
+                                <span class="spec-label">Active Ingredient</span>
+                                <span class="spec-value text-right">Pharmaceutical-grade USP</span>
+                            </div>
+                            <div class="spec-row flex justify-between">
+                                <span class="spec-label">Potency Testing</span>
+                                <span class="spec-value text-right">98–102% verified</span>
+                            </div>
+                            <div class="spec-row flex justify-between">
+                                <span class="spec-label">Sterility Testing</span>
+                                <span class="spec-value text-right">Passed before shipment</span>
+                            </div>
+                            <div class="spec-row flex justify-between">
+                                <span class="spec-label">Endotoxin Testing</span>
+                                <span class="spec-value text-right">USP threshold compliant</span>
+                            </div>
+                            <div class="spec-row flex justify-between">
+                                <span class="spec-label">Storage temp</span>
+                                <span class="spec-value text-right">2–8°C cold chain</span>
+                            </div>
+                            <div class="spec-row flex justify-between">
+                                <span class="spec-label">Expiry</span>
+                                <span class="spec-value text-right">Per batch CoA documentation</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+
+    <section class="everything_managed second overflow-hidden mb-12">
+        <div class="container">
+            <div class="results-header">
+                <div class="bordered--heading inline-block px-4">
+                    <span class="text-uppercase">SAFETY FIRST</span>
+                </div>
+                <h1 class="hero-title mt-4 mb-12">Your Safety is<br> <span>non-negotiable</span></h1>
+
+            </div>
+            <!-- Swiper Container -->
+            <div class="swiper results-grid">
+                <div class="swiper-wrapper">
+                    <!-- Card 1 -->
+                    <div class="swiper-slide">
+                        <div class="result-item">
+
+                            <!-- Your Safety Card 1 -->
+
+                            <img src="/assets//howItsWork/yourSafety1.png" alt="">
+
+
+                        </div>
+                    </div>
+                    <!-- Card 2 -->
+                    <div class="swiper-slide">
+                        <div class="result-item">
+                            <!-- Your Safety Card 2 -->
+
+                            <img src="/assets//howItsWork/yourSafety2.png" alt="">
+
+
+                        </div>
+                    </div>
+                    <!-- Card 3 -->
+                    <div class="swiper-slide">
+                        <div class="result-item">
+                            <!-- Your Safety Card 3 -->
+
+                            <img src="/assets//howItsWork/yourSafety3.png" alt="">
+
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <section class="cta--sec py-12 hidden md:block" style="background-image: url(/assets/cta-girl.png);">
+        <div class="container py-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 items-center">
+                <div>
+                    <div class="section--title">
+                        <h2 class="text-light">Your Body Deserves Better Than Guesswork. Live Freeley.</h2>
+                    </div>
+
+                    <p class="text-light mb-12">
+                        Start with a free medical visit. No commitment. No insurance required.
+                    </p>
+                </div>
+
+                <div style="min-height: 300px;display: flex;align-items: end;">
+                    <div class="ctas flex flex-col md:flex-row items-center md:items-start gap-4 w-full">
+                        <a href="javascript:void(0)" id="start-full-assessment" class="global--qua--button bg-white global--green">
+                            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="32" height="32" rx="16" fill="#004C27" />
+                                <path d="M17.6201 11.9531L21.6668 15.9998L17.6201 20.0465" stroke="white"
+                                    stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                                <path d="M10.333 16H21.553" stroke="white" stroke-width="1.5" stroke-miterlimit="10"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                            </svg> Start Your Assessment
+                        </a>
+
+                        <a href="javascript:void(0)" id="start-assessment-header" class="global--qua--button secondory px-12">
+                            Or browse plan pricing
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta--sec-home-mobile py-12 mobile">
+        <div class="container py-12">
+            <div>
+                <div>
+                    <div class="section--title">
+                        <h2 class="text-light">Start with a free medical visit. No commitment. No insurance required.
+                        </h2>
+                    </div>
+                    <p class="text-light mb-12">
+                        Start with a free medical visit. No commitment. No insurance required.
+                    </p>
+                </div>
+                <div class="ctas flex flex-col md:flex-row items-center md:items-start gap-4 w-full">
+                    <a href="javascript:void(0)" class="global--qua--button bg-white global--green w-full">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="32" height="32" rx="16" fill="#004C27" />
+                            <path d="M17.6201 11.9531L21.6668 15.9998L17.6201 20.0465" stroke="white" stroke-width="1.5"
+                                stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M10.333 16H21.553" stroke="white" stroke-width="1.5" stroke-miterlimit="10"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg> Start Your Assessment
+                    </a>
+
+                    <a href="javascript:void(0)" class="global--qua--button secondory px-6 w-full">
+                        Or browse plan pricing
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-------------------------------------
+        ************** FOOTER ******************
+        -------------------------------------->
+    <div class="container-fluid">
+<div class="footer--header grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6 items-center pb-12">
+                <div class="flex flex-col gap-4">
+                    <h2 class="text-5xl mb-0 font-normal">
+                        Feel better,<br />
+                        <span class="italic">starting today</span>
+                    </h2>
+                    <p class="text-white/50 text-14-inter">
+                        Personalized care for every part of you from weight to skin, sleep to sexual health.
+                    </p>
+                </div>
+
+                <div class="flex flex-col items-start md:items-end gap-6">
+                    <div>
+                        <a href="javascript:void(0)" id="start-assessment" class="global--qua--button bg-white px-4 pe-2 w-full">
+                            <img class="btn--icon" src="/assets/home/icons/icon-right-green.svg" /> Start Your Assessment
+                        </a>
+                    </div>
+
+                    <div class="flex flex-wrap justify-start md:justify-end gap-4 text-white/50 text-sm">
+                        <div class="flex text-white items-center gap-1 text-14-inter">
+                            <span class="text-white"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M9 1.5C4.8675 1.5 1.5 4.8675 1.5 9C1.5 13.1325 4.8675 16.5 9 16.5C13.1325 16.5 16.5 13.1325 16.5 9C16.5 4.8675 13.1325 1.5 9 1.5ZM12.585 7.275L8.3325 11.5275C8.2275 11.6325 8.085 11.6925 7.935 11.6925C7.785 11.6925 7.6425 11.6325 7.5375 11.5275L5.415 9.405C5.1975 9.1875 5.1975 8.8275 5.415 8.61C5.6325 8.3925 5.9925 8.3925 6.21 8.61L7.935 10.335L11.79 6.48C12.0075 6.2625 12.3675 6.2625 12.585 6.48C12.8025 6.6975 12.8025 7.05 12.585 7.275Z"
+                                        fill="white" />
+                                </svg>
+                            </span> No credit card required
+                        </div>
+                        <div class="flex text-white items-center gap-1 text-14-inter">
+                            <span class=""><svg width="18" height="18" viewBox="0 0 18 18" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M9 1.5C4.8675 1.5 1.5 4.8675 1.5 9C1.5 13.1325 4.8675 16.5 9 16.5C13.1325 16.5 16.5 13.1325 16.5 9C16.5 4.8675 13.1325 1.5 9 1.5ZM12.585 7.275L8.3325 11.5275C8.2275 11.6325 8.085 11.6925 7.935 11.6925C7.785 11.6925 7.6425 11.6325 7.5375 11.5275L5.415 9.405C5.1975 9.1875 5.1975 8.8275 5.415 8.61C5.6325 8.3925 5.9925 8.3925 6.21 8.61L7.935 10.335L11.79 6.48C12.0075 6.2625 12.3675 6.2625 12.585 6.48C12.8025 6.6975 12.8025 7.05 12.585 7.275Z"
+                                        fill="white" />
+                                </svg>
+                            </span> Takes 2 minutes
+                        </div>
+                        <div class="flex text-white items-center gap-1 text-14-inter">
+                            <span class="text-white"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M9 1.5C4.8675 1.5 1.5 4.8675 1.5 9C1.5 13.1325 4.8675 16.5 9 16.5C13.1325 16.5 16.5 13.1325 16.5 9C16.5 4.8675 13.1325 1.5 9 1.5ZM12.585 7.275L8.3325 11.5275C8.2275 11.6325 8.085 11.6925 7.935 11.6925C7.785 11.6925 7.6425 11.6325 7.5375 11.5275L5.415 9.405C5.1975 9.1875 5.1975 8.8275 5.415 8.61C5.6325 8.3925 5.9925 8.3925 6.21 8.61L7.935 10.335L11.79 6.48C12.0075 6.2625 12.3675 6.2625 12.585 6.48C12.8025 6.6975 12.8025 7.05 12.585 7.275Z"
+                                        fill="white" />
+                                </svg>
+                            </span> Cancel anytime
+                        </div>
+                    </div>
+                </div>
+            </div>
+</div>
+
+<Footer />
+
+    <script is:inline>
+        // Highlights timeline node as user scrolls down
+        window.addEventListener('scroll', () => {
+            const steps = document.querySelectorAll('.step-number');
+            const triggerPoint = window.innerHeight * 0.8;
+
+            steps.forEach(step => {
+                const stepTop = step.getBoundingClientRect().top;
+                if (stepTop < triggerPoint) {
+                    step.classList.add('active-step');
+                } else {
+                    step.classList.remove('active-step');
+                }
+            });
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" is:inline></script>
+    <script is:inline>
+        // ================= Everything Managed =================
+        const wrapper = document.querySelector('.everything_managed .swiper-wrapper');
+
+        // Store original slides
+        const originalSlides = Array.from(wrapper.children);
+
+        // Duplicate 3 more times (total = 4 copies)
+        for (let i = 0; i < 3; i++) {
+            originalSlides.forEach(slide => {
+                wrapper.appendChild(slide.cloneNode(true));
+            });
+        }
+
+        new Swiper('.everything_managed .swiper', {
+            slidesPerView: 'auto',
+            spaceBetween: 24,
+            // loop: true,
+            // grabCursor: true,
+
+            // autoplay: {
+            //     delay: 5000,
+            //     disableOnInteraction: false,
+            // },
+        });
+
+        // ================= Transformation Slider =================
+
+        const transformationWrapper = document.querySelector('.everything_managed.second .swiper-wrapper');
+
+        // Store original slides
+        const originalSlides2 = Array.from(transformationWrapper.children);
+
+        // Duplicate 3 more times
+        for (let i = 0; i < 3; i++) {
+            originalSlides2.forEach(slide => {
+                transformationWrapper.appendChild(slide.cloneNode(true));
+            });
+        }
+
+        new Swiper('.everything_managed.second .swiper', {
+            slidesPerView: "auto",
+            spaceBetween: 24,
+            freeMode: false,
+            autoplay: {
+                delay: 5000,
+            },
+            direction: "horizontal",
+            loop: true,
+            grabCursor: true,
+            mousewheel: false,
+            centeredSlides: false,
+        });
+    </script>
+
+    <script is:inline>
+        const modal = document.getElementById('quiz--modal');
+        const loader = document.getElementById('loader');
+        const quizContainer = document.getElementById('quiz--container');
+        let quizIframe = null;
+
+        document.querySelectorAll(
+            '#start-assessment, #start-assessment-header, #start-full-assessment'
+        ).forEach(button => {
+            button.addEventListener('click', () => {
+                // If iframe exists, remove it first
+                if (quizIframe) {
+                    quizIframe.remove();
+                    quizIframe = null;
+                }
+
+                modal.style.display = 'block';
+                loader.style.display = 'block';
+                quizContainer.innerHTML = '';
+
+                // Create new iframe
+                quizIframe = document.createElement('iframe');
+                quizIframe.style.width = '100%';
+                quizIframe.style.height = '605px';
+                quizIframe.style.border = 'none';
+                quizIframe.style.borderRadius = '0';
+                quizIframe.style.display = 'none';
+                quizIframe.style.background = '#0000004D';
+
+                // Load with cache-busting
+                quizIframe.src = '/assessment-quiz?t=' + Date.now();
+
+                quizIframe.onload = function() {
+                    loader.style.display = 'none';
+                    quizIframe.style.display = 'block';
+
+                    // Apply styles to iframe body (if you have access)
+                    try {
+                        const iframeDoc = quizIframe.contentDocument || quizIframe.contentWindow.document;
+                        if (iframeDoc) {
+                            const style = iframeDoc.createElement('style');
+                            style.textContent = `
+                            body {
+                                background: #0000004D !important;
+                                border: 0 !important;
+                                border-radius: 0 !important;
+                                height: 100vh;
+                                margin: 0;
+                            }
+                        `;
+                            iframeDoc.head.appendChild(style);
+                        }
+                    } catch (e) {
+                        // Cross-origin restrictions may prevent this
+                        console.log('Cannot style iframe body due to CORS');
+                    }
+                };
+
+                quizIframe.onerror = function() {
+                    loader.style.display = 'none';
+                    quizContainer.innerHTML = '<p>Unable to load quiz.</p>';
+                };
+
+                quizContainer.appendChild(quizIframe);
+            });
+        });
+
+        function closeQuiz() {
+            // Hide modal
+            modal.style.display = 'none';
+
+            // Remove iframe completely
+            if (quizIframe) {
+                // Clear iframe content
+                try {
+                    quizIframe.src = 'about:blank';
+                    quizIframe.contentWindow.document.write('');
+                    quizIframe.contentWindow.document.clear();
+                } catch (e) {}
+
+                // Remove from DOM
+                quizIframe.remove();
+                quizIframe = null;
+            }
+
+            // Clear container
+            quizContainer.innerHTML = '';
+            loader.style.display = 'none';
+        }
+
+        document
+            .getElementById('close--quiz')
+            .addEventListener('click', closeQuiz);
+
+        // Close on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modal.style.display === 'block') {
+                closeQuiz();
+            }
+        });
+
+        // Close when clicking outside
+        window.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeQuiz();
+            }
+        });
+    </script>
+
+    <!--Start of Tawk.to Script-->
+    <script type="text/javascript" is:inline>
+        var Tawk_API = Tawk_API || {},
+            Tawk_LoadStart = new Date();
+        (function() {
+            var s1 = document.createElement("script"),
+                s0 = document.getElementsByTagName("script")[0];
+            s1.async = true;
+            s1.src = 'https://embed.tawk.to/6a454f1fb271bd1d477e9990/1jsfbq5mb';
+            s1.charset = 'UTF-8';
+            s1.setAttribute('crossorigin', '*');
+            s0.parentNode.insertBefore(s1, s0);
+        })();
+    </script>
+    <!--End of Tawk.to Script-->
+
+</Layout>
