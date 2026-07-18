@@ -151,7 +151,7 @@ import Footer from '../components/Footer.astro';
                     <div class="flex flex-col md:items-end gap-6 items-start">
                         <div>
                             <a href="javascript:void(0)" id="start-assessment" class="global--qua--button bg-white px-4 pr-2 w-full">
-                                <img class="btn--icon" id="start-assessment" src="/assets/home/icons/icon-right-green.svg" /> Start Your Assessment
+                                <img class="btn--icon" src="/assets/home/icons/icon-right-green.svg" /> Start Your Assessment
                             </a>
                         </div>
 
@@ -214,12 +214,24 @@ import Footer from '../components/Footer.astro';
             slidesPerView: 'auto',
             spaceBetween: 24,
             freeMode: false,
+            autoplay: {
+                delay: 5000,
+                pauseOnMouseEnter: true,
+                disableOnInteraction: false,
+            },
+            rewind: true,
             grabCursor: true
         });
         new Swiper('.transformation-slider.swiper', {
             slidesPerView: 2.2,
             spaceBetween: 24,
             freeMode: false,
+            autoplay: {
+                delay: 5000,
+                pauseOnMouseEnter: true,
+                disableOnInteraction: false,
+            },
+            rewind: true,
             grabCursor: true
         });
     </script>

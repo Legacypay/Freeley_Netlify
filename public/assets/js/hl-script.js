@@ -4,7 +4,7 @@ const quizContainer = document.getElementById('quiz--container');
 let quizIframe = null;
 
 document.querySelectorAll(
-    '#start-full-assessment, #start-assessment1, #start-assessment2, #start-assessment3, #start-assessment4, #start-assessment5, #start-assessment6, #start-assesment-header'
+    '#start-full-assessment, #start-assessment1, #start-assessment2, #start-assessment3, #start-assessment4, #start-assessment5, #start-assessment6, #start-assessment-header'
 ).forEach(button => {
     button.addEventListener('click', () => {
         // If iframe exists, remove it first

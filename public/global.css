@@ -666,6 +666,16 @@ input[type="number"] {
     text-decoration: none !important;
 }
 
+/* Tailwind's bg-white lives in @layer utilities, so it loses to the
+   unlayered background above — restate it unlayered for white buttons. */
+.global--qua--button.bg-white {
+    background: #fff;
+}
+
+.global--qua--button.bg-white:hover {
+    background: #f1f1ee;
+}
+
 .btn--icon {
     width: 35px;
     height: 35px;

@@ -467,7 +467,7 @@ import Footer from '../components/Footer.astro';
               States (AZ, CA, TX, FL, VA, UT, MO) to ensure efficient nationwide
               delivery.
               <br /><a
-                href="javascript:void(0)"
+                href="/partner-pharmacies"
                 class="view-locations-link ml-1 font-semibold no-underline"
                 >View all pharmacy locations &rarr;</a
               >
@@ -643,9 +643,11 @@ import Footer from '../components/Footer.astro';
             freeMode: false,
             autoplay: {
                 delay: 5000,
+                pauseOnMouseEnter: true,
+                disableOnInteraction: false,
             },
             direction: "horizontal",
-            loop: true,
+            rewind: true,
             grabCursor: true,
             mousewheel: false,
             centeredSlides: false,

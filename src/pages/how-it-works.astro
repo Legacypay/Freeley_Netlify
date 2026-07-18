@@ -21,9 +21,9 @@ import Footer from '../components/Footer.astro';
             <p class="hero-subtitle mx-auto mt-6">
                 The entire Freeley experience — from your first visit to your first refill — is designed to be effortless, fast, and fully remote.
             </p>
-            <a href="javascript:void(0)" class="global--qua--button py-1 px-4 pe-1 md:mt-0 flex">
+            <a href="javascript:void(0)" class="global--qua--button py-1 px-4 pe-1 md:mt-0 flex js-start-quiz">
                 <img class="btn--icon" src="/assets/icons/arrow-right.svg">
-                <small>See if you Quality</small>
+                <small>See if you Qualify</small>
             </a>
         </div>
     </section>
@@ -422,7 +422,7 @@ import Footer from '../components/Footer.astro';
                             </svg> Start Your Assessment
                         </a>
 
-                        <a href="javascript:void(0)" id="start-assessment-header" class="global--qua--button secondory px-12">
+                        <a href="/pricing" class="global--qua--button secondory px-12">
                             Or browse plan pricing
                         </a>
                     </div>
@@ -444,7 +444,7 @@ import Footer from '../components/Footer.astro';
                     </p>
                 </div>
                 <div class="ctas flex flex-col md:flex-row items-center md:items-start gap-4 w-full">
-                    <a href="javascript:void(0)" class="global--qua--button bg-white global--green w-full">
+                    <a href="javascript:void(0)" class="global--qua--button bg-white global--green w-full js-start-quiz">
                         <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <rect width="32" height="32" rx="16" fill="#004C27" />
                             <path d="M17.6201 11.9531L21.6668 15.9998L17.6201 20.0465" stroke="white" stroke-width="1.5"
@@ -454,7 +454,7 @@ import Footer from '../components/Footer.astro';
                         </svg> Start Your Assessment
                     </a>
 
-                    <a href="javascript:void(0)" class="global--qua--button secondory px-6 w-full">
+                    <a href="/pricing" class="global--qua--button secondory px-6 w-full">
                         Or browse plan pricing
                     </a>
                 </div>
@@ -554,13 +554,13 @@ import Footer from '../components/Footer.astro';
         new Swiper('.everything_managed .swiper', {
             slidesPerView: 'auto',
             spaceBetween: 24,
-            // loop: true,
-            // grabCursor: true,
-
-            // autoplay: {
-            //     delay: 5000,
-            //     disableOnInteraction: false,
-            // },
+            autoplay: {
+                delay: 5000,
+                pauseOnMouseEnter: true,
+                disableOnInteraction: false,
+            },
+            rewind: true,
+            grabCursor: true,
         });
 
         // ================= Transformation Slider =================
@@ -583,9 +583,11 @@ import Footer from '../components/Footer.astro';
             freeMode: false,
             autoplay: {
                 delay: 5000,
+                pauseOnMouseEnter: true,
+                disableOnInteraction: false,
             },
             direction: "horizontal",
-            loop: true,
+            rewind: true,
             grabCursor: true,
             mousewheel: false,
             centeredSlides: false,
@@ -599,7 +601,7 @@ import Footer from '../components/Footer.astro';
         let quizIframe = null;
 
         document.querySelectorAll(
-            '#start-assessment, #start-assessment-header, #start-full-assessment'
+            '#start-assessment, #start-assessment-header, #start-full-assessment, .js-start-quiz'
         ).forEach(button => {
             button.addEventListener('click', () => {
                 // If iframe exists, remove it first

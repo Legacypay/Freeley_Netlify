@@ -9,17 +9,34 @@ import image20 from '../assets/products-imgs/image-20.png';
 import image21 from '../assets/products-imgs/image-21.png';
 import beforeImg from '../assets/before-after/before.png';
 import afterImg from '../assets/before-after/after.png';
-import hipaaBadge from '../assets/badges/hipaa_badge.png';
+import trustPilot from '../assets/badges/trust_pilot.png';
 import legitScript from '../assets/badges/49921676.png';
 import usaBadge from '../assets/badges/usa_badge.png';
 import closeIcon from '../assets/icons/close.png';
 import arrowCircleRight from '../assets/icons/arrow-circle-right.png';
+import heroMob from '../assets/home/hero-mob.png';
 ---
 
 <Layout title="Compounded GLP-1 & Peptide Telehealth | Freeley Wellness">
   <Fragment slot="head">
     <!-- Font playfair display embed -->
     <style>
+        .verified-badges img {
+            height: 44px;
+            width: auto;
+            object-fit: contain;
+        }
+        .verified-badges img.badge--lg {
+            height: 58px;
+        }
+        @media (max-width: 768px) {
+            .verified-badges img {
+                height: 36px;
+            }
+            .verified-badges img.badge--lg {
+                height: 46px;
+            }
+        }
         .swiper_before_after {}
         .swiper_before_after .swiper-slide {
             max-width: fit-content;
@@ -77,10 +94,11 @@ import arrowCircleRight from '../assets/icons/arrow-circle-right.png';
               >
                 Real doctors. Real Rx. Delivered to your door
               </p>
-              <img
-                src="/assets/home/hero-mob.png"
+              <Image
+                src={heroMob}
                 alt="Freeley patients"
                 loading="eager"
+                fetchpriority="high"
                 class="hero-img-mobile w-full rounded-2xl mb-6"
               />
               <div
@@ -214,33 +232,23 @@ import arrowCircleRight from '../assets/icons/arrow-circle-right.png';
                 <div class="flex-1 hidden md:block">
                   <span>Verified &amp; Certified</span>
                 </div>
-                <div class="swiper verified-badges-swiper flex-1">
-                  <div class="swiper-wrapper items-center">
-                    <div class="swiper-slide">
-                      <Image
-                        src={hipaaBadge}
-                        alt="HIPAA compliance badge"
-                        class="img-fluid"
-                        loading="eager"
-                      />
-                    </div>
-                    <div class="swiper-slide">
-                      <Image
-                        src={legitScript}
-                        alt="LegitScript certification badge"
-                        class="img-fluid"
-                        loading="eager"
-                      />
-                    </div>
-                    <div class="swiper-slide">
-                      <Image
-                        src={usaBadge}
-                        alt="USA-based badge"
-                        class="img-fluid"
-                        loading="eager"
-                      />
-                    </div>
-                  </div>
+                <div class="verified-badges flex items-center gap-6">
+                  <Image
+                    src={trustPilot}
+                    alt="Trustpilot rating"
+                    loading="eager"
+                  />
+                  <Image
+                    src={legitScript}
+                    alt="LegitScript certification badge"
+                    class="badge--lg"
+                    loading="eager"
+                  />
+                  <Image
+                    src={usaBadge}
+                    alt="USA-based badge"
+                    loading="eager"
+                  />
                 </div>
               </div>
             </div>
@@ -383,7 +391,7 @@ import arrowCircleRight from '../assets/icons/arrow-circle-right.png';
                 ><img
                   class="btn--icon"
                   src="/assets/icons/arrow-right.svg"
-                  alt="" loading="lazy" />See if you Quality</button
+                  alt="" loading="lazy" />See if you Qualify</button
               >
               <div class="cancel-text">Cancel Anytime</div>
             </div>
@@ -433,7 +441,7 @@ import arrowCircleRight from '../assets/icons/arrow-circle-right.png';
                 ><img
                   class="btn--icon"
                   src="/assets/icons/arrow-right.svg"
-                  alt="" loading="lazy" />See if you Quality</button
+                  alt="" loading="lazy" />See if you Qualify</button
               >
               <div class="cancel-text">Cancel Anytime</div>
             </div>
@@ -483,7 +491,7 @@ import arrowCircleRight from '../assets/icons/arrow-circle-right.png';
                 ><img
                   class="btn--icon"
                   src="/assets/icons/arrow-right.svg"
-                  alt="" loading="lazy" />See if you Quality</button
+                  alt="" loading="lazy" />See if you Qualify</button
               >
               <div class="cancel-text">Cancel Anytime</div>
             </div>
@@ -533,7 +541,7 @@ import arrowCircleRight from '../assets/icons/arrow-circle-right.png';
                 ><img
                   class="btn--icon"
                   src="/assets/icons/arrow-right.svg"
-                  alt="" loading="lazy" />See if you Quality</button
+                  alt="" loading="lazy" />See if you Qualify</button
               >
               <div class="cancel-text">Cancel Anytime</div>
             </div>
@@ -644,11 +652,11 @@ import arrowCircleRight from '../assets/icons/arrow-circle-right.png';
                   <div class="compare-wrapper">
                     <div class="before-box">
                       <span class="compare-label">Before</span
-                      ><Image src={beforeImg} alt="Before" loading="eager" />
+                      ><Image src={beforeImg} alt="Before" loading="lazy" />
                     </div>
                     <div class="after-box">
                       <span class="compare-label">After</span
-                      ><Image src={afterImg} alt="After" loading="eager" />
+                      ><Image src={afterImg} alt="After" loading="lazy" />
                     </div>
                   </div>
                   <div class="transform-quote">
@@ -664,11 +672,11 @@ import arrowCircleRight from '../assets/icons/arrow-circle-right.png';
                   <div class="compare-wrapper">
                     <div class="before-box">
                       <span class="compare-label">Before</span
-                      ><Image src={beforeImg} alt="Before" loading="eager" />
+                      ><Image src={beforeImg} alt="Before" loading="lazy" />
                     </div>
                     <div class="after-box">
                       <span class="compare-label">After</span
-                      ><Image src={afterImg} alt="After" loading="eager" />
+                      ><Image src={afterImg} alt="After" loading="lazy" />
                     </div>
                   </div>
                   <div class="transform-quote">
@@ -684,11 +692,11 @@ import arrowCircleRight from '../assets/icons/arrow-circle-right.png';
                   <div class="compare-wrapper">
                     <div class="before-box">
                       <span class="compare-label">Before</span
-                      ><Image src={beforeImg} alt="Before" loading="eager" />
+                      ><Image src={beforeImg} alt="Before" loading="lazy" />
                     </div>
                     <div class="after-box">
                       <span class="compare-label">After</span
-                      ><Image src={afterImg} alt="After" loading="eager" />
+                      ><Image src={afterImg} alt="After" loading="lazy" />
                     </div>
                   </div>
                   <div class="transform-quote">
@@ -704,11 +712,11 @@ import arrowCircleRight from '../assets/icons/arrow-circle-right.png';
                   <div class="compare-wrapper">
                     <div class="before-box">
                       <span class="compare-label">Before</span
-                      ><Image src={beforeImg} alt="Before" loading="eager" />
+                      ><Image src={beforeImg} alt="Before" loading="lazy" />
                     </div>
                     <div class="after-box">
                       <span class="compare-label">After</span
-                      ><Image src={afterImg} alt="After" loading="eager" />
+                      ><Image src={afterImg} alt="After" loading="lazy" />
                     </div>
                   </div>
                   <div class="transform-quote">
@@ -724,11 +732,11 @@ import arrowCircleRight from '../assets/icons/arrow-circle-right.png';
                   <div class="compare-wrapper">
                     <div class="before-box">
                       <span class="compare-label">Before</span
-                      ><Image src={beforeImg} alt="Before" loading="eager" />
+                      ><Image src={beforeImg} alt="Before" loading="lazy" />
                     </div>
                     <div class="after-box">
                       <span class="compare-label">After</span
-                      ><Image src={afterImg} alt="After" loading="eager" />
+                      ><Image src={afterImg} alt="After" loading="lazy" />
                     </div>
                   </div>
                   <div class="transform-quote">
@@ -744,11 +752,11 @@ import arrowCircleRight from '../assets/icons/arrow-circle-right.png';
                   <div class="compare-wrapper">
                     <div class="before-box">
                       <span class="compare-label">Before</span
-                      ><Image src={beforeImg} alt="Before" loading="eager" />
+                      ><Image src={beforeImg} alt="Before" loading="lazy" />
                     </div>
                     <div class="after-box">
                       <span class="compare-label">After</span
-                      ><Image src={afterImg} alt="After" loading="eager" />
+                      ><Image src={afterImg} alt="After" loading="lazy" />
                     </div>
                   </div>
                   <div class="transform-quote">
@@ -1193,7 +1201,7 @@ import arrowCircleRight from '../assets/icons/arrow-circle-right.png';
               <div class="numbers--item item--2 flex items-end">
                 <div class="text-content md:w-2/3">
                   <div class="numbers--text">24hr</div>
-                  <div class="green--text  mb-4">Avg.physician esponse</div>
+                  <div class="green--text  mb-4">Avg. physician response</div>
                   <div class="dark">
                     From intake to physician review and prescription — often same day.
                   </div>
@@ -1230,7 +1238,7 @@ import arrowCircleRight from '../assets/icons/arrow-circle-right.png';
         </div>
       </section>
 
-      <section id="rhemsleves-main" class="hidden">
+      <section id="rhemsleves-mobile" class="hidden">
         <div class="container">
           <div class="heading-wrap">
             <div class="section--title">
@@ -1429,11 +1437,11 @@ import arrowCircleRight from '../assets/icons/arrow-circle-right.png';
               </div>
             </div>
             <div class="relative z-1 mt-12 pt-4">
-              <button type="button" id="start-assessment8" class="global--qua--button"
+              <button type="button" id="start-assessment9" class="global--qua--button"
                 ><img
                   class="btn--icon"
                   src="/assets/icons/arrow-right.svg"
-                  alt="" loading="lazy" />See if you Quality</button
+                  alt="" loading="lazy" />See if you Qualify</button
               >
             </div>
           </div>
@@ -2098,7 +2106,7 @@ import arrowCircleRight from '../assets/icons/arrow-circle-right.png';
               </p>
 
               <div class="flex flex-col md:flex-row gap-4">
-                <button type="button" id="start-assessment5" class="global--qua--button px-4 w-full">
+                <button type="button" id="start-assessment10" class="global--qua--button px-4 w-full">
                   <img
                     class="btn--icon"
                     src="/assets/icons/arrow-right.svg"
@@ -2126,7 +2134,7 @@ import arrowCircleRight from '../assets/icons/arrow-circle-right.png';
         let quizIframe = null;
         document
             .querySelectorAll(
-                "#start-assessment1, #start-assessment2, #start-assessment3, #start-assessment4, #start-assessment5, #start-assessment7, #start-assessment8, #start-full-assessment, #start-assessment-header",
+                "#start-assessment1, #start-assessment2, #start-assessment3, #start-assessment4, #start-assessment5, #start-assessment7, #start-assessment8, #start-assessment9, #start-assessment10, #start-full-assessment, #start-assessment-header",
             )
             .forEach((button) => {
                 button.addEventListener("click", () => {
@@ -2232,19 +2240,6 @@ import arrowCircleRight from '../assets/icons/arrow-circle-right.png';
     </script>
 
     <script is:inline>
-        new Swiper(".verified-badges-swiper", {
-            slidesPerView: "auto",
-            autoplay: {
-                delay: 5000,
-                pauseOnMouseEnter: true,
-                disableOnInteraction: false,
-            },
-            direction: "horizontal",
-            rewind: true,
-            spaceBetween: 32,
-            freeMode: false,
-            grabCursor: true,
-        });
         new Swiper(".patient-results .swiper", {
             slidesPerView: "auto",
             autoplay: {
@@ -2274,6 +2269,12 @@ import arrowCircleRight from '../assets/icons/arrow-circle-right.png';
 
         new Swiper(".brand--grid--hero--2.swiper", {
             slidesPerView: "auto",
+            autoplay: {
+                delay: 5000,
+                pauseOnMouseEnter: true,
+                disableOnInteraction: false,
+            },
+            rewind: true,
             spaceBetween: 24,
             freeMode: false,
             grabCursor: true,

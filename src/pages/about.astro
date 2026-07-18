@@ -242,7 +242,7 @@ import Footer from '../components/Footer.astro';
 </svg> Start Your Assessment
                             </a>
 
-                            <a href="javascript:void(0)" class="global--qua--button secondory px-5">
+                            <a href="/pricing" class="global--qua--button secondory px-5">
                         Or browse plan pricing
                     </a>
                         </div>
@@ -263,7 +263,7 @@ import Footer from '../components/Footer.astro';
                         </p>
                     </div>
                     <div class="ctas flex flex-col md:flex-row items-center md:items-start gap-4 w-full">
-                        <a href="javascript:void(0)" class="global--qua--button bg-white global--green w-full">
+                        <a href="javascript:void(0)" class="global--qua--button bg-white global--green w-full js-start-quiz">
                             <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
 <rect width="32" height="32" rx="16" fill="#004C27"/>
 <path d="M17.6201 11.9531L21.6668 15.9998L17.6201 20.0465" stroke="white" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
@@ -271,7 +271,7 @@ import Footer from '../components/Footer.astro';
 </svg> Start Your Assessment
                         </a>
 
-                        <a href="javascript:void(0)" class="global--qua--button secondory px-6 w-full">
+                        <a href="/pricing" class="global--qua--button secondory px-6 w-full">
                         Or browse plan pricing
                     </a>
                     </div>
@@ -366,9 +366,11 @@ import Footer from '../components/Footer.astro';
             grabCursor: true,
             autoplay: {
                 delay: 5000,
+                pauseOnMouseEnter: true,
+                disableOnInteraction: false,
             },
             direction: 'horizontal',
-            loop: true,
+            rewind: true,
             mousewheel: false,
             centeredSlides: false,
         });
@@ -379,9 +381,11 @@ import Footer from '../components/Footer.astro';
             freeMode: false,
             autoplay: {
                 delay: 5000,
+                pauseOnMouseEnter: true,
+                disableOnInteraction: false,
             },
             direction: 'horizontal',
-            loop: true,
+            rewind: true,
             grabCursor: true,
             mousewheel: false,
             centeredSlides: false,
@@ -397,7 +401,7 @@ import Footer from '../components/Footer.astro';
         let quizIframe = null;
 
         document.querySelectorAll(
-            '#start-assessment, #start-assessment-header, #start-quiz-btn2'
+            '#start-assessment, #start-assessment-header, #start-quiz-btn2, .js-start-quiz'
         ).forEach(button => {
             button.addEventListener('click', () => {
                 // If iframe exists, remove it first

@@ -65,12 +65,12 @@ import Footer from '../components/Footer.astro';
                 <h2 class="serif-heading text-white text-center">Still have questions?</h2>
                 <p class="text-white text-center py-4">Our care team is available Monday–Saturday and responds within 2 hours.</p>
                 <div class="cta--buttons flex flex-col md:flex-row justify-start gap-4">
-                    <a href="javascript:void(0)" class="global--qua--button bg-white px-4 pr-2 w-full">
+                    <a href="mailto:support@freeley.com" class="global--qua--button bg-white px-4 pr-2 w-full">
                         <img class="btn--icon" src="/assets/home/icons/icon-right-green.svg"> Contact Us
                     </a>
-                    <a href="javascript:void(0)" class="global--qua--button transparent px-4 pr-2 w-full">
+                    <a href="javascript:void(0)" class="global--qua--button transparent px-4 pr-2 w-full js-start-quiz">
 
-                            See if you Quality
+                            See if you Qualify
                 </a>
                 </div>
             </div>
@@ -360,7 +360,7 @@ import Footer from '../components/Footer.astro';
         let quizIframe = null;
 
         document.querySelectorAll(
-            '#start-assessment, #start-full-assessment, #start-assessment-header'
+            '#start-assessment, #start-full-assessment, #start-assessment-header, .js-start-quiz'
         ).forEach(button => {
             button.addEventListener('click', () => {
                 // If iframe exists, remove it first

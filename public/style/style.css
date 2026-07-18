@@ -3020,6 +3020,38 @@ section.cta--inner__pages::after {
     border-bottom: 1px solid #FFFFFF1A
 }
 
+/* The pre-footer strip uses white text and expects the footer's dark
+   green behind it; its bare .container-fluid wrapper has no background. */
+.container-fluid:has(> .footer--header) {
+    background-color: var(--secondary-color);
+    padding: 48px 40px 0;
+}
+
+.footer--header h2 {
+    color: #fff;
+}
+
+/* Same layering issue as bg-white: the strip's text-white utilities
+   lose to unlayered color rules — restate the colors unlayered. */
+.footer--header p {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.footer--header .text-14-inter {
+    color: #fff;
+}
+
+/* More layering victims: text-white utilities on the referral banner
+   and the green FAQ CTA lose to unlayered p/.text-14-inter colors. */
+.cta--inner__pages p {
+    color: #fff;
+}
+
+.cta--green p,
+.cta--green .text-14-inter {
+    color: #fff;
+}
+
 .footer--header .global--qua--button {
     color: #004c27 !important;
 }
@@ -3154,7 +3186,13 @@ section.cta--inner__pages::after {
 }
 
 .footer-badge {
+    height: 40px;
+    width: auto;
     object-fit: contain;
+}
+
+.footer-badge--lg {
+    height: 54px;
 }
 
 .footer-badges .footer-badge:not(:last-child) {

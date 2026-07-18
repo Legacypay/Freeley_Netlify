@@ -69,7 +69,7 @@ import Footer from '../components/Footer.astro';
 
 
         <!-- Precision Medicine Cards -->
-        <section class="precision-medicine pb-12 md-pb-0">
+        <section id="plans" class="precision-medicine pb-12 md-pb-0">
             <div class="container">
                 <div class="medicine-grid">
                     <!-- Card 1 -->
@@ -96,8 +96,8 @@ import Footer from '../components/Footer.astro';
                             <div class="text-14-inter dark">Starting at </div>
                             <div><span>$99*</span><small class="text-14-inter">/month</small></div>
                         </div>
-                        <a href="javascript:void(0)" class="global--qua--button w-full">
-                            <img class="btn--icon" src="/assets/icons/arrow-right.svg" /> See if you Quality
+                        <a href="javascript:void(0)" class="global--qua--button w-full js-start-quiz">
+                            <img class="btn--icon" src="/assets/icons/arrow-right.svg" /> See if you Qualify
                         </a>
                         <div class="cancel-text">Cancel Anytime</div>
                     </div>
@@ -125,8 +125,8 @@ import Footer from '../components/Footer.astro';
                             <div class="text-14-inter dark">Starting at </div>
                             <div><span>$59</span><small class="text-14-inter">/month</small></div>
                         </div>
-                        <a href="javascript:void(0)" class="global--qua--button w-full">
-                            <img class="btn--icon" src="/assets/icons/arrow-right.svg" /> See if you Quality
+                        <a href="javascript:void(0)" class="global--qua--button w-full js-start-quiz">
+                            <img class="btn--icon" src="/assets/icons/arrow-right.svg" /> See if you Qualify
                         </a>
                         <div class="cancel-text">Cancel Anytime</div>
                     </div>
@@ -154,8 +154,8 @@ import Footer from '../components/Footer.astro';
                             <div class="text-14-inter dark">Starting at </div>
                             <div><span>$29</span><small class="text-14-inter">/month</small></div>
                         </div>
-                        <a href="javascript:void(0)" class="global--qua--button w-full">
-                            <img class="btn--icon" src="/assets/icons/arrow-right.svg" /> See if you Quality
+                        <a href="javascript:void(0)" class="global--qua--button w-full js-start-quiz">
+                            <img class="btn--icon" src="/assets/icons/arrow-right.svg" /> See if you Qualify
                         </a>
                         <div class="cancel-text">Cancel Anytime</div>
                     </div>
@@ -183,8 +183,8 @@ import Footer from '../components/Footer.astro';
                             <div class="text-14-inter dark">Starting at </div>
                             <div><span>$99</span><small class="text-14-inter">/month</small></div>
                         </div>
-                        <a href="javascript:void(0)" class="global--qua--button w-full">
-                            <img class="btn--icon" src="/assets/icons/arrow-right.svg" /> See if you Quality
+                        <a href="javascript:void(0)" class="global--qua--button w-full js-start-quiz">
+                            <img class="btn--icon" src="/assets/icons/arrow-right.svg" /> See if you Qualify
                         </a>
                         <div class="cancel-text">Cancel Anytime</div>
                     </div>
@@ -658,7 +658,7 @@ import Footer from '../components/Footer.astro';
                                     Start Your Assessment
                                 </a>
 
-                                <a href="javascript:void(0)" class="global--qua--button secondory px-12">
+                                <a href="#plans" class="global--qua--button secondory px-12">
                                     Or browse plan pricing
                                 </a>
                             </div>
@@ -680,7 +680,7 @@ import Footer from '../components/Footer.astro';
             </p>
             </div>
                 <div class="ctas flex flex-col md:flex-row items-center md:items-start gap-4 w-full">
-                    <a href="javascript:void(0)" class="global--qua--button bg-white global--green w-full">
+                    <a href="javascript:void(0)" class="global--qua--button bg-white global--green w-full js-start-quiz">
                         <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
 <rect width="32" height="32" rx="16" fill="#004C27"></rect>
 <path d="M17.6201 11.9531L21.6668 15.9998L17.6201 20.0465" stroke="white" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -690,7 +690,7 @@ import Footer from '../components/Footer.astro';
                         Start Your Assessment
                     </a>
 
-                    <a href="javascript:void(0)" class="global--qua--button secondory px-6 w-full">
+                    <a href="#plans" class="global--qua--button secondory px-6 w-full">
                         Or browse plan pricing
                     </a>
                 </div>
@@ -819,7 +819,7 @@ import Footer from '../components/Footer.astro';
         let quizIframe = null;
 
         document.querySelectorAll(
-            '#start-assessment, #start-assessment-header, #start-full-assessment, #start-full-assessment-cta'
+            '#start-assessment, #start-assessment-header, #start-full-assessment, #start-full-assessment-cta, .js-start-quiz'
         ).forEach(button => {
             button.addEventListener('click', () => {
                 // If iframe exists, remove it first

@@ -4,6 +4,7 @@ import trustPilot from '../assets/badges/trust_pilot.png';
 import legitScript from '../assets/badges/49921676.png';
 import hipaaBadge from '../assets/badges/hipaa_badge.png';
 import usaBadge from '../assets/badges/usa_badge.png';
+import logoWhite from '../assets/brand/freeley_logo_transparent_white.webp';
 
 const currentYear = new Date().getFullYear();
 ---
@@ -12,6 +13,9 @@ const currentYear = new Date().getFullYear();
   <div class="container-fluid">
     <div class="grid grid-cols-1 md:grid-cols-12 gap-x-6 gap-y-6 mb-6">
       <div class="md:col-span-6 lg:col-span-3">
+        <a href="/" aria-label="Freeley home">
+          <Image src={logoWhite} alt="Freeley" width={160} class="mb-4" loading="lazy" />
+        </a>
         <p class="footer-header-text">
           Healthcare technology connecting patients to licensed physicians and compounding pharmacies — on your terms.
         </p>
@@ -19,7 +23,7 @@ const currentYear = new Date().getFullYear();
           <p class="mb-2"><strong>Freeley Health LLC</strong></p>
           <p class="mb-2">7700 Camino Real, Suite 400</p>
           <p class="mb-2">Boca Raton, FL 33433</p>
-          <p class="mb-2">Email: support@freely.com</p>
+          <p class="mb-2">Email: support@freeley.com</p>
           <p class="mb-2">Phone: +1 (954) 686-6960</p>
         </div>
       </div>
@@ -44,7 +48,7 @@ const currentYear = new Date().getFullYear();
               <a href="/partner-pharmacies" class="footer-link">Partner Pharmacies</a>
               <a href="/blogs" class="footer-link">Blog & Insights</a>
               <a href="/faqs" class="footer-link">FAQ</a>
-              <a href="mailto:support@freely.com" class="footer-link">Contact Us</a>
+              <a href="mailto:support@freeley.com" class="footer-link">Contact Us</a>
             </div>
           </div>
         </div>
@@ -94,7 +98,7 @@ const currentYear = new Date().getFullYear();
         <div class="footer-verified">
           <div class="footer-verified-title">Verified & Certified</div>
           <div class="footer-badges">
-            <Image src={trustPilot} alt="Trustpilot rating" class="footer-badge" loading="lazy" /><Image src={legitScript} alt="LegitScript certification badge" class="footer-badge" loading="lazy" /><Image src={hipaaBadge} alt="HIPAA compliance badge" class="footer-badge" loading="lazy" /><Image src={usaBadge}
+            <Image src={trustPilot} alt="Trustpilot rating" class="footer-badge" loading="lazy" /><Image src={legitScript} alt="LegitScript certification badge" class="footer-badge footer-badge--lg" loading="lazy" /><Image src={hipaaBadge} alt="HIPAA compliance badge" class="footer-badge" loading="lazy" /><Image src={usaBadge}
               alt="USA-based badge" class="footer-badge" loading="lazy" />
           </div>
         </div>
@@ -104,8 +108,8 @@ const currentYear = new Date().getFullYear();
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-x-6 gap-y-4">
       <div class="lg:col-span-6">
         <p class="footer-disclaimer-text">
-          Freeley is a healthcare technology platform that facilitates connections between patients and independently licensed (telemedicine) providers through our clinical partner, MD Integrations, an PCOA-accredited 503A compounding pharmacies. Including Strive
-          Pharmacy, available nationwide across all 50 U.S. states. Freeley does not practice medicine, employ physicians, or dispense medications. All treatment decisions and prescriptions are made solely by an independent,
+          Freeley is a healthcare technology platform that facilitates connections between patients and independently licensed (telemedicine) providers through our clinical partner, MD Integrations, and PCAB-accredited 503A compounding pharmacies,
+          including Strive Pharmacy, available nationwide across all 50 U.S. states. Freeley does not practice medicine, employ physicians, or dispense medications. All treatment decisions and prescriptions are made solely by an independent,
           licensed healthcare provider. Compounded medications are not FDA-approved and are the responsibility of any healthcare providers. Results vary. Freeley eligibility varies.
         </p>
         <div class="footer-legal-links">
