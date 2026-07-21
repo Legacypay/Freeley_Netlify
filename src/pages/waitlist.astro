@@ -1,0 +1,259 @@
+---
+// TEMPORARY "coming soon" waitlist page. The whole site is gated to this via
+// netlify.toml. To remove the waitlist and restore the real site, see
+// WAITLIST.md at the repo root (do not just delete this file — the gate lives
+// in netlify.toml).
+import { Image } from 'astro:assets';
+import logo from '../assets/brand/freeley_logo_transparent_green.webp';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, follow" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;0,700&display=swap"
+      rel="stylesheet"
+    />
+    <title>Freeley — Something better is coming</title>
+    <style is:inline>
+      :root {
+        --brand: #004c27;
+        --brand-soft: #0a6a3a;
+        --ink: #10241a;
+        --muted: #5b6b62;
+        --line: #d9e5dd;
+        --bg: #f4f8f4;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(1100px 600px at 50% -10%, #e6f2ea 0%, transparent 60%),
+          linear-gradient(180deg, #ffffff 0%, var(--bg) 100%);
+      }
+      .card {
+        width: 100%;
+        max-width: 560px;
+        text-align: center;
+      }
+      .logo {
+        height: 46px;
+        width: auto;
+        margin: 0 auto 40px;
+        display: block;
+      }
+      .eyebrow {
+        display: inline-block;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--brand);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 7px 16px;
+        margin-bottom: 26px;
+        background: #fff;
+      }
+      h1 {
+        font-family: 'Playfair Display', Georgia, serif;
+        font-weight: 600;
+        font-size: clamp(2.1rem, 6vw, 3.1rem);
+        line-height: 1.1;
+        margin: 0 0 18px;
+        color: var(--ink);
+      }
+      h1 em {
+        font-style: italic;
+        color: var(--brand);
+      }
+      .lead {
+        font-size: 1.05rem;
+        line-height: 1.6;
+        color: var(--muted);
+        margin: 0 auto 36px;
+        max-width: 440px;
+      }
+      form {
+        display: flex;
+        gap: 10px;
+        max-width: 460px;
+        margin: 0 auto;
+      }
+      input[type='email'] {
+        flex: 1;
+        min-width: 0;
+        font-size: 1rem;
+        padding: 15px 18px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #fff;
+        color: var(--ink);
+        outline: none;
+        transition: border-color 0.15s, box-shadow 0.15s;
+      }
+      input[type='email']:focus {
+        border-color: var(--brand-soft);
+        box-shadow: 0 0 0 3px rgba(10, 106, 58, 0.14);
+      }
+      button {
+        font-family: inherit;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #fff;
+        background: var(--brand);
+        border: none;
+        border-radius: 12px;
+        padding: 15px 26px;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background 0.15s, transform 0.05s;
+      }
+      button:hover:not(:disabled) {
+        background: var(--brand-soft);
+      }
+      button:active:not(:disabled) {
+        transform: translateY(1px);
+      }
+      button:disabled {
+        opacity: 0.6;
+        cursor: default;
+      }
+      .msg {
+        min-height: 20px;
+        font-size: 0.9rem;
+        margin-top: 16px;
+      }
+      .msg.error {
+        color: #b3261e;
+      }
+      .foot {
+        margin-top: 40px;
+        font-size: 0.82rem;
+        color: var(--muted);
+      }
+      /* Success state swap */
+      .success {
+        display: none;
+      }
+      body[data-joined='true'] form,
+      body[data-joined='true'] .lead {
+        display: none;
+      }
+      body[data-joined='true'] .success {
+        display: block;
+      }
+      .success h2 {
+        font-family: 'Playfair Display', Georgia, serif;
+        font-weight: 600;
+        font-size: 1.7rem;
+        color: var(--brand);
+        margin: 0 0 10px;
+      }
+      .success p {
+        color: var(--muted);
+        font-size: 1rem;
+        margin: 0 auto;
+        max-width: 400px;
+        line-height: 1.6;
+      }
+      @media (max-width: 520px) {
+        form {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="card">
+      <Image class="logo" src={logo} alt="Freeley" loading="eager" />
+      <span class="eyebrow">Launching soon</span>
+      <h1>Something better <em>is coming.</em></h1>
+      <p class="lead">
+        We're putting the finishing touches on physician-prescribed, doctor-guided
+        care delivered to your door. Join the waitlist and be first in line when
+        we open.
+      </p>
+
+      <form id="waitlist-form" novalidate>
+        <input
+          id="email"
+          type="email"
+          name="email"
+          placeholder="you@email.com"
+          autocomplete="email"
+          required
+          aria-label="Email address"
+        />
+        <button type="submit" id="submit-btn">Notify me</button>
+      </form>
+      <div class="msg" id="msg" role="status" aria-live="polite"></div>
+
+      <div class="success">
+        <h2>You're on the list.</h2>
+        <p>Thanks for joining. We'll email you the moment Freeley goes live.</p>
+      </div>
+
+      <p class="foot">Physician-prescribed · Delivered to your door</p>
+    </main>
+
+    <script>
+      import { callRpc } from '../lib/supabaseClient';
+
+      const form = document.getElementById('waitlist-form');
+      const emailInput = document.getElementById('email');
+      const btn = document.getElementById('submit-btn');
+      const msg = document.getElementById('msg');
+      const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = emailInput.value.trim();
+        msg.className = 'msg';
+        msg.textContent = '';
+
+        if (!EMAIL_RE.test(email)) {
+          msg.className = 'msg error';
+          msg.textContent = 'Please enter a valid email address.';
+          emailInput.focus();
+          return;
+        }
+
+        btn.disabled = true;
+        const original = btn.textContent;
+        btn.textContent = 'Joining…';
+
+        try {
+          await callRpc('join_waitlist', { p_email: email });
+          document.body.setAttribute('data-joined', 'true');
+        } catch (err) {
+          msg.className = 'msg error';
+          msg.textContent = 'Something went wrong. Please try again.';
+          btn.disabled = false;
+          btn.textContent = original;
+        }
+      });
+    </script>
+  </body>
+</html>

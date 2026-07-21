@@ -43,6 +43,71 @@
 # This fixes the "Alternate page with proper canonical tag" error
 # in Google Search Console.
 
+# ══════════════════════════════════════════════════════════════
+# COMING SOON GATE  —  TEMPORARY "under construction" waitlist
+# ══════════════════════════════════════════════════════════════
+# This block makes EVERY URL render the waitlist page while keeping
+# the URL in the address bar (200 rewrite, not a redirect). No real
+# route (/pricing, /checkout, blog, etc.) is reachable while it's here.
+#
+# The allow-rules below run FIRST (Netlify: first matching rule wins),
+# so assets (/_astro), Netlify Functions/webhooks (/.netlify) and the
+# favicons still load. Everything else falls through to the forced
+# rewrite at the bottom. `force = true` is what makes it override even
+# pages that really exist — without it, /pricing would still open.
+#
+# ┌──────────────────────────────────────────────────────────────┐
+# │ AI AGENT / DEV: HOW TO REMOVE THE WAITLIST (restore the site) │
+# │ 1. Delete THIS ENTIRE block — from the top banner above down  │
+# │    to the "END COMING SOON GATE" line below. That's the only  │
+# │    required step; it instantly restores full-site routing.    │
+# │ 2. Do NOT touch any other [[redirects]] rule in this file —   │
+# │    the .html→clean-URL and trailing-slash rules must stay.    │
+# │ 3. KEEP these (they're harmless / reusable, not the gate):    │
+# │      • src/lib/supabaseClient.ts  (generic Supabase helper)   │
+# │      • supabase/migrations/0002_waitlist.sql  + the waitlist  │
+# │        table — it holds REAL collected emails. Never drop it. │
+# │ 4. OPTIONAL: delete src/pages/waitlist.astro only if you no   │
+# │    longer want a /waitlist page to exist.                     │
+# │ 5. Redeploy. Full details: see WAITLIST.md at the repo root.  │
+# └──────────────────────────────────────────────────────────────┘
+[[redirects]]
+  from = "/_astro/*"
+  to = "/_astro/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/.netlify/*"
+  to = "/.netlify/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/favicon.svg"
+  to = "/favicon.svg"
+  status = 200
+
+[[redirects]]
+  from = "/favicon.png"
+  to = "/favicon.png"
+  status = 200
+
+[[redirects]]
+  from = "/waitlist"
+  to = "/waitlist"
+  status = 200
+
+# Forced 200 rewrite: serve the waitlist HTML at every remaining URL
+# WITHOUT changing the address bar. Change to `status = 302` if you'd
+# rather redirect visitors to freeley.com/waitlist instead.
+[[redirects]]
+  from = "/*"
+  to = "/waitlist"
+  status = 200
+  force = true
+# ══════════════════════════════════════════════════════════════
+# END COMING SOON GATE
+# ══════════════════════════════════════════════════════════════
+
 # Force .html → clean URL (301 permanent redirect)
 [[redirects]]
   from = "/*.html"
