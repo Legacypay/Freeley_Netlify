@@ -91,6 +91,13 @@
   to = "/favicon.png"
   status = 200
 
+# Static assets (images/fonts/etc) must load on the waitlist page — they
+# expose no real page, only files. Safe to let through.
+[[redirects]]
+  from = "/assets/*"
+  to = "/assets/:splat"
+  status = 200
+
 [[redirects]]
   from = "/waitlist"
   to = "/waitlist"
