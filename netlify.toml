@@ -103,13 +103,44 @@
   to = "/waitlist"
   status = 200
 
+# Astro dev-server paths — only ever requested by Netlify Preview Servers,
+# which run `astro dev` instead of a production build. In dev the <Image>
+# component serves images through /_image (a real build emits /_astro/*,
+# allowed above) and Vite serves HMR + client modules from /@vite, /@fs, /@id
+# and /node_modules. Without these rules the forced catch-all below swallows
+# them and returns the waitlist HTML, so images and HMR break on the preview
+# server. Inert on freeley.com: none of these paths exist in the built site.
+[[redirects]]
+  from = "/_image"
+  to = "/_image"
+  status = 200
+
+[[redirects]]
+  from = "/@vite/*"
+  to = "/@vite/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/@fs/*"
+  to = "/@fs/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/@id/*"
+  to = "/@id/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/node_modules/*"
+  to = "/node_modules/:splat"
+  status = 200
+
 # ⚠️ BRANCH-ONLY CONFIG — this `preview` branch is the client demo
-# environment (preview--freeley-health.netlify.app). It differs from `main`
-# by this one rule: the catch-all serves the redesigned landing instead of
-# the waitlist, so every URL on the branch subdomain shows the new design.
-# Production (freeley.com, built from `main`) still serves the waitlist.
-# NEVER merge this branch into main — it would replace the waitlist gate
-# with the prototype on the live domain.
+# environment. It differs from `main` by this one rule: the catch-all serves
+# the redesigned landing instead of the waitlist, so every URL on the branch
+# subdomain shows the new design. Production (freeley.com, built from `main`)
+# still serves the waitlist. NEVER merge this branch into main — it would
+# replace the waitlist gate with the prototype on the live domain.
 [[redirects]]
   from = "/*"
   to = "/prototype"
