@@ -141,7 +141,9 @@
   for = "/*"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
-    X-Robots-Tag = "index, follow"
+    # BRANCH-ONLY: this is the client demo environment, never the live site.
+    # `main` keeps "index, follow" for freeley.com — do not merge this line.
+    X-Robots-Tag = "noindex, nofollow"
     # Security headers — required for enterprise/LegitScript compliance
     X-Frame-Options = "SAMEORIGIN"
     X-Content-Type-Options = "nosniff"
