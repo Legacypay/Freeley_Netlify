@@ -104,15 +104,27 @@
   status = 200
 
 # Astro dev-server paths — only ever requested by Netlify Preview Servers,
-# which run `astro dev` instead of a production build. In dev the <Image>
-# component serves images through /_image (a real build emits /_astro/*,
-# allowed above) and Vite serves HMR + client modules from /@vite, /@fs, /@id
-# and /node_modules. Without these rules the forced catch-all below swallows
-# them and returns the waitlist HTML, so images and HMR break on the preview
-# server. Inert on freeley.com: none of these paths exist in the built site.
+# which run `astro dev` instead of a production build. Vite serves modules
+# straight off the project root, so the browser asks for paths that simply do
+# not exist in a built site. Without these rules the forced catch-all below
+# swallows them and answers with the waitlist HTML, which breaks images, HMR
+# and the page's own inline scripts. All inert on freeley.com — none of these
+# paths exist in the build.
+#
+#   /_image        <Image> component in dev (a build emits /_astro/*, above)
+#   /src/*         page + component source, e.g. the waitlist inline <script>
+#                  is fetched as /src/pages/waitlist.astro?astro&type=script
+#   /@vite, /@id   Vite HMR client and resolved bare imports
+#   /@fs           files outside the project root
+#   /node_modules  pre-bundled dependencies
 [[redirects]]
   from = "/_image"
   to = "/_image"
+  status = 200
+
+[[redirects]]
+  from = "/src/*"
+  to = "/src/:splat"
   status = 200
 
 [[redirects]]
