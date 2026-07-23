@@ -103,6 +103,17 @@
   to = "/waitlist"
   status = 200
 
+# Client preview of the redesigned landing (src/pages/prototype.astro).
+# /preview is the shareable mockup URL; it is the ONE route that bypasses the
+# gate. Kept out of search results by the page's own meta plus the matching
+# X-Robots-Tag header further down (the site-wide header says "index, follow").
+# Internal links on it (/pricing, /how-it-works…) still hit the waitlist — this
+# is a landing mockup, not a navigable site. Remove along with the gate.
+[[redirects]]
+  from = "/preview"
+  to = "/prototype"
+  status = 200
+
 # Astro dev-server paths — only ever requested by Netlify Preview Servers,
 # which run `astro dev` instead of a production build. Vite serves modules
 # straight off the project root, so the browser asks for paths that simply do
@@ -207,3 +218,10 @@
   for = "/assets/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
+
+# The /preview mockup must never be indexed. More specific than the site-wide
+# "/*" rule above, which sets "index, follow" for the real pages.
+[[headers]]
+  for = "/preview"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
