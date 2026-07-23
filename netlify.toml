@@ -103,21 +103,16 @@
   to = "/waitlist"
   status = 200
 
-# Client preview of the redesigned landing (src/pages/prototype.astro).
-# /preview is the shareable URL; it bypasses the gate but stays noindex,
-# nofollow via the page's own meta. Internal links on it (/pricing, etc.)
-# still hit the waitlist — only this one route is open. Remove with the gate.
-[[redirects]]
-  from = "/preview"
-  to = "/prototype"
-  status = 200
-
-# Forced 200 rewrite: serve the waitlist HTML at every remaining URL
-# WITHOUT changing the address bar. Change to `status = 302` if you'd
-# rather redirect visitors to freeley.com/waitlist instead.
+# ⚠️ BRANCH-ONLY CONFIG — this `preview` branch is the client demo
+# environment (preview--freeley-health.netlify.app). It differs from `main`
+# by this one rule: the catch-all serves the redesigned landing instead of
+# the waitlist, so every URL on the branch subdomain shows the new design.
+# Production (freeley.com, built from `main`) still serves the waitlist.
+# NEVER merge this branch into main — it would replace the waitlist gate
+# with the prototype on the live domain.
 [[redirects]]
   from = "/*"
-  to = "/waitlist"
+  to = "/prototype"
   status = 200
   force = true
 # ══════════════════════════════════════════════════════════════
