@@ -53,6 +53,25 @@ const steps = [
   { n: '3', title: 'Delivered to You', desc: 'Your medication is compounded and shipped discreetly to your door.' },
 ];
 
+// "The Process" — 4-step breakdown, restored from index.astro's own process
+// section (was never carried into this redesign). rectangle-32.png and the
+// trust-card photos below are pre-existing public/ assets, referenced
+// directly rather than through astro:assets since Image only optimizes
+// files under src/ — these already ship unoptimized on the live homepage.
+const processSteps = [
+  { n: '1', title: 'Complete Intake', desc: 'A quick, secure health questionnaire. Takes 5 minutes from your phone. No appointment needed.' },
+  { n: '2', title: 'Doctor Reviews', desc: 'A board-certified physician reviews your profile within 24 hours and writes your personalized Rx.' },
+  { n: '3', title: 'Pharmacy Compounds', desc: 'Your prescription is sent to a 503A-licensed compounding pharmacy for precise formulation.' },
+  { n: '4', title: 'Delivered to You', desc: 'Discreet, climate-controlled packaging shipped directly to your door. Refills are automatic.' },
+];
+
+// "Real Doctors / Real Providers / Pharmacy Grade" — restored trust section.
+const trustCards = [
+  { img: '/assets/home/Real_Doctors.png', label: 'Real Doctors', desc: 'Every visit reviewed by a board-certified, licensed U.S. physician.' },
+  { img: '/assets/home/Real_Providers.png', label: 'Real Providers', desc: 'Medications sourced and dispensed by our licensed pharmacy partners.' },
+  { img: '/assets/home/Pharmacy_Grade.png', label: 'Pharmacy Grade', desc: '503A-licensed compounding, tested for potency, sterility, and purity.' },
+];
+
 const stats = [
   { value: '15%', label: 'Avg. body weight lost', sub: 'Average body weight loss with physician-guided GLP-1 treatment, not diet alone.' },
   { value: '24hr', label: 'Avg. physician response', sub: 'From intake to physician review and prescription — often same day.' },
@@ -205,7 +224,9 @@ const press = [
       /* Header */
       header { position: absolute; top: 0; left: 0; right: 0; z-index: 20; }
       header .pill { box-shadow: 0 6px 18px rgba(18, 60, 44, .18); }
-      .nav { display: flex; align-items: center; justify-content: space-between; padding: 22px 0; gap: 24px; }
+      /* padding longhands wherever a class shares its element with .wrap — a
+         `padding` shorthand would zero out .wrap's `padding: 0 28px`. */
+      .nav { display: flex; align-items: center; justify-content: space-between; padding-top: 22px; padding-bottom: 22px; gap: 24px; }
       .nav__logo img { height: 30px; width: auto; }
       .nav__links { display: none; gap: 22px; font-size: 14px; font-weight: 500; color: var(--ink); }
       .nav__links a { color: inherit; text-decoration: none; white-space: nowrap; }
@@ -218,31 +239,38 @@ const press = [
       @media (min-width: 1024px) { .nav__burger { display: none; } .nav__cta { display: inline-flex; } }
       .nav__mobile { display: none; flex-direction: column; background: var(--cream); border-top: 1px solid var(--line); box-shadow: 0 12px 24px rgba(0,0,0,.08); padding: 10px 28px 18px; }
       .nav__mobile.open { display: flex; }
-      .nav__mobile a { color: var(--ink); text-decoration: none; font-size: 15px; font-weight: 500; padding: 11px 0; border-bottom: 1px solid var(--line); }
-      .nav__mobile a:last-of-type { border-bottom: none; }
+      /* :not(.pill) — otherwise this beats .pill's own color/padding (higher
+         specificity: class+tag vs. class) and the CTA renders with black text. */
+      .nav__mobile a:not(.pill) { color: var(--ink); text-decoration: none; font-size: 15px; font-weight: 500; padding: 11px 0; border-bottom: 1px solid var(--line); }
+      .nav__mobile a:not(.pill):last-of-type { border-bottom: none; }
       .nav__mobile .pill { justify-content: center; margin-top: 12px; }
       @media (min-width: 1024px) { .nav__mobile { display: none !important; } }
 
       /* Hero */
       .hero { position: relative; background: var(--cream); overflow: hidden; }
       .hero__img { display: none; }
-      @media (min-width: 900px) {
+      @media (min-width: 1024px) {
         .hero__img {
           display: block; position: absolute; top: 84px; right: 0;
-          width: 50%; height: calc(100% - 84px);
+          width: 50%; height: calc(100% - 84px); max-height: 760px;
           object-fit: cover; object-position: center 22%;
           /* soft fade of the left edge into the cream — no hard vertical seam */
           -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 26%);
           mask-image: linear-gradient(to right, transparent 0%, #000 26%);
         }
       }
-      .hero__inner { position: relative; z-index: 5; padding: 150px 0 72px; }
+      /* Longhands on purpose: a `padding` shorthand here would zero out the
+         horizontal padding this element inherits from .wrap's `padding: 0 28px`. */
+      .hero__inner { position: relative; z-index: 5; padding-top: 150px; padding-bottom: 72px; }
       .hero__col { max-width: 560px; }
-      @media (min-width: 900px) { .hero__col { max-width: 50%; } }
+      @media (min-width: 1024px) { .hero__col { max-width: 50%; } }
       .hero__img-mob { display: none; }
-      @media (max-width: 899px) {
+      @media (max-width: 1023px) {
         .hero__img-mob {
-          display: block; width: 100%; border-radius: 18px;
+          /* height:auto is load-bearing: without it the height="1024" attribute
+             Astro's <Image> emits wins (no author height rule), and a determined
+             height disables aspect-ratio entirely — the image renders 1024px tall. */
+          display: block; width: 100%; height: auto; border-radius: 18px;
           aspect-ratio: 16 / 10; object-fit: cover; object-position: center 18%;
           margin: 8px 0 26px;
         }
@@ -310,9 +338,50 @@ const press = [
       .intro h2 { font-size: clamp(2.1rem, 3.6vw, 2.6rem); margin: 12px 0 16px; line-height: 1.08; }
       .intro p { color: var(--muted); font-size: 15px; margin: 0 0 22px; max-width: 260px; }
 
-      /* Stat bento — reuses the production home imagery, text stays HTML */
+      /* "The Process" — restored from index.astro. Mirrors .split__grid but
+         swaps the 280px intro column for an even split (text | phone photo),
+         and the step row below runs the full width under both. */
+      .process__top { display: grid; gap: 34px; grid-template-columns: 1fr; align-items: center; }
+      @media (min-width: 900px) { .process__top { grid-template-columns: 1fr 1fr; } }
+      .process__img { display: flex; justify-content: center; }
+      .process__img img { max-width: 100%; height: auto; }
+      /* The hand rises into frame on scroll — a bigger, slower rise than the
+         stat/prod cards elsewhere, since this is the section's one signature
+         moment, not a repeated list-item reveal. */
+      @supports (animation-timeline: view()) {
+        @media (prefers-reduced-motion: no-preference) {
+          .process__img img { animation: phoneRise ease-out both; animation-timeline: view(); animation-range: entry 5% cover 55%; }
+          @keyframes phoneRise { from { opacity: 0; transform: translateY(90px) scale(.94); } to { opacity: 1; transform: none; } }
+        }
+      }
+      .process__steps { display: grid; gap: 28px; grid-template-columns: repeat(2, 1fr); margin-top: 56px; }
+      @media (min-width: 700px) { .process__steps { grid-template-columns: repeat(4, 1fr); } }
+      .process__step { border-top: 2px solid var(--line); padding-top: 18px; }
+      .process__step .step__n { font-family: var(--font-display); font-size: 1.3rem; color: var(--gold); display: block; margin-bottom: 10px; }
+      .process__step h3 { font-size: 1rem; margin: 0 0 6px; font-weight: 600; }
+      .process__step p { font-size: 13px; color: var(--muted); margin: 0; }
+
+      /* "Your Journey" — restored full-bleed photo section (index.astro's
+         your_journey_What_to_expect_on.png + its pre-aligned graph-home.svg
+         timeline overlay, reused as-is — the SVG's dots are hand-positioned
+         against this exact photo). height:auto on the img — see the mobile
+         hero fix earlier in this file for why that matters with a fixed
+         aspect box. */
+      .journey { position: relative; overflow: hidden; border-radius: 22px; margin: 0 0 46px; background: var(--green); }
+      .journey__bg { position: absolute; inset: 0; background-image: url('/assets/home/your_journey_What_to_expect_on.png'); background-size: cover; background-position: center; }
+      .journey__watermark { position: absolute; inset: 0; background-image: url('/assets/home/Frame_399.png'); background-size: cover; opacity: .5; mix-blend-mode: overlay; }
+      .journey__inner { position: relative; z-index: 1; padding: 56px 40px 0; min-height: 620px; display: flex; flex-direction: column; justify-content: space-between; }
+      .journey__head { max-width: 420px; }
+      .journey__head h2 { color: #fff; font-size: clamp(2rem, 3.6vw, 2.7rem); margin: 14px 0 22px; line-height: 1.1; }
+      .journey__head .eyebrow { color: #fff; opacity: .85; }
+      .journey__graph { display: block; width: 100%; height: auto; }
+      @media (max-width: 767.98px) {
+        .journey__inner { padding: 40px 24px 0; min-height: 480px; }
+      }
+
+      /* Product cards */
       .stats { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
-      @media (min-width: 900px) {
+      @media (min-width: 1024px) {
         .stats { grid-template-columns: repeat(12, minmax(0, 1fr)); }
         .stat--1, .stat--4 { grid-column: span 7; }
         .stat--2, .stat--3 { grid-column: span 5; }
@@ -365,7 +434,7 @@ const press = [
         }
       }
 
-      @media (max-width: 899px) {
+      @media (max-width: 1023px) {
         .stat__body, .stat--1 .stat__body, .stat--4 .stat__body { max-width: 68%; }
         .stat--1::after { background-image: url('/assets/home/girl-belly-mobile.png'); background-position: right center; }
         .stat--3::after { background-size: calc(100% + 210px) auto; }
@@ -446,6 +515,28 @@ const press = [
         }
       }
 
+      /* "Real Doctors / Real Providers / Pharmacy Grade" — restored trust
+         section, reusing index.astro's three photos. */
+      .trust { display: grid; gap: 16px; grid-template-columns: 1fr; }
+      @media (min-width: 780px) { .trust { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+      .trust__card { border-radius: 18px; overflow: hidden; background: var(--card); }
+      .trust__img { aspect-ratio: 4 / 3; overflow: hidden; }
+      .trust__img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+      .trust__body { padding: 20px 22px 24px; }
+      .trust__body h3 { font-family: var(--font-display); font-size: 1.2rem; font-weight: 600; margin: 0 0 6px; }
+      .trust__body p { font-size: 13.5px; color: var(--muted); margin: 0; }
+
+      /* Staggered scroll-in, same mechanism as .stat/.prod above. */
+      @supports (animation-timeline: view()) {
+        @media (prefers-reduced-motion: no-preference) {
+          .trust__card { animation: trustIn linear both; animation-timeline: view(); }
+          .trust__card:nth-child(1) { animation-range: entry 8% cover 26%; }
+          .trust__card:nth-child(2) { animation-range: entry 14% cover 32%; }
+          .trust__card:nth-child(3) { animation-range: entry 20% cover 38%; }
+          @keyframes trustIn { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: none; } }
+        }
+      }
+
       /* Testimonials — quote-led (no duplicated imagery) */
       .tcards { display: grid; gap: 16px; grid-template-columns: 1fr; }
       @media (min-width: 780px) { .tcards { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
@@ -462,9 +553,16 @@ const press = [
       .press__row span { font-size: 12px; font-family: var(--font-condensed); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
       .press__row img { height: 24px; width: auto; opacity: .72; filter: grayscale(1); }
 
-      /* Final CTA */
-      .final { background: var(--green); color: #fff; }
-      .final__grid { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 26px; padding: 40px 0; }
+      /* Final CTA — photo restored from index.astro's cta-girl-desktop.png,
+         behind a green scrim (kept multi-vertical copy, not the homepage's
+         weight-loss-specific headline — PRODUCT.md: "four doors, one house"). */
+      .final { position: relative; color: #fff; background: var(--green); overflow: hidden; }
+      /* right top, not right bottom — the source photo (2840x720) has her
+         face near the top of the frame; anchoring "bottom" pushed the crop
+         window down past her chin. */
+      .final::before { content: ''; position: absolute; inset: 0; background: url('/assets/home/cta-girl-desktop.png') right top / cover no-repeat; }
+      .final::after { content: ''; position: absolute; inset: 0; background: linear-gradient(100deg, var(--green) 0%, var(--green) 38%, rgba(18,60,44,.55) 70%, rgba(18,60,44,.25) 100%); }
+      .final__grid { position: relative; z-index: 1; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 26px; padding-top: 64px; padding-bottom: 64px; }
       .final h2 { font-size: clamp(1.9rem, 3.2vw, 2.4rem); margin: 0; color: #fff; line-height: 1.1; }
       .final__feats { display: flex; flex-wrap: wrap; gap: 22px; }
       .final__feats span { display: flex; align-items: center; gap: 8px; font-size: 13px; color: rgba(255,255,255,.85); }
@@ -472,18 +570,18 @@ const press = [
 
       /* Footer */
       .foot { background: var(--green-deep); color: rgba(255,255,255,.75); }
-      .foot__grid { display: grid; gap: 34px; grid-template-columns: 1fr; padding: 56px 0 34px; }
+      .foot__grid { display: grid; gap: 34px; grid-template-columns: 1fr; padding-top: 56px; padding-bottom: 34px; }
       @media (min-width: 780px) { .foot__grid { grid-template-columns: 1.7fr 1fr 1fr 1fr; } }
       .foot__logo { height: 30px; width: auto; opacity: .95; }
       .foot__brand p { font-size: 14px; max-width: 260px; margin: 16px 0 0; line-height: 1.6; }
       .foot__col h4 { color: #fff; font-size: 13px; font-weight: 600; letter-spacing: .04em; margin: 0 0 14px; }
       .foot__col a { display: block; color: rgba(255,255,255,.7); text-decoration: none; font-size: 14px; padding: 6px 0; }
       .foot__col a:hover { color: #fff; }
-      .foot__bottom { border-top: 1px solid rgba(255,255,255,.12); padding: 22px 0 40px; display: flex; flex-wrap: wrap; gap: 10px 32px; justify-content: space-between; }
+      .foot__bottom { border-top: 1px solid rgba(255,255,255,.12); padding-top: 22px; padding-bottom: 40px; display: flex; flex-wrap: wrap; gap: 10px 32px; justify-content: space-between; }
       .foot__bottom span { font-size: 12px; color: rgba(255,255,255,.55); }
       .foot__bottom .disc { max-width: 640px; font-family: var(--font-condensed); letter-spacing: 0.015em; }
 
-      @media (max-width: 899px) {
+      @media (max-width: 1023px) {
         .badge-mob { display: block; margin-top: 26px; }
         .hero__badges { display: none; }
         .hero__inner { padding-top: 104px; }
@@ -592,6 +690,32 @@ const press = [
       </div>
     </div>
 
+    <!-- The Process (restored from index.astro — was dropped from this redesign) -->
+    <section class="split">
+      <div class="wrap">
+        <div class="process__top">
+          <div>
+            <span class="eyebrow">The Process</span>
+            <h2 class="serif" style="margin:12px 0 16px;">From visit to doorstep<br /><em>in under a week</em></h2>
+            <p style="color:var(--muted); font-size:15px; margin:0 0 22px; max-width:38ch;">Everything happens on your schedule, from your phone.</p>
+            <a href="/about" class="ghost">About Us <span class="arw">→</span></a>
+          </div>
+          <div class="process__img">
+            <img src="/assets/frame-242.svg" alt="The Freeley assessment on a patient's phone" loading="lazy" width="362" height="366" style="height:auto; max-width:340px;" />
+          </div>
+        </div>
+        <div class="process__steps">
+          {processSteps.map((s) => (
+            <div class="process__step">
+              <span class="step__n serif">{s.n}</span>
+              <h3>{s.title}</h3>
+              <p>{s.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
     <!-- Stats (full-width, centered head — breaks the split rhythm) -->
     <section class="fullsec">
       <div class="wrap">
@@ -612,6 +736,25 @@ const press = [
         </div>
         <p class="footnote" style="text-align:center;">*Individual results may vary. Based on internal patient data.</p>
         <div class="center-cta"><a href="/about" class="ghost">View patient stories <span class="arw">→</span></a></div>
+      </div>
+    </section>
+
+    <!-- Your Journey (restored from index.astro — the photo + timeline graph
+         are index.astro's original pre-aligned pair, reused as-is) -->
+    <section>
+      <div class="wrap">
+        <div class="journey">
+          <div class="journey__bg"></div>
+          <div class="journey__watermark"></div>
+          <div class="journey__inner">
+            <div class="journey__head">
+              <span class="eyebrow">Your Journey</span>
+              <h2 class="serif">What to expect on <em>GLP-1 therapy</em></h2>
+              <a href={ASSESSMENT} class="pill pill--light">Start Your Assessment <span class="arw">→</span></a>
+            </div>
+            <img class="journey__graph" src="/assets/home/graph-home.svg" alt="Timeline of expected results: reduced appetite at week 1-2, average 5-8 lbs lost by month 1, significant weight reduction by month 3, 15%+ body weight lost by month 6" loading="lazy" />
+          </div>
+        </div>
       </div>
     </section>
 
@@ -675,6 +818,28 @@ const press = [
             ))}
           </div>
           <p class="footnote">*Price reflects the 12-month plan. 1-, 3-, and 6-month plans available at higher monthly rates.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Real Doctors / Real Providers / Pharmacy Grade (restored from index.astro) -->
+    <section class="fullsec" style="padding-top:0;">
+      <div class="wrap">
+        <div class="center-head">
+          <span class="eyebrow">Verified, Not Assumed</span>
+          <h2 class="serif" style="margin-top:14px;">Real physicians. <em>Real pharmacies.</em></h2>
+          <p>Every layer of care is licensed, credentialed, and checkable.</p>
+        </div>
+        <div class="trust">
+          {trustCards.map((t) => (
+            <div class="trust__card">
+              <div class="trust__img"><img src={t.img} alt={t.label} loading="lazy" width="600" height="450" style="height:auto;" /></div>
+              <div class="trust__body">
+                <h3>{t.label}</h3>
+                <p>{t.desc}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

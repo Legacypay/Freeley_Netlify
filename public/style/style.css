@@ -3,6 +3,20 @@
     --secondary-color: #004C27;
     --text-color-secondary: #008262;
     --primary-color-primary: #C5984E;
+    /* Impeccable direction (2026-07-23) — same palette as /prototype.
+       Additive: existing --primary-color/--secondary-color stay untouched so
+       nothing else on the site shifts; components migrate one at a time. */
+    --green: #123c2c;
+    --green-deep: #0d3122;
+    --brand: #0f6b45;
+    --cream: #f6f2e9;
+    --ink: #1a1c1a;
+    --muted: #63665f;
+    --gold: #c39a4e;
+    --line: #e5ded0;
+    --font-serif: 'Source Serif 4', Charter, Georgia, serif;
+    --font-sans: 'Archivo', system-ui, sans-serif;
+    --font-condensed: 'Archivo Narrow', system-ui, sans-serif;
 }
 
 
@@ -13,6 +27,16 @@
 header {
     position: relative;
     z-index: 1;
+}
+
+/* Tailwind's default .container has NO horizontal padding (max-width only) —
+   below its smallest breakpoint (640px, i.e. every phone) content sits flush
+   against the viewport edge. /prototype's .wrap always carries 28px. Scoped
+   to the header only, not the base .container used across the rest of the
+   site — that's a separate, much bigger change. */
+header .container {
+    padding-left: 28px;
+    padding-right: 28px;
 }
 
 .navbar-custom {
@@ -56,51 +80,38 @@ header {
     flex-grow: 1;
 }
 
-/* Scope the desktop link row as a subtle island rather than bare inline
-   text floating in the header bar (avoids the generic wordmark+links+CTA
-   fingerprint). */
-@media (min-width: 1024px) {
-    .navbar-nav-custom {
-        background: rgba(0, 76, 39, 0.04);
-        border: 1px solid rgba(0, 76, 39, 0.08);
-        border-radius: 999px;
-        padding: 8px 22px;
-    }
-}
+/* Plain inline links, no pill-island wrapper — matches /prototype's .nav__links
+   (bare flex row). The island this replaced was an earlier, separate call to
+   avoid a "generic wordmark+links+CTA" look; /prototype's own direction
+   already avoids that through type and color, not a boxed link row. */
 
 .navbar-link {
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 600;
-    font-style: Medium;
     font-size: 16px;
     line-height: 100%;
     letter-spacing: 0.2px;
-    color: #17222A !important;
+    color: var(--ink) !important;
     white-space: nowrap;
 }
 
 .navbar-link:hover {
-    color: #1f4d3d;
+    color: var(--brand);
 }
 
 .navbar-separator {
-    color: #17222A;
+    color: var(--ink);
     font-size: 10px;
     opacity: 0.35;
     margin: 0 -12px;
 }
 
+/* Plain wrapper now — .btn-check-eligibility is a complete pill on its own
+   (background, padding, radius). This div used to paint a second white pill
+   around it ("pill inside a pill"); that's what read as "doesn't match
+   /prototype's CTA" — prototype's pill is a single shape, not nested ones. */
 .navbar-actions {
-    border-radius: 40px;
-    font-size: 14px;
-    padding-top: 4px;
-    padding-right: 20px;
-    padding-bottom: 4px;
-    padding-left: 20px;
-    background: white;
-    font-weight: 500;
-    color: #004C27;
-    font-family: 'Inter';
+    display: inline-flex;
 }
 
 
@@ -111,23 +122,26 @@ header {
 } */
 
 .btn-check-eligibility {
-    border-radius: 40px;
-    padding-top: 4px;
-    padding-right: 20px;
-    padding-bottom: 4px;
-    padding-left: 20px;
-    font-family: Poppins;
-    font-weight: 500;
-    font-style: Medium;
+    border-radius: 999px;
+    padding-top: 11px;
+    padding-right: 22px;
+    padding-bottom: 11px;
+    padding-left: 22px;
+    font-family: var(--font-sans);
+    font-weight: 600;
     font-size: 14px;
-    leading-trim: NONE;
     line-height: 100%;
     letter-spacing: 0%;
-    background: #FFFFFF;
-    color: #004C27;
+    background: var(--green);
+    color: #FFFFFF;
     cursor: pointer;
+    box-shadow: 0 6px 18px rgba(18, 60, 44, .18);
     transition: background-color 0.3s ease, color 0.3s ease;
     white-space: nowrap;
+}
+
+.btn-check-eligibility:hover {
+    background: var(--green-deep);
 }
 
 .navbar-toggler-custom {
@@ -232,6 +246,96 @@ header {
 .text-highlight {
     color: #C5984E;
     font-weight: 600;
+}
+
+/* ============================================================
+   /weight-loss hero — Impeccable direction (2026-07-23), same
+   palette/type as /prototype. Scoped to .weight--lose only: no
+   image references touched (frame_399.png, wl/hero.png, badges,
+   testimonial/brand images all stay exactly as they are); other
+   verticals (hair-loss, sexual-wellness, longevity, homepage)
+   keep their current look until redesigned in their own pass.
+   ============================================================ */
+.weight--lose .hero {
+    background-color: var(--cream);
+}
+.weight--lose .hero h1 {
+    font-family: var(--font-serif);
+    color: var(--ink);
+}
+.weight--lose .text-highlight {
+    color: var(--gold);
+}
+.weight--lose .hero--container .lead {
+    font-family: var(--font-sans);
+    color: var(--muted);
+}
+.weight--lose .bordered--heading {
+    border-color: rgba(15, 107, 69, .18);
+    background: rgba(15, 107, 69, .05);
+}
+.weight--lose .bordered--heading span {
+    font-family: var(--font-condensed);
+    letter-spacing: 0.1em;
+    color: var(--brand);
+}
+.weight--lose .weight-item {
+    font-family: var(--font-sans);
+    background-color: #fff;
+    border-color: var(--line);
+}
+.weight--lose .weight-item:hover {
+    border-color: var(--brand);
+}
+.weight--lose .weight-range {
+    font-family: var(--font-sans);
+    color: var(--ink);
+}
+.weight--lose .assessment-link span {
+    font-family: var(--font-sans);
+    color: var(--muted);
+}
+.weight--lose .assessment-link a,
+.weight--lose .assessment-link button {
+    font-family: var(--font-sans);
+    color: var(--brand) !important;
+}
+.weight--lose .step-title {
+    font-family: var(--font-serif);
+    font-style: normal;
+    color: var(--ink);
+}
+.weight--lose .step--subtitle {
+    font-family: var(--font-sans);
+    color: var(--muted);
+}
+.weight--lose .step--number {
+    background-color: var(--gold);
+    color: #fff;
+    font-family: var(--font-sans);
+}
+.weight--lose .hero--testimonial strong,
+.weight--lose .hero--testimonial span {
+    font-family: var(--font-sans);
+}
+.weight--lose .hero--testimonial span {
+    color: var(--muted);
+}
+.weight--lose .hero--brands strong {
+    font-family: var(--font-sans);
+    color: var(--muted);
+}
+.weight--lose .container.blur--bg strong {
+    font-family: var(--font-serif);
+    color: var(--ink);
+}
+.weight--lose .container.blur--bg .from--to {
+    font-family: var(--font-sans);
+    color: var(--ink);
+}
+.weight--lose .container.blur--bg .from--to span {
+    font-family: var(--font-serif);
+    color: var(--gold);
 }
 
 @media (min-width: 767.98px) {
