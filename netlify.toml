@@ -232,3 +232,12 @@
   for = "/assets/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
+
+# Astro build output — JS, CSS, optimized images, and now the self-hosted font
+# files. Every filename carries a content hash, so a changed file gets a NEW
+# URL: safe to cache forever. Without this rule these fall through to the
+# site-wide "must-revalidate" above and get re-validated on every page view.
+[[headers]]
+  for = "/_astro/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
