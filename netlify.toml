@@ -219,6 +219,17 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
+# Astro build output — JS, CSS, optimized images, and the self-hosted font
+# files (/_astro/fonts/*.woff2). Every filename carries a content hash, so a
+# changed file gets a NEW URL: safe to cache forever. Without this rule these
+# fall through to the site-wide "must-revalidate" above and get re-validated
+# on every page view. The gate's /_astro/* allow-rule already lets them past
+# the waitlist catch-all.
+[[headers]]
+  for = "/_astro/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
 # The /preview mockup must never be indexed. More specific than the site-wide
 # "/*" rule above, which sets "index, follow" for the real pages.
 [[headers]]

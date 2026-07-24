@@ -4,7 +4,7 @@
 // View locally with `npm run dev` → http://localhost:4321/prototype
 // Reuses the Figma v5 export in public/assets/brand/_figma_v5/ + src badges.
 // ponytail: hard-coded content arrays — it's a prototype, wire to CMS/data later.
-import { Image } from 'astro:assets';
+import { Image, Font } from 'astro:assets';
 import logo from '../assets/brand/freeley_logo_transparent_green.webp';
 import logoWhite from '../assets/brand/freeley_logo_transparent_white.webp';
 // Hero trust badges — exactly the set used on the original landing (index.astro):
@@ -13,10 +13,31 @@ import trustPilot from '../assets/badges/trust_pilot.png';
 import legitScript from '../assets/badges/49921676.png';
 import hipaaBadge from '../assets/badges/hipaa_badge.png';
 import usaBadge from '../assets/badges/usa_badge.png';
+// Image sources live in src/assets/ so the Image component can optimize them at
+// build time (static build → sharp runs on Netlify's builder, nothing at runtime).
+import heroCouple from '../assets/figma-v5/hero-couple-green.jpg';
+import vialWeightLoss from '../assets/figma-v5/vial-weight-loss.png';
+import vialSexualWellness from '../assets/figma-v5/vial-sexual-wellness.png';
+import vialHairLoss from '../assets/figma-v5/vial-hair-loss.png';
+import vialLongevity from '../assets/figma-v5/vial-longevity.png';
+import pressForbes from '../assets/figma-v5/press-forbes.png';
+import pressBloomberg from '../assets/figma-v5/press-bloomberg.png';
+import pressNyt from '../assets/figma-v5/press-nyt.png';
+import pressTechCrunch from '../assets/figma-v5/press-techcrunch.png';
 
-const FIG = '/assets/brand/_figma_v5';
+// Every link points at a route that really exists — `href="#"` is a dead link
+// for keyboard and screen-reader users, and the site pages are already built.
+const ASSESSMENT = '/assessment-quiz';
 
-const nav = ['GLP-1 Weight Loss', 'Hair Loss', 'Sexual Wellness', 'Longevity', 'How It Works', 'Pricing', 'About Us'];
+const nav = [
+  { label: 'GLP-1 Weight Loss', href: '/weight-loss' },
+  { label: 'Hair Loss', href: '/hair-loss' },
+  { label: 'Sexual Wellness', href: '/sexual-wellness' },
+  { label: 'Longevity', href: '/longevity' },
+  { label: 'How It Works', href: '/how-it-works' },
+  { label: 'Pricing', href: '/pricing' },
+  { label: 'About Us', href: '/about' },
+];
 
 const trustBar = [
   { label: 'Licensed U.S. Physicians', icon: 'stethoscope' },
@@ -33,10 +54,10 @@ const steps = [
 ];
 
 const stats = [
-  { value: '15%', label: 'Avg. body weight lost', sub: 'On GLP-1 protocols*', icon: 'spark' },
-  { value: '24hr', label: 'Avg. physician response', sub: 'After intake submission', icon: 'clock' },
-  { value: '96%', label: 'Patient satisfaction', sub: 'Across all treatments', icon: 'smile' },
-  { value: '48hr', label: 'Avg. delivery time', sub: 'Discreet to your door', icon: 'box' },
+  { value: '15%', label: 'Avg. body weight lost', sub: 'Average body weight loss with physician-guided GLP-1 treatment, not diet alone.' },
+  { value: '24hr', label: 'Avg. physician response', sub: 'From intake to physician review and prescription — often same day.' },
+  { value: '96%', label: 'Patient satisfaction', sub: 'Across all four treatment programs, from internal patient surveys.' },
+  { value: '48hr', label: 'Door-to-Door Delivery', sub: 'Medication delivered to your door within 2 business days.' },
 ];
 
 const compareCols = ['Freeley', 'Traditional Clinics', 'Retail Pharmacy', 'Other Telehealth'];
@@ -44,7 +65,7 @@ const compareRows = [
   { label: 'Board-certified physician oversight', cells: ['y', 'y', '–', 'Varies'] },
   { label: 'No in-person visit required', cells: ['y', 'n', 'n', 'y'] },
   { label: 'Compounded medication options', cells: ['y', 'Rarely', 'n', 'Some'] },
-  { label: 'Monthly price (GLP-1 weight loss)', cells: ['$99/month', '$300–$500+', 'Varies', '$188–$399'] },
+  { label: 'Monthly price (GLP-1 weight loss)', cells: ['$99/mo · 12-mo plan', '$300–$500+', 'Varies', '$188–$399'] },
   { label: 'Free shipping & discreet delivery', cells: ['y', 'n', 'Varies', 'y'] },
   { label: 'FSA / HSA eligible', cells: ['y', 'y', 'y', 'Some'] },
   { label: 'No membership or hidden fees', cells: ['y', 'n', 'y', 'Varies'] },
@@ -52,10 +73,10 @@ const compareRows = [
 ];
 
 const products = [
-  { name: 'GLP-1 Weight Loss', img: `${FIG}/vial-weight-loss.png`, desc: 'Semaglutide or Tirzepatide compounded for effective, clinician-supervised weight loss.', price: '$99' },
-  { name: 'Sexual Wellness', img: `${FIG}/vial-sexual-wellness.png`, desc: 'Physician-prescribed treatments for performance, libido, and confidence.', price: '$59' },
-  { name: 'Hair Loss', img: `${FIG}/vial-hair-loss.png`, desc: 'Clinically proven solutions to stop hair loss and support regrowth.', price: '$29' },
-  { name: 'Longevity & Peptides', img: `${FIG}/vial-longevity.png`, desc: 'Peptides and therapies to optimize energy, recovery, and long-term health.', price: '$129' },
+  { name: 'GLP-1 Weight Loss', img: vialWeightLoss, href: '/weight-loss', desc: 'Semaglutide or Tirzepatide compounded for effective, clinician-supervised weight loss.', price: '$99' },
+  { name: 'Sexual Wellness', img: vialSexualWellness, href: '/sexual-wellness', desc: 'Physician-prescribed treatments for performance, libido, and confidence.', price: '$59' },
+  { name: 'Hair Loss', img: vialHairLoss, href: '/hair-loss', desc: 'Clinically proven solutions to stop hair loss and support regrowth.', price: '$29' },
+  { name: 'Longevity & Peptides', img: vialLongevity, href: '/longevity', desc: 'Peptides and therapies to optimize energy, recovery, and long-term health.', price: '$129' },
 ];
 
 const testimonials = [
@@ -65,10 +86,10 @@ const testimonials = [
 ];
 
 const press = [
-  { src: '/assets/brands/forbes.svg', name: 'Forbes' },
-  { src: '/assets/brands/bloomberg.svg', name: 'Bloomberg' },
-  { src: '/assets/brands/new_york.svg', name: 'The New York Times' },
-  { src: '/assets/brands/tech_crunch.svg', name: 'TechCrunch' },
+  { src: pressForbes, name: 'Forbes' },
+  { src: pressBloomberg, name: 'Bloomberg' },
+  { src: pressNyt, name: 'The New York Times' },
+  { src: pressTechCrunch, name: 'TechCrunch' },
 ];
 ---
 
@@ -79,18 +100,37 @@ const press = [
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex, nofollow" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap"
-      rel="stylesheet"
-    />
+    <Font cssVariable="--font-display" preload />
+    <Font cssVariable="--font-text" preload />
+    <Font cssVariable="--font-condensed" />
     <title>Freeley — Prototype</title>
     <style is:inline>
       /* Hallmark · audit-fix pass · 2026-07-21
        * Kept by client brand: italic display emphasis + gold price.
        * Applied: footer, mobile nav, focus-visible, broken split-rhythm,
-       * fewer eyebrows, quote-led testimonials, overflow-clip, minmax grids. */
+       * fewer eyebrows, quote-led testimonials, overflow-clip, minmax grids.
+       *
+       * ── Impeccable direction contract · 2026-07-23 ──────────────────────
+       * THESIS: A compounded prescription is a document before it is a
+       *   product. This page speaks in that document's voice — dispensing
+       *   record, not apothecary romance — and refuses the soft
+       *   wellness-brand register the category defaults to.
+       * OWN-WORLD: Client-pinned palette untouched (cream, forest green,
+       *   gold). The change is the voice, in two families. Source Serif 4,
+       *   drawn as a companion face for documents and interfaces: low
+       *   contrast, upright, no flourish, with an optical-size axis spent on
+       *   legibility. Under it, Archivo, an American grotesque whose width
+       *   axis gives a native condensed register for the compliance
+       *   microtype a real Rx label carries. Both replace training-default
+       *   faces (Playfair Display, Inter). Owner call 2026-07-23: an earlier
+       *   didone pass was rejected — its contrast read as italic everywhere.
+       * STORY: A licensed physician decides, a licensed pharmacy compounds,
+       *   it arrives at the door. Whatever you came for.
+       * FIRST VIEWPORT: Display headline at 4.8rem with the italic carrying
+       *   the refusal; price and primary action directly beneath.
+       * FORM: Grounded structure #3 (the dispensary document) · seed 5c02a55e
+       *   · staging held to type, per owner scope: visual design stays.
+       * ─────────────────────────────────────────────────────────────────── */
       :root {
         --green: #123c2c;
         --green-deep: #0d3122;
@@ -109,25 +149,42 @@ const press = [
       * { box-sizing: border-box; }
       html, body { margin: 0; padding: 0; overflow-x: clip; }
       body {
-        font-family: 'Inter', system-ui, sans-serif;
+        font-family: var(--font-text);
         color: var(--ink);
         background: var(--cream);
         -webkit-font-smoothing: antialiased;
-        line-height: 1.5;
+        line-height: 1.55;
       }
       img { max-width: 100%; display: block; }
       a:focus-visible, button:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 8px; }
       .wrap { max-width: 1200px; margin: 0 auto; padding: 0 28px; }
-      .serif { font-family: 'Playfair Display', Georgia, serif; font-weight: 600; letter-spacing: -0.01em; }
-      .serif em { font-style: italic; color: var(--emph); }
-      .eyebrow {
-        font-size: 11px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase;
+      /* Display — Source Serif 4, drawn as a companion for documents and
+         interfaces: low stroke contrast, upright, no flourish. It keeps the
+         optical-size axis (8..60), so the same face tightens for small sizes
+         and opens for display, but it spends that axis on legibility rather
+         than on hairline drama. Owner call 2026-07-23: the didone was read as
+         italic wherever it appeared, so the whole face was replaced. */
+      .serif {
+        font-family: var(--font-display);
+        font-weight: 600;
+        font-optical-sizing: auto;
+        letter-spacing: -0.02em;
+        text-wrap: balance;
+      }
+      .serif em { font-style: italic; font-weight: 600; color: var(--emph); }
+
+      /* Compliance register — Archivo held narrow on its width axis. This is the
+         voice a real prescription label uses for everything the law makes it
+         carry, and it is why this pairing beats a second decorative face. */
+            .eyebrow {
+        font-family: var(--font-condensed);
+        font-size: 11.5px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;
         color: var(--brand);
       }
       .pill {
         display: inline-flex; align-items: center; gap: 10px;
         background: var(--green); color: #fff; border: none; border-radius: 999px;
-        font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 600;
+        font-family: var(--font-text); font-size: 15px; font-weight: 600;
         padding: 14px 24px; cursor: pointer; text-decoration: none; transition: background .15s;
       }
       .pill:hover { background: var(--green-deep); }
@@ -143,7 +200,7 @@ const press = [
       }
       .ghost:hover { background: #faf8f2; }
       .ghost .arw { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 999px; background: var(--green); color: #fff; }
-      .price { font-family: 'Playfair Display', serif; color: var(--gold); font-weight: 600; }
+      .price { font-family: var(--font-display); color: var(--gold); font-weight: 600; }
 
       /* Header */
       header { position: absolute; top: 0; left: 0; right: 0; z-index: 20; }
@@ -181,7 +238,7 @@ const press = [
       }
       .hero__inner { position: relative; z-index: 5; padding: 150px 0 72px; }
       .hero__col { max-width: 560px; }
-      @media (min-width: 900px) { .hero__col { max-width: 46%; } }
+      @media (min-width: 900px) { .hero__col { max-width: 50%; } }
       .hero__img-mob { display: none; }
       @media (max-width: 899px) {
         .hero__img-mob {
@@ -190,8 +247,9 @@ const press = [
           margin: 8px 0 26px;
         }
       }
-      .hero h1 { font-size: clamp(2.6rem, 5.2vw, 4rem); line-height: 1.05; margin: 18px 0 20px; }
+      .hero h1 { font-size: clamp(2.9rem, 6.2vw, 4.8rem); line-height: 1.02; letter-spacing: -0.021em; margin: 20px 0 22px; }
       .hero__sub { font-size: 1.05rem; color: var(--muted); margin: 0 0 22px; }
+      .hero__qual { font-family: var(--font-condensed); font-size: 12.5px; color: var(--muted); display: block; margin-top: 4px; }
       .hero__from { font-size: 1rem; color: var(--ink); margin-bottom: 22px; }
       .hero__from .price { font-size: 1.6rem; }
       .hero__proof { display: flex; align-items: center; gap: 14px; margin-top: 26px; }
@@ -232,7 +290,7 @@ const press = [
       @media (min-width: 700px) { .steps { grid-template-columns: repeat(3, 1fr); } }
       .step { display: flex; gap: 14px; }
       .step__ic { flex: none; width: 46px; height: 46px; border-radius: 12px; background: rgba(255,255,255,.10); display: grid; place-items: center; }
-      .step__n { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: #cdb98f; line-height: 1; }
+      .step__n { font-family: var(--font-display); font-size: 1.5rem; color: #cdb98f; line-height: 1; }
       .step h3 { font-size: 1rem; margin: 0 0 6px; font-weight: 600; }
       .step p { font-size: 13px; color: rgba(255,255,255,.72); margin: 0; }
       .band__foot { margin-top: 26px; }
@@ -241,7 +299,7 @@ const press = [
       /* Full-width section with a centered head — breaks the split rhythm */
       section.fullsec { padding: 56px 0; }
       .center-head { text-align: center; max-width: 640px; margin: 0 auto 42px; }
-      .center-head h2 { font-size: 2rem; margin: 0 0 12px; line-height: 1.15; }
+      .center-head h2 { font-size: clamp(2.1rem, 4vw, 2.7rem); margin: 0 0 14px; line-height: 1.08; }
       .center-head p { color: var(--muted); font-size: 15px; margin: 0; }
       .center-cta { text-align: center; margin-top: 32px; }
 
@@ -249,26 +307,78 @@ const press = [
       section.split { padding: 56px 0; }
       .split__grid { display: grid; gap: 34px; grid-template-columns: 1fr; }
       @media (min-width: 960px) { .split__grid { grid-template-columns: 280px 1fr; } }
-      .intro h2 { font-size: 2rem; margin: 12px 0 14px; line-height: 1.15; }
+      .intro h2 { font-size: clamp(2.1rem, 3.6vw, 2.6rem); margin: 12px 0 16px; line-height: 1.08; }
       .intro p { color: var(--muted); font-size: 15px; margin: 0 0 22px; max-width: 260px; }
 
-      /* Stat cards */
-      .stats { display: grid; gap: 16px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      @media (min-width: 1100px) { .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
-      .stat { background: var(--card); border-radius: 16px; padding: 26px 22px; }
-      .stat__ic { width: 40px; height: 40px; border-radius: 999px; background: rgba(0,0,0,.05); display: grid; place-items: center; color: var(--brand); margin-bottom: 40px; }
-      .stat__v { font-family: 'Playfair Display', serif; font-size: 2.4rem; font-weight: 600; }
-      .stat__l { font-size: 14px; font-weight: 600; margin-top: 8px; }
-      .stat__s { font-size: 12px; color: var(--muted); margin-top: 2px; }
-      .footnote { font-size: 11px; color: var(--muted); margin-top: 16px; }
+      /* Stat bento — reuses the production home imagery, text stays HTML */
+      .stats { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
+      @media (min-width: 900px) {
+        .stats { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+        .stat--1, .stat--4 { grid-column: span 7; }
+        .stat--2, .stat--3 { grid-column: span 5; }
+      }
+      .stat { position: relative; overflow: hidden; border-radius: 16px; padding: 26px 30px; min-height: 309px; display: flex; flex-direction: column; justify-content: flex-end; background: linear-gradient(180deg, #E7EAF0 0%, #F3F4EF 100%); }
+      .stat::after { content: ''; position: absolute; inset: 0; background-repeat: no-repeat; }
+      .stat__body { position: relative; z-index: 1; max-width: 66%; }
+      .stat__v { font-family: var(--font-display); font-size: clamp(3.4rem, 5vw, 4.1rem); font-weight: 600; line-height: 1.08; letter-spacing: -0.022em; }
+      .stat__l { font-size: 16px; font-weight: 500; margin-top: 4px; color: var(--brand); }
+      .stat__s { font-size: 15px; color: #000; margin-top: 16px; line-height: 1.4; }
+
+      /* Text placement mirrors the reference bento: card 1 top-left, 2 & 4 bottom-left, 3 bottom-centered */
+      .stat--1 { justify-content: flex-start; background: linear-gradient(101.13deg, #D2CBC2 33.46%, #F0E9E0 100%); }
+      .stat--1 .stat__body { max-width: 40%; }
+      .stat--1::before { content: ''; position: absolute; top: 0; left: 0; width: 340px; height: 100%; background: url('/assets/home/white-ellipse.png') no-repeat; background-size: contain; }
+      .stat--1::after { background-image: url('/assets/home/girl-belly.png'); background-position: right center; background-size: contain; }
+      .stat--2 { background: radial-gradient(139.32% 139.32% at 50% 100%, #F6EEE0 0%, #FFDAAD 100%); }
+      .stat--2::after { background-image: url('/assets/home/24hr.Avg.physician.esponse.png'); background-position: right 22px top 22px; background-size: 180px auto; }
+      .stat--3 { background: radial-gradient(107.61% 107.61% at 50.12% 100%, #F8FEFF 0%, #C7D0E4 100%); }
+      .stat--3 .stat__body { max-width: 100%; text-align: center; }
+      .stat--3::before { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 80%; height: 64%; border-radius: 50%; background: url('/assets/home/ellipse_35.png') no-repeat; background-size: contain; }
+      .stat--3::after { background-image: url('/assets/home/96_Patient satisfaction.png'); background-position: center -220px; background-size: calc(100% + 100px) auto; }
+      .stat--4 .stat__body { max-width: 38%; }
+      .stat--4::after { background-image: url('/assets/home/48hr_Door-to-Door_Delivery.png'); background-position: right -30px center; background-size: auto 110%; }
+
+      /* Hover: lift the card, push the artwork in a touch. Uses the standalone
+         `translate` / `scale` properties, not `transform`, so it composes with
+         the scroll-in animation below instead of fighting it. */
+      @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+        .stat { transition: translate .4s cubic-bezier(.22,.61,.36,1), box-shadow .4s ease; }
+        .stat::after { transition: scale .6s cubic-bezier(.22,.61,.36,1); }
+        .stat:hover { translate: 0 -6px; box-shadow: 0 20px 44px rgba(23, 34, 42, .16); }
+        .stat:hover::after { scale: 1.045; }
+        /* Scale from the side the artwork sits on, so it grows into the card
+           instead of drifting off the edge. */
+        .stat--1::after, .stat--4::after { transform-origin: right center; }
+        .stat--2::after { transform-origin: right top; }
+        .stat--3::after { transform-origin: center top; }
+        .stat__v, .stat__l, .stat__s { transition: translate .4s cubic-bezier(.22,.61,.36,1); }
+        .stat:hover .stat__v { translate: 0 -2px; }
+      }
+
+      /* Scroll-in reveal, native scroll-driven animation — no JS, no library.
+         ponytail: gated behind @supports; browsers without view() just show the
+         cards immediately, which is the correct fallback, not a broken one. */
+      @supports (animation-timeline: view()) {
+        @media (prefers-reduced-motion: no-preference) {
+          .stat { animation: statIn linear both; animation-timeline: view(); animation-range: entry 8% cover 24%; }
+          @keyframes statIn { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
+        }
+      }
+
+      @media (max-width: 899px) {
+        .stat__body, .stat--1 .stat__body, .stat--4 .stat__body { max-width: 68%; }
+        .stat--1::after { background-image: url('/assets/home/girl-belly-mobile.png'); background-position: right center; }
+        .stat--3::after { background-size: calc(100% + 210px) auto; }
+      }
+      .footnote { font-size: 11.5px; color: var(--muted); margin-top: 16px; }
 
       /* Comparison table */
       .ctable { width: 100%; border-collapse: collapse; font-size: 13.5px; }
       .ctable th, .ctable td { padding: 13px 12px; text-align: left; border-bottom: 1px solid var(--line); }
-      .ctable thead th { font-weight: 600; color: var(--muted); font-size: 13px; }
+      .ctable thead th { font-weight: 600; color: var(--muted); font-size: 13px; font-family: var(--font-condensed); text-transform: uppercase; letter-spacing: 0.1em; }
       .ctable thead th:first-child { width: 34%; }
       .ctable thead th.hl { color: var(--brand); }
-      .ctable td.c { text-align: center; }
+      .ctable td.c { text-align: center; font-variant-numeric: tabular-nums; }
       .ctable td.rowlabel { font-weight: 500; }
       .ctable tbody tr:nth-child(even) { background: rgba(0,0,0,.015); }
       .ic-y { color: var(--check); }
@@ -279,21 +389,69 @@ const press = [
       @media (min-width: 640px) { .prods { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
       @media (min-width: 1100px) { .prods { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
       .prod { background: var(--card); border-radius: 18px; padding: 22px; display: flex; flex-direction: column; }
-      .prod__img { height: 150px; display: grid; place-items: center; margin-bottom: 14px; }
-      .prod__img img { max-height: 150px; width: auto; object-fit: contain; }
-      .prod h3 { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 600; margin: 0 0 8px; text-align: center; }
+      .prod__img { position: relative; height: 150px; display: grid; place-items: center; margin-bottom: 14px; }
+      /* position: relative keeps the vial painting ABOVE the hover halo — the
+         halo is a positioned pseudo, so a static img would sit under it. */
+      .prod__img img { position: relative; max-height: 150px; width: auto; object-fit: contain; }
+      .prod h3 { font-family: var(--font-display); font-size: 1.45rem; font-weight: 600; margin: 0 0 8px; text-align: center; }
       .prod p { font-size: 13px; color: var(--muted); text-align: center; margin: 0 0 18px; flex: 1; }
       .prod__price { text-align: center; margin-bottom: 14px; }
       .prod__price .price { font-size: 1.5rem; }
       .prod__price small { color: var(--muted); font-size: 13px; }
       .prod .pill { justify-content: center; width: 100%; font-size: 14px; padding: 12px; }
 
+      /* The funnel's decision row: the motion here has a job — pull the eye to
+         one card at a time and make the CTA read as the next step. */
+      .prod { position: relative; border: 1px solid transparent; }
+      /* Soft halo behind the vial, revealed on hover. */
+      .prod__img::before {
+        content: ''; position: absolute; inset: -10% 8% 0;
+        background: radial-gradient(closest-side, rgba(15, 107, 69, .16), transparent 70%);
+        opacity: 0; pointer-events: none;
+      }
+      @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+        .prod__img img { transition: translate .5s cubic-bezier(.22,.61,.36,1), scale .5s cubic-bezier(.22,.61,.36,1); }
+        .prod__img::before { transition: opacity .45s ease; }
+        .prod .pill { transition: translate .35s cubic-bezier(.22,.61,.36,1); }
+        .prod__price .price { transition: color .35s ease; }
+
+        .prod:hover { translate: 0 -8px; box-shadow: 0 22px 48px rgba(23, 34, 42, .16); border-color: var(--brand); }
+        .prod:hover .prod__img img { translate: 0 -8px; scale: 1.06; }
+        .prod:hover .prod__img::before { opacity: 1; }
+        .prod:hover .prod__price .price { color: var(--brand); }
+        .prod:hover .pill { translate: 0 -2px; }
+
+        /* Dim the siblings so the hovered card is the only live option — the
+           whole point of a funnel row. Dims with `filter: opacity()`, not
+           `opacity`: the scroll-in keyframes below animate `opacity`, and an
+           animation with fill `both` outranks a plain declaration, so this
+           would silently never apply. `filter` composes instead of colliding. */
+        .prod { transition: translate .4s cubic-bezier(.22,.61,.36,1), box-shadow .4s ease, border-color .4s ease, filter .4s ease; }
+        .prods:hover .prod { filter: opacity(.62); }
+        .prods:hover .prod:hover { filter: none; }
+      }
+
+      /* Staggered scroll-in. The cards sit in one row, so they share the same
+         view() progress — the stagger comes from shifting each card's
+         animation-range, not from a delay (delays don't apply to scroll
+         timelines). ponytail: same @supports fallback as the bento. */
+      @supports (animation-timeline: view()) {
+        @media (prefers-reduced-motion: no-preference) {
+          .prod { animation: prodIn linear both; animation-timeline: view(); }
+          .prod:nth-child(1) { animation-range: entry 6% cover 20%; }
+          .prod:nth-child(2) { animation-range: entry 12% cover 26%; }
+          .prod:nth-child(3) { animation-range: entry 18% cover 32%; }
+          .prod:nth-child(4) { animation-range: entry 24% cover 38%; }
+          @keyframes prodIn { from { opacity: 0; transform: translateY(30px) scale(.97); } to { opacity: 1; transform: none; } }
+        }
+      }
+
       /* Testimonials — quote-led (no duplicated imagery) */
       .tcards { display: grid; gap: 16px; grid-template-columns: 1fr; }
       @media (min-width: 780px) { .tcards { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
       .tcard { background: var(--card); border-radius: 16px; padding: 24px; }
       .tcard__stars { color: #00b67a; letter-spacing: 2px; font-size: 14px; margin-bottom: 14px; }
-      .tcard__quote { font-family: 'Playfair Display', Georgia, serif; font-size: 1.05rem; line-height: 1.5; color: var(--ink); margin: 0 0 16px; }
+      .tcard__quote { font-family: var(--font-display); font-size: 1.28rem; line-height: 1.42; color: var(--ink); margin: 0 0 16px; }
       .tcard__meta { font-size: 13px; }
       .tcard__name { font-weight: 600; }
       .tcard__tag { color: var(--brand); }
@@ -301,13 +459,13 @@ const press = [
       /* Press */
       .press { padding: 30px 0 56px; }
       .press__row { display: flex; flex-wrap: wrap; align-items: center; gap: 40px; }
-      .press__row span { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+      .press__row span { font-size: 12px; font-family: var(--font-condensed); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
       .press__row img { height: 24px; width: auto; opacity: .72; filter: grayscale(1); }
 
       /* Final CTA */
       .final { background: var(--green); color: #fff; }
       .final__grid { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 26px; padding: 40px 0; }
-      .final h2 { font-size: 1.9rem; margin: 0; color: #fff; line-height: 1.2; }
+      .final h2 { font-size: clamp(1.9rem, 3.2vw, 2.4rem); margin: 0; color: #fff; line-height: 1.1; }
       .final__feats { display: flex; flex-wrap: wrap; gap: 22px; }
       .final__feats span { display: flex; align-items: center; gap: 8px; font-size: 13px; color: rgba(255,255,255,.85); }
       .final__feats svg { flex: none; }
@@ -323,7 +481,7 @@ const press = [
       .foot__col a:hover { color: #fff; }
       .foot__bottom { border-top: 1px solid rgba(255,255,255,.12); padding: 22px 0 40px; display: flex; flex-wrap: wrap; gap: 10px 32px; justify-content: space-between; }
       .foot__bottom span { font-size: 12px; color: rgba(255,255,255,.55); }
-      .foot__bottom .disc { max-width: 640px; }
+      .foot__bottom .disc { max-width: 640px; font-family: var(--font-condensed); letter-spacing: 0.015em; }
 
       @media (max-width: 899px) {
         .badge-mob { display: block; margin-top: 26px; }
@@ -339,32 +497,32 @@ const press = [
       <div class="wrap nav">
         <a href="/prototype" class="nav__logo"><Image src={logo} alt="Freeley" /></a>
         <nav class="nav__links">
-          {nav.map((item) => <a href="#">{item}</a>)}
+          {nav.map((item) => <a href={item.href}>{item.label}</a>)}
         </nav>
         <div class="nav__right">
-          <a href="#" class="pill nav__cta">Start Assessment <span class="arw">→</span></a>
+          <a href={ASSESSMENT} class="pill nav__cta">Start Assessment <span class="arw">→</span></a>
           <button class="nav__burger" id="navBurger" aria-label="Open menu" aria-expanded="false" aria-controls="navMobile">
             <span></span><span></span><span></span>
           </button>
         </div>
       </div>
       <nav class="nav__mobile" id="navMobile">
-        {nav.map((item) => <a href="#">{item}</a>)}
-        <a href="#" class="pill">Start Assessment <span class="arw">→</span></a>
+        {nav.map((item) => <a href={item.href}>{item.label}</a>)}
+        <a href={ASSESSMENT} class="pill">Start Assessment <span class="arw">→</span></a>
       </nav>
     </header>
 
     <!-- Hero -->
     <section class="hero">
-      <img class="hero__img" src={`${FIG}/hero-couple-green.jpg`} alt="Freeley patients" />
+      <Image class="hero__img" src={heroCouple} alt="Freeley patients" widths={[900, 1400]} sizes="50vw" loading="eager" fetchpriority="high" />
       <div class="wrap hero__inner">
         <div class="hero__col">
           <span class="eyebrow">Physician-Prescribed Care</span>
-          <h1 class="serif">Your Last Diet Didn’t Fail.<br /><em>Your Biology Did.</em></h1>
-          <p class="hero__sub">Personalized treatments. Real results.<br />Delivered to your door.</p>
-          <img class="hero__img-mob" src={`${FIG}/hero-couple-green.jpg`} alt="Freeley patients" />
-          <div class="hero__from">Starting at <span class="price">$99</span>/month</div>
-          <a href="#" class="pill">Start Your Assessment <span class="arw">→</span></a>
+          <h1 class="serif">Care that never starts <em>in a waiting room.</em></h1>
+          <p class="hero__sub">Weight, sexual wellness, hair, longevity — prescribed by licensed U.S. physicians, compounded by licensed pharmacies, delivered discreetly to your door.</p>
+          <Image class="hero__img-mob" src={heroCouple} alt="Freeley patients" widths={[600, 900]} sizes="100vw" loading="lazy" />
+          <div class="hero__from">GLP-1 weight loss from <span class="price">$99</span>/month <span class="hero__qual">on the 12-month plan</span></div>
+          <a href={ASSESSMENT} class="pill">Start Your Assessment <span class="arw">→</span></a>
 
           <div class="hero__proof">
             <div class="avatars"><span></span><span></span><span></span><span></span></div>
@@ -428,7 +586,7 @@ const press = [
                 </div>
               ))}
             </div>
-            <div class="band__foot"><a href="#">See how it works →</a></div>
+            <div class="band__foot"><a href="/how-it-works">See how it works →</a></div>
           </div>
         </div>
       </div>
@@ -442,24 +600,18 @@ const press = [
           <p>Clinically proven treatments. Physician-supervised care.</p>
         </div>
         <div class="stats">
-          {stats.map((s) => (
-            <div class="stat">
-              <div class="stat__ic">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-                  {s.icon === 'spark' && <path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18" />}
-                  {s.icon === 'clock' && <path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18ZM12 7v5l3 2" />}
-                  {s.icon === 'smile' && <path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18ZM8 14a4 4 0 0 0 8 0M9 9h.01M15 9h.01" />}
-                  {s.icon === 'box' && <path d="M12 3 3 7.5v9L12 21l9-4.5v-9L12 3ZM3 7.5 12 12l9-4.5" />}
-                </svg>
+          {stats.map((s, i) => (
+            <div class={`stat stat--${i + 1}`}>
+              <div class="stat__body">
+                <div class="stat__v serif">{s.value}</div>
+                <div class="stat__l">{s.label}</div>
+                <div class="stat__s">{s.sub}</div>
               </div>
-              <div class="stat__v serif">{s.value}</div>
-              <div class="stat__l">{s.label}</div>
-              <div class="stat__s">{s.sub}</div>
             </div>
           ))}
         </div>
         <p class="footnote" style="text-align:center;">*Individual results may vary. Based on internal patient data.</p>
-        <div class="center-cta"><a href="#" class="ghost">View patient stories <span class="arw">→</span></a></div>
+        <div class="center-cta"><a href="/about" class="ghost">View patient stories <span class="arw">→</span></a></div>
       </div>
     </section>
 
@@ -469,7 +621,7 @@ const press = [
         <div class="intro">
           <h2 class="serif">Why patients choose <em>Freeley</em></h2>
           <p>We combine the best of telehealth with real medical care.</p>
-          <a href="#" class="ghost">See if you qualify <span class="arw">→</span></a>
+          <a href={ASSESSMENT} class="ghost">See if you qualify <span class="arw">→</span></a>
         </div>
         <div style="overflow-x:auto;">
           <table class="ctable">
@@ -508,17 +660,17 @@ const press = [
         <div class="intro">
           <h2 class="serif">Precision medicine<br /><em>for every body</em></h2>
           <p>Clinically validated protocols, compounded to your exact prescription by licensed pharmacies.</p>
-          <a href="#" class="ghost">Explore all treatments <span class="arw">→</span></a>
+          <a href="/pricing" class="ghost">Explore all treatments <span class="arw">→</span></a>
         </div>
         <div>
           <div class="prods">
             {products.map((p) => (
               <div class="prod">
-                <div class="prod__img"><img src={p.img} alt={p.name} loading="lazy" /></div>
+                <div class="prod__img"><Image src={p.img} alt={p.name} height={300} loading="lazy" /></div>
                 <h3>{p.name}</h3>
                 <p>{p.desc}</p>
                 <div class="prod__price"><span class="price">{p.price}</span><small>/mo*</small></div>
-                <a href="#" class="pill">See if you qualify</a>
+                <a href={p.href} class="pill">See if you qualify</a>
               </div>
             ))}
           </div>
@@ -543,7 +695,8 @@ const press = [
             </div>
           ))}
         </div>
-        <div class="center-cta"><a href="#" class="ghost">Read more stories <span class="arw">→</span></a></div>
+        <p class="footnote" style="text-align:center;">*Individual results may vary. Quotes are from Freeley weight-loss patients; results are not typical or guaranteed.</p>
+        <div class="center-cta"><a href="/about" class="ghost">Read more stories <span class="arw">→</span></a></div>
       </div>
     </section>
 
@@ -551,7 +704,7 @@ const press = [
     <section class="press">
       <div class="wrap press__row">
         <span>Featured In</span>
-        {press.map((p) => <img src={p.src} alt={p.name} loading="lazy" />)}
+        {press.map((p) => <Image src={p.src} alt={p.name} height={48} loading="lazy" />)}
       </div>
     </section>
 
@@ -568,7 +721,7 @@ const press = [
           <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5" /></svg> No Commitment</span>
           <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5" /></svg> Cancel Anytime</span>
         </div>
-        <a href="#" class="pill pill--light">Start Your Assessment <span class="arw">→</span></a>
+        <a href={ASSESSMENT} class="pill pill--light">Start Your Assessment <span class="arw">→</span></a>
       </div>
     </section>
 
@@ -581,24 +734,24 @@ const press = [
         </div>
         <div class="foot__col">
           <h4>Treatments</h4>
-          <a href="#">GLP-1 Weight Loss</a>
-          <a href="#">Sexual Wellness</a>
-          <a href="#">Hair Loss</a>
-          <a href="#">Longevity &amp; Peptides</a>
+          <a href="/weight-loss">GLP-1 Weight Loss</a>
+          <a href="/sexual-wellness">Sexual Wellness</a>
+          <a href="/hair-loss">Hair Loss</a>
+          <a href="/longevity">Longevity &amp; Peptides</a>
         </div>
         <div class="foot__col">
           <h4>Company</h4>
-          <a href="#">How It Works</a>
-          <a href="#">Pricing</a>
-          <a href="#">About Us</a>
-          <a href="#">Partner Pharmacies</a>
+          <a href="/how-it-works">How It Works</a>
+          <a href="/pricing">Pricing</a>
+          <a href="/about">About Us</a>
+          <a href="/partner-pharmacies">Partner Pharmacies</a>
         </div>
         <div class="foot__col">
           <h4>Legal</h4>
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms of Service</a>
-          <a href="#">HIPAA Notice</a>
-          <a href="#">Telehealth Consent</a>
+          <a href="/privacy">Privacy Policy</a>
+          <a href="/terms">Terms of Service</a>
+          <a href="/hipaa">HIPAA Notice</a>
+          <a href="/telehealth-consent">Telehealth Consent</a>
         </div>
       </div>
       <div class="wrap foot__bottom">
