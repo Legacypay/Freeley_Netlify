@@ -1,1661 +1,844 @@
 ---
+// WEIGHT LOSS — rebuilt 2026-07-24 in the /prototype design language.
+//
+// ── Impeccable direction contract ────────────────────────────────────
+// THESIS: /prototype is the new landing and owns the visual world; this
+//   page is the vertical a visitor lands ON, so it inherits that world
+//   wholesale and spends it on one job — getting a GLP-1 candidate into
+//   intake. It refuses the old page's stacked-band layout where every
+//   section looked equally loud.
+// OWN-WORLD: inherited from /prototype, unchanged. Cream ground, forest
+//   green, gold price. Source Serif 4 display with italic emphasis,
+//   Archivo text, Archivo Narrow for the compliance register.
+// STORY: your biology, not your willpower → here is the molecule and who
+//   prescribes it → here is what the months actually look like → start.
+// FIRST VIEWPORT: serif headline left, real patient photo right, the
+//   three weight-goal doors directly under the price.
+// FORM: extension of an established surface — no concept tournament.
+// ─────────────────────────────────────────────────────────────────────
+//
+// EVERY DOM hook in public/assets/js/wl-script.js is preserved verbatim:
+//   modal      #quiz--modal #loader #quiz--container #close--quiz
+//   triggers   #start-full-assessment #start-assessment1..6
+//   gallery    #mainProductImage #prevBtn #nextBtn #dotContainer
+//              #thumbnailsContainer #featuresList
+//   toggle     .medication-toggle .btn[data-medication] .active-medication
+//   live text  .product-title .product-current-price
+//              .text-decoration-line-through .popular-badge
+//   swipers    .ok--section.swiper .brand--grid--hero.swiper .transformSwiper.swiper
+//   accordion  .faq-item > .faq-question   (public/style/script.js toggles .open)
+// Class names for layout are `wl-` prefixed so none of the legacy
+// global.css / style.css cascade reaches this markup. Layout.astro puts
+// <slot name="head"/> last in <head>, so the block below outranks both.
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+
+const ASSESSMENT = '/assessment-quiz';
+
+// Weight-goal doors — each id is a quiz-modal trigger wl-script.js binds.
+const goals = [
+  { id: 'start-assessment1', label: '10–25 lbs' },
+  { id: 'start-assessment2', label: '25–50 lbs' },
+  { id: 'start-assessment3', label: '50+ lbs' },
+];
+
+// Real ladder from pricing.json (semaglutide). The old page printed "$99*"
+// on all three tiers, which is only the 12-month rate — see the note in
+// PRODUCT.md about the qualifier having to travel with the number.
+const plans = [
+  { months: '1 month', price: '$194', save: null },
+  { months: '3 months', price: '$149', save: 'Save 23%' },
+  { months: '6 months', price: '$124', save: 'Save 36%' },
+  { months: '12 months', price: '$99', save: 'Save 49%', best: true },
+];
+
+const trustPoints = [
+  'Board-Certified Physicians',
+  '503A Licensed Pharmacy',
+  'HIPAA Compliant',
+  'HSA/FSA Accepted',
+  'Free Shipping',
+  'Cancel Anytime',
+];
+
+// The five "what's inside" cards. Images are the page's own existing
+// assets, previously reachable only as ::before backgrounds keyed to
+// legacy class names in global.css — referenced directly now.
+const mechanisms = [
+  {
+    title: 'Quiets the "food noise"',
+    desc: "GLP-1s target the brain's hunger receptors. The constant cravings and obsession over your next meal disappear.",
+    img: '/assets/wl/QuietsThe_FoodNoise_.png',
+    tint: '#C6CCDA',
+  },
+  {
+    title: 'You stay full longer',
+    desc: 'It slows down stomach emptying. Small portions finally make you feel completely satisfied and full.',
+    img: '/assets/wl/YouStayFullLonger.png',
+    tint: '#D2CBC2',
+  },
+  {
+    title: 'Improves metabolic health',
+    desc: 'By balancing blood sugar and insulin levels, your body stops hoarding fat and starts burning it.',
+    img: '/assets/wl/ImprovesMetabolicHealth.png',
+    tint: '#D1D9DC',
+  },
+  {
+    title: 'Compounded securely in 503A pharmacies',
+    desc: 'Prepared to your prescription by a licensed compounding facility, tested for potency, sterility, and purity.',
+    img: '/assets/wl/Compounded_securely_in_503A_Pharmacies.png',
+    tint: '#E4DDD4',
+  },
+  {
+    title: 'Overseen by board-certified physicians',
+    desc: 'A licensed U.S. physician reviews your intake, writes your plan, and adjusts your dose as you go.',
+    img: '/assets/wl/OverseenbyBoard-CertifiedPhysicians.png',
+    tint: '#F6EEE0',
+  },
+];
+
+const press = [
+  { src: '/assets/brands/bloomberg.svg', name: 'Bloomberg' },
+  { src: '/assets/brands/forbes.svg', name: 'Forbes' },
+  { src: '/assets/brands/new_york.svg', name: 'The New York Times' },
+  { src: '/assets/brands/tech_crunch.svg', name: 'TechCrunch' },
+];
+
+// Timeline. The old page's fourth entry was hair-loss copy ("noticeably
+// thicker, denser hair") under a duplicated "Month 6" label — dropped
+// rather than rewritten, since a replacement would be an invented claim.
+const timeline = [
+  {
+    badge: 'Month 1',
+    phase: 'The Reset',
+    tag: 'Appetite Control',
+    desc: "Your appetite decreases significantly. You'll naturally eat smaller portions and feel fuller much faster. Less bloating is common.",
+  },
+  {
+    badge: 'Month 3',
+    phase: 'The Momentum',
+    tag: 'Visible Results',
+    desc: "You're dropping consistent, healthy weight week over week. Clothes fit significantly better. Energy levels stabilize without sugar crashes.",
+  },
+  {
+    badge: 'Month 6',
+    phase: 'The Transformation',
+    tag: 'Full Payoff',
+    desc: 'Significant, noticeable weight loss. Improved metabolic markers. The compounding effect of healthy eating feels effortless.',
+  },
+];
+
+// ⚠️ The old page shipped three FAQs whose answers were all the same
+// side-effects paragraph, answering none of their questions. The
+// side-effect copy is kept verbatim under the question it actually
+// answers; the other two are written from PRODUCT.md facts only.
+// Flagged for owner review — no medical claim here is invented.
+const faqs = [
+  {
+    q: 'Do I need insurance?',
+    a: 'No. Freeley does not bill insurance: you pay one flat monthly price with no membership fee and no hidden charges. Plans are FSA/HSA eligible, and you can cancel at any time.',
+  },
+  {
+    q: 'What are the most common side effects?',
+    a: 'Most common side effects are mild gastrointestinal symptoms that typically improve over time. These may include nausea, vomiting, diarrhea, or constipation.',
+  },
+  {
+    q: 'What is compounded medication?',
+    a: 'A compounded medication is prepared for you by a licensed 503A pharmacy following USP standards, rather than mass-produced. Compounded medications are not FDA-approved and are not equivalent to the brand-name drug.',
+  },
+];
 ---
 
-<Layout title="Weight Lose">
+<Layout title="GLP-1 Weight Loss Treatment | Freeley">
   <Fragment slot="head">
-    <!-- Font playfair display embed -->
-    <style>
-        .transformSwiper .swiper-slide,
-        .transformSwiper .swiper-slide .transform-card {
-            width: fit-content !important;
+    <style is:inline>
+      /* Design tokens are already declared in public/style/style.css :root
+         (--green, --cream, --font-serif, …). Everything below is scoped to
+         wl- classes so no legacy rule collides. */
+      .wl-page { background: var(--cream); color: var(--ink); font-family: var(--font-sans); line-height: 1.55; overflow-x: clip; }
+      .wl-page img { max-width: 100%; }
+      .wl-wrap { max-width: 1200px; margin: 0 auto; padding-left: 28px; padding-right: 28px; }
+
+      .wl-serif { font-family: var(--font-serif); font-weight: 600; letter-spacing: -0.02em; text-wrap: balance; }
+      .wl-serif em { font-style: italic; font-weight: 600; color: #2c6b4c; }
+      .wl-eyebrow { font-family: var(--font-condensed); font-size: 11.5px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--brand); }
+      .wl-price { font-family: var(--font-serif); color: var(--gold); font-weight: 600; }
+      .wl-foot { font-size: 11.5px; color: var(--muted); margin-top: 16px; }
+
+      /* Buttons — same two shapes /prototype uses. */
+      .wl-btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; background: var(--green); color: #fff; border: none; border-radius: 999px; font-family: var(--font-sans); font-size: 15px; font-weight: 600; padding: 14px 24px; cursor: pointer; text-decoration: none; transition: background .15s; }
+      .wl-btn:hover { background: var(--green-deep); color: #fff; }
+      .wl-btn .wl-arw { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 999px; background: rgba(255,255,255,.16); }
+      .wl-btn--light { background: #fff; color: var(--green); border: 1px solid var(--line); }
+      .wl-btn--light:hover { background: #faf8f2; color: var(--green); }
+      .wl-btn--light .wl-arw { background: var(--green); color: #fff; }
+      .wl-btn-ghost { display: inline-flex; align-items: center; gap: 10px; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 11px 20px; font-size: 14px; font-weight: 600; color: var(--ink); text-decoration: none; cursor: pointer; transition: background .15s; }
+      .wl-btn-ghost:hover { background: #faf8f2; color: var(--ink); }
+      .wl-btn-ghost .wl-arw { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 999px; background: var(--green); color: #fff; }
+      .wl-page a:focus-visible, .wl-page button:focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; border-radius: 8px; }
+
+      /* ── Hero ───────────────────────────────────────────────── */
+      .wl-hero { position: relative; overflow: hidden; }
+      .wl-hero__img { display: none; }
+      @media (min-width: 1024px) {
+        .wl-hero__img {
+          display: block; position: absolute; top: 0; right: 0;
+          /* no max-height: the column's own height sets the section height,
+             and any cap shorter than that leaves a hard horizontal cut where
+             the photo stops against the cream. */
+          width: 46%; height: 100%;
+          object-fit: cover; object-position: center 25%;
+          -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 30%);
+          mask-image: linear-gradient(to right, transparent 0%, #000 30%);
         }
-        .transformSwiper .swiper-slide {
-            max-width: unset !important;
+      }
+      .wl-hero__inner { position: relative; z-index: 2; padding-top: 40px; padding-bottom: 64px; }
+      .wl-hero__col { max-width: 560px; }
+      @media (min-width: 1024px) { .wl-hero__col { max-width: 54%; } }
+      /* height:auto is load-bearing next to aspect-ratio — a width/height
+         attribute pair would otherwise win and defeat the ratio box. */
+      /* hero-mob.png is a 337x525 transparent cutout, not a photo plate —
+         forcing it into a landscape ratio box with object-fit:cover crops the
+         subject and strands it off-centre. Centre the cutout on the cream
+         instead, the same treatment /prototype gives its vials. */
+      .wl-hero__img-mob { display: block; width: auto; height: auto; max-height: 320px; margin: 10px auto 28px; }
+      @media (min-width: 1024px) { .wl-hero__img-mob { display: none; } }
+      .wl-hero h1 { font-size: clamp(2.6rem, 5.4vw, 4.2rem); line-height: 1.04; margin: 18px 0 20px; }
+      .wl-hero__sub { font-size: 1.05rem; color: var(--muted); margin: 0 0 26px; max-width: 46ch; }
+
+      .wl-badgeline { display: inline-flex; align-items: center; gap: 8px; background: rgba(15,107,69,.06); border: 1px solid rgba(15,107,69,.16); border-radius: 999px; padding: 6px 14px 6px 10px; }
+      .wl-badgeline img { width: 16px; height: auto; }
+      .wl-badgeline span { font-family: var(--font-condensed); font-size: 11.5px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--brand); }
+
+      /* Weight-goal doors */
+      .wl-goals { display: grid; gap: 10px; grid-template-columns: 1fr; margin: 0 0 14px; }
+      @media (min-width: 560px) { .wl-goals { grid-template-columns: repeat(3, 1fr); } }
+      .wl-goal { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 13px 18px; font-family: var(--font-sans); font-size: 15px; font-weight: 600; color: var(--ink); cursor: pointer; transition: border-color .15s, transform .15s; }
+      .wl-goal:hover { border-color: var(--brand); }
+      @media (hover: hover) and (prefers-reduced-motion: no-preference) { .wl-goal:hover { transform: translateY(-2px); } }
+      .wl-goal svg { flex: none; color: var(--brand); }
+      .wl-notsure { font-size: 14px; color: var(--muted); margin: 0 0 6px; }
+      .wl-notsure button { background: none; border: none; padding: 0; font: inherit; font-weight: 600; color: var(--brand); cursor: pointer; text-decoration: none; }
+      .wl-notsure button:hover { text-decoration: underline; }
+      .wl-hero__fineprint { font-family: var(--font-condensed); font-size: 12.5px; color: var(--muted); margin: 0 0 26px; }
+
+      .wl-hero__from { font-size: 1rem; margin: 0 0 8px; }
+      .wl-hero__from .wl-price { font-size: 1.7rem; }
+      .wl-hero__qual { font-family: var(--font-condensed); font-size: 12.5px; color: var(--muted); display: block; margin-top: 2px; }
+
+      .wl-quote { border-left: 2px solid var(--line); padding-left: 18px; margin: 30px 0 0; max-width: 48ch; }
+      .wl-quote p { font-family: var(--font-serif); font-size: 1.08rem; line-height: 1.5; font-style: italic; color: var(--ink); margin: 0 0 8px; }
+      .wl-quote span { font-family: var(--font-condensed); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+
+      /* ── Plan ladder ────────────────────────────────────────── */
+      .wl-plans { display: grid; gap: 10px; grid-template-columns: repeat(2, 1fr); margin: 0 0 4px; }
+      @media (min-width: 700px) { .wl-plans { grid-template-columns: repeat(4, 1fr); } }
+      .wl-plan { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
+      .wl-plan--best { border-color: var(--brand); box-shadow: 0 6px 20px rgba(15,107,69,.10); }
+      .wl-plan__price { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 600; color: var(--ink); line-height: 1.1; }
+      .wl-plan--best .wl-plan__price { color: var(--gold); }
+      .wl-plan__mo { font-size: 12px; color: var(--muted); }
+      .wl-plan__term { font-size: 13px; font-weight: 600; margin-top: 6px; }
+      .wl-plan__save { display: inline-block; font-family: var(--font-condensed); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--brand); background: rgba(15,107,69,.08); border-radius: 999px; padding: 3px 9px; margin-top: 8px; }
+
+      /* ── Trust bar ──────────────────────────────────────────── */
+      .wl-trustbar { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+      .wl-trustbar ul { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 24px; list-style: none; margin: 0; padding-top: 20px; padding-bottom: 20px; }
+      @media (min-width: 900px) { .wl-trustbar ul { grid-template-columns: repeat(6, auto); justify-content: space-between; } }
+      .wl-trustbar li { display: flex; align-items: center; gap: 9px; font-size: 14px; font-weight: 500; }
+      .wl-trustbar svg { color: var(--brand); flex: none; }
+      .wl-certs { display: flex; flex-wrap: wrap; align-items: center; gap: 18px; padding-top: 18px; padding-bottom: 18px; }
+      .wl-certs > span { font-family: var(--font-condensed); font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+      .wl-certs img { height: 40px; width: auto; }
+
+      /* ── Section furniture ──────────────────────────────────── */
+      .wl-sec { padding-top: 64px; padding-bottom: 64px; }
+      .wl-head { max-width: 660px; margin-bottom: 40px; }
+      .wl-head--center { text-align: center; margin-left: auto; margin-right: auto; }
+      .wl-head h2 { font-size: clamp(2rem, 3.8vw, 2.7rem); line-height: 1.1; margin: 14px 0 12px; }
+      .wl-head p { color: var(--muted); font-size: 15px; margin: 0; }
+
+      /* ── Inline CTA band ────────────────────────────────────── */
+      .wl-band { background: var(--green); color: #fff; border-radius: 22px; padding: 34px 32px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 22px; }
+      .wl-band h2 { font-family: var(--font-serif); font-size: clamp(1.5rem, 2.6vw, 2rem); color: #fff; margin: 0 0 6px; line-height: 1.15; }
+      .wl-band p { color: rgba(255,255,255,.75); font-size: 14px; margin: 0; }
+      .wl-band p b { color: var(--gold); font-family: var(--font-serif); font-size: 1.15rem; }
+      /* script.js pins this band on mobile scroll by adding .mobile-fixed.
+         global.css already handles position/radius and hides .left; the band
+         still carries section padding, so tighten it for the pinned state. */
+      .wl-band.mobile-fixed { padding: 12px 20px; }
+
+      /* ── Mechanism cards (swiper row) ───────────────────────── */
+      /* Clip at the wrap edge — swiper's own overflow:hidden is correct
+         here; the padding keeps the hover lift and its shadow from being
+         shaved off by that clip. */
+      .wl-mech.swiper { overflow: hidden; padding-top: 6px; padding-bottom: 16px; }
+      .wl-mech .swiper-slide { width: 300px; height: auto; }
+      @media (min-width: 700px) { .wl-mech .swiper-slide { width: 340px; } }
+      .wl-mech__card { display: flex; flex-direction: column; height: 100%; border-radius: 18px; overflow: hidden; background: var(--card); }
+      .wl-mech__img { aspect-ratio: 4 / 3; overflow: hidden; }
+      .wl-mech__img img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+      .wl-mech__body { padding: 20px 22px 24px; }
+      .wl-mech__body h3 { font-family: var(--font-serif); font-size: 1.2rem; font-weight: 600; margin: 0 0 8px; line-height: 1.25; }
+      .wl-mech__body p { font-size: 13.5px; color: var(--muted); margin: 0; }
+
+      /* ── Before / after ─────────────────────────────────────── */
+      .wl-ba.swiper { overflow: hidden; padding-top: 6px; padding-bottom: 16px; }
+      .wl-ba .swiper-slide { width: 320px; height: auto; }
+      @media (min-width: 700px) { .wl-ba .swiper-slide { width: 400px; } }
+      .wl-ba__card { background: var(--card); border-radius: 18px; padding: 16px; height: 100%; }
+      .wl-ba__pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+      .wl-ba__box { position: relative; border-radius: 12px; overflow: hidden; background: #fff; }
+      .wl-ba__box img { width: 100%; height: auto; display: block; }
+      .wl-ba__label { position: absolute; top: 10px; left: 10px; z-index: 1; font-family: var(--font-condensed); font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; background: rgba(255,255,255,.92); color: var(--ink); border-radius: 999px; padding: 3px 10px; }
+      .wl-ba__box--after .wl-ba__label { background: var(--green); color: #fff; }
+      .wl-ba__quote { font-family: var(--font-serif); font-size: 1.05rem; font-style: italic; margin: 16px 0 6px; }
+      .wl-ba__note { font-size: 11.5px; color: var(--muted); margin: 0; line-height: 1.4; }
+
+      /* ── Product showcase (JS-driven) ───────────────────────── */
+      .wl-prod { display: grid; gap: 40px; grid-template-columns: 1fr; align-items: start; }
+      @media (min-width: 900px) { .wl-prod { grid-template-columns: 1fr 1fr; gap: 56px; } }
+      .wl-prod__stage { background: var(--card); border-radius: 22px; padding: 22px; }
+      .popular-badge { display: inline-block; font-family: var(--font-condensed); font-size: 11px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; background: var(--gold); color: #fff; border-radius: 999px; padding: 5px 12px; }
+      .wl-prod__frame { display: grid; place-items: center; padding: 26px 0 18px; min-height: 280px; }
+      .wl-prod__frame img { max-height: 260px; width: auto; transition: opacity .2s ease; }
+      .wl-prod__frame img.fade-out { opacity: 0; }
+      .wl-prod__frame img.fade-in { opacity: 1; }
+      .wl-prod__nav { display: flex; align-items: center; justify-content: space-between; }
+      .wl-navbtn { background: #fff; border: 1px solid var(--line); border-radius: 999px; width: 42px; height: 42px; display: grid; place-items: center; cursor: pointer; color: var(--green); transition: border-color .15s; }
+      .wl-navbtn:hover { border-color: var(--brand); }
+      /* Fixed 18x6 box always reserved so activating a dot animates
+         transform, never width — width would relayout the whole row. */
+      #dotContainer { display: flex; align-items: center; gap: 7px; }
+      #dotContainer .dot-indicator { width: 18px; height: 6px; border-radius: 999px; background: var(--line); cursor: pointer; transform: scaleX(.34); transition: transform .2s ease, background .15s ease; }
+      #dotContainer .dot-indicator.active { background: var(--brand); transform: scaleX(1); }
+      #thumbnailsContainer { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+      #thumbnailsContainer .thumb-box { border: 1px solid var(--line); border-radius: 12px; padding: 5px; cursor: pointer; background: #fff; transition: border-color .15s; }
+      #thumbnailsContainer .thumb-box.active { border-color: var(--brand); }
+
+      .wl-trustpilot { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+      .wl-trustpilot span { font-family: var(--font-condensed); font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+      .wl-trustpilot img { height: 18px; width: auto; }
+      .product-title { font-family: var(--font-serif); font-size: clamp(1.7rem, 3vw, 2.2rem); font-weight: 600; margin: 0 0 8px; line-height: 1.15; }
+      .wl-prod__lede { font-size: 14.5px; color: var(--muted); margin: 0 0 20px; }
+
+      .medication-toggle { display: inline-flex; gap: 6px; padding: 5px; background: var(--card); border-radius: 999px; margin-bottom: 24px; }
+      .medication-toggle .btn { border: none; background: transparent; border-radius: 999px; padding: 11px 22px; font-family: var(--font-sans); font-size: 14px; font-weight: 600; color: var(--muted); cursor: pointer; transition: background .15s, color .15s; }
+      /* 0,3,0 — outranks the .text-white / .text-success utility classes
+         wl-script.js swaps in at runtime, which Tailwind may never emit. */
+      .medication-toggle .btn.active-medication { background: var(--green); color: #fff; }
+
+      .wl-pricerow { display: flex; align-items: baseline; flex-wrap: wrap; gap: 12px; margin-bottom: 4px; }
+      .product-current-price { font-family: var(--font-serif); font-size: 2.6rem; font-weight: 600; color: var(--gold); line-height: 1; }
+      .text-decoration-line-through { text-decoration: line-through; color: var(--muted); font-size: 16px; opacity: .75; }
+      .wl-prod__per { font-family: var(--font-condensed); font-size: 13px; color: var(--muted); margin: 0 0 24px; }
+
+      #featuresList { margin-bottom: 24px; }
+      #featuresList .feature-item { display: flex; align-items: center; gap: 11px; margin-bottom: 11px; font-size: 14.5px; }
+      #featuresList .feature-icon { flex: none; width: 22px; height: 22px; border-radius: 999px; background: var(--brand); display: grid; place-items: center; }
+      .wl-note { display: flex; align-items: flex-start; gap: 10px; background: #fbf5e6; border: 1px solid #ecd9a8; border-radius: 12px; padding: 13px 15px; margin-bottom: 24px; }
+      .wl-note p { font-size: 13px; color: #6b5522; margin: 0; }
+      .wl-note svg { flex: none; margin-top: 1px; }
+
+      /* ── Journey ────────────────────────────────────────────── */
+      .wl-journey { position: relative; overflow: hidden; border-radius: 22px; background: var(--green); }
+      .wl-journey__bg { position: absolute; inset: 0; background-image: url('/assets/wl/Here_sWhatHappensNext.png'); background-size: cover; background-position: center; }
+      .wl-journey__inner { position: relative; z-index: 1; padding: 44px 34px 0; min-height: 560px; display: flex; flex-direction: column; justify-content: space-between; }
+      .wl-journey__head { max-width: 460px; }
+      .wl-journey__head .wl-eyebrow { color: #fff; opacity: .85; }
+      .wl-journey__head h2 { color: #fff; font-size: clamp(1.9rem, 3.4vw, 2.6rem); margin: 12px 0 22px; line-height: 1.12; }
+      .wl-journey__graph { display: none; width: 100%; height: auto; }
+      @media (min-width: 900px) { .wl-journey__graph { display: block; } }
+      .wl-journey__list { display: flex; flex-direction: column; gap: 26px; padding-bottom: 44px; }
+      @media (min-width: 900px) { .wl-journey__list { display: none; } }
+      .wl-tl { display: flex; gap: 14px; }
+      .wl-tl__dot { flex: none; width: 14px; height: 14px; border-radius: 999px; background: #fff; margin-top: 5px; box-shadow: 0 0 0 6px rgba(255,255,255,.18); }
+      .wl-tl__badge { display: inline-block; font-family: var(--font-condensed); font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--green); background: #fff; border-radius: 999px; padding: 3px 10px; margin-bottom: 8px; }
+      .wl-tl__phase { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 8px; }
+      .wl-tl__phase b { color: #fff; font-size: 14.5px; font-weight: 600; }
+      .wl-tl__tag { font-size: 12.5px; color: #fff; border: 1px solid rgba(255,255,255,.45); border-radius: 999px; padding: 3px 11px; }
+      .wl-tl p { font-size: 13.5px; color: rgba(255,255,255,.82); margin: 0; line-height: 1.5; }
+
+      /* ── Why trust ──────────────────────────────────────────── */
+      .wl-why { display: grid; gap: 40px; grid-template-columns: 1fr; align-items: center; }
+      @media (min-width: 900px) { .wl-why { grid-template-columns: 1fr 1fr; gap: 56px; } }
+      .wl-why__img { border-radius: 20px; overflow: hidden; }
+      .wl-why__img img { width: 100%; height: auto; display: block; }
+      .wl-why__pt { margin-bottom: 22px; }
+      .wl-why__pt-head { display: flex; align-items: center; gap: 10px; margin-bottom: 7px; }
+      .wl-why__pt-head h3 { font-size: 1rem; font-weight: 600; margin: 0; }
+      .wl-why__pt p { font-size: 14px; color: var(--muted); margin: 0; max-width: 52ch; }
+      .wl-tick { flex: none; width: 22px; height: 22px; border-radius: 999px; background: var(--brand); display: grid; place-items: center; }
+
+      /* ── Press ──────────────────────────────────────────────── */
+      .wl-press { display: flex; flex-wrap: wrap; align-items: center; gap: 34px; padding-top: 8px; padding-bottom: 56px; }
+      .wl-press > span { font-family: var(--font-condensed); font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+      .wl-press img { height: 22px; width: auto; opacity: .62; filter: grayscale(1); }
+      .wl-press .swiper-slide { width: auto; }
+
+      /* ── FAQ ────────────────────────────────────────────────── */
+      .wl-faqs { max-width: 780px; margin: 0 auto; }
+      .faq-item { border-bottom: 1px solid var(--line); }
+      .faq-question { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 22px 0; cursor: pointer; }
+      .faq-question-text { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 600; }
+      .faq-toggle-icon { flex: none; color: var(--green); transition: transform .25s ease; }
+      .faq-item.open .faq-toggle-icon { transform: rotate(180deg); }
+      /* grid-template-rows animates without measuring — no JS height math. */
+      .faq-answer { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .28s ease; }
+      .faq-item.open .faq-answer { grid-template-rows: 1fr; }
+      .faq-answer > div { overflow: hidden; }
+      .faq-answer p { font-size: 14.5px; color: var(--muted); margin: 0 0 22px; max-width: 62ch; line-height: 1.6; }
+
+      /* ── Referral + closing band ────────────────────────────── */
+      .wl-refer { background: var(--card); border-radius: 22px; padding: 40px 34px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px; }
+      .wl-refer h2 { font-family: var(--font-serif); font-size: clamp(1.6rem, 2.8vw, 2.1rem); margin: 0 0 8px; line-height: 1.15; }
+      .wl-refer p { color: var(--muted); font-size: 14.5px; margin: 0; max-width: 46ch; }
+
+      .wl-close { background: var(--green-deep); color: #fff; }
+      .wl-close__grid { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 26px; padding-top: 56px; padding-bottom: 56px; }
+      .wl-close h2 { font-family: var(--font-serif); font-size: clamp(1.9rem, 3.2vw, 2.5rem); margin: 0 0 10px; color: #fff; line-height: 1.12; }
+      .wl-close h2 em { font-style: italic; color: #cdb98f; }
+      .wl-close p { color: rgba(255,255,255,.65); font-size: 14.5px; margin: 0; max-width: 42ch; }
+      .wl-close__feats { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 18px; }
+      .wl-close__feats span { display: flex; align-items: center; gap: 8px; font-size: 13px; color: rgba(255,255,255,.85); }
+
+      /* ── Motion, gated exactly as /prototype gates it ───────── */
+      @supports (animation-timeline: view()) {
+        @media (prefers-reduced-motion: no-preference) {
+          .wl-mech__card, .wl-ba__card, .wl-why__img { animation: wlRise linear both; animation-timeline: view(); animation-range: entry 6% cover 24%; }
+          @keyframes wlRise { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
         }
+      }
+      @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+        .wl-mech__card, .wl-ba__card { transition: translate .35s cubic-bezier(.22,.61,.36,1), box-shadow .35s ease; }
+        .wl-mech__card:hover, .wl-ba__card:hover { translate: 0 -6px; box-shadow: 0 20px 40px rgba(23,34,42,.14); }
+      }
+
+      /* ── Legacy cascade overrides ───────────────────────────────
+         wl-script.js and script.js force these exact class names, and
+         public/style/style.css already styles them for the OLD design
+         (Inter/Poppins, #004C27, #005c2b). Every selector here is
+         .wl-page-prefixed so it outranks the legacy rule and cannot
+         reach the other verticals that share those classes. !important
+         appears only where the legacy declaration is itself !important
+         — style.css:3646 and :3657. Verified by computed style, not by
+         reading the cascade. */
+      .wl-page .medication-toggle .btn { font-family: var(--font-sans); font-size: 14px; padding: 11px 22px; color: var(--muted) !important; }
+      .wl-page .medication-toggle .btn.active-medication { background: var(--green) !important; color: #fff !important; }
+      .wl-page #featuresList .feature-text { font-family: var(--font-sans); font-size: 14.5px; font-weight: 400; line-height: 1.45; color: var(--ink); }
+      .wl-page .faq-question-text { color: var(--ink); }
+      /* legacy .faq-answer ships padding:14px 20px + margin-top, which
+         leaves a gap even when the row is collapsed to 0fr. */
+      .wl-page .faq-answer { padding: 0; margin-top: 0; }
+      .wl-page .faq-answer p { font-family: var(--font-sans); }
+      /* global.css:591 sets `.swiper { overflow: visible !important }`
+         site-wide, so every carousel bleeds past its container. /prototype's
+         rows clip at the wrap, so these two do too. !important is required
+         to answer !important; the .wl-page prefix keeps it off the other
+         verticals that rely on the bleed. */
+      .wl-page .wl-mech.swiper, .wl-page .wl-ba.swiper { overflow: hidden !important; }
+
+      /* Quiz modal — legacy chrome, styling kept local so it no longer
+         depends on the old page's cascade. */
+      #quiz--modal { display: none; position: fixed; inset: 0; z-index: 9999; background: rgba(10,20,15,.55); }
+      #quiz--modal .modal-content { position: relative; background: #fff; max-width: 620px; margin: 6vh auto; border-radius: 18px; overflow: hidden; }
+      #quiz--modal .close { position: absolute; top: 12px; right: 12px; z-index: 2; cursor: pointer; }
+      #quiz--modal .close img { width: 26px; height: 26px; }
+      .processing-loader { display: none; width: 34px; height: 34px; margin: 60px auto; border: 3px solid var(--line); border-top-color: var(--brand); border-radius: 50%; animation: wlSpin .8s linear infinite; }
+      @keyframes wlSpin { to { transform: rotate(360deg); } }
     </style>
   </Fragment>
 
-    <main class="weight--lose">
-        <!-- Header -->
-        <Header />
+  <main class="wl-page">
+    <Header />
 
-      <section class="hero overflow-hidden py-12">
-
-        <div class="container hero--container py-12">
-                  <div class="fig-hero__couple" aria-hidden="true">
-        </div>
-          <div class="grid grid-cols-1 md:grid-cols-12 gap-x-6 relative">
-            <div class="md:col-span-8 lg:col-span-7 pr-4 md:pr-12">
-              <div
-                class="bordered--heading inline-block px-4 mb-4"
-              >
-                <span class="capitalize flex items-center gap-1">
-                  <span>
-                    <img
-                      src="/assets/trust-icon.svg"
-                      alt="Verified Icon"
-                      class="mr-2"
-                    />
-                  </span>
-                  LegitScript Certified Healthcare Platform
-                </span>
-              </div>
-              <h1
-                class="flex flex-col"
-              >
-                Weight Loss Medication
-                <span class="text-highlight">That Actually Works</span>
-              </h1>
-              <p
-                class="lead pr-0 md:pr-12"
-              >
-                Clinical-grade GLP-1 treatments delivered to your door. Lose
-                weight safely with a board-certified physician.
-              </p>
-              <div
-                class="bordered--heading extra-border mt-4 inline-block px-4 mb-6"
-              >
-                <span class="uppercase"
-                  >WHAT'S YOUR WEIGHT LOSS GOAL?</span
-                >
-              </div>
-              <div
-                class="mb-6"
-              >
-                <div class="weight-guide grid grid-cols-1 md:grid-cols-12 gap-4 m-0">
-                  <div class="weight-item md:col-span-4 lg:col-span-3" id="start-assessment1">
-                    <span
-                      class="weight-range flex justify-between items-center"
-                      ><span>10–25 lbs</span>
-                      <div>
-                        <svg
-                          width="14"
-                          height="14"
-                          viewBox="0 0 14 14"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M8.41797 3.45898L11.9588 6.99982L8.41797 10.5407"
-                            stroke="#004C27"
-                            stroke-width="1.5"
-                            stroke-miterlimit="10"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                          <path
-                            d="M2.04199 7H11.8595"
-                            stroke="#004C27"
-                            stroke-width="1.5"
-                            stroke-miterlimit="10"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                        </svg>
-                      </div>
-                    </span>
-                  </div>
-                  <div class="weight-item md:col-span-4 lg:col-span-3" id="start-assessment2">
-                    <span
-                      class="weight-range flex justify-between items-center"
-                      ><span>25–50 lbs </span>
-                      <div>
-                        <svg
-                          width="14"
-                          height="14"
-                          viewBox="0 0 14 14"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M8.41797 3.45898L11.9588 6.99982L8.41797 10.5407"
-                            stroke="#004C27"
-                            stroke-width="1.5"
-                            stroke-miterlimit="10"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                          <path
-                            d="M2.04199 7H11.8595"
-                            stroke="#004C27"
-                            stroke-width="1.5"
-                            stroke-miterlimit="10"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                        </svg>
-                      </div>
-                    </span>
-                  </div>
-                  <div class="weight-item md:col-span-4 lg:col-span-3" id="start-assessment3">
-                    <span
-                      class="weight-range flex justify-between items-center"
-                      ><span>50+ lbs</span>
-                      <div>
-                        <svg
-                          width="14"
-                          height="14"
-                          viewBox="0 0 14 14"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M8.41797 3.45898L11.9588 6.99982L8.41797 10.5407"
-                            stroke="#004C27"
-                            stroke-width="1.5"
-                            stroke-miterlimit="10"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                          <path
-                            d="M2.04199 7H11.8595"
-                            stroke="#004C27"
-                            stroke-width="1.5"
-                            stroke-miterlimit="10"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                        </svg>
-                      </div>
-                    </span>
-                  </div>
-                </div>
-                <div class="assessment-link">
-                  <span>Not sure? </span>
-                  <a href="javascript:void(0)" id="start-full-assessment">Start the full assessment →</a>
-                    </div>
-                    <p class="mt-2">
-                        <small class="italic">Free consultation if you don't qualify. Cancel
-                    anytime.</small
-                  >
-                </p>
-              </div>
-              <div
-                class="steps--container hidden md:flex"
-              >
-                <div class="step">
-                  <div class="flex gap-2 flex-col">
-                    <div class="step-title">$99*</div>
-                    <div class="flex items-center gap-4">
-                      <div class="step--subtitle">1-month</div>
-                      <div class="step--number">Save 15%</div>
-                    </div>
-                  </div>
-                </div>
-                <div class="step">
-                  <div class="flex gap-2 flex-col">
-                    <div class="step-title">$99*</div>
-                    <div class="flex items-center gap-4">
-                      <div class="step--subtitle">3-month</div>
-                      <div class="step--number">Save 15%</div>
-                    </div>
-                  </div>
-                </div>
-                <div class="step">
-                  <div class="flex gap-2 flex-col">
-                    <div class="step-title">$99*</div>
-                    <div class="flex items-center gap-4">
-                      <div class="step--subtitle">6-month</div>
-                      <div class="step--number">Save 15%</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="steps--container grid grid-cols-3 md:hidden"
-              >
-                <div
-                  class="step mb-2 flex flex-col-reverse px-2"
-                >
-                  <div class="step--number">Save 15%</div>
-                  <div class="flex gap-2 flex-col">
-                    <div class="step-title text-center">$99*</div>
-                    <div class="text-14-inter text-center">1-month</div>
-                  </div>
-                </div>
-                <div
-                  class="step mb-2 flex flex-col-reverse px-2"
-                >
-                  <div class="step--number">Save 15%</div>
-                  <div class="flex gap-2 flex-col">
-                    <div class="step-title text-center">$99*</div>
-                    <div class="text-14-inter text-center">3-month</div>
-                  </div>
-                </div>
-                <div
-                  class="step mb-2 flex flex-col-reverse px-2"
-                >
-                  <div class="step--number">Save 15%</div>
-                  <div class="flex gap-2 flex-col">
-                    <div class="step-title text-center">$99*</div>
-                    <div class="text-14-inter text-center">6-month</div>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="hero--testimonial pr-0 mb-12 md:pr-12 mt-6"
-              >
-                <p class="text-black mb-6">Testimonials</p>
-                <span
-                  >"I tried every diet app imaginable. Nothing stuck until my
-                  doctor started me on semaglutide through Freeley. The cravings
-                  just… stopped. I'm down 31 lbs and my A1C went from 6.4 to
-                  5.6."</span
-                >
-              </div>
-
-              <div
-                class="hero--brands pr-0 md:pr-12 mt-4"
-              >
-                <p class="text-black mb-6">Our Treatments Featured In</p>
-                <div class="hidden md:grid md:grid-cols-4 items-end pl-4">
-                  <div class="md:col-span-1 px-0">
-                    <img
-                      class="max-w-full h-auto"
-                      src="/assets/brands/bloomberg.svg"
-                    />
-                  </div>
-                  <div class="md:col-span-1 px-0">
-                    <img
-                      class="max-w-full h-auto"
-                      src="/assets/brands/forbes.svg"
-                    />
-                  </div>
-                  <div class="md:col-span-1 px-0">
-                    <img
-                      class="max-w-full h-auto"
-                      src="/assets/brands/new_york.svg"
-                    />
-                  </div>
-                  <div class="md:col-span-1 px-0">
-                    <img
-                      class="max-w-full h-auto"
-                      src="/assets/brands/tech_crunch.svg"
-                    />
-                  </div>
-                </div>
-                <div class="flex gap-4 mt-4 md:hidden">
-                  <div class="swiper brand--grid--hero">
-                    <div class="swiper-wrapper items-end">
-                      <div class="swiper-slide">
-                        <img
-                          src="/assets/brands/bloomberg.svg"
-                        />
-                      </div>
-                      <div class="swiper-slide">
-                        <img
-                          src="/assets/brands/forbes.svg"
-                        />
-                      </div>
-                      <div class="swiper-slide">
-                        <img
-                          src="/assets/brands/new_york.svg"
-                        />
-                      </div>
-                      <div class="swiper-slide">
-                        <img
-                          src="/assets/brands/tech_crunch.svg"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="md:col-span-6"></div>
-          </div>
-        </div>
-        <div
-          class="container relative z-[2] py-4 mb-6 percentage--container"
-        >
-          <div
-            class="grid grid-cols-1 md:grid-cols-2 protocol--text gap-6 md:gap-0"
-          >
-            <div
-              class="order-2 md:order-1 flex flex-col md:flex-row gap-2"
-            >
-              <div class="features-container">
-                <div class="features-grid">
-                  <div class="feature-item">
-                    <div class="feature-icon">
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M20.3 7.3L9 18.6L3.7 13.3"
-                          stroke="white"
-                          stroke-width="2.5"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                      </svg>
-                    </div>
-                    <span class="feature-text">Board-Certified Physicians</span>
-                  </div>
-                  <div class="feature-item">
-                    <div class="feature-icon">
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M20.3 7.3L9 18.6L3.7 13.3"
-                          stroke="white"
-                          stroke-width="2.5"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                      </svg>
-                    </div>
-                    <span class="feature-text">503A Licensed Pharmacy</span>
-                  </div>
-                  <div class="feature-item">
-                    <div class="feature-icon">
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M20.3 7.3L9 18.6L3.7 13.3"
-                          stroke="white"
-                          stroke-width="2.5"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                      </svg>
-                    </div>
-                    <span class="feature-text">HIPAA Compliant</span>
-                  </div>
-                  <div class="feature-item">
-                    <div class="feature-icon">
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M20.3 7.3L9 18.6L3.7 13.3"
-                          stroke="white"
-                          stroke-width="2.5"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                      </svg>
-                    </div>
-                    <span class="feature-text">HSA/FSA Accepted</span>
-                  </div>
-                  <div class="feature-item">
-                    <div class="feature-icon">
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M20.3 7.3L9 18.6L3.7 13.3"
-                          stroke="white"
-                          stroke-width="2.5"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                      </svg>
-                    </div>
-                    <span class="feature-text">Free Shipping</span>
-                  </div>
-                  <div class="feature-item">
-                    <div class="feature-icon">
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M20.3 7.3L9 18.6L3.7 13.3"
-                          stroke="white"
-                          stroke-width="2.5"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                      </svg>
-                    </div>
-                    <span class="feature-text">Cancel Anytime</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div
-              class="order-1 md:order-2 verified--text"
-            >
-              <div class="text-left mb-4 block md:hidden">
-                <span>Verified &amp; Certified</span>
-              </div>
-              <div
-                class="flex justify-start md:justify-end items-end md:items-center gap-4 md:gap-12 protocol--imgs"
-              >
-                <div class="flex-1 hidden md:block">
-                  <span>Verified &amp; Certified</span>
-                </div>
-                               <div class="flex-1">
-                  <img
-                    src="/assets/hipaa_badge.png"
-                    alt="Protocol Image"
-                    class="max-w-full h-auto"
-                  />
-                </div>
-                <div class="flex-1">
-                  <img
-                    src="/assets/49921676.png"
-                    alt="Protocol Image"
-                    class="max-w-full h-auto"
-                  />
-                </div>
-
-                <div class="flex-1">
-                  <img
-                    src="/assets/usa_badge.png"
-                    alt="Protocol Image"
-                    class="max-w-full h-auto"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          class="container z-[2] relative blur--bg"
-          id="start-assessment"
-        >
-          <div class="grid grid-cols-1 md:grid-cols-2 items-center">
-            <div class="flex flex-col gap-4 left">
-              <strong>Start Assessment</strong>
-              <div class="from--to">
-                From <span>$99</span> Physician-supervised
-              </div>
-            </div>
-            <div
-              class="flex justify-start md:justify-end gap-4 mt-4 md:mt-0 right"
-            >
-              <a
-                href="javascript:void(0);"
-                class="cta--global w-full md:w-1/3 text-center"
-                id="start-assessment4"
-              >
-                <span>Start Your Assessment</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section>
-
-          <div id="quiz--modal" class="modal">
-              <div class="modal-content">
-                  <span class="close" id="close--quiz"><img src="/assets/icons/close.png" /></span>
-
-                  <div class="processing-loader" id="loader"></div>
-
-                  <div id="quiz--container"></div>
-              </div>
-          </div>
-      </section>
-      <!-------------------------------------
-        *********** What's inside***********
-        -------------------------------------->
-      <section class="three--gorgeous md:py-12 overflow-hidden">
-        <div class="container py-12">
-          <div
-            class="mb-12"
-          >
-            <div class="section--title">
-              <div class="bordered--heading inline-block px-4">
-                <span class="uppercase">What's Inside</span>
-              </div>
-              <h2>
-                Okay,<br />
-                <span class="highlight">But Does It Actually Work?</span>
-              </h2>
-              <p>15-20% Average body weight lost in 1 year</p>
-            </div>
-          </div>
-    <!-- Desktop Swiper -->
-    <div class="swiper ok--section desktop pb-12 homepage desktop">
-        <div class="swiper-wrapper gorgeous--items ">
-
-          <!-- Slide 1 -->
-          <div class="swiper-slide">
-            <div
-              class="gorgeous--item flex items-end"
-            >
-              <div
-                class="text-content flex flex-col justify-end items-start h-full w-full relative z-1"
-              >
-                <h2 class="text-left mb-4 pr-12">Quiets The "Food Noise"</h2>
-                <div class="text-14-inter dark">
-                  GLP-1s target the brain's hunger receptors. The constant cravings and obsession over your next meal disappear.
-                </div>
-              </div>
-            </div>
+    <!-- ═══ Hero ═══ -->
+    <section class="wl-hero">
+      <img class="wl-hero__img" src="/assets/wl/hero.png" alt="A Freeley weight-loss patient" fetchpriority="high" />
+      <div class="wl-wrap wl-hero__inner">
+        <div class="wl-hero__col">
+          <div class="wl-badgeline">
+            <img src="/assets/trust-icon.svg" alt="" />
+            <span>LegitScript Certified</span>
           </div>
 
-          <!-- Slide 2 -->
-          <div class="swiper-slide">
-            <div
-              class="gorgeous--item flex items-end"
-            >
-              <div
-                class="text-content flex flex-col justify-end items-start h-full w-full relative z-1"
-              >
-                <h2 class="text-left mb-4 pr-12">Compounded securely in 503A Pharmacies</h2>
-              </div>
-            </div>
+          <h1 class="wl-serif">Your last diet didn't fail. <em>Your biology did.</em></h1>
+          <p class="wl-hero__sub">
+            Clinical-grade GLP-1 treatment, prescribed by a licensed U.S. physician and
+            compounded by a 503A pharmacy — delivered discreetly to your door.
+          </p>
+
+          <img class="wl-hero__img-mob" src="/assets/wl/hero-mob.png" alt="A Freeley weight-loss patient" />
+
+          <div class="wl-hero__from">
+            From <span class="wl-price">$99</span>/month
+            <span class="wl-hero__qual">on the 12-month plan · no membership fee, cancel anytime</span>
           </div>
 
-          <!-- Slide 3 -->
-          <div class="swiper-slide">
-            <div
-              class="gorgeous--item flex items-end"
-            >
-              <div
-                class="text-content flex flex-col justify-end items-start h-full w-full relative z-1"
-              >
-                <h2 class="text-left mb-4 pr-12">You Stay Full Longer</h2>
-                <div class="text-14-inter dark">
-                  It slows down stomach emptying. Small portions finally make you feel completely satisfied and full.
-                </div>
-              </div>
-            </div>
+          <p class="wl-eyebrow" style="margin:26px 0 12px;">What's your weight loss goal?</p>
+          <div class="wl-goals">
+            {goals.map((g) => (
+              <button type="button" class="wl-goal" id={g.id}>
+                {g.label}
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+              </button>
+            ))}
           </div>
+          <p class="wl-notsure">
+            Not sure? <button type="button" id="start-full-assessment">Start the full assessment →</button>
+          </p>
+          <p class="wl-hero__fineprint">Free consultation if you don't qualify. Cancel anytime.</p>
 
-          <!-- Slide 4 -->
-          <div class="swiper-slide">
-            <div
-              class="gorgeous--item flex items-end"
-            >
-              <div
-                class="text-content flex flex-col justify-end items-start h-full w-full relative z-1"
-              >
-                <h2 class="text-left mb-4 pr-12">Overseen by Board-Certified Physicians</h2>
-
-              </div>
-            </div>
-          </div>
-
-
-                    <!-- Slide 5 -->
-          <div class="swiper-slide">
-            <div
-              class="gorgeous--item flex items-end"
-            >
-              <div
-                class="text-content flex flex-col justify-end items-start h-full w-full relative z-1"
-              >
-                <h2 class="text-left mb-4 pr-12">Improves Metabolic Health</h2>
-                <div class="text-14-inter dark">
-                 By balancing blood sugar and insulin levels, your body stops hoarding fat and starts burning it.
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </div>
-    </div>
-
- <!-- Mobile Columns -->
-            <div class="gorgeous--items md:hidden">
-              <div
-                class="gorgeous--item mb-4 px-0"
-              >
-                <img src="/assets/wl/percent1.svg" />
-              </div>
-              <div
-                class="gorgeous--item mb-4 px-0"
-              >
-                <img src="/assets/wl/percent2.svg" />
-              </div>
-              <div
-                class="gorgeous--item mb-4 px-0"
-              >
-                <img src="/assets/wl/percent3.svg" />
-              </div>
-              <div
-                class="gorgeous--item mb-4 px-0"
-              >
-                <img src="/assets/wl/percent4.svg" />
-              </div>
-              <div
-                class="gorgeous--item mb-4 px-0"
-              >
-                <img src="/assets/wl/percent5.svg" />
-              </div>
-          </div>
-        </div>
-      </section>
-
-<!-- before after section -->
-<section class="overflow-hidden pb-12">
-  <div class="container">
-    <!-- Swiper Container -->
-    <div class="swiper transformSwiper">
-      <div class="swiper-wrapper">
-        <!-- Slide 1 -->
-        <div class="swiper-slide">
-          <div
-            class="transform-card"
-          >
-            <div class="compare-wrapper">
-              <div class="before-box">
-                <span class="compare-label">Before</span>
-                <img
-                  src="/assets/wl/before.svg"
-                  alt="Before transformation"
-                />
-              </div>
-              <div class="after-box">
-                <span class="compare-label">After</span>
-                <img
-                  src="/assets/wl/after.svg"
-                  alt="After transformation"
-                />
-              </div>
-            </div>
-            <div class="transform-quote">
-              Real patient progress over 12 weeks.
-            </div>
-            <div class="transform-author">
-              Individual results vary. Photos representative of typical
-              outcomes.
-              <span></span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Slide 2 -->
-        <div class="swiper-slide">
-          <div
-            class="transform-card "
-          >
-            <div class="compare-wrapper">
-              <div class="before-box">
-                <span class="compare-label">Before</span>
-                <img
-                  src="/assets/wl/before.svg"
-                  alt="Before transformation"
-                />
-              </div>
-              <div class="after-box">
-                <span class="compare-label">After</span>
-                <img
-                  src="/assets/wl/after.svg"
-                  alt="After transformation"
-                />
-              </div>
-            </div>
-            <div class="transform-quote">
-              Real patient progress over 12 weeks.
-            </div>
-            <div class="transform-author">
-              Individual results vary. Photos representative of typical
-              outcomes.
-              <span></span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Slide 3 -->
-        <div class="swiper-slide">
-          <div
-            class="transform-card "
-
-          >
-            <div class="compare-wrapper">
-              <div class="before-box">
-                <span class="compare-label">Before</span>
-                <img
-                  src="/assets/wl/before.svg"
-                  alt="Before transformation"
-                />
-              </div>
-              <div class="after-box">
-                <span class="compare-label">After</span>
-                <img
-                  src="/assets/wl/after.svg"
-                  alt="After transformation"
-                />
-              </div>
-            </div>
-            <div class="transform-quote">
-              Real patient progress over 12 weeks.
-            </div>
-            <div class="transform-author">
-              Individual results vary. Photos representative of typical
-              outcomes.
-              <span></span>
-            </div>
-          </div>
-        </div>
-                <!-- Slide 4 -->
-        <div class="swiper-slide">
-          <div
-            class="transform-card"
-          >
-            <div class="compare-wrapper">
-              <div class="before-box">
-                <span class="compare-label">Before</span>
-                <img
-                  src="/assets/wl/before.svg"
-                  alt="Before transformation"
-                />
-              </div>
-              <div class="after-box">
-                <span class="compare-label">After</span>
-                <img
-                  src="/assets/wl/after.svg"
-                  alt="After transformation"
-                />
-              </div>
-            </div>
-            <div class="transform-quote">
-              Real patient progress over 12 weeks.
-            </div>
-            <div class="transform-author">
-              Individual results vary. Photos representative of typical
-              outcomes.
-              <span></span>
-            </div>
+          <div class="wl-quote">
+            <p>“I tried every diet app imaginable. Nothing stuck until my doctor started me on semaglutide through Freeley. The cravings just… stopped. I'm down 31 lbs and my A1C went from 6.4 to 5.6.”</p>
+            <span>Verified Freeley patient</span>
           </div>
         </div>
       </div>
+    </section>
+
+    <!-- ═══ Trust bar ═══ -->
+    <div class="wl-trustbar">
+      <div class="wl-wrap">
+        <ul>
+          {trustPoints.map((t) => (
+            <li>
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
+              {t}
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
-  </div>
-</section>
+    <div class="wl-wrap wl-certs">
+      <span>Verified &amp; Certified</span>
+      <img src="/assets/hipaa_badge.png" alt="HIPAA Compliant" loading="lazy" />
+      <img src="/assets/49921676.png" alt="LegitScript Certified" loading="lazy" />
+      <img src="/assets/usa_badge.png" alt="Made in USA" loading="lazy" />
+    </div>
 
-
-      <section class="three--gorgeous py-0 md:py-12 hidden">
-        <div class="container">
-          <div class="mb-12">
-            <div class="section--title">
-              <h2>
-                Okay,<br />
-                <span class="highlight">But Does It Actually Work?</span>
-              </h2>
-            </div>
-            <p class="section--description pr-12">
-              Everything happens on your schedule, from your phone.
-            </p>
-          </div>
-
-          <div class="hidden md:grid md:grid-cols-3 gorgeous--items">
-            <div class="gorgeous--item">
-              <img src="/assets/frame-176.png" />
-            </div>
-            <div class="gorgeous--item">
-              <img src="/assets/frame-182.png" />
-            </div>
-            <div class="gorgeous--item">
-              <img src="/assets/frame-184.png" />
-            </div>
-          </div>
-
-          <div class="gorgeous--items md:hidden">
-            <div class="gorgeous--item mb-4 px-0">
-              <img src="/assets/wl/percent1.svg" />
-            </div>
-            <div class="gorgeous--item mb-4 px-0">
-              <img src="/assets/wl/percent2.svg" />
-            </div>
-            <div class="gorgeous--item mb-4 px-0">
-              <img src="/assets/wl/percent3.svg" />
-            </div>
-            <div class="gorgeous--item mb-4 px-0">
-              <img src="/assets/wl/percent4.svg" />
-            </div>
-            <div class="gorgeous--item mb-4 px-0">
-              <img src="/assets/wl/percent5.svg" />
-            </div>
-          </div>
+    <!-- ═══ Plan ladder + inline CTA ═══ -->
+    <section class="wl-sec" style="padding-bottom:0;">
+      <div class="wl-wrap">
+        <div class="wl-head">
+          <span class="wl-eyebrow">Transparent Pricing</span>
+          <h2 class="wl-serif">One price. <em>No membership.</em></h2>
+          <p>The longer your plan, the lower your monthly rate. Every plan includes physician review, compounding, and shipping.</p>
         </div>
-      </section>
-
-      <section class="why--choose pt-12 mt-12">
-        <div class="container pt-12">
-          <div class="grid grid-cols-1 md:grid-cols-12 gap-x-6 gap-0 md:gap-4">
-            <div
-              class="order-2 md:order-1 md:col-span-6 pt-12 pb-12 md:pt-0 md:pb-0"
-            >
-              <div class="section--title mb-4">
-                <h2>
-                  Why Patients<br />
-                  <span class="highlight">Trust Freeley</span>
-                </h2>
-              </div>
-              <p class="section--description pr-12">
-                Freeley is a LegitScript Certified healthcare platform. All
-                treatments are prescribed by board-certified physicians and
-                compounded at 503A licensed pharmacies following USP standards.
-              </p>
-              <div class="mb">
-                <div class="feature-item mb-4">
-                  <div class="feature-icon">
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M20.3 7.3L9 18.6L3.7 13.3"
-                        stroke="white"
-                        stroke-width="2.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      ></path>
-                    </svg>
-                  </div>
-                  <span class="feature-text">Board-Certified Physicians</span>
-                </div>
-                <p class="section--description pr-12">
-                  Freeley is a LegitScript Certified healthcare platform. All
-                  treatments are prescribed by board-certified physicians and
-                  compounded at 503A licensed pharmacies following USP
-                  standards.
-                </p>
-              </div>
-              <div class="mb">
-                <div class="feature-item mb-4">
-                  <div class="feature-icon">
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M20.3 7.3L9 18.6L3.7 13.3"
-                        stroke="white"
-                        stroke-width="2.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      ></path>
-                    </svg>
-                  </div>
-                  <span class="feature-text">PCAB-Accredited Pharmacies</span>
-                </div>
-                <p class="section--description pr-12">
-                  Medications are compounded at accredited pharmacies following
-                  USP 797 standards. Each batch is tested for potency,
-                  sterility, and purity. Compounded medications are not
-                  FDA-approved.
-                </p>
-              </div>
+        <div class="wl-plans">
+          {plans.map((p) => (
+            <div class={p.best ? 'wl-plan wl-plan--best' : 'wl-plan'}>
+              <div class="wl-plan__price">{p.price}<span class="wl-plan__mo">/mo</span></div>
+              <div class="wl-plan__term">{p.months}</div>
+              {p.save && <span class="wl-plan__save">{p.save}</span>}
             </div>
-            <div
-              class="order-1 md:order-2 md:col-start-8 md:col-span-5 product-right"
-            >
-              <div
-                class="process--col--right flex items-center justify-center"
-              >
-                <!-- <img src="/assets/49921676.png.png" /> -->
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
-      </section>
+        <p class="wl-foot">Compounded semaglutide. Monthly rate billed for the full plan length. Tirzepatide is priced separately; see the plan selector below.</p>
+      </div>
+    </section>
 
-<!-- =============================================
-     PRODUCT SHOWCASE SECTION - with JS gallery
-     ============================================= -->
-<section class="product-showcase-section">
-  <div class="container">
-    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-12 items-start">
-      <div class="md:col-span-5 m-0 product-left">
-
-        <!-- Mobile Product Card -->
-        <div class="product-mobile-card flex flex-col justify-between mb-4">
-          <div class="flex justify-start items-center">
-            <div class="popular-badge">Most Popular</div>
+    <section class="wl-sec">
+      <div class="wl-wrap">
+        <!-- id="start-assessment" (no digit) is NOT a quiz trigger — it is the
+             anchor public/style/script.js grabs to pin this band to the top of
+             the viewport on mobile. Its .left/.right children are what the
+             legacy .mobile-fixed rules hide and re-center. -->
+        <div class="wl-band" id="start-assessment">
+          <div class="left">
+            <h2>Start your assessment</h2>
+            <p>From <b>$99</b>/month · physician-supervised · takes about 2 minutes</p>
           </div>
-
-          <div class="flex justify-center items-center flex-1 my-6">
-            <div class="product-image-container">
-              <img id="mainProductImage" src="" alt="Product Bottle" class="product-image" />
-            </div>
-          </div>
-
-          <!-- Bottom Nav -->
-          <div class="flex justify-between items-center px-2 pb-2">
-            <button class="nav-arrow" id="prevBtn" aria-label="Previous slide">
-              <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M19 8H1M1 8L8 15M1 8L8 1" stroke="#1a4331" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </button>
-
-            <div class="flex items-center gap-2" id="dotContainer">
-              <!-- Dots will be dynamically generated -->
-            </div>
-
-            <button class="nav-arrow" id="nextBtn" aria-label="Next slide">
-              <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M1 8H19M19 8L12 1M19 8L12 15" stroke="#1a4331" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
+          <div class="right">
+            <button type="button" class="wl-btn wl-btn--light" id="start-assessment4">
+              Check if I qualify <span class="wl-arw">→</span>
             </button>
           </div>
-        </div>
-
-        <!-- Thumbnails - Will be dynamically generated -->
-        <div class="flex flex-wrap gap-2 gallery-thumbnails" id="thumbnailsContainer">
-          <!-- Thumbnails will be dynamically generated -->
         </div>
       </div>
+    </section>
 
-      <div class="md:col-start-7 md:col-span-6 px-4 product-right">
-        <div class="product-details-content">
-          <div class="trustpilot-rating flex items-center gap-2 mb-2">
-            <span class="text-14-inter dark text-black font-bold">Trustpilot</span>
-            <img src="/assets/trust-pilot.svg" alt="Trustpilot">
+    <!-- ═══ How it works on the body ═══ -->
+    <section class="wl-sec" style="padding-top:0;">
+      <div class="wl-wrap">
+        <div class="wl-head">
+          <span class="wl-eyebrow">What's Inside</span>
+          <h2 class="wl-serif">Okay, but <em>does it actually work?</em></h2>
+          <p>15–20% average body weight lost in one year, with physician-guided GLP-1 treatment.</p>
+        </div>
+      </div>
+      <div class="wl-wrap">
+        <!-- .ok--section.swiper is initialised by wl-script.js -->
+        <div class="swiper ok--section wl-mech">
+          <div class="swiper-wrapper">
+            {mechanisms.map((m) => (
+              <div class="swiper-slide">
+                <div class="wl-mech__card">
+                  <div class="wl-mech__img" style={`background:${m.tint}`}>
+                    <img src={m.img} alt={m.title} loading="lazy" />
+                  </div>
+                  <div class="wl-mech__body">
+                    <h3>{m.title}</h3>
+                    <p>{m.desc}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
+        </div>
+        <p class="wl-foot">*Average body weight loss with physician-guided GLP-1 treatment, not diet alone. Individual results vary.</p>
+      </div>
+    </section>
 
-          <h1 class="product-title h2 mb-6">Compounded GLP-1s</h1>
-          <p class="text-14-inter">Select the active ingredient that fits your goals.</p>
+    <!-- ═══ Before / after ═══ -->
+    <section class="wl-sec" style="padding-top:0;">
+      <div class="wl-wrap">
+        <div class="wl-head">
+          <span class="wl-eyebrow">Patient Progress</span>
+          <h2 class="wl-serif">Twelve weeks, <em>side by side.</em></h2>
+        </div>
+      </div>
+      <div class="wl-wrap">
+        <!-- .transformSwiper.swiper is initialised by wl-script.js -->
+        <div class="swiper transformSwiper wl-ba">
+          <div class="swiper-wrapper">
+            {[1, 2, 3, 4].map(() => (
+              <div class="swiper-slide">
+                <div class="wl-ba__card">
+                  <div class="wl-ba__pair">
+                    <div class="wl-ba__box">
+                      <span class="wl-ba__label">Before</span>
+                      <img src="/assets/wl/before.svg" alt="Patient before treatment" loading="lazy" />
+                    </div>
+                    <div class="wl-ba__box wl-ba__box--after">
+                      <span class="wl-ba__label">After</span>
+                      <img src="/assets/wl/after.svg" alt="Patient after twelve weeks of treatment" loading="lazy" />
+                    </div>
+                  </div>
+                  <p class="wl-ba__quote">Real patient progress over 12 weeks.</p>
+                  <p class="wl-ba__note">Individual results vary. Photos representative of typical outcomes.</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
 
-          <!-- Medication Toggle -->
-          <div class="inline-flex p-2 rounded-full flex-wrap bg-gray-100 gap-2 mb-4 medication-toggle">
-            <button class="btn rounded-full text-white flex-1 active-medication" data-medication="semaglutide">
-              Semaglutide
+    <!-- ═══ Product showcase — every hook below is wl-script.js's ═══ -->
+    <section class="wl-sec" style="padding-top:0;">
+      <div class="wl-wrap wl-prod">
+        <div class="wl-prod__stage">
+          <div class="popular-badge">Most Popular</div>
+          <div class="wl-prod__frame">
+            <!-- src seeded with semaglutide's first image — the exact value
+                 wl-script.js's init() assigns anyway. Without it the tag ships
+                 as a broken-image box until the script runs. -->
+            <img id="mainProductImage" src="/assets/wl/semag.png" alt="Compounded GLP-1 medication" />
+          </div>
+          <div class="wl-prod__nav">
+            <button class="wl-navbtn" id="prevBtn" type="button" aria-label="Previous image">
+              <svg width="18" height="14" viewBox="0 0 20 16" fill="none"><path d="M19 8H1M1 8L8 15M1 8L8 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
-            <button class="btn rounded-full text-[var(--secondary-color)] bg-transparent border-0 flex-1" data-medication="tirzepatide">
-              Tirzepatide
+            <div id="dotContainer"></div>
+            <button class="wl-navbtn" id="nextBtn" type="button" aria-label="Next image">
+              <svg width="18" height="14" viewBox="0 0 20 16" fill="none"><path d="M1 8H19M19 8L12 1M19 8L12 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
           </div>
+          <div id="thumbnailsContainer"></div>
+        </div>
 
-          <!-- Dynamic Details Container -->
-          <div id="medicationDetails">
-            <!-- Details will be dynamically populated -->
+        <div>
+          <div class="wl-trustpilot">
+            <span>Trustpilot</span>
+            <img src="/assets/trust-pilot.svg" alt="Trustpilot rating" loading="lazy" />
+          </div>
+          <h2 class="product-title">Compounded GLP-1s</h2>
+          <p class="wl-prod__lede">Select the active ingredient that fits your goals.</p>
+
+          <div class="medication-toggle">
+            <button type="button" class="btn active-medication" data-medication="semaglutide">Semaglutide</button>
+            <button type="button" class="btn" data-medication="tirzepatide">Tirzepatide</button>
           </div>
 
-          <div class="price-container mb-6">
-            <div class="line-through text-red-600 text-sm text-xl font-light m-0 opacity-50">
-              $249.00
-            </div>
-            <div class="text-5xl leading-tight font-semibold product-current-price">
-              $99*
-            </div>
+          <div class="wl-pricerow">
+            <span class="product-current-price">$99*</span>
+            <span class="text-decoration-line-through">$249.00</span>
           </div>
-          <p class="text-14-inter mb-6">per month on the 12-month plan</p>
+          <p class="wl-prod__per">per month on the 12-month plan</p>
 
-          <div class="mb-12" id="featuresList">
-            <!-- Features will be dynamically populated -->
-          </div>
+          <div id="featuresList"></div>
 
-          <div class="consultation-banner flex items-start gap-2 py-2 md:py-4 px-2 md:px-4">
+          <div class="wl-note">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M8.00065 14.6673C11.6673 14.6673 14.6673 11.6673 14.6673 8.00065C14.6673 4.33398 11.6673 1.33398 8.00065 1.33398C4.33398 1.33398 1.33398 4.33398 1.33398 8.00065C1.33398 11.6673 4.33398 14.6673 8.00065 14.6673Z" stroke="#A57C00" stroke-linecap="round" stroke-linejoin="round"/>
               <path d="M8 5.33398V8.66732" stroke="#A57C00" stroke-linecap="round" stroke-linejoin="round"/>
               <path d="M7.99609 10.666H8.00208" stroke="#A57C00" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-            <p class="m-0 text-sm text-gray-800">Includes free physician consultation & cold shipping.</p>
+            <p>Includes free physician consultation &amp; cold-chain shipping.</p>
           </div>
 
-          <a href="javascript:void(0);" class="cta--global my-4 text-center" id="start-assessment5">
-            <span>Start Your Assessment</span>
-          </a>
+          <button type="button" class="wl-btn" id="start-assessment5" style="width:100%;">
+            Start Your Assessment <span class="wl-arw">→</span>
+          </button>
+          <p class="wl-foot">Compounded medications are not FDA-approved and are not equivalent to the brand-name drug.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ Journey ═══ -->
+    <section class="wl-sec" style="padding-top:0;">
+      <div class="wl-wrap">
+        <div class="wl-journey">
+          <div class="wl-journey__bg"></div>
+          <div class="wl-journey__inner">
+            <div class="wl-journey__head">
+              <span class="wl-eyebrow">Your Journey</span>
+              <h2 class="wl-serif">Here's what <em>happens next</em></h2>
+            </div>
+            <img class="wl-journey__graph" src="/assets/wl/graph.svg" alt="Expected progress across month one, month three, and month six of GLP-1 therapy" loading="lazy" />
+            <div class="wl-journey__list">
+              {timeline.map((t) => (
+                <div class="wl-tl">
+                  <span class="wl-tl__dot"></span>
+                  <div>
+                    <span class="wl-tl__badge">{t.badge}</span>
+                    <div class="wl-tl__phase">
+                      <b>{t.phase}</b>
+                      <span class="wl-tl__tag">{t.tag}</span>
+                    </div>
+                    <p>{t.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ Why trust Freeley ═══ -->
+    <section class="wl-sec" style="padding-top:0;">
+      <div class="wl-wrap wl-why">
+        <div>
+          <span class="wl-eyebrow">Verified, Not Assumed</span>
+          <h2 class="wl-serif" style="font-size:clamp(2rem,3.8vw,2.7rem); margin:14px 0 16px; line-height:1.1;">
+            Why patients <em>trust Freeley</em>
+          </h2>
+          <p style="color:var(--muted); font-size:15px; margin:0 0 28px; max-width:52ch;">
+            Freeley is a LegitScript Certified healthcare platform. Every treatment is prescribed
+            by a board-certified physician and compounded at a 503A licensed pharmacy following
+            USP standards.
+          </p>
+
+          <div class="wl-why__pt">
+            <div class="wl-why__pt-head">
+              <span class="wl-tick"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg></span>
+              <h3>Board-certified physicians</h3>
+            </div>
+            <p>A licensed U.S. physician reviews your intake, writes your prescription, and adjusts your plan at every check-in. No synchronous appointment required.</p>
+          </div>
+
+          <div class="wl-why__pt">
+            <div class="wl-why__pt-head">
+              <span class="wl-tick"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg></span>
+              <h3>PCAB-accredited pharmacies</h3>
+            </div>
+            <p>Medications are compounded at accredited pharmacies following USP 797 standards. Each batch is tested for potency, sterility, and purity. Compounded medications are not FDA-approved.</p>
+          </div>
+
+          <a href="/partner-pharmacies" class="wl-btn-ghost" style="margin-top:8px;">See our partner pharmacies <span class="wl-arw">→</span></a>
+        </div>
+        <div class="wl-why__img">
+          <img src="/assets/sw/WhyPatientsTrustFreeley.png" alt="LegitScript Certified seal" loading="lazy" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ Press ═══ -->
+    <div class="wl-wrap wl-press">
+      <span>Our treatments featured in</span>
+      {press.map((p) => <img src={p.src} alt={p.name} loading="lazy" />)}
+    </div>
+    <!-- .brand--grid--hero.swiper is initialised by wl-script.js -->
+    <div class="wl-wrap" style="display:none;">
+      <div class="swiper brand--grid--hero">
+        <div class="swiper-wrapper">
+          {press.map((p) => (
+            <div class="swiper-slide"><img src={p.src} alt={p.name} loading="lazy" /></div>
+          ))}
         </div>
       </div>
     </div>
-  </div>
-</section>
 
-<style>
-  .sw-glp{
-    background-image: url(/assets/wl/Here_sWhatHappensNext.png);
-    position: relative;
-    width: 100%;
-    min-height: 900px;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-    margin-top: 10px;
-  }
-  .gpl-desktop{
-    min-height: 900px;
-  }
-</style>
-      <section class="sw-glp hidden md:flex justify-center py-2 desktop">
-        <div class="container py-12">
-          <div class="w-full gpl-desktop hidden md:flex flex-col justify-between">
-              <div class="overlay-gpl"></div>
-              <div class="relative z-1">
-              <div class="md:w-1/2">
-            <div class="journey-badge mb-4">Your Journey</div>
-              <h2 class="glp-heading mb-12">
-                Here's What <br /><em>Happens Next</em>
-              </h2>
+    <!-- ═══ FAQ ═══ -->
+    <section class="wl-sec" style="padding-top:0;">
+      <div class="wl-wrap">
+        <div class="wl-head wl-head--center">
+          <span class="wl-eyebrow">Common Questions</span>
+          <h2 class="wl-serif">Questions <em>&amp; answers.</em></h2>
+        </div>
+        <div class="wl-faqs">
+          {faqs.map((f) => (
+            <div class="faq-item">
+              <div class="faq-question">
+                <span class="faq-question-text">{f.q}</span>
+                <span class="faq-toggle-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"/><path d="M8.47 10.74 12 14.26l3.53-3.52"/></svg>
+                </span>
               </div>
-              </div>
-                <img src="/assets/wl/graph.svg" />
+              <div class="faq-answer"><div><p>{f.a}</p></div></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ Referral ═══ -->
+    <section class="wl-sec" style="padding-top:0;">
+      <div class="wl-wrap">
+        <div class="wl-refer">
+          <div>
+            <h2 class="wl-serif">Give $50, get $50</h2>
+            <p>Share Freeley with a friend. When they start their plan, you both save $50 on your next month.</p>
+          </div>
+          <a href="/about" class="wl-btn-ghost">Share &amp; save <span class="wl-arw">→</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ Closing band ═══ -->
+    <section class="wl-close">
+      <div class="wl-wrap wl-close__grid">
+        <div>
+          <h2 class="wl-serif">Feel better,<br /><em>starting today.</em></h2>
+          <p>Personalized care for every part of you, from weight to skin, sleep to sexual health.</p>
+          <div class="wl-close__feats">
+            <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> No credit card required</span>
+            <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Takes 2 minutes</span>
+            <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Cancel anytime</span>
           </div>
         </div>
-      </section>
+        <button type="button" class="wl-btn wl-btn--light" id="start-assessment6">
+          Start Your Assessment <span class="wl-arw">→</span>
+        </button>
+      </div>
+    </section>
 
+    <!-- Quiz modal — opened by every #start-assessment* trigger above -->
+    <div id="quiz--modal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="close--quiz"><img src="/assets/icons/close.png" alt="Close" /></span>
+        <div class="processing-loader" id="loader"></div>
+        <div id="quiz--container"></div>
+      </div>
+    </div>
 
-      <section
-        class="glp-therapy-section flex justify-center py-2 mobile"
-        style="background-image: url(/assets/wl/glp-mob.svg)"
-      >
-        <div class="hidden md:block"></div>
+    <Footer />
+  </main>
 
-        <div class="container py-12">
-          <div
-            class="block md:hidden glp-mobile-container flex flex-col justify-between"
-          >
-            <div class="relative z-1">
-              <div
-                class="journey-badge mb-4"
-              >
-                your journey
-              </div>
-              <h1
-                class="glp-heading mb-12"
-              >
-                Here's What <br /><em>Happens Next</em>
-              </h1>
-
-              <div class="flex flex-col gap-6">
-                <div
-                  class="flex items-start gap-4"
-                >
-                  <svg
-                    width="30"
-                    height="30"
-                    viewBox="0 0 30 30"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <circle
-                      cx="15"
-                      cy="15"
-                      r="15"
-                      fill="url(#paint0_radial_149_4297)"
-                    />
-                    <circle cx="15" cy="15" r="7" fill="white" />
-                    <defs>
-                      <radialGradient
-                        id="paint0_radial_149_4297"
-                        cx="0"
-                        cy="0"
-                        r="1"
-                        gradientUnits="userSpaceOnUse"
-                        gradientTransform="translate(15 15) rotate(90) scale(15)"
-                      >
-                        <stop
-                          offset="0.561867"
-                          stop-color="white"
-                          stop-opacity="0"
-                        />
-                        <stop offset="1" stop-color="white" />
-                      </radialGradient>
-                    </defs>
-                  </svg>
-
-                  <div class="flex flex-col items-start gap-2">
-                    <span class="timeline-badge">Month 1</span>
-                    <div class="flex items-center mb-4 gap-2">
-                      <div
-                        class="flex gap-2 items-center text-14-inter text-white"
-                      >
-                        <span class="dot">
-                          <svg
-                            width="6"
-                            height="6"
-                            viewBox="0 0 6 6"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <circle cx="3" cy="3" r="3" fill="white"></circle>
-                          </svg>
-                        </span>
-                        The Reset
-                      </div>
-                      <div
-                        class="rounded-full text-white border text-14-inter px-4 py-1"
-                      >
-                        Appetite Control
-                      </div>
-                    </div>
-                    <span class="text-14-inter text-white pr-12"
-                      >Your appetite decreases significantly. You'll naturally
-                      eat smaller portions and feel fuller much faster. Less
-                      bloating is common.</span
-                    >
-                  </div>
-                </div>
-
-                <div
-                  class="flex items-start gap-4"
-                >
-                  <svg
-                    width="30"
-                    height="30"
-                    viewBox="0 0 30 30"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <circle
-                      cx="15"
-                      cy="15"
-                      r="15"
-                      fill="url(#paint0_radial_149_4297)"
-                    />
-                    <circle cx="15" cy="15" r="7" fill="white" />
-                    <defs>
-                      <radialGradient
-                        id="paint0_radial_149_4297"
-                        cx="0"
-                        cy="0"
-                        r="1"
-                        gradientUnits="userSpaceOnUse"
-                        gradientTransform="translate(15 15) rotate(90) scale(15)"
-                      >
-                        <stop
-                          offset="0.561867"
-                          stop-color="white"
-                          stop-opacity="0"
-                        />
-                        <stop offset="1" stop-color="white" />
-                      </radialGradient>
-                    </defs>
-                  </svg>
-
-                  <div class="flex flex-col items-start gap-2">
-                    <span class="timeline-badge">Month 3</span>
-                    <div class="flex items-center mb-4 gap-2">
-                      <div
-                        class="flex gap-2 items-center text-14-inter text-white"
-                      >
-                        <span class="dot">
-                          <svg
-                            width="6"
-                            height="6"
-                            viewBox="0 0 6 6"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <circle cx="3" cy="3" r="3" fill="white"></circle>
-                          </svg>
-                        </span>
-                        The Momentum
-                      </div>
-                      <div
-                        class="rounded-full text-white border text-14-inter px-4 py-1"
-                      >
-                        Visible Results
-                      </div>
-                    </div>
-                    <span class="text-14-inter text-white pr-12"
-                      >You're dropping consistent, healthy weight week over
-                      week. Clothes fit significantly better. Energy levels
-                      stabilize without sugar crashes.</span
-                    >
-                  </div>
-                </div>
-
-                <div
-                  class="flex items-start gap-4"
-                >
-                  <svg
-                    width="30"
-                    height="30"
-                    viewBox="0 0 30 30"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <circle
-                      cx="15"
-                      cy="15"
-                      r="15"
-                      fill="url(#paint0_radial_149_4297)"
-                    />
-                    <circle cx="15" cy="15" r="7" fill="white" />
-                    <defs>
-                      <radialGradient
-                        id="paint0_radial_149_4297"
-                        cx="0"
-                        cy="0"
-                        r="1"
-                        gradientUnits="userSpaceOnUse"
-                        gradientTransform="translate(15 15) rotate(90) scale(15)"
-                      >
-                        <stop
-                          offset="0.561867"
-                          stop-color="white"
-                          stop-opacity="0"
-                        />
-                        <stop offset="1" stop-color="white" />
-                      </radialGradient>
-                    </defs>
-                  </svg>
-
-                  <div class="flex flex-col items-start gap-2">
-                    <span class="timeline-badge">Month 6</span>
-                    <div class="flex items-center mb-4 gap-2">
-                      <div
-                        class="flex gap-2 items-center text-14-inter text-white"
-                      >
-                        <span class="dot">
-                          <svg
-                            width="6"
-                            height="6"
-                            viewBox="0 0 6 6"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <circle cx="3" cy="3" r="3" fill="white"></circle>
-                          </svg>
-                        </span>
-                        The Transformation
-                      </div>
-                      <div
-                        class="rounded-full text-white border text-14-inter px-4 py-1"
-                      >
-                        Full Payoff
-                      </div>
-                    </div>
-                    <span class="text-14-inter text-white pr-12"
-                      >Significant, noticeable weight loss. Improved metabolic
-                      markers. The compounding effect of healthy eating feels
-                      effortless.</span
-                    >
-                  </div>
-                </div>
-
-                <div
-                  class="flex items-start gap-4"
-                >
-                  <svg
-                    width="30"
-                    height="30"
-                    viewBox="0 0 30 30"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <circle
-                      cx="15"
-                      cy="15"
-                      r="15"
-                      fill="url(#paint0_radial_149_4297)"
-                    />
-                    <circle cx="15" cy="15" r="7" fill="white" />
-                    <defs>
-                      <radialGradient
-                        id="paint0_radial_149_4297"
-                        cx="0"
-                        cy="0"
-                        r="1"
-                        gradientUnits="userSpaceOnUse"
-                        gradientTransform="translate(15 15) rotate(90) scale(15)"
-                      >
-                        <stop
-                          offset="0.561867"
-                          stop-color="white"
-                          stop-opacity="0"
-                        />
-                        <stop offset="1" stop-color="white" />
-                      </radialGradient>
-                    </defs>
-                  </svg>
-
-                  <div class="flex flex-col items-start gap-2">
-                    <span class="timeline-badge">Month 6</span>
-                    <div class="flex items-center mb-4 gap-2">
-                      <div
-                        class="flex gap-2 items-center text-14-inter text-white"
-                      >
-                        <span class="dot">
-                          <svg
-                            width="6"
-                            height="6"
-                            viewBox="0 0 6 6"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <circle cx="3" cy="3" r="3" fill="white"></circle>
-                          </svg>
-                        </span>
-                        The Payoff
-                      </div>
-                      <div
-                        class="rounded-full text-white border text-14-inter px-4 py-1"
-                      >
-                        Full Density
-                      </div>
-                    </div>
-                    <span class="text-14-inter text-white pr-12"
-                      >Noticeably thicker, denser hair. The mirror anxiety is
-                      gone, and you can style your hair the way you used
-                      to.</span
-                    >
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="faqs py-12">
-        <div class="container text-center py-12">
-          <div class="section--title">
-            <div
-              class="hidden md:block text-center"
-            >
-              <div class="bordered--heading inline-block px-4 mb-4">
-                <span class="uppercase">Common Questions</span>
-              </div>
-              <h2 class="mb-6">
-                Questions <span class="highlight">& Answers.</span>
-              </h2>
-            </div>
-            <div
-              class="block md:hidden text-left"
-            >
-              <div class="bordered--heading inline-block px-4 mb-4">
-                <span class="uppercase">Common Questions</span>
-              </div>
-              <h2 class="mb-6">
-                Questions <br /><span class="highlight">& Answers.</span>
-              </h2>
-            </div>
-          </div>
-          <div class="">
-            <div
-              class="faq-container"
-            >
-              <div class="faq-items">
-                <div class="faq-item">
-                  <div class="faq-question">
-                    <span class="faq-question-text">Do I need Insurance?</span>
-                    <div class="faq-toggle-icon">
-                      <div class="arrow-plus">
-                        <svg
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-                            stroke="#080808"
-                            stroke-width="1.5"
-                            stroke-miterlimit="10"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                          <path
-                            d="M8.4707 10.7402L12.0007 14.2602L15.5307 10.7402"
-                            stroke="#080808"
-                            stroke-width="1.5"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="faq-answer">
-                    Most common side effects are mild gastrointestinal symptoms
-                    that typically improve over time. These may include nausea,
-                    vomiting, diarrhea, or constipation.
-                  </div>
-                </div>
-
-                <div class="faq-item">
-                  <div class="faq-question">
-                    <span class="faq-question-text"
-                      >How do the injections work?</span
-                    >
-                    <div class="faq-toggle-icon">
-                      <div class="arrow-plus">
-                        <svg
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-                            stroke="#080808"
-                            stroke-width="1.5"
-                            stroke-miterlimit="10"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                          <path
-                            d="M8.4707 10.7402L12.0007 14.2602L15.5307 10.7402"
-                            stroke="#080808"
-                            stroke-width="1.5"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="faq-answer">
-                    Most common side effects are mild gastrointestinal symptoms
-                    that typically improve over time. These may include nausea,
-                    vomiting, diarrhea, or constipation.
-                  </div>
-                </div>
-
-                <div class="faq-item">
-                  <div class="faq-question">
-                    <span class="faq-question-text"
-                      >What is compounded medication?</span
-                    >
-                    <div class="faq-toggle-icon">
-                      <div class="arrow-plus">
-                        <svg
-                          width="24"
-                          height="24"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-                            stroke="#080808"
-                            stroke-width="1.5"
-                            stroke-miterlimit="10"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                          <path
-                            d="M8.4707 10.7402L12.0007 14.2602L15.5307 10.7402"
-                            stroke="#080808"
-                            stroke-width="1.5"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="faq-answer">
-                    Most common side effects are mild gastrointestinal symptoms
-                    that typically improve over time. These may include nausea,
-                    vomiting, diarrhea, or constipation.
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="cta--inner__pages">
-        <div class="container py-12">
-          <div
-            class="md:w-1/2"
-          >
-            <div>
-              <div class="section--title">
-                <h2 class="text-white mb-4">Give $50, Get $50</h2>
-              </div>
-              <p class="text-white mb-12 pr-12">
-                Share Freeley with a friend. When they start their plan, you
-                both save $50 on your next month.
-              </p>
-            </div>
-            <div class="ctas flex gap-4">
-              <div
-                class="ctas flex flex-col md:flex-row items-start gap-4 w-full"
-              >
-                <a href="javascript:void(0)" class="global--qua--button">
-                  <img
-                    class="btn--icon"
-                    src="/assets/icons/arrow-right.svg"
-                  />
-                  Share & Save
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-------------------------------------
-        ************** FOOTER ******************
-        -------------------------------------->
-      <div class="container-fluid">
-<div class="footer--header grid grid-cols-1 md:grid-cols-12 items-center pb-12 gap-y-6">
-            <div
-              class="md:col-span-6 flex flex-col gap-4"
-            >
-              <h2 class="text-5xl leading-tight mb-0 font-normal">
-                Feel better,<br />
-                <span class="italic">starting today</span>
-              </h2>
-              <p class="text-white/50 text-14-inter">
-                Personalized care for every part of you from weight to skin,
-                sleep to sexual health.
-              </p>
-            </div>
-
-            <div
-              class="md:col-span-6 flex flex-col items-start md:items-end gap-6"
-
-            >
-              <div>
-                <a
-                  class="global--qua--button bg-white px-4 pr-2 w-full"
-                  id="start-assessment6"
-                  href="javascript:void(0);"
-                >
-                  <img
-                    class="btn--icon"
-                    src="/assets/home/icons/icon-right-green.svg"
-
-                  />
-                  Start Your Assessment
-                </a>
-              </div>
-
-              <div
-                class="flex flex-wrap justify-start md:justify-end gap-4 text-white/50 text-sm"
-              >
-                <div
-                  class="flex text-white items-center gap-1 text-14-inter"
-                >
-                  <span class="text-white"
-                    ><svg
-                      width="18"
-                      height="18"
-                      viewBox="0 0 18 18"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M9 1.5C4.8675 1.5 1.5 4.8675 1.5 9C1.5 13.1325 4.8675 16.5 9 16.5C13.1325 16.5 16.5 13.1325 16.5 9C16.5 4.8675 13.1325 1.5 9 1.5ZM12.585 7.275L8.3325 11.5275C8.2275 11.6325 8.085 11.6925 7.935 11.6925C7.785 11.6925 7.6425 11.6325 7.5375 11.5275L5.415 9.405C5.1975 9.1875 5.1975 8.8275 5.415 8.61C5.6325 8.3925 5.9925 8.3925 6.21 8.61L7.935 10.335L11.79 6.48C12.0075 6.2625 12.3675 6.2625 12.585 6.48C12.8025 6.6975 12.8025 7.05 12.585 7.275Z"
-                        fill="white"
-                      />
-                    </svg>
-                  </span>
-                  No credit card required
-                </div>
-                <div
-                  class="flex text-white items-center gap-1 text-14-inter"
-                >
-                  <span class=""
-                    ><svg
-                      width="18"
-                      height="18"
-                      viewBox="0 0 18 18"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M9 1.5C4.8675 1.5 1.5 4.8675 1.5 9C1.5 13.1325 4.8675 16.5 9 16.5C13.1325 16.5 16.5 13.1325 16.5 9C16.5 4.8675 13.1325 1.5 9 1.5ZM12.585 7.275L8.3325 11.5275C8.2275 11.6325 8.085 11.6925 7.935 11.6925C7.785 11.6925 7.6425 11.6325 7.5375 11.5275L5.415 9.405C5.1975 9.1875 5.1975 8.8275 5.415 8.61C5.6325 8.3925 5.9925 8.3925 6.21 8.61L7.935 10.335L11.79 6.48C12.0075 6.2625 12.3675 6.2625 12.585 6.48C12.8025 6.6975 12.8025 7.05 12.585 7.275Z"
-                        fill="white"
-                      />
-                    </svg>
-                  </span>
-                  Takes 2 minutes
-                </div>
-                <div
-                  class="flex text-white items-center gap-1 text-14-inter"
-                >
-                  <span class="text-white"
-                    ><svg
-                      width="18"
-                      height="18"
-                      viewBox="0 0 18 18"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M9 1.5C4.8675 1.5 1.5 4.8675 1.5 9C1.5 13.1325 4.8675 16.5 9 16.5C13.1325 16.5 16.5 13.1325 16.5 9C16.5 4.8675 13.1325 1.5 9 1.5ZM12.585 7.275L8.3325 11.5275C8.2275 11.6325 8.085 11.6925 7.935 11.6925C7.785 11.6925 7.6425 11.6325 7.5375 11.5275L5.415 9.405C5.1975 9.1875 5.1975 8.8275 5.415 8.61C5.6325 8.3925 5.9925 8.3925 6.21 8.61L7.935 10.335L11.79 6.48C12.0075 6.2625 12.3675 6.2625 12.585 6.48C12.8025 6.6975 12.8025 7.05 12.585 7.275Z"
-                        fill="white"
-                      />
-                    </svg>
-                  </span>
-                  Cancel anytime
-                </div>
-              </div>
-            </div>
-          </div>
-</div>
-
-<Footer />
-    </main>
-
-    <!-- Scripts -->
-    <script src="/style/script.js" is:inline></script>
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" is:inline></script>
-    <!-- <script src="/assets/js/swiper-bundle.min.js" is:inline></script> -->
-
-    <script src="/assets/js/wl-script.js" is:inline></script>
-
+  <script src="/style/script.js" is:inline></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" is:inline></script>
+  <script src="/assets/js/wl-script.js" is:inline></script>
 </Layout>

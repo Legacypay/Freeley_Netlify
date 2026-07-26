@@ -5,6 +5,8 @@
 // Reuses the Figma v5 export in public/assets/brand/_figma_v5/ + src badges.
 // ponytail: hard-coded content arrays — it's a prototype, wire to CMS/data later.
 import { Image, Font } from 'astro:assets';
+import { heroRows } from '../data/compare';
+import QuizModal from '../components/QuizModal.astro';
 import logo from '../assets/brand/freeley_logo_transparent_green.webp';
 import logoWhite from '../assets/brand/freeley_logo_transparent_white.webp';
 // Hero trust badges — exactly the set used on the original landing (index.astro):
@@ -79,16 +81,76 @@ const stats = [
   { value: '48hr', label: 'Door-to-Door Delivery', sub: 'Medication delivered to your door within 2 business days.' },
 ];
 
-const compareCols = ['Freeley', 'Traditional Clinics', 'Retail Pharmacy', 'Other Telehealth'];
-const compareRows = [
-  { label: 'Board-certified physician oversight', cells: ['y', 'y', '–', 'Varies'] },
-  { label: 'No in-person visit required', cells: ['y', 'n', 'n', 'y'] },
-  { label: 'Compounded medication options', cells: ['y', 'Rarely', 'n', 'Some'] },
-  { label: 'Monthly price (GLP-1 weight loss)', cells: ['$99/mo · 12-mo plan', '$300–$500+', 'Varies', '$188–$399'] },
-  { label: 'Free shipping & discreet delivery', cells: ['y', 'n', 'Varies', 'y'] },
-  { label: 'FSA / HSA eligible', cells: ['y', 'y', 'y', 'Some'] },
-  { label: 'No membership or hidden fees', cells: ['y', 'n', 'y', 'Varies'] },
-  { label: 'Cancel anytime — no contracts', cells: ['y', 'N/A', 'N/A', 'Varies'] },
+// x/y are the node coordinates of the original graph-home.svg export, kept so the
+// hand-built timeline lands on the photo exactly where the flattened SVG did.
+const journeyStops = [
+  { x: 45, y: 345, label: 'Week 1-2', copy: 'Reduced appetite and cravings begin. Starter dose calibration.' },
+  { x: 343, y: 199, label: 'Month 1', copy: 'Average 5–8 lbs lost. Energy improves. Dosage may be adjusted.' },
+  { x: 635, y: 199, label: 'Month 3', copy: 'Significant weight reduction. Metabolic markers improve. Visible results.' },
+  { x: 879, y: 66, label: 'Month 6', copy: '15%+ body weight lost. Maintenance phase. Long-term metabolic health.' },
+];
+
+// ── The 3D capsule ────────────────────────────────────────────────────────────
+// Drawn as depth slices, not as a cylinder of radial faces. Cut a capsule with
+// planes perpendicular to the camera axis and the cross-section at depth z is
+// EXACTLY a stadium of half-height sqrt(r² − z²) — the cylindrical middle
+// (y² + z² = r²) and the spherical domes (centres at ±x0) both reduce to it.
+// So every slice is one div with border-radius:999px and the domes cost nothing:
+// no ring stacks, no dome approximation, no seams.
+//
+// Sizes are emitted UNITLESS and multiplied by --u in the CSS, so one variable
+// rescales the whole capsule on small screens while the geometry stays exact.
+// Shading is baked here rather than applied with filter: brightness(), which
+// would promote all 64 slices to their own compositor layers.
+const POD_R = 104;  // capsule radius
+const POD_X0 = 190; // half-length of the straight section
+const POD_SLICES = 32;
+const podSlices = Array.from({ length: POD_SLICES }, (_, i) => {
+  const z = -POD_R + (2 * POD_R * (i + 0.5)) / POD_SLICES;
+  const h = Math.sqrt(POD_R * POD_R - z * z);
+  // Front slices catch the light; the curve keeps the falloff off-linear so the
+  // stack reads as a lit cylinder rather than a flat gradient.
+  const lit = 0.58 + 0.42 * Math.pow((z + POD_R) / (2 * POD_R), 0.7);
+  const shade = (c: number[]) => c.map((v) => Math.round(v * lit)).join(' ');
+  return {
+    z: +z.toFixed(2),
+    h: +h.toFixed(2),
+    w: +(POD_X0 + h).toFixed(2),
+    cap: shade([26, 122, 82]),
+    body: shade([243, 240, 232]),
+  };
+});
+
+// The capsule opens onto the four `hero` rows; /compare renders all eight from
+// the same module, so the two can never drift.
+
+// Decorative capsule drift behind the final CTA — the product itself instead of
+// a stock model, and it costs no image request.
+//
+// Hand-placed, not random: the group has to stay clear of the headline and read
+// as composed. Sizes and offsets are UNITLESS and multiplied by --s in the CSS,
+// so one number rescales the whole arrangement on narrow screens — the same
+// trick the 3D capsule uses, and the reason a media query can resize them even
+// though the per-pill values arrive as inline styles (which would otherwise win).
+//
+// Deeper pills sit further from the right edge, where the section's green scrim
+// is more opaque, so distance reads as depth for free. `c1`/`c2` are the cap and
+// body colours; omit them for an outline-only ghost.
+const ctaPills = [
+  { w: 218, h: 76, x: -46, edge: 'top', y: -26, rot: -28, c1: 'var(--cream)', c2: 'var(--brand)', dur: 11, dly: 0 },
+  { w: 172, h: 60, x: 128, edge: 'bottom', y: -30, rot: -24, c1: 'var(--gold)', c2: 'var(--green-deep)', dur: 13, dly: -2 },
+  { w: 98, h: 35, x: 46, edge: 'bottom', y: 34, rot: -26, c1: 'var(--cream)', c2: 'var(--gold)', dur: 12, dly: -5 },
+  { w: 124, h: 44, x: 236, edge: 'top', y: 30, rot: -31, c1: '#fff', c2: 'var(--emph)', dur: 14, dly: -3 },
+  { w: 56, h: 20, x: 96, edge: 'top', y: 8, rot: -28, c1: 'var(--brand)', c2: 'var(--cream)', dur: 10, dly: -6 },
+  // Kept clear of y 112–132, where the feature row sits. Mind that a rotated
+  // pill's bounding box is far taller than its height: 86x31 at -27deg spans
+  // ~67px, so the centre needs ~33px of clearance, not 16.
+  { w: 86, h: 31, x: 180, edge: 'bottom', y: 60, rot: -27, c1: 'var(--gold)', c2: 'var(--cream)', dur: 15, dly: -8 },
+  { w: 74, h: 27, x: 344, edge: 'bottom', y: 16, rot: -28, dur: 12, dly: -7 },
+  { w: 64, h: 23, x: 300, edge: 'top', y: 4, rot: -25, c1: 'var(--cream)', c2: 'var(--emph)', dur: 13, dly: -4 },
+  { w: 148, h: 52, x: 392, edge: 'top', y: -18, rot: -29, c1: 'var(--emph)', c2: 'var(--cream)', dur: 16, dly: -9 },
+  { w: 112, h: 40, x: 470, edge: 'bottom', y: -14, rot: -26, dur: 14, dly: -11 },
+  { w: 130, h: 46, x: 556, edge: 'top', y: 20, rot: -28, dur: 17, dly: -13 },
 ];
 
 const products = [
@@ -123,6 +185,10 @@ const press = [
     <Font cssVariable="--font-text" preload />
     <Font cssVariable="--font-condensed" />
     <title>Freeley — Prototype</title>
+    <meta
+      name="description"
+      content="Physician-prescribed GLP-1 weight loss, sexual wellness, hair and longevity care — compounded by licensed U.S. pharmacies and delivered to your door from $99/month."
+    />
     <style is:inline>
       /* Hallmark · audit-fix pass · 2026-07-21
        * Kept by client brand: italic display emphasis + gold price.
@@ -298,16 +364,26 @@ const press = [
       .hero__count span { font-size: 13px; color: var(--muted); }
       .hero__rating { display: flex; align-items: center; gap: 10px; margin-top: 18px; font-size: 14px; font-weight: 600; }
       .stars { color: #00b67a; letter-spacing: 1px; }
-      .hero__badges { position: absolute; z-index: 6; right: 24px; bottom: 20px; display: flex; gap: 14px; align-items: center; }
+      /* .hero is full-bleed, so a plain `right: 24px` pins the badges to the
+         viewport edge and they drift ever further from the copy as the screen
+         grows — on 4K they end up ~1300px right of the content column. Anchor
+         them to that column instead: 572px = half the 1200px .wrap minus its
+         28px padding, so their right edge lands on the same line every other
+         section ends at. Below ~1200px the max() falls back to the old 24px. */
+      .hero__badges { position: absolute; z-index: 6; right: max(24px, calc(50% - 572px)); bottom: 20px; display: flex; gap: 14px; align-items: center; }
       .hero__badges img { height: 38px; width: auto; background: #fff; border-radius: 8px; padding: 5px 8px; box-shadow: 0 4px 16px rgba(0,0,0,.12); }
       .hero__badges img.lg { height: 48px; }
       .badge-mob { display: none; }
 
       /* Trust bar */
+      /* .trustbar is the cream divider band under the hero — a position treatment,
+         not tied to any one set of contents. The trust points moved out of it and
+         the press logos moved in; the list styles below travel with the list. */
       .trustbar { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--cream); }
-      .trustbar ul { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 18px; list-style: none; margin: 0; padding: 18px 0; }
-      .trustbar li { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500; color: var(--ink); }
-      .trustbar svg { color: var(--brand); flex: none; }
+      .trustbar .wrap { padding-block: 18px; }
+      .trustlist { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 18px; list-style: none; margin: 0; padding: 0; }
+      .trustlist li { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500; color: var(--ink); }
+      .trustlist svg { color: var(--brand); flex: none; }
 
       /* Steps band */
       .band { background: var(--green); color: #fff; border-radius: 22px; margin: 46px 0; padding: 44px; }
@@ -362,21 +438,156 @@ const press = [
       .process__step p { font-size: 13px; color: var(--muted); margin: 0; }
 
       /* "Your Journey" — restored full-bleed photo section (index.astro's
-         your_journey_What_to_expect_on.png + its pre-aligned graph-home.svg
-         timeline overlay, reused as-is — the SVG's dots are hand-positioned
-         against this exact photo). height:auto on the img — see the mobile
-         hero fix earlier in this file for why that matters with a fixed
-         aspect box. */
+         your_journey_What_to_expect_on.png). The timeline that sits on top of it
+         is built below; its nodes are hand-positioned against this exact photo,
+         so the two sizes have to stay locked together. */
       .journey { position: relative; overflow: hidden; border-radius: 22px; margin: 0 0 46px; background: var(--green); }
       .journey__bg { position: absolute; inset: 0; background-image: url('/assets/home/your_journey_What_to_expect_on.png'); background-size: cover; background-position: center; }
       .journey__watermark { position: absolute; inset: 0; background-image: url('/assets/home/Frame_399.png'); background-size: cover; opacity: .5; mix-blend-mode: overlay; }
+      /* The photo is a model against a bright sky, and every word in this section
+         is white on top of it. Without a scrim the copy fell onto her skin and
+         her light grey joggers and stopped being readable — worst on mobile,
+         where the text spans the full width. Angled so the left, where all the
+         type lives, carries the most cover and the photo still reads on the
+         right. */
+      .journey__scrim {
+        position: absolute; inset: 0;
+        background:
+          linear-gradient(102deg, rgba(18, 60, 44, .88) 0%, rgba(18, 60, 44, .66) 46%, rgba(18, 60, 44, .28) 100%),
+          linear-gradient(to bottom, rgba(13, 49, 34, .34) 0%, rgba(13, 49, 34, .06) 38%, rgba(13, 49, 34, .40) 100%);
+      }
       .journey__inner { position: relative; z-index: 1; padding: 56px 40px 0; min-height: 620px; display: flex; flex-direction: column; justify-content: space-between; }
       .journey__head { max-width: 420px; }
       .journey__head h2 { color: #fff; font-size: clamp(2rem, 3.6vw, 2.7rem); margin: 14px 0 22px; line-height: 1.1; }
+      /* The page emphasises with brand green italics, which works on cream and
+         disappears here — dark green on sky blue, then dark green on the green
+         scrim. Light gold keeps the emphasis reading as emphasis, and it is
+         already the page's second accent (prices, step numerals). */
+      .journey em { color: #e6cd97; }
       .journey__head .eyebrow { color: #fff; opacity: .85; }
-      .journey__graph { display: block; width: 100%; height: auto; }
+      /* Timeline, hand-built. Replaces the flattened graph-home.svg export
+         (231 KB, every label baked into outlines) with one inline path plus real
+         DOM text: the line can now draw itself as you scroll, and the copy stays
+         selectable, translatable and screen-reader readable. All coordinates are
+         the export's own, expressed as % of its 1125x464 viewBox, so every node
+         still lands on the photo exactly where it used to. */
+      .journey__timeline { position: relative; width: 100%; aspect-ratio: 1125 / 464; margin-top: 28px; }
+      .journey__svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+      .jline { fill: none; stroke: #fff; stroke-width: 1; vector-effect: non-scaling-stroke; }
+      .jstop { position: absolute; top: 0; bottom: 0; color: #fff; }
+      .jstop--1 { left: 0;     width: 26%; }
+      .jstop--2 { left: 26.9%; width: 25%; }
+      .jstop--3 { left: 52.8%; width: 21%; }
+      .jstop--4 { left: 74.5%; width: 25%; }
+      .jstop__badge {
+        position: absolute; left: 0; padding: 6px 15px; border-radius: 999px;
+        background: rgba(255, 255, 255, .2); white-space: nowrap;
+        font-family: var(--font-condensed); font-size: 13px; font-weight: 600;
+      }
+      .jstop__text { position: absolute; left: 0; right: 16px; margin: 0; padding-left: 17px; font-size: 13px; line-height: 1.45; }
+      .jstop__text::before { content: ''; position: absolute; left: 0; top: .52em; width: 6px; height: 6px; border-radius: 50%; background: #004c27; }
+      .jstop--1 .jstop__badge { top: 60.1%; }
+      .jstop--2 .jstop__badge { top: 28.7%; }
+      .jstop--3 .jstop__badge { top: 28.7%; }
+      .jstop--4 .jstop__badge { top: 0; }
+      .jstop--1 .jstop__text { top: 83.2%; }
+      .jstop--2 .jstop__text { top: 53.7%; }
+      .jstop--3 .jstop__text { top: 54.5%; }
+      .jstop--4 .jstop__text { top: 25%; }
+
+      /* Under 900px the four columns are ~90px wide — unreadable. Same markup,
+         restacked as a vertical rail. */
+      @media (max-width: 899.98px) {
+        .journey__timeline { aspect-ratio: auto; margin-top: 34px; padding: 4px 0 4px 30px; }
+        .journey__svg { display: none; }
+        .journey__timeline::before { content: ''; position: absolute; left: 9px; top: 12px; bottom: 12px; width: 1px; background: rgba(255, 255, 255, .5); transform-origin: top; }
+        .jstop, .jstop__badge, .jstop__text { position: static; width: auto; }
+        /* left: 0 is load-bearing. .jstop--N carries the desktop staircase
+           (left: 26.9% and friends) and `position: relative` below re-activates
+           it, which pushed the last three stops up to 65px past the right edge
+           and clipped their copy on every phone. */
+        .jstop { position: relative; left: 0; padding-bottom: 24px; }
+        .jstop:last-child { padding-bottom: 0; }
+        .jstop__badge { display: inline-block; margin-bottom: 9px; }
+        .jstop__text { padding-left: 0; }
+        .jstop__text::before { display: none; }
+        .jstop::after {
+          content: ''; position: absolute; left: -29px; top: 1px; width: 19px; height: 19px; border-radius: 50%;
+          background: radial-gradient(circle, #fff 0 4.5px, rgba(255, 255, 255, 0) 4.5px 56%, rgba(255, 255, 255, .9) 100%);
+        }
+      }
       @media (max-width: 767.98px) {
         .journey__inner { padding: 40px 24px 0; min-height: 480px; }
+      }
+
+      /* A 20-second loop: the line draws left to right over the first 1.8s, each
+         stop lights as the line reaches it, the finished timeline holds long
+         enough to actually be read, then it clears and rebuilds.
+
+         Every element shares the same 20s period, and the per-stop offsets live
+         in the KEYFRAME PERCENTAGES rather than in animation-delay. That is not a
+         style choice: animation-delay applies only to the first iteration, so on
+         an infinite animation the stops would drift out of sync with the line
+         from the second loop onward. The percentages are the node positions along
+         the path (0 / 28.8 / 54.4 / 78.8% of its length) mapped onto the draw
+         window — 0 / 2.6 / 4.9 / 7.1% of the cycle — which is also why the draw
+         stays `linear`: ease it and the stops no longer meet the line.
+
+         is-armed / is-live / is-idle are set by the script at the bottom.
+         ponytail: the base rules above already ARE the finished timeline, so with
+         JS off or reduced motion on it just renders complete. Nothing to fall
+         back to, nothing that can get stuck invisible. */
+      @media (prefers-reduced-motion: no-preference) {
+        .is-armed .jline { stroke-dasharray: 100; stroke-dashoffset: 100; }
+        .is-armed .jnode, .is-armed .jstop { opacity: 0; }
+        .is-armed::before { scale: 1 0; }
+
+        .is-live .jline,
+        .is-live::before,
+        .is-live .jnode,
+        .is-live .jstop { animation-duration: 20s; animation-timing-function: linear; animation-iteration-count: infinite; animation-fill-mode: both; }
+        .is-live .jline { animation-name: jDrawLine; }
+        .is-live::before { animation-name: jDrawRail; }
+        .is-live .jnode--1, .is-live .jstop--1 { animation-name: jStop1; }
+        .is-live .jnode--2, .is-live .jstop--2 { animation-name: jStop2; }
+        .is-live .jnode--3, .is-live .jstop--3 { animation-name: jStop3; }
+        .is-live .jnode--4, .is-live .jstop--4 { animation-name: jStop4; }
+        /* Nothing runs while the section is off screen. */
+        .is-idle .jline, .is-idle::before, .is-idle .jnode, .is-idle .jstop { animation-play-state: paused; }
+
+        @keyframes jDrawLine {
+          0% { stroke-dashoffset: 100; }
+          9%, 88% { stroke-dashoffset: 0; }
+          97%, 100% { stroke-dashoffset: 100; }
+        }
+        @keyframes jDrawRail {
+          0% { scale: 1 0; }
+          9%, 88% { scale: 1 1; }
+          97%, 100% { scale: 1 0; }
+        }
+        /* Same shape four times, offset by each node's arrival. The easing is
+           declared inside the keyframe so the short fade keeps its curve instead
+           of inheriting the linear timing the 20s cycle needs. */
+        @keyframes jStop1 {
+          0% { opacity: 0; translate: 0 12px; animation-timing-function: cubic-bezier(.22, .61, .36, 1); }
+          2.75%, 88% { opacity: 1; translate: 0 0; }
+          95%, 100% { opacity: 0; translate: 0 12px; }
+        }
+        @keyframes jStop2 {
+          0%, 2.6% { opacity: 0; translate: 0 12px; animation-timing-function: cubic-bezier(.22, .61, .36, 1); }
+          5.35%, 88% { opacity: 1; translate: 0 0; }
+          95%, 100% { opacity: 0; translate: 0 12px; }
+        }
+        @keyframes jStop3 {
+          0%, 4.9% { opacity: 0; translate: 0 12px; animation-timing-function: cubic-bezier(.22, .61, .36, 1); }
+          7.65%, 88% { opacity: 1; translate: 0 0; }
+          95%, 100% { opacity: 0; translate: 0 12px; }
+        }
+        @keyframes jStop4 {
+          0%, 7.1% { opacity: 0; translate: 0 12px; animation-timing-function: cubic-bezier(.22, .61, .36, 1); }
+          9.85%, 88% { opacity: 1; translate: 0 0; }
+          95%, 100% { opacity: 0; translate: 0 12px; }
+        }
       }
 
       /* Product cards */
@@ -406,6 +617,20 @@ const press = [
       .stat--3::after { background-image: url('/assets/home/96_Patient satisfaction.png'); background-position: center -220px; background-size: calc(100% + 100px) auto; }
       .stat--4 .stat__body { max-width: 38%; }
       .stat--4::after { background-image: url('/assets/home/48hr_Door-to-Door_Delivery.png'); background-position: right -30px center; background-size: auto 110%; }
+
+      /* On one column the artwork on cards 2 and 4 is sized to the card, so it
+         grew to cover the whole tile and the copy ended up printed over vials and
+         a cardboard box — dark type on dark artwork, unreadable. The layering was
+         never wrong (.stat__body already sits at z-index 1); the artwork was
+         simply too big. Pin it to the top-right at a fixed height, hand the lower
+         half to the text, and add the height that split needs.
+         Cards 1 and 3 place their art clear of the copy already — left alone. */
+      @media (max-width: 639.98px) {
+        .stat--2, .stat--4 { min-height: 344px; }
+        .stat--2 .stat__body, .stat--4 .stat__body { max-width: 100%; }
+        .stat--2::after { background-size: auto 104px; background-position: right 14px top 16px; }
+        .stat--4::after { background-size: auto 132px; background-position: right -8px top 14px; }
+      }
 
       /* Hover: lift the card, push the artwork in a touch. Uses the standalone
          `translate` / `scale` properties, not `transform`, so it composes with
@@ -441,15 +666,216 @@ const press = [
       }
       .footnote { font-size: 11.5px; color: var(--muted); margin-top: 16px; }
 
-      /* Comparison table */
-      .ctable { width: 100%; border-collapse: collapse; font-size: 13.5px; }
-      .ctable th, .ctable td { padding: 13px 12px; text-align: left; border-bottom: 1px solid var(--line); }
-      .ctable thead th { font-weight: 600; color: var(--muted); font-size: 13px; font-family: var(--font-condensed); text-transform: uppercase; letter-spacing: 0.1em; }
-      .ctable thead th:first-child { width: 34%; }
-      .ctable thead th.hl { color: var(--brand); }
-      .ctable td.c { text-align: center; font-variant-numeric: tabular-nums; }
-      .ctable td.rowlabel { font-weight: 500; }
-      .ctable tbody tr:nth-child(even) { background: rgba(0,0,0,.015); }
+      /* ── The 3D capsule ─────────────────────────────────────────────────────
+         One big capsule that splits open and reveals what Freeley includes, in
+         the exact space it occupied. See the frontmatter for why each slice is a
+         plain rounded div: the cross-section of a capsule at depth z IS a
+         stadium, so this is exact geometry, not an approximation, and the domes
+         need no special case.
+
+         The reveal is absolutely positioned over the stage, so opening changes
+         NO layout — nothing below the section moves, and there is no height to
+         animate. The halves swing to nearly edge-on (rotateY 74°) rather than
+         sliding far apart, which is what lets a 588px capsule open inside an
+         820px column without the halves leaving the grid cell.
+
+         Two invariants that are easy to undo by accident: the idle motion
+         animates .pod__stage ALONE (the 64 slices ride along as one composited
+         3D subtree — animating them individually is the mistake this design
+         exists to avoid), and slice sizes are emitted unitless and multiplied by
+         --u, so one number rescales the whole capsule per breakpoint.
+
+         ponytail: no 3D library, no JavaScript. <details> supplies the toggle and
+         keeps every value in the DOM — indexable, screen-reader reachable,
+         expandable by find-in-page. A WebGL canvas would have cost ~155 KB and
+         hidden all of it. */
+      .pod { --u: 1px; --r: 104; --x0: 190; position: relative; display: block; }
+      /* Full column to itself now, so the capsule scales up on wide screens. */
+      @media (min-width: 1040px) { .pod { --u: 1.3px; } }
+      .pod__trigger { display: block; cursor: pointer; list-style: none; border-radius: 26px; }
+      .pod__trigger::-webkit-details-marker { display: none; }
+      .pod__trigger:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; }
+
+      .pod__scene {
+        position: relative;
+        display: flex; justify-content: center; align-items: center;
+        min-height: calc(var(--r) * 2.5 * var(--u));
+        perspective: calc(1500 * var(--u));
+      }
+      /* Contact shadow. Deliberately on the scene, not the stage: the stage is
+         what drifts, and a shadow that floats along with the object it belongs to
+         kills the illusion. Anchored here, the capsule reads as rising off it. */
+      /* ::before, not ::after — it paints before the element's children, so it
+         sits under the capsule without a negative z-index, which would have
+         depended on whichever ancestor happens to form the stacking context. */
+      .pod__scene::before {
+        content: ''; position: absolute; left: 50%;
+        bottom: calc(var(--r) * .06 * var(--u));
+        width: calc((var(--x0) + var(--r)) * 1.75 * var(--u));
+        height: calc(var(--r) * .3 * var(--u));
+        transform: translateX(-50%);
+        background: radial-gradient(50% 50% at 50% 50%, rgba(18, 60, 44, .24), rgba(18, 60, 44, 0) 70%);
+        transition: opacity .9s ease, transform .9s cubic-bezier(.2, .8, .25, 1);
+        pointer-events: none;
+      }
+      /* Halves apart, the mass under them spreads and thins. scaleX rather than
+         width: same look, composited instead of re-laid-out every frame. */
+      .pod[open] .pod__scene::before { opacity: .55; transform: translateX(-50%) scaleX(1.43); }
+      .pod__stage {
+        position: relative;
+        width: calc((var(--x0) + var(--r)) * 2 * var(--u));
+        height: calc(var(--r) * 2 * var(--u));
+        transform-style: preserve-3d;
+        animation: podIdle 9s ease-in-out infinite;
+      }
+      @keyframes podIdle {
+        0%, 100% { transform: translateY(calc(-6 * var(--u))) rotateY(-7deg) rotateZ(-1.4deg); }
+        50%      { transform: translateY(calc(6 * var(--u)))  rotateY(7deg)  rotateZ(1.4deg); }
+      }
+
+      /* Each half is a zero-sized anchor at the joint, so its default
+         transform-origin sits exactly on the seam — rotateY pivots the half about
+         the joint, the way a real capsule comes apart. */
+      .pod__half {
+        position: absolute; left: 50%; top: 50%;
+        transform-style: preserve-3d;
+        transition: transform .9s cubic-bezier(.2, .8, .25, 1), opacity .7s ease;
+      }
+      .pod__slice {
+        position: absolute;
+        width: calc(var(--w) * var(--u));
+        height: calc(var(--h) * 2 * var(--u));
+        top: calc(var(--h) * -1 * var(--u));
+        transform: translateZ(calc(var(--z) * var(--u)));
+        /* Depth shading is baked into the inline background. --gloss adds the
+           roll-off around the cylinder, which depth alone cannot express: a tight
+           specular band near the top, a core shadow low down, and a bounce rim on
+           the very bottom edge. The narrow highlight is what stops it reading as
+           a flat lozenge — a wide soft one just looks like a gradient. */
+        --gloss: linear-gradient(
+          to bottom,
+          rgba(255, 255, 255, .10) 0%,
+          rgba(255, 255, 255, .58) 13%,
+          rgba(255, 255, 255, .16) 27%,
+          rgba(255, 255, 255, 0) 44%,
+          rgba(0, 0, 0, .14) 68%,
+          rgba(0, 0, 0, .34) 90%,
+          rgba(255, 255, 255, .18) 100%
+        );
+        background-image: var(--gloss);
+      }
+      /* One horizontal layer per half carries both ends: the outer dome falling
+         away from the light, and the darker seam where the two halves meet. The
+         stops are mirrored because the joint is on the right of the cap and on
+         the left of the body. */
+      .pod__half--cap .pod__slice {
+        left: calc(var(--w) * -1 * var(--u)); border-radius: 999px 3px 3px 999px;
+        background-image: linear-gradient(90deg, rgba(0, 0, 0, .20), transparent 14%, transparent 88%, rgba(0, 0, 0, .24)), var(--gloss);
+      }
+      .pod__half--body .pod__slice {
+        left: 0; border-radius: 3px 999px 999px 3px;
+        background-image: linear-gradient(90deg, rgba(0, 0, 0, .28), transparent 12%, transparent 86%, rgba(0, 0, 0, .20)), var(--gloss);
+      }
+
+      /* Opens sideways: each half slides outward along the capsule's own axis and
+         pivots a little about the joint. The head now sits above the capsule
+         instead of beside it, which is what freed the width for this travel. */
+      /* .42 opacity turned the halves into pale blobs and they stopped reading as
+         a capsule at all. Higher opacity keeps their colour, and a stronger
+         rotateY foreshortens the flat inner edge so it reads as a cut face
+         turning away rather than a rounded rectangle. */
+      .pod[open] .pod__half--cap { transform: translateX(calc(var(--x0) * -.92 * var(--u))) rotateY(-24deg) rotateZ(-2.5deg); opacity: .58; }
+      .pod[open] .pod__half--body { transform: translateX(calc(var(--x0) * .92 * var(--u))) rotateY(24deg) rotateZ(2.5deg); opacity: .58; }
+
+      .pod__hint {
+        display: block; text-align: center; margin-top: 2px;
+        font-family: var(--font-condensed); font-size: 12.5px;
+        letter-spacing: .14em; text-transform: uppercase; color: var(--muted);
+      }
+      .pod__hint--open, .pod[open] .pod__hint--shut { display: none; }
+      .pod[open] .pod__hint--open { display: inline; }
+
+      /* Out of flow on purpose — see the block comment. Centred on the capsule,
+         not on the section, so it lands where the capsule was. */
+      .pod__reveal {
+        position: absolute; left: 50%; top: calc(var(--r) * 1.25 * var(--u));
+        /* Sized to the OPENING, not to the capsule. The halves travel .92·x0
+           each, so the gap between them is 1.84·x0 — a panel wider than that cut
+           diagonally across the green half instead of sitting inside the opening. */
+        width: min(100%, calc(var(--x0) * 2.05 * var(--u)));
+        transform: translate(-50%, -50%);
+        animation: podReveal .65s cubic-bezier(.2, .8, .25, 1) .18s both;
+      }
+      @keyframes podReveal {
+        from { opacity: 0; transform: translate(-50%, -50%) scale(.88); }
+        to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      }
+      .pod__eyebrow {
+        margin: 0 0 10px; text-align: center;
+        font-family: var(--font-condensed); font-size: 12px;
+        letter-spacing: .16em; text-transform: uppercase; color: var(--brand);
+      }
+      .pod__gives {
+        list-style: none; margin: 0; padding: 8px 10px;
+        background: rgba(255, 255, 255, .94); border: 1px solid var(--line);
+        border-radius: 20px; box-shadow: 0 14px 38px rgba(18, 60, 44, .13);
+        backdrop-filter: blur(3px);
+      }
+      .pod__gives li {
+        display: flex; align-items: center; justify-content: space-between;
+        gap: 14px; flex-wrap: wrap; padding: 9px 12px;
+      }
+      .pod__gives li + li { box-shadow: inset 0 1px 0 var(--line); }
+      .pod__gives-label { font-size: 14px; font-weight: 500; }
+      .pod__gives-val {
+        display: flex; align-items: center; margin-left: auto;
+        font-size: 14.5px; font-weight: 700; color: var(--brand);
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* Link to the full comparison, not a disclosure. */
+      .pod__more { display: flex; justify-content: center; margin-top: 26px; }
+      .pod__more-btn {
+        display: inline-flex; align-items: center; gap: 10px; padding: 11px 12px 11px 24px;
+        background: #fff; border: 1px solid var(--line); border-radius: 999px;
+        font-size: 14px; font-weight: 600; color: var(--ink); text-decoration: none;
+        transition: border-color .3s ease, box-shadow .3s ease;
+      }
+      .pod__more-btn .arw { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 999px; background: var(--green); color: #fff; }
+      @media (hover: hover) { .pod__more-btn:hover { border-color: #d6cbb4; box-shadow: 0 8px 20px rgba(18, 60, 44, .10); } }
+
+      /* Half the slices below 640px. Tilt is bounded to ±7°, so at this scale the
+         lateral offset between adjacent slices stays under a pixel — the volume
+         still reads, at half the overdraw. */
+      @media (max-width: 639.98px) {
+        .pod { --u: .5px; }
+        .pod__slice:nth-child(even) { display: none; }
+        /* The reveal drops into normal flow here rather than floating over the
+           capsule. Centring a ~230px panel on a 104px capsule needed a 300px
+           scene, which sat mostly empty the rest of the time — about 94px of dead
+           air above and below. Opening now costs a layout shift, which on a phone
+           is the ordinary, expected behaviour. */
+        .pod__scene { min-height: calc(var(--r) * 2.7 * var(--u)); }
+        .pod__reveal {
+          position: static; transform: none; width: auto; padding-top: 20px;
+          animation-name: podRevealFlow;
+        }
+        @keyframes podRevealFlow {
+          from { opacity: 0; transform: translateY(14px) scale(.96); }
+          to { opacity: 1; transform: none; }
+        }
+        .pod__gives li { padding: 8px 10px; }
+        .pod__gives-label { font-size: 13.5px; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .pod__stage { animation: none; }
+        .pod__half { transition: opacity .3s ease; }
+        .pod[open] .pod__half--cap, .pod[open] .pod__half--body { transform: none; opacity: .12; }
+        .pod__reveal { animation: none; }
+        .pod__more-btn { transition: none; }
+      }
+
       .ic-y { color: var(--check); }
       .ic-n { color: var(--x); }
 
@@ -548,19 +974,64 @@ const press = [
       .tcard__tag { color: var(--brand); }
 
       /* Press */
-      .press { padding: 30px 0 56px; }
-      .press__row { display: flex; flex-wrap: wrap; align-items: center; gap: 40px; }
-      .press__row span { font-size: 12px; font-family: var(--font-condensed); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
-      .press__row img { height: 24px; width: auto; opacity: .72; filter: grayscale(1); }
+      .trustpoints { padding: 30px 0 56px; }
+      /* Label on its own line, logos in a row beneath it — the label used to sit
+         inline at the far left, which made the four logos read as a continuation
+         of the sentence rather than as a set. */
+      .press__row { display: flex; flex-direction: column; align-items: center; gap: 15px; }
+      .press__label { font-size: 12px; font-family: var(--font-condensed); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+      .press__logos { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 22px 54px; }
+      .press__logos img { height: 24px; width: auto; opacity: .72; filter: grayscale(1); }
 
-      /* Final CTA — photo restored from index.astro's cta-girl-desktop.png,
-         behind a green scrim (kept multi-vertical copy, not the homepage's
-         weight-loss-specific headline — PRODUCT.md: "four doors, one house"). */
+      /* Final CTA — a drift of capsules instead of the stock photo it used to
+         carry (kept multi-vertical copy, not the homepage's weight-loss-specific
+         headline — PRODUCT.md: "four doors, one house").
+         Each pill is ONE div: border-radius:999px plus a hard-stop gradient at
+         50% gives the two-tone cap/body of a real capsule, and ::after adds the
+         specular strip that makes it read as a cylinder rather than a lozenge.
+         They share a narrow band of angles so the group looks composed. See the
+         frontmatter for the placements and why they are unitless. */
       .final { position: relative; color: #fff; background: var(--green); overflow: hidden; }
-      /* right top, not right bottom — the source photo (2840x720) has her
-         face near the top of the frame; anchoring "bottom" pushed the crop
-         window down past her chin. */
-      .final::before { content: ''; position: absolute; inset: 0; background: url('/assets/home/cta-girl-desktop.png') right top / cover no-repeat; }
+      .final__pills { --s: 1px; position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+      .fpill {
+        position: absolute; border-radius: 999px;
+        width: calc(var(--w) * var(--s)); height: calc(var(--h) * var(--s));
+        right: calc(var(--x) * var(--s));
+        background-image: linear-gradient(90deg, var(--c1) 0 50%, var(--c2) 50% 100%);
+        box-shadow: 0 16px 32px rgba(0, 0, 0, .3);
+        transform: rotate(var(--rot));
+      }
+      .fpill--top { top: calc(var(--y) * var(--s)); }
+      .fpill--bottom { bottom: calc(var(--y) * var(--s)); }
+      .fpill::after {
+        content: ''; position: absolute; inset: 17% 13% auto; height: 21%;
+        border-radius: 999px; background: rgba(255, 255, 255, .26);
+      }
+      /* Outline-only — depth without adding another solid mass. */
+      .fpill--ghost { background-image: none; border: 1.5px solid rgba(255, 255, 255, .3); box-shadow: none; }
+      .fpill--ghost::after { display: none; }
+
+      /* Transform only, so it composites. rotate and translate have to ride the
+         one property, which is why the angle is repeated in every keyframe. */
+      @media (prefers-reduced-motion: no-preference) {
+        .fpill { animation: fpillDrift var(--dur) ease-in-out infinite; animation-delay: var(--dly); }
+        .fpill:nth-child(even) { animation-direction: reverse; }
+      }
+      @keyframes fpillDrift {
+        0%, 100% { transform: rotate(var(--rot)) translate(0, 0); }
+        50% { transform: rotate(var(--rot)) translate(-9px, -13px); }
+      }
+
+      /* Narrow band: the copy wraps to full width and the deep pills would sit
+         behind it. Shrink the whole arrangement with one number and keep only the
+         three nearest the corner, where nothing else lands. */
+      @media (max-width: 860px) {
+        .final__pills { --s: .62px; }
+        .fpill:nth-child(n+4) { display: none; }
+      }
+
+      /* Kept: fades the drift into the flat green under the headline, so the
+         copy on the left never competes with the pills on the right. */
       .final::after { content: ''; position: absolute; inset: 0; background: linear-gradient(100deg, var(--green) 0%, var(--green) 38%, rgba(18,60,44,.55) 70%, rgba(18,60,44,.25) 100%); }
       .final__grid { position: relative; z-index: 1; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 26px; padding-top: 64px; padding-bottom: 64px; }
       .final h2 { font-size: clamp(1.9rem, 3.2vw, 2.4rem); margin: 0; color: #fff; line-height: 1.1; }
@@ -574,7 +1045,7 @@ const press = [
       @media (min-width: 780px) { .foot__grid { grid-template-columns: 1.7fr 1fr 1fr 1fr; } }
       .foot__logo { height: 30px; width: auto; opacity: .95; }
       .foot__brand p { font-size: 14px; max-width: 260px; margin: 16px 0 0; line-height: 1.6; }
-      .foot__col h4 { color: #fff; font-size: 13px; font-weight: 600; letter-spacing: .04em; margin: 0 0 14px; }
+      .foot__col h3 { color: #fff; font-size: 13px; font-weight: 600; letter-spacing: .04em; margin: 0 0 14px; }
       .foot__col a { display: block; color: rgba(255,255,255,.7); text-decoration: none; font-size: 14px; padding: 6px 0; }
       .foot__col a:hover { color: #fff; }
       .foot__bottom { border-top: 1px solid rgba(255,255,255,.12); padding-top: 22px; padding-bottom: 40px; display: flex; flex-wrap: wrap; gap: 10px 32px; justify-content: space-between; }
@@ -593,6 +1064,9 @@ const press = [
     <!-- Header -->
     <header>
       <div class="wrap nav">
+        {/* /prototype, not /preview: /preview exists only as a Netlify redirect,
+            so it 404s on the local dev server. Both are excepted from the
+            waitlist catch-all, so this works in either place. */}
         <a href="/prototype" class="nav__logo"><Image src={logo} alt="Freeley" /></a>
         <nav class="nav__links">
           {nav.map((item) => <a href={item.href}>{item.label}</a>)}
@@ -647,23 +1121,13 @@ const press = [
       </div>
     </section>
 
-    <!-- Trust bar -->
+    <!-- Featured In -->
     <div class="trustbar">
-      <div class="wrap">
-        <ul>
-          {trustBar.map((t) => (
-            <li>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
-                {t.icon === 'stethoscope' && <path d="M6 3v6a4 4 0 0 0 8 0V3M10 17a5 5 0 0 0 10 0v-2M20 13a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z" />}
-                {t.icon === 'pharmacy' && <path d="M4 8a4 4 0 0 1 4-4h8a4 4 0 0 1 0 8H8a4 4 0 0 1-4-4ZM12 12v8M8 16h8" />}
-                {t.icon === 'lock' && <path d="M6 10V7a6 6 0 0 1 12 0v3M5 10h14v11H5z" />}
-                {t.icon === 'box' && <path d="M12 3 3 7.5v9L12 21l9-4.5v-9L12 3ZM3 7.5 12 12l9-4.5" />}
-                {t.icon === 'card' && <path d="M3 6h18v12H3zM3 10h18" />}
-              </svg>
-              {t.label}
-            </li>
-          ))}
-        </ul>
+      <div class="wrap press__row">
+        <span class="press__label">Featured In</span>
+        <div class="press__logos">
+          {press.map((p) => <Image src={p.src} alt={p.name} height={48} loading="lazy" />)}
+        </div>
       </div>
     </div>
 
@@ -690,28 +1154,177 @@ const press = [
       </div>
     </div>
 
-    <!-- The Process (restored from index.astro — was dropped from this redesign) -->
+    <!-- Products -->
     <section class="split">
-      <div class="wrap">
-        <div class="process__top">
-          <div>
-            <span class="eyebrow">The Process</span>
-            <h2 class="serif" style="margin:12px 0 16px;">From visit to doorstep<br /><em>in under a week</em></h2>
-            <p style="color:var(--muted); font-size:15px; margin:0 0 22px; max-width:38ch;">Everything happens on your schedule, from your phone.</p>
-            <a href="/about" class="ghost">About Us <span class="arw">→</span></a>
-          </div>
-          <div class="process__img">
-            <img src="/assets/frame-242.svg" alt="The Freeley assessment on a patient's phone" loading="lazy" width="362" height="366" style="height:auto; max-width:340px;" />
-          </div>
+      <div class="wrap split__grid">
+        <div class="intro">
+          <h2 class="serif">Precision medicine<br /><em>for every body</em></h2>
+          <p>Clinically validated protocols, compounded to your exact prescription by licensed pharmacies.</p>
+          <a href="/pricing" class="ghost">Explore all treatments <span class="arw">→</span></a>
         </div>
-        <div class="process__steps">
-          {processSteps.map((s) => (
-            <div class="process__step">
-              <span class="step__n serif">{s.n}</span>
-              <h3>{s.title}</h3>
-              <p>{s.desc}</p>
+        <div>
+          <div class="prods">
+            {products.map((p) => (
+              <div class="prod">
+                <div class="prod__img"><Image src={p.img} alt={p.name} height={300} loading="lazy" /></div>
+                <h3>{p.name}</h3>
+                <p>{p.desc}</p>
+                <div class="prod__price"><span class="price">{p.price}</span><small>/mo*</small></div>
+                {/* The quiz, not the product page: this is the conversion action,
+                    and /weight-loss et al. sit behind the waitlist gate anyway.
+                    Staying an <a> to the real quiz keeps the no-JS fallback. */}
+                <a href={ASSESSMENT} class="pill">See if you qualify</a>
+              </div>
+            ))}
+          </div>
+          <p class="footnote">*Price reflects the 12-month plan. 1-, 3-, and 6-month plans available at higher monthly rates.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials (full-width, quote-led — no duplicated imagery) -->
+    <section class="fullsec">
+      <div class="wrap">
+        <div class="center-head">
+          <h2 class="serif">Real results. <em>Real people.</em></h2>
+          <p>See how Freeley is helping patients look, feel, and live better.</p>
+        </div>
+        <div class="tcards">
+          {testimonials.map((t) => (
+            <div class="tcard">
+              <div class="tcard__stars">★★★★★</div>
+              <p class="tcard__quote">“{t.quote}”</p>
+              <div class="tcard__meta"><span class="tcard__name">{t.name}</span> · <span class="tcard__tag">{t.tag}</span></div>
             </div>
           ))}
+        </div>
+        <p class="footnote" style="text-align:center;">*Individual results may vary. Quotes are from Freeley weight-loss patients; results are not typical or guaranteed.</p>
+        <div class="center-cta"><a href="/about" class="ghost">Read more stories <span class="arw">→</span></a></div>
+      </div>
+    </section>
+
+    <!-- Your Journey (restored from index.astro — the photo + timeline graph
+         are index.astro's original pre-aligned pair, reused as-is) -->
+    <section>
+      <div class="wrap">
+        <div class="journey">
+          <div class="journey__bg"></div>
+          <div class="journey__watermark"></div>
+          <div class="journey__scrim"></div>
+          <div class="journey__inner">
+            <div class="journey__head">
+              <span class="eyebrow">Your Journey</span>
+              <h2 class="serif">What to expect on <em>GLP-1 therapy</em></h2>
+              <a href={ASSESSMENT} class="pill pill--light">Start Your Assessment <span class="arw">→</span></a>
+            </div>
+            <div class="journey__timeline">
+              <svg class="journey__svg" viewBox="0 0 1125 464" fill="none" aria-hidden="true">
+                <defs>
+                  <radialGradient id="jGlow">
+                    <stop offset="0.56" stop-color="#fff" stop-opacity="0" />
+                    <stop offset="1" stop-color="#fff" />
+                  </radialGradient>
+                </defs>
+                <path class="jline" pathLength="100" d="M45 345L341.413 199.219H634.891L881.279 66H1125" />
+                {journeyStops.map((s, i) => (
+                  <g class={`jnode jnode--${i + 1}`}>
+                    <circle cx={s.x} cy={s.y} r="15" fill="url(#jGlow)" />
+                    <circle cx={s.x} cy={s.y} r="7" fill="#fff" />
+                  </g>
+                ))}
+              </svg>
+              {journeyStops.map((s, i) => (
+                <div class={`jstop jstop--${i + 1}`}>
+                  <span class="jstop__badge">{s.label}</span>
+                  <p class="jstop__text">{s.copy}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Real Doctors / Real Providers / Pharmacy Grade (restored from index.astro) -->
+    <section class="fullsec" style="padding-top:0;">
+      <div class="wrap">
+        <div class="center-head">
+          <span class="eyebrow">Verified, Not Assumed</span>
+          <h2 class="serif" style="margin-top:14px;">Real physicians. <em>Real pharmacies.</em></h2>
+          <p>Every layer of care is licensed, credentialed, and checkable.</p>
+        </div>
+        <div class="trust">
+          {trustCards.map((t) => (
+            <div class="trust__card">
+              <div class="trust__img"><img src={t.img} alt={t.label} loading="lazy" width="600" height="450" style="height:auto;" /></div>
+              <div class="trust__body">
+                <h3>{t.label}</h3>
+                <p>{t.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Comparison -->
+    <section class="split" style="padding-top:0;">
+      <div class="wrap">
+        {/* Head sits above the capsule rather than beside it, so the capsule gets
+            the full column and its halves have room to travel sideways. */}
+        <div class="center-head">
+          <h2 class="serif">Why patients choose <em>Freeley</em></h2>
+          <p>We combine the best of telehealth with real medical care.</p>
+        </div>
+        <details class="pod">
+          <summary class="pod__trigger">
+            <div class="pod__scene">
+              <div class="pod__stage" aria-hidden="true">
+                <div class="pod__half pod__half--cap">
+                  {podSlices.map((s) => (
+                    <span class="pod__slice" style={`--w:${s.w};--h:${s.h};--z:${s.z};background:rgb(${s.cap})`}></span>
+                  ))}
+                </div>
+                <div class="pod__half pod__half--body">
+                  {podSlices.map((s) => (
+                    <span class="pod__slice" style={`--w:${s.w};--h:${s.h};--z:${s.z};background:rgb(${s.body})`}></span>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <span class="pod__hint">
+              <span class="pod__hint--shut">Open the capsule</span>
+              <span class="pod__hint--open">Close</span>
+            </span>
+          </summary>
+
+          {/* Absolutely positioned over .pod__scene, so opening the capsule
+              changes no layout at all — the contents land exactly in the space
+              the capsule occupied, and nothing below the section moves. */}
+          <div class="pod__reveal">
+            <p class="pod__eyebrow">What Freeley gives you</p>
+            <ul class="pod__gives">
+              {heroRows.map((row) => (
+                <li>
+                  <span class="pod__gives-label">{row.label}</span>
+                  <span class="pod__gives-val">
+                    {row.cells[0] === 'y' ? (
+                      <svg class="ic-y" role="img" aria-label="Included" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18ZM8.5 12l2.5 2.5 4.5-5" /></svg>
+                    ) : (
+                      row.cells[0]
+                    )}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </details>
+
+        {/* The full eight-row comparison lives on its own page now. A link,
+            not a disclosure: it is a different depth of content, and /compare
+            renders every row from the same data module this capsule reads. */}
+        <div class="pod__more">
+          <a href="/compare" class="pod__more-btn">See full comparison <span class="arw">→</span></a>
         </div>
       </div>
     </section>
@@ -739,142 +1352,62 @@ const press = [
       </div>
     </section>
 
-    <!-- Your Journey (restored from index.astro — the photo + timeline graph
-         are index.astro's original pre-aligned pair, reused as-is) -->
-    <section>
-      <div class="wrap">
-        <div class="journey">
-          <div class="journey__bg"></div>
-          <div class="journey__watermark"></div>
-          <div class="journey__inner">
-            <div class="journey__head">
-              <span class="eyebrow">Your Journey</span>
-              <h2 class="serif">What to expect on <em>GLP-1 therapy</em></h2>
-              <a href={ASSESSMENT} class="pill pill--light">Start Your Assessment <span class="arw">→</span></a>
-            </div>
-            <img class="journey__graph" src="/assets/home/graph-home.svg" alt="Timeline of expected results: reduced appetite at week 1-2, average 5-8 lbs lost by month 1, significant weight reduction by month 3, 15%+ body weight lost by month 6" loading="lazy" />
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Comparison -->
-    <section class="split" style="padding-top:0;">
-      <div class="wrap split__grid">
-        <div class="intro">
-          <h2 class="serif">Why patients choose <em>Freeley</em></h2>
-          <p>We combine the best of telehealth with real medical care.</p>
-          <a href={ASSESSMENT} class="ghost">See if you qualify <span class="arw">→</span></a>
-        </div>
-        <div style="overflow-x:auto;">
-          <table class="ctable">
-            <thead>
-              <tr>
-                <th></th>
-                {compareCols.map((c, i) => <th class={i === 0 ? 'hl' : ''}>{c}</th>)}
-              </tr>
-            </thead>
-            <tbody>
-              {compareRows.map((row) => (
-                <tr>
-                  <td class="rowlabel">{row.label}</td>
-                  {row.cells.map((cell) => (
-                    <td class="c">
-                      {cell === 'y' ? (
-                        <svg class="ic-y" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18ZM8.5 12l2.5 2.5 4.5-5" /></svg>
-                      ) : cell === 'n' ? (
-                        <svg class="ic-n" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18ZM9 9l6 6M15 9l-6 6" /></svg>
-                      ) : (
-                        <span>{cell}</span>
-                      )}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- Products -->
+    <!-- The Process (restored from index.astro — was dropped from this redesign) -->
     <section class="split">
-      <div class="wrap split__grid">
-        <div class="intro">
-          <h2 class="serif">Precision medicine<br /><em>for every body</em></h2>
-          <p>Clinically validated protocols, compounded to your exact prescription by licensed pharmacies.</p>
-          <a href="/pricing" class="ghost">Explore all treatments <span class="arw">→</span></a>
-        </div>
-        <div>
-          <div class="prods">
-            {products.map((p) => (
-              <div class="prod">
-                <div class="prod__img"><Image src={p.img} alt={p.name} height={300} loading="lazy" /></div>
-                <h3>{p.name}</h3>
-                <p>{p.desc}</p>
-                <div class="prod__price"><span class="price">{p.price}</span><small>/mo*</small></div>
-                <a href={p.href} class="pill">See if you qualify</a>
-              </div>
-            ))}
+      <div class="wrap">
+        <div class="process__top">
+          <div>
+            <span class="eyebrow">The Process</span>
+            <h2 class="serif" style="margin:12px 0 16px;">From visit to doorstep<br /><em>in under a week</em></h2>
+            <p style="color:var(--muted); font-size:15px; margin:0 0 22px; max-width:38ch;">Everything happens on your schedule, from your phone.</p>
+            <a href="/about" class="ghost">About Us <span class="arw">→</span></a>
           </div>
-          <p class="footnote">*Price reflects the 12-month plan. 1-, 3-, and 6-month plans available at higher monthly rates.</p>
+          <div class="process__img">
+            <img src="/assets/frame-242.svg" alt="The Freeley assessment on a patient's phone" loading="lazy" width="362" height="366" style="height:auto; max-width:340px;" />
+          </div>
         </div>
-      </div>
-    </section>
-
-    <!-- Real Doctors / Real Providers / Pharmacy Grade (restored from index.astro) -->
-    <section class="fullsec" style="padding-top:0;">
-      <div class="wrap">
-        <div class="center-head">
-          <span class="eyebrow">Verified, Not Assumed</span>
-          <h2 class="serif" style="margin-top:14px;">Real physicians. <em>Real pharmacies.</em></h2>
-          <p>Every layer of care is licensed, credentialed, and checkable.</p>
-        </div>
-        <div class="trust">
-          {trustCards.map((t) => (
-            <div class="trust__card">
-              <div class="trust__img"><img src={t.img} alt={t.label} loading="lazy" width="600" height="450" style="height:auto;" /></div>
-              <div class="trust__body">
-                <h3>{t.label}</h3>
-                <p>{t.desc}</p>
-              </div>
+        <div class="process__steps">
+          {processSteps.map((s) => (
+            <div class="process__step">
+              <span class="step__n serif">{s.n}</span>
+              <h3>{s.title}</h3>
+              <p>{s.desc}</p>
             </div>
           ))}
         </div>
       </div>
     </section>
 
-    <!-- Testimonials (full-width, quote-led — no duplicated imagery) -->
-    <section class="fullsec" style="padding-top:0;">
+    <!-- Trust points -->
+    <section class="trustpoints">
       <div class="wrap">
-        <div class="center-head">
-          <h2 class="serif">Real results. <em>Real people.</em></h2>
-          <p>See how Freeley is helping patients look, feel, and live better.</p>
-        </div>
-        <div class="tcards">
-          {testimonials.map((t) => (
-            <div class="tcard">
-              <div class="tcard__stars">★★★★★</div>
-              <p class="tcard__quote">“{t.quote}”</p>
-              <div class="tcard__meta"><span class="tcard__name">{t.name}</span> · <span class="tcard__tag">{t.tag}</span></div>
-            </div>
+        <ul class="trustlist">
+          {trustBar.map((t) => (
+            <li>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                {t.icon === 'stethoscope' && <path d="M6 3v6a4 4 0 0 0 8 0V3M10 17a5 5 0 0 0 10 0v-2M20 13a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z" />}
+                {t.icon === 'pharmacy' && <path d="M4 8a4 4 0 0 1 4-4h8a4 4 0 0 1 0 8H8a4 4 0 0 1-4-4ZM12 12v8M8 16h8" />}
+                {t.icon === 'lock' && <path d="M6 10V7a6 6 0 0 1 12 0v3M5 10h14v11H5z" />}
+                {t.icon === 'box' && <path d="M12 3 3 7.5v9L12 21l9-4.5v-9L12 3ZM3 7.5 12 12l9-4.5" />}
+                {t.icon === 'card' && <path d="M3 6h18v12H3zM3 10h18" />}
+              </svg>
+              {t.label}
+            </li>
           ))}
-        </div>
-        <p class="footnote" style="text-align:center;">*Individual results may vary. Quotes are from Freeley weight-loss patients; results are not typical or guaranteed.</p>
-        <div class="center-cta"><a href="/about" class="ghost">Read more stories <span class="arw">→</span></a></div>
-      </div>
-    </section>
-
-    <!-- Press -->
-    <section class="press">
-      <div class="wrap press__row">
-        <span>Featured In</span>
-        {press.map((p) => <Image src={p.src} alt={p.name} height={48} loading="lazy" />)}
+        </ul>
       </div>
     </section>
 
     <!-- Final CTA -->
     <section class="final">
+      <div class="final__pills" aria-hidden="true">
+        {ctaPills.map((p) => (
+          <span
+            class:list={['fpill', `fpill--${p.edge}`, !p.c1 && 'fpill--ghost']}
+            style={`--w:${p.w};--h:${p.h};--x:${p.x};--y:${p.y};--rot:${p.rot}deg;--dur:${p.dur}s;--dly:${p.dly}s${p.c1 ? `;--c1:${p.c1};--c2:${p.c2}` : ''}`}
+          ></span>
+        ))}
+      </div>
       <div class="wrap final__grid">
         <div>
           <h2 class="serif">You deserve a plan<br />that works with your body.</h2>
@@ -898,21 +1431,21 @@ const press = [
           <p>Physician-prescribed, doctor-guided care — compounded by licensed U.S. pharmacies and delivered to your door.</p>
         </div>
         <div class="foot__col">
-          <h4>Treatments</h4>
+          <h3>Treatments</h3>
           <a href="/weight-loss">GLP-1 Weight Loss</a>
           <a href="/sexual-wellness">Sexual Wellness</a>
           <a href="/hair-loss">Hair Loss</a>
           <a href="/longevity">Longevity &amp; Peptides</a>
         </div>
         <div class="foot__col">
-          <h4>Company</h4>
+          <h3>Company</h3>
           <a href="/how-it-works">How It Works</a>
           <a href="/pricing">Pricing</a>
           <a href="/about">About Us</a>
           <a href="/partner-pharmacies">Partner Pharmacies</a>
         </div>
         <div class="foot__col">
-          <h4>Legal</h4>
+          <h3>Legal</h3>
           <a href="/privacy">Privacy Policy</a>
           <a href="/terms">Terms of Service</a>
           <a href="/hipaa">HIPAA Notice</a>
@@ -935,6 +1468,25 @@ const press = [
           b.setAttribute('aria-expanded', String(open));
         });
       })();
+
+      /* Your Journey timeline: a 20s loop that starts the first time the section
+         reaches the viewport and pauses whenever it leaves, so nothing animates
+         off screen. The observer is deliberately NOT disconnected — it is what
+         drives that pause. is-armed (the empty starting state) is added from JS
+         on purpose: a visitor without JS keeps the finished timeline instead of
+         staring at a blank box. */
+      (function () {
+        var t = document.querySelector('.journey__timeline');
+        if (!t || !matchMedia('(prefers-reduced-motion: no-preference)').matches) return;
+        t.classList.add('is-armed');
+        new IntersectionObserver(function (entries) {
+          var seen = entries[0].isIntersecting;
+          if (seen) t.classList.add('is-live');
+          t.classList.toggle('is-idle', !seen);
+        }, { threshold: 0.25 }).observe(t);
+      })();
     </script>
+
+    <QuizModal />
   </body>
 </html>

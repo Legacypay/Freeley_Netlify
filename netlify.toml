@@ -114,6 +114,31 @@
   to = "/prototype"
   status = 200
 
+# The route /preview rewrites to. Excepted as well because /preview exists only
+# as the rule above — it 404s on a local dev server, so in-page links (the logo,
+# the back link on /compare) point at /prototype to work in both places.
+[[redirects]]
+  from = "/prototype"
+  to = "/prototype"
+  status = 200
+
+# The full comparison table, linked from the capsule on /preview. Without this
+# pass-through the forced catch-all below answers it with the waitlist HTML and
+# the button appears broken. Remove along with the gate, like /preview.
+[[redirects]]
+  from = "/compare"
+  to = "/compare"
+  status = 200
+
+# The assessment quiz. /preview opens it in a modal <iframe>, so without this
+# rule the catch-all answers the iframe with the waitlist page and every CTA on
+# the mockup looks broken — including the modal itself. The quiz is also the
+# no-JS fallback target for those same links.
+[[redirects]]
+  from = "/assessment-quiz"
+  to = "/assessment-quiz"
+  status = 200
+
 # Astro dev-server paths — only ever requested by Netlify Preview Servers,
 # which run `astro dev` instead of a production build. Vite serves modules
 # straight off the project root, so the browser asks for paths that simply do
@@ -234,5 +259,16 @@
 # "/*" rule above, which sets "index, follow" for the real pages.
 [[headers]]
   for = "/preview"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+# Same for the comparison page it links to — part of the same mockup.
+[[headers]]
+  for = "/compare"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/prototype"
   [headers.values]
     X-Robots-Tag = "noindex, nofollow"

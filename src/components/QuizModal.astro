@@ -1,0 +1,131 @@
+---
+// The free-assessment quiz in a modal, ported from index.astro's #quiz--modal.
+//
+// It is a component because two standalone pages need it (/preview and
+// /compare) and neither loads public/global.css, where the original modal's
+// styles live.
+//
+// Built on <dialog>, not a div with a z-index: showModal() gives the top layer,
+// ::backdrop, Escape-to-close, focus trapping and inert background content for
+// free. The original hand-rolled all of that except the focus trap, which it
+// simply did not have.
+//
+// Progressive enhancement on purpose: the CTAs stay real <a href="/assessment-
+// quiz"> links and the script intercepts the click. With JS broken the visitor
+// still reaches the quiz page instead of pressing a dead button — which is what
+// would happen had these been <button>s.
+---
+
+<dialog class="qm" id="quizModal" aria-label="Free assessment">
+  <button type="button" class="qm__close" aria-label="Close assessment">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+  </button>
+  <div class="qm__loader" aria-hidden="true"></div>
+  <div class="qm__frame"></div>
+</dialog>
+
+<style is:inline>
+  /* Namespaced rather than scoped: the iframe is created at runtime, so it would
+     never carry Astro's scoping attribute and .qm iframe would silently miss. */
+  .qm {
+    /* 760, not 940: the quiz page lays out to about 710px, so a wider dialog just
+       added white gutters either side of it. */
+    width: min(760px, calc(100vw - 28px));
+    padding: 0; border: 0; border-radius: 22px; overflow: hidden;
+    background: #fff; color: inherit;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, .32);
+  }
+  .qm::backdrop { background: rgba(18, 60, 44, .55); }
+  .qm[open] { animation: qmIn .28s cubic-bezier(.22, .61, .36, 1); }
+  @keyframes qmIn { from { opacity: 0; transform: translateY(12px) scale(.98); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .qm[open] { animation: none; } }
+
+  .qm__close {
+    position: absolute; top: 14px; right: 14px; z-index: 2;
+    display: grid; place-items: center; width: 34px; height: 34px;
+    border: 1px solid rgba(0, 0, 0, .12); border-radius: 999px;
+    background: rgba(255, 255, 255, .92); color: #1a1c1a; cursor: pointer;
+  }
+  .qm__close:hover { background: #fff; border-color: rgba(0, 0, 0, .28); }
+  .qm__close:focus-visible { outline: 2px solid var(--focus, #0f6b45); outline-offset: 2px; }
+
+  .qm__frame { display: block; min-height: 320px; }
+  .qm__frame iframe {
+    display: block; width: 100%; border: 0;
+    /* The quiz's first step is ~810px tall; at 660 the Start button opened below
+       the fold of the frame and looked like the modal had cut it off. */
+    height: min(780px, calc(100vh - 56px));
+    opacity: 0; transition: opacity .3s ease;
+  }
+  .qm__frame iframe.is-ready { opacity: 1; }
+
+  .qm__loader {
+    position: absolute; top: 50%; left: 50%; width: 34px; height: 34px;
+    margin: -17px 0 0 -17px;
+    border: 2.5px solid rgba(15, 107, 69, .18);
+    border-top-color: var(--brand, #0f6b45);
+    border-radius: 50%;
+    animation: qmSpin .8s linear infinite;
+  }
+  .qm__loader[hidden] { display: none; }
+  @keyframes qmSpin { to { transform: rotate(360deg); } }
+
+  /* showModal() makes the page behind inert but does not stop it scrolling. */
+  html.qm-open, html.qm-open body { overflow: hidden; }
+</style>
+
+<script is:inline>
+  (function () {
+    var dlg = document.getElementById('quizModal');
+    if (!dlg || typeof dlg.showModal !== 'function') return;
+
+    var frame = dlg.querySelector('.qm__frame');
+    var loader = dlg.querySelector('.qm__loader');
+    var iframe = null;
+
+    function destroy() {
+      if (iframe) {
+        // Blank the document before detaching: the quiz keeps state, and the
+        // original modal reset it the same way so a reopen starts clean.
+        try { iframe.src = 'about:blank'; } catch (e) {}
+        iframe.remove();
+        iframe = null;
+      }
+      frame.replaceChildren();
+    }
+
+    function open() {
+      destroy();
+      loader.hidden = false;
+      iframe = document.createElement('iframe');
+      iframe.title = 'Freeley free assessment';
+      iframe.setAttribute('loading', 'eager');
+      iframe.addEventListener('load', function () {
+        loader.hidden = true;
+        iframe.classList.add('is-ready');
+      });
+      iframe.src = '/assessment-quiz?t=' + Date.now();
+      frame.appendChild(iframe);
+      dlg.showModal();
+      document.documentElement.classList.add('qm-open');
+    }
+
+    dlg.addEventListener('close', function () {
+      destroy();
+      loader.hidden = true;
+      document.documentElement.classList.remove('qm-open');
+    });
+    dlg.querySelector('.qm__close').addEventListener('click', function () { dlg.close(); });
+    // Clicks land on the dialog element itself only when they hit the backdrop.
+    dlg.addEventListener('click', function (e) { if (e.target === dlg) dlg.close(); });
+
+    document.querySelectorAll('a[href^="/assessment-quiz"]').forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        // Leave modified clicks alone so "open in new tab" still works.
+        if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        e.preventDefault();
+        open();
+      });
+    });
+  })();
+</script>

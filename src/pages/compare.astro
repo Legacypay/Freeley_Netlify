@@ -1,0 +1,157 @@
+---
+// Full Freeley-vs-the-rest comparison, linked from the capsule on /preview.
+//
+// Deliberately standalone and small rather than reusing prototype.astro's
+// 700-line inline <style>: this page needs tokens, type, a back link and a
+// table. Copying the whole prototype stylesheet to get four of those would be
+// the expensive way to stay consistent. It reads its data from src/data/compare
+// so the eight rows here and the four in the capsule cannot drift.
+//
+// Reachability: the site-wide `/*` → /waitlist forced rewrite in netlify.toml
+// swallows every route that is not explicitly excepted. /compare has its own
+// pass-through rule there, next to /preview.
+import { Font, Image } from 'astro:assets';
+import logo from '../assets/brand/freeley_logo_transparent_green.webp';
+import { compareCols, compareRows } from '../data/compare';
+import QuizModal from '../components/QuizModal.astro';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <Font cssVariable="--font-display" preload />
+    <Font cssVariable="--font-text" preload />
+    <Font cssVariable="--font-condensed" />
+    <title>Freeley — Full comparison</title>
+    <style is:inline>
+      :root {
+        --green: #123c2c;
+        --brand: #0f6b45;
+        --cream: #f6f2e9;
+        --ink: #1a1c1a;
+        --muted: #63665f;
+        --line: #e5ded0;
+        --check: #1f8a55;
+        --x: #c2513f;
+        --focus: #0f6b45;
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; overflow-x: clip; }
+      body { font-family: var(--font-text); color: var(--ink); background: var(--cream); -webkit-font-smoothing: antialiased; }
+      .serif { font-family: var(--font-display); font-weight: 600; letter-spacing: -0.015em; }
+      .serif em { font-style: italic; color: var(--brand); }
+      /* Longhands: a `padding` shorthand would zero the horizontal padding any
+         element sharing this class inherits. Same rule as the prototype. */
+      .wrap { max-width: 1080px; margin: 0 auto; padding: 0 28px; }
+
+      .top { padding-block: 22px; border-bottom: 1px solid var(--line); background: #fff; }
+      .top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+      .top img { height: 30px; width: auto; }
+      .back { display: inline-flex; align-items: center; gap: 9px; font-size: 14px; font-weight: 600; color: var(--ink); text-decoration: none; }
+      .back:hover { color: var(--brand); }
+      .back:focus-visible, .top a:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; border-radius: 6px; }
+
+      .head { text-align: center; max-width: 640px; margin: 0 auto; padding-block: 54px 10px; }
+      .head h1 { font-size: clamp(2.1rem, 4vw, 2.8rem); margin: 0 0 14px; line-height: 1.08; }
+      .head p { color: var(--muted); font-size: 15px; margin: 0; }
+
+      main { padding-bottom: 70px; }
+      .tablewrap { overflow-x: auto; margin-top: 34px; border: 1px solid var(--line); border-radius: 20px; background: #fff; }
+      table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 720px; }
+      th, td { padding: 15px 16px; text-align: left; border-bottom: 1px solid var(--line); }
+      tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
+      thead th { font-family: var(--font-condensed); font-size: 12.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+      thead th.hl { color: var(--brand); }
+      thead th:first-child { width: 32%; }
+      tbody th { font-weight: 500; font-size: 14px; }
+      td.c { text-align: center; font-variant-numeric: tabular-nums; }
+      /* The Freeley column is the point of the page — keep it tinted the whole
+         way down so the eye can follow one column without counting headers. */
+      thead th.hl, td.c:first-of-type { background: var(--cream); }
+      td.c:first-of-type { font-weight: 700; color: var(--brand); }
+      tbody tr:hover th, tbody tr:hover td { background: rgba(0, 0, 0, .018); }
+      tbody tr:hover td.c:first-of-type { background: #efe9dd; }
+      .ic-y { color: var(--check); vertical-align: middle; }
+      .ic-n { color: var(--x); vertical-align: middle; }
+      /* The action moved here from the capsule section on /preview: this is the
+         page where someone has finished weighing the options. */
+      .cta { display: flex; justify-content: center; margin-top: 34px; }
+      .ghost {
+        display: inline-flex; align-items: center; gap: 10px; padding: 11px 12px 11px 24px;
+        background: #fff; border: 1px solid var(--line); border-radius: 999px;
+        font-size: 14px; font-weight: 600; color: var(--ink); text-decoration: none;
+        transition: border-color .3s ease, box-shadow .3s ease;
+      }
+      .ghost .arw { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 999px; background: var(--green); color: #fff; }
+      .ghost:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+      @media (hover: hover) { .ghost:hover { border-color: #d6cbb4; box-shadow: 0 8px 20px rgba(18, 60, 44, .10); } }
+
+      .foot { margin-top: 18px; font-size: 11.5px; color: var(--muted); }
+      /* The header corner cell reads as empty to a screen reader otherwise. */
+      .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+      @media (max-width: 600px) {
+        .head { padding-block: 38px 6px; }
+        th, td { padding: 13px 13px; }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="top">
+      <div class="wrap">
+        <a href="/prototype" aria-label="Freeley home"><Image src={logo} alt="Freeley" height={60} loading="eager" /></a>
+        <a class="back" href="/prototype">← Back</a>
+      </div>
+    </div>
+
+    <main>
+      <div class="wrap">
+        <div class="head">
+          <h1 class="serif">How Freeley <em>compares</em></h1>
+          <p>Every criterion, side by side with the alternatives patients usually weigh.</p>
+        </div>
+
+        <div class="tablewrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col"><span class="sr">Criterion</span></th>
+                {compareCols.map((c, i) => <th scope="col" class={i === 0 ? 'hl' : undefined}>{c}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {compareRows.map((row) => (
+                <tr>
+                  <th scope="row">{row.label}</th>
+                  {row.cells.map((cell) => (
+                    <td class="c">
+                      {cell === 'y' ? (
+                        <svg class="ic-y" role="img" aria-label="Yes" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18ZM8.5 12l2.5 2.5 4.5-5" /></svg>
+                      ) : cell === 'n' ? (
+                        <svg class="ic-n" role="img" aria-label="No" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18ZM9 9l6 6M15 9l-6 6" /></svg>
+                      ) : (
+                        cell
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="cta">
+          <a href="/assessment-quiz" class="ghost">See if you qualify <span class="arw">→</span></a>
+        </div>
+
+        <p class="foot">Comparison reflects typical market offerings as of 2026 and is provided for general information. Individual clinics, pharmacies and telehealth providers vary.</p>
+      </div>
+    </main>
+
+    <QuizModal />
+  </body>
+</html>
