@@ -14,6 +14,7 @@
     --muted: #63665f;
     --gold: #c39a4e;
     --line: #e5ded0;
+    --card: #efe9dd;
     --font-serif: 'Source Serif 4', Charter, Georgia, serif;
     --font-sans: 'Archivo', system-ui, sans-serif;
     --font-condensed: 'Archivo Narrow', system-ui, sans-serif;
@@ -35,103 +36,95 @@ header {
    to the header only, not the base .container used across the rest of the
    site — that's a separate, much bigger change. */
 header .container {
+    /* /prototype's .wrap is a fixed 1200px. !important is required to answer
+       the legacy sitewide `.container { max-width: 1480px !important }`
+       (style.css:~1103), which otherwise wins the cascade on any specificity
+       — on wide screens the header stretched 140px past every section. */
+    max-width: 1200px !important;
+    margin-left: auto;
+    margin-right: auto;
+    /* The vertical padding lives HERE, not on .navbar-custom: that same
+       legacy `.container` block ships `padding: 0 24px`, whose shorthand
+       zeroes any equal-specificity vertical padding declared later wins
+       aside — this selector (0,1,1) outranks it, no !important needed. */
+    padding-top: 22px;
+    padding-bottom: 22px;
     padding-left: 28px;
     padding-right: 28px;
 }
 
+/* The nav row IS /prototype's .nav, one for one: logo | links | CTA
+   distributed with space-between, links as a bare 22px-gap row, CTA a green
+   pill with the arrow chip, burger + slide-down panel under 1024px.
+   .navbar-custom shares its element with .container, so vertical padding
+   stays in longhands — a `padding` shorthand would zero out .container's
+   28px horizontal padding. */
 .navbar-custom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
     background-color: transparent;
-    padding: 25px 0;
 }
 
 .navbar-brand-custom {
     display: flex;
     align-items: center;
-    gap: 10px;
-    max-width: 170px;
     text-decoration: none;
-    margin-right: 50px;
 }
 
-.navbar-logo-circle {
-    width: 36px;
-    height: 36px;
-    background-color: #1f4d3d;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #ffffff;
-    font-weight: 700;
-    font-size: 18px;
-}
-
-.navbar-brand-text {
-    color: #1f4d3d;
-    font-weight: 700;
-    font-size: 18px;
-    letter-spacing: -0.5px;
+.navbar-brand-custom img {
+    height: 30px;
+    width: auto;
 }
 
 .navbar-nav-custom {
-    display: flex;
+    display: none;
     align-items: center;
-    gap: 24px;
-    flex-grow: 1;
+    gap: 22px;
 }
 
-/* Plain inline links, no pill-island wrapper — matches /prototype's .nav__links
-   (bare flex row). The island this replaced was an earlier, separate call to
-   avoid a "generic wordmark+links+CTA" look; /prototype's own direction
-   already avoids that through type and color, not a boxed link row. */
+@media (min-width: 1024px) {
+    .navbar-nav-custom {
+        display: flex;
+    }
+}
 
 .navbar-link {
     font-family: var(--font-sans);
-    font-weight: 600;
-    font-size: 16px;
+    font-weight: 500;
+    font-size: 14px;
     line-height: 100%;
     letter-spacing: 0.2px;
     color: var(--ink) !important;
     white-space: nowrap;
+    text-decoration: none;
 }
 
 .navbar-link:hover {
-    color: var(--brand);
+    color: var(--brand) !important;
 }
 
-.navbar-separator {
-    color: var(--ink);
-    font-size: 10px;
-    opacity: 0.35;
-    margin: 0 -12px;
-}
-
-/* Plain wrapper now — .btn-check-eligibility is a complete pill on its own
-   (background, padding, radius). This div used to paint a second white pill
-   around it ("pill inside a pill"); that's what read as "doesn't match
-   /prototype's CTA" — prototype's pill is a single shape, not nested ones. */
 .navbar-actions {
-    display: inline-flex;
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
-
-
-/* @media(max-width: 767.98px) {
-    .navbar-actions {
-        padding-bottom: 8px;
-    }
-} */
 
 .btn-check-eligibility {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    border: none;
     border-radius: 999px;
-    padding-top: 11px;
-    padding-right: 22px;
-    padding-bottom: 11px;
-    padding-left: 22px;
+    padding-top: 14px;
+    padding-right: 24px;
+    padding-bottom: 14px;
+    padding-left: 24px;
     font-family: var(--font-sans);
     font-weight: 600;
-    font-size: 14px;
+    font-size: 15px;
     line-height: 100%;
-    letter-spacing: 0%;
     background: var(--green);
     color: #FFFFFF;
     cursor: pointer;
@@ -140,80 +133,98 @@ header .container {
     white-space: nowrap;
 }
 
+@media (min-width: 1024px) {
+    .btn-check-eligibility {
+        display: inline-flex;
+    }
+}
+
 .btn-check-eligibility:hover {
     background: var(--green-deep);
 }
 
-.navbar-toggler-custom {
-    border: none;
-    padding: 0;
+.navbar-cta-arw {
+    display: inline-grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .16);
 }
 
-.navbar-toggler-custom:focus {
-    box-shadow: none;
+.navbar-burger {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 40px;
+    height: 40px;
+    padding: 9px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    cursor: pointer;
 }
 
-@media (max-width: 992px) {
-    .navbar-brand-custom {
-        margin-right: 20px;
-    }
-    .navbar-nav-custom {
-        gap: 16px;
-    }
-    .navbar-link {
-        font-size: 12px;
-    }
+.navbar-burger span {
+    display: block;
+    height: 2px;
+    width: 100%;
+    background: var(--ink);
+    border-radius: 2px;
 }
 
-@media (max-width: 767.98px) {
-    .navbar-custom {
-        padding: 25px 20px;
-    }
-    .navbar-brand-custom {
-        margin-right: 15px;
-    }
-    .navbar-nav-custom {
-        gap: 12px;
-        flex-wrap: wrap;
-    }
-    .navbar-separator {
+@media (min-width: 1024px) {
+    .navbar-burger {
         display: none;
     }
-    .navbar-link {
-        font-size: 12px;
-    }
-    .navbar-actions {
-        gap: 12px;
-        margin-left: auto;
-    }
-    .btn-check-eligibility {
-        padding: 8px 16px;
-        font-size: 12px;
-    }
 }
 
-@media (max-width: 576px) {
-    .navbar-custom {
-        padding: 25px 0px;
-    }
-    .navbar-logo-circle {
-        width: 32px;
-        height: 32px;
-        font-size: 16px;
-    }
-    .navbar-brand-text {
-        font-size: 16px;
-    }
-    .navbar-nav-custom {
-        display: none;
-    }
-    .navbar-actions {
-        gap: 10px;
-        margin-left: auto;
-    }
-    .btn-check-eligibility {
-        padding: 8px 16px;
-        font-size: 11px;
+.navbar-mobile {
+    display: none;
+    flex-direction: column;
+    background: var(--cream);
+    border-top: 1px solid var(--line);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, .08);
+    padding: 10px 28px 18px;
+}
+
+.navbar-mobile.open {
+    display: flex;
+}
+
+.navbar-mobile .navbar-link {
+    font-size: 15px;
+    line-height: 1.4;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--line);
+}
+
+.navbar-mobile .navbar-link:last-of-type {
+    border-bottom: none;
+}
+
+.navbar-mobile .navbar-mobile-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 12px;
+    border-radius: 999px;
+    padding: 14px 24px;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 15px;
+    background: var(--green);
+    /* !important answers the legacy global anchor color, which paints this
+       white-on-green pill's label blue otherwise. */
+    color: #fff !important;
+    text-decoration: none;
+}
+
+@media (min-width: 1024px) {
+    .navbar-mobile {
+        display: none !important;
     }
 }
 

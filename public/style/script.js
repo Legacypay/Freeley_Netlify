@@ -34,36 +34,41 @@ faqItems.forEach(item => {
 
 const stickyBar = document.getElementById("start-assessment");
 
-const placeholder = document.createElement("div");
-stickyBar.parentNode.insertBefore(placeholder, stickyBar);
+// Guarded: pages that opt out of the pinned mobile bar (e.g. /weight-loss)
+// simply don't carry the #start-assessment anchor.
+if (stickyBar) {
 
-function handleSticky() {
+    const placeholder = document.createElement("div");
+    stickyBar.parentNode.insertBefore(placeholder, stickyBar);
 
-    if (window.innerWidth >= 768) {
-        stickyBar.classList.remove("mobile-fixed");
-        placeholder.style.display = "none";
-        return;
+    function handleSticky() {
+
+        if (window.innerWidth >= 768) {
+            stickyBar.classList.remove("mobile-fixed");
+            placeholder.style.display = "none";
+            return;
+        }
+
+        const rect = stickyBar.getBoundingClientRect();
+
+        if (rect.top <= 0 && !stickyBar.classList.contains("mobile-fixed")) {
+
+            placeholder.style.height = stickyBar.offsetHeight + "px";
+            placeholder.style.display = "block";
+
+            stickyBar.classList.add("mobile-fixed");
+
+        } else if (window.scrollY <= placeholder.offsetTop) {
+
+            placeholder.style.display = "none";
+            stickyBar.classList.remove("mobile-fixed");
+
+        }
     }
 
-    const rect = stickyBar.getBoundingClientRect();
-
-    if (rect.top <= 0 && !stickyBar.classList.contains("mobile-fixed")) {
-
-        placeholder.style.height = stickyBar.offsetHeight + "px";
-        placeholder.style.display = "block";
-
-        stickyBar.classList.add("mobile-fixed");
-
-    } else if (window.scrollY <= placeholder.offsetTop) {
-
-        placeholder.style.display = "none";
-        stickyBar.classList.remove("mobile-fixed");
-
-    }
+    window.addEventListener("scroll", handleSticky);
+    window.addEventListener("resize", handleSticky);
 }
-
-window.addEventListener("scroll", handleSticky);
-window.addEventListener("resize", handleSticky);
 
 
 

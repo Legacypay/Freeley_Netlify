@@ -1,1276 +1,905 @@
 ---
+// SEXUAL WELLNESS — rebuilt 2026-07-29 in the /prototype design language,
+// the same treatment /weight-loss and /hair-loss got. All images are the
+// page's own existing assets under /assets/sw/.
+//
+// EVERY DOM hook in public/assets/js/sw-script.js is preserved verbatim:
+//   modal      #quiz--modal #loader #quiz--container #close--quiz
+//   triggers   #start-full-assessment #start-assessment1..6
+//   gallery    #mainProductImageSW #prevBtnSW #nextBtnSW
+//              #dotContainerSW #thumbnailsContainerSW #featuresListSW
+//   live text  .product-title .product-current-price .popular-badge
+//   swipers    .brand--grid--hero.swiper
+//   accordion  .faq-item > .faq-question   (public/style/script.js toggles .open)
+// One product, no medication toggle — sw-script.js drives a single
+// swProductData object ($89/mo 3-in-1 troche). Its legacy originalPrice
+// ($49, LOWER than the price) was never rendered by the old markup and is
+// deliberately not rendered here either.
+//
+// Deliberately NO id="start-assessment": that id is the anchor
+// public/style/script.js uses to pin a band to the viewport top on mobile
+// scroll, and the new-design pages opt out (script.js is null-guarded).
+//
+// The wl- class prefix is the shared vertical-landing namespace (introduced
+// on /weight-loss): it keeps the legacy global.css / style.css cascade off
+// this markup; it does not mark the weight-loss page specifically.
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+
+const ASSESSMENT = '/assessment-quiz';
+
+// Duration doors — each id is a quiz-modal trigger sw-script.js binds.
+// ⚠️ The old page's eyebrow above these read "WHAT'S YOUR WEIGHT LOSS
+// GOAL?" — a copy-paste from /weight-loss. Rewritten to match the doors.
+const goals = [
+  { id: 'start-assessment1', label: 'Under 6 months' },
+  { id: 'start-assessment2', label: '6–12 months' },
+  { id: 'start-assessment3', label: 'Over a year' },
+];
+
+const trustPoints = [
+  'Board-Certified Physicians',
+  '503A Licensed Pharmacy',
+  'HIPAA Compliant',
+  'HSA/FSA Accepted',
+  'Free Shipping',
+  'Cancel Anytime',
+];
+
+// Patient-reported stats from the old page's counter section.
+const stats = [
+  { value: '87%', label: 'See results in 30 days' },
+  { value: '15 min', label: 'Average onset' },
+  { value: '4.9', label: 'Trustpilot rating' },
+];
+
+// "What's inside" cards — copy from the old page's desktop cards, art is
+// the page's own card PNGs (previously desktop-only CSS backgrounds).
+const mechanisms = [
+  {
+    title: 'Targeted absorption',
+    desc: 'Dissolves rapidly under your tongue. Bypasses the digestive system so it works in 15 minutes, not hours.',
+    img: '/assets/sw/Targeted_Absorption.png',
+    tint: '#D2CBC2',
+  },
+  {
+    title: 'Primes arousal pathways',
+    desc: "Our formula includes Apomorphine to activate dopamine pathways, priming your body's natural response.",
+    img: '/assets/sw/Primes_Arousal_Pathways.png',
+    tint: '#C6CCDA',
+  },
+  {
+    title: 'Control & confidence',
+    desc: 'Tadalafil stays in your system supporting sustained blood flow for up to 36 hours. Stop timing your pills.',
+    img: '/assets/sw/Control_&_Confidence.png',
+    tint: '#E4DDD4',
+  },
+];
+
+// "3-in-1 compounded sublingual formula" — the old page's second card row.
+// "(Mentalreadiness)" was a typo in the legacy heading; spaced here.
+const proofCards = [
+  { title: 'Sildenafil — fast onset', img: '/assets/sw/Sildenafil_(FastOnset).png', tint: '#E4DDD4' },
+  { title: 'Tadalafil — 36-hour window', img: '/assets/sw/Tadalafil_(36-hour_window).png', tint: '#D1D9DC' },
+  { title: 'Apomorphine — mental readiness', img: '/assets/sw/Apomorphine_(Mentalreadiness).png', tint: '#F6EEE0' },
+];
+
+const press = [
+  { src: '/assets/brands/bloomberg.svg', name: 'Bloomberg' },
+  { src: '/assets/brands/forbes.svg', name: 'Forbes' },
+  { src: '/assets/brands/new_york.svg', name: 'The New York Times' },
+  { src: '/assets/brands/tech_crunch.svg', name: 'TechCrunch' },
+];
+
+// Timeline. x/y are the node coordinates of the original gpl_desk.svg
+// export (nodes live in its 1420x860 space; the timeline's viewBox below
+// crops to the graph region), kept so the hand-built timeline lands on the
+// background photo exactly where the flattened graphic did.
+const timeline = [
+  {
+    x: 170,
+    y: 648,
+    badge: '0 Minutes',
+    phase: 'Direct Absorption',
+    desc: 'Place the minty troche under your tongue. It absorbs directly into your bloodstream through the mucosal membrane, bypassing the slow digestive process.',
+  },
+  {
+    x: 468,
+    y: 502,
+    badge: '15 Minutes In',
+    phase: 'Activation',
+    desc: "The apomorphine primes your brain's dopamine receptors for arousal, while the sildenafil kicks in rapidly, increasing physical blood flow exactly when you need it.",
+  },
+  {
+    x: 1004,
+    y: 369,
+    badge: 'Up to 36 Hours',
+    phase: 'The Window',
+    desc: "The tadalafil stays in your system, providing sustained readiness. If the moment arises tomorrow, you won't need to take another dose.",
+  },
+];
+
+// ⚠️ The old page shipped three FAQs whose answers were ALL the same
+// weight-loss GI-side-effects paragraph — wrong drug, wrong page. Rewritten
+// from facts already on this page and the platform's telehealth flow; no
+// new medical claim is invented. Flagged for owner review.
+const faqs = [
+  {
+    q: 'What is a troche?',
+    a: 'A troche is a small lozenge that dissolves under your tongue, absorbing directly into the bloodstream instead of passing through the digestive system. Yours is compounded to your prescription by a licensed 503A pharmacy.',
+  },
+  {
+    q: 'Does it just give me an erection?',
+    a: 'No — the 3-in-1 formula works on more than blood flow. Sildenafil acts fast, tadalafil supports sustained blood flow for up to 36 hours, and apomorphine primes the dopamine pathways involved in arousal.',
+  },
+  {
+    q: 'Do I have to do a video call?',
+    a: 'No. The assessment is fully online: a licensed U.S. physician reviews your intake and, if appropriate, writes your prescription — no synchronous appointment or video call required.',
+  },
+];
+
+// Decorative capsule drift behind the closing CTA — /prototype's final
+// section, same arrangement as the other verticals. Unitless sizes × --s.
+// #2c6b4c stands in for /prototype's --emph token (not in style.css).
+const ctaPills = [
+  { w: 218, h: 76, x: -46, edge: 'top', y: -26, rot: -28, c1: 'var(--cream)', c2: 'var(--brand)', dur: 11, dly: 0 },
+  { w: 172, h: 60, x: 128, edge: 'bottom', y: -30, rot: -24, c1: 'var(--gold)', c2: 'var(--green-deep)', dur: 13, dly: -2 },
+  { w: 98, h: 35, x: 46, edge: 'bottom', y: 34, rot: -26, c1: 'var(--cream)', c2: 'var(--gold)', dur: 12, dly: -5 },
+  { w: 124, h: 44, x: 236, edge: 'top', y: 30, rot: -31, c1: '#fff', c2: '#2c6b4c', dur: 14, dly: -3 },
+  { w: 56, h: 20, x: 96, edge: 'top', y: 8, rot: -28, c1: 'var(--brand)', c2: 'var(--cream)', dur: 10, dly: -6 },
+  { w: 86, h: 31, x: 180, edge: 'bottom', y: 60, rot: -27, c1: 'var(--gold)', c2: 'var(--cream)', dur: 15, dly: -8 },
+  { w: 74, h: 27, x: 344, edge: 'bottom', y: 16, rot: -28, dur: 12, dly: -7 },
+  { w: 64, h: 23, x: 300, edge: 'top', y: 4, rot: -25, c1: 'var(--cream)', c2: '#2c6b4c', dur: 13, dly: -4 },
+  { w: 148, h: 52, x: 392, edge: 'top', y: -18, rot: -29, c1: '#2c6b4c', c2: 'var(--cream)', dur: 16, dly: -9 },
+  { w: 112, h: 40, x: 470, edge: 'bottom', y: -14, rot: -26, dur: 14, dly: -11 },
+  { w: 130, h: 46, x: 556, edge: 'top', y: 20, rot: -28, dur: 17, dly: -13 },
+];
 ---
 
-<Layout title="Sexual wellness">
-    <main class="sexual--wellness">
-        <!-- Header -->
-        <Header />
-      <section class="hero overflow-hidden py-12">
+<Layout title="Sexual Wellness Treatment | Freeley">
+  <Fragment slot="head">
+    <style is:inline>
+      /* Design tokens come from public/style/style.css :root. Everything
+         below is scoped to wl- classes so no legacy rule collides. */
+      .wl-page { background: var(--cream); color: var(--ink); font-family: var(--font-sans); line-height: 1.55; overflow-x: clip; }
+      .wl-page img { max-width: 100%; }
+      .wl-wrap { max-width: 1200px; margin: 0 auto; padding-left: 28px; padding-right: 28px; }
 
-        <div class="container hero--container py-12">
-                  <div class="fig-hero__couple" aria-hidden="true">
-        </div>
-          <div class="grid grid-cols-1 md:grid-cols-12 gap-x-6 relative">
-            <div class="md:col-span-8 lg:col-span-7 pr-4 md:pr-12">
-              <div
-                class="bordered--heading inline-block px-4 mb-4"
-              >
-                <span class="capitalize flex items-center gap-1">
-                  <span>
-                    <img
-                      src="/assets/trust-icon.svg"
-                      alt="Verified Icon"
-                      class="mr-2"
-                    />
-                  </span>
-                  LegitScript Certified Healthcare Platform
-                </span>
-              </div>
-              <h1
-                class="flex flex-col"
-              >
-                Live your best
-                <span class="text-highlight">Sex life.</span>
-              </h1>
-              <p
-                class="lead pr-0 md:pr-12"
-              >
-                Clinical-grade 3-in-1 sublingual ED compound. Fast-acting,
-                reliable, and discreetly delivered.
-              </p>
-              <div
-                class="bordered--heading extra-border mt-4 inline-block px-4 mb-6"
-              >
-                <span class="uppercase"
-                  >WHAT'S YOUR WEIGHT LOSS GOAL?</span
-                >
-              </div>
-              <div
-                class="mb-6"
-              >
-                <div class="weight-guide grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  <div class="weight-item" id="start-assessment1">
-                    <span
-                      class="weight-range flex justify-between items-center"
-                      ><span> &lt;6mo </span>
-                      <div>
-                        <svg
-                          width="14"
-                          height="14"
-                          viewBox="0 0 14 14"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M8.41797 3.45898L11.9588 6.99982L8.41797 10.5407"
-                            stroke="#004C27"
-                            stroke-width="1.5"
-                            stroke-miterlimit="10"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                          <path
-                            d="M2.04199 7H11.8595"
-                            stroke="#004C27"
-                            stroke-width="1.5"
-                            stroke-miterlimit="10"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                        </svg>
-                      </div>
-                    </span>
-                  </div>
-                  <div class="weight-item" id="start-assessment2">
-                    <span
-                      class="weight-range flex justify-between items-center"
-                      ><span>6-12mo </span>
-                      <div>
-                        <svg
-                          width="14"
-                          height="14"
-                          viewBox="0 0 14 14"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M8.41797 3.45898L11.9588 6.99982L8.41797 10.5407"
-                            stroke="#004C27"
-                            stroke-width="1.5"
-                            stroke-miterlimit="10"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                          <path
-                            d="M2.04199 7H11.8595"
-                            stroke="#004C27"
-                            stroke-width="1.5"
-                            stroke-miterlimit="10"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                        </svg>
-                      </div>
-                    </span>
-                  </div>
-                  <div class="weight-item" id="start-assessment3">
-                    <span
-                      class="weight-range flex justify-between items-center"
-                      ><span>1yr+</span>
-                      <div>
-                        <svg
-                          width="14"
-                          height="14"
-                          viewBox="0 0 14 14"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M8.41797 3.45898L11.9588 6.99982L8.41797 10.5407"
-                            stroke="#004C27"
-                            stroke-width="1.5"
-                            stroke-miterlimit="10"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                          <path
-                            d="M2.04199 7H11.8595"
-                            stroke="#004C27"
-                            stroke-width="1.5"
-                            stroke-miterlimit="10"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                        </svg>
-                      </div>
-                    </span>
-                  </div>
-                </div>
-                <div class="assessment-link">
-                  <span>Not sure? </span>
-                  <a href="javascript:void(0)" id="start-full-assessment">Start the full assessment →</a>
-                    </div>
-                    <p class="mt-2">
-                        <small class="italic text-sm">Free consultation if you don't qualify. Cancel
-                    anytime.</small
-                  >
-                </p>
-              </div>
-              <div
-                class="steps--container hidden md:flex"
-              >
-                <div class="step">
-                  <div class="flex gap-2 flex-col">
-                    <div class="step-title">$99*</div>
-                    <div class="flex items-center gap-4">
-                      <div class="step--subtitle">1-month</div>
-                      <div class="step--number">Save 15%</div>
-                    </div>
-                  </div>
-                </div>
-                <div class="step">
-                  <div class="flex gap-2 flex-col">
-                    <div class="step-title">$99*</div>
-                    <div class="flex items-center gap-4">
-                      <div class="step--subtitle">3-month</div>
-                      <div class="step--number">Save 15%</div>
-                    </div>
-                  </div>
-                </div>
-                <div class="step">
-                  <div class="flex gap-2 flex-col">
-                    <div class="step-title">$99*</div>
-                    <div class="flex items-center gap-4">
-                      <div class="step--subtitle">6-month</div>
-                      <div class="step--number">Save 15%</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="steps--container grid grid-cols-3 md:hidden"
-              >
-                <div
-                  class="step mb-2 flex flex-col-reverse border-r px-2"
-                >
-                  <div class="step--number">Save 15%</div>
-                  <div class="flex gap-2 flex-col">
-                    <div class="step-title text-center">$99*</div>
-                    <div class="text-14-inter text-center">1-month</div>
-                  </div>
-                </div>
-                <div
-                  class="step mb-2 flex flex-col-reverse border-r px-2"
-                >
-                  <div class="step--number">Save 15%</div>
-                  <div class="flex gap-2 flex-col">
-                    <div class="step-title text-center">$99*</div>
-                    <div class="text-14-inter text-center">3-month</div>
-                  </div>
-                </div>
-                <div
-                  class="step mb-2 flex flex-col-reverse border-r px-2"
-                >
-                  <div class="step--number">Save 15%</div>
-                  <div class="flex gap-2 flex-col">
-                    <div class="step-title text-center">$99*</div>
-                    <div class="text-14-inter text-center">6-month</div>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="hero--testimonial pr-0 mb-12 md:pr-12 mt-6"
-              >
-                <p class="text-black mb-6">Testimonials</p>
-                <span
-                  >"I tried every diet app imaginable. Nothing stuck until my
-                  doctor started me on semaglutide through Freeley. The cravings
-                  just… stopped. I'm down 31 lbs and my A1C went from 6.4 to
-                  5.6."</span
-                >
-              </div>
+      .wl-serif { font-family: var(--font-serif); font-weight: 600; letter-spacing: -0.02em; text-wrap: balance; }
+      .wl-serif em { font-style: italic; font-weight: 600; color: #2c6b4c; }
+      .wl-eyebrow { font-family: var(--font-condensed); font-size: 11.5px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--brand); }
+      .wl-price { font-family: var(--font-serif); color: var(--gold); font-weight: 600; }
+      .wl-foot { font-size: 11.5px; color: var(--muted); margin-top: 16px; }
 
-              <div
-                class="hero--brands pr-0 md:pr-12 mt-4"
-              >
-                <p class="text-black mb-6">Our Treatments Featured In</p>
-                <div class="hidden md:grid md:grid-cols-4 md:items-end pl-4">
-                  <div class="px-0">
-                    <img
-                      class="img-fluid"
-                      src="/assets/brands/bloomberg.svg"
-                    />
-                  </div>
-                  <div class="px-0">
-                    <img
-                      class="img-fluid"
-                      src="/assets/brands/forbes.svg"
-                    />
-                  </div>
-                  <div class="px-0">
-                    <img
-                      class="img-fluid"
-                      src="/assets/brands/new_york.svg"
-                    />
-                  </div>
-                  <div class="px-0">
-                    <img
-                      class="img-fluid"
-                      src="/assets/brands/tech_crunch.svg"
-                    />
-                  </div>
-                </div>
-                <div class="flex md:hidden gap-4 mt-4">
-                  <div class="swiper brand--grid--hero">
-                    <div class="swiper-wrapper items-end">
-                      <div class="swiper-slide">
-                        <img
-                          src="/assets/brands/bloomberg.svg"
-                        />
-                      </div>
-                      <div class="swiper-slide">
-                        <img
-                          src="/assets/brands/forbes.svg"
-                        />
-                      </div>
-                      <div class="swiper-slide">
-                        <img
-                          src="/assets/brands/new_york.svg"
-                        />
-                      </div>
-                      <div class="swiper-slide">
-                        <img
-                          src="/assets/brands/tech_crunch.svg"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="md:col-span-6"></div>
-          </div>
-        </div>
-        <div
-          class="container relative z-2 py-4 mb-6 percentage--container"
-        >
-          <div
-            class="protocol--text flex flex-col-reverse md:flex-row gap-6 md:gap-0"
-          >
-            <div
-              class="w-full md:w-1/2 flex flex-col md:flex-row gap-2"
-            >
-              <div class="features-container">
-                <div class="features-grid">
-                  <div class="feature-item">
-                    <div class="feature-icon">
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M20.3 7.3L9 18.6L3.7 13.3"
-                          stroke="white"
-                          stroke-width="2.5"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                      </svg>
-                    </div>
-                    <span class="feature-text">Board-Certified Physicians</span>
-                  </div>
-                  <div class="feature-item">
-                    <div class="feature-icon">
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M20.3 7.3L9 18.6L3.7 13.3"
-                          stroke="white"
-                          stroke-width="2.5"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                      </svg>
-                    </div>
-                    <span class="feature-text">503A Licensed Pharmacy</span>
-                  </div>
-                  <div class="feature-item">
-                    <div class="feature-icon">
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M20.3 7.3L9 18.6L3.7 13.3"
-                          stroke="white"
-                          stroke-width="2.5"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                      </svg>
-                    </div>
-                    <span class="feature-text">HIPAA Compliant</span>
-                  </div>
-                  <div class="feature-item">
-                    <div class="feature-icon">
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M20.3 7.3L9 18.6L3.7 13.3"
-                          stroke="white"
-                          stroke-width="2.5"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                      </svg>
-                    </div>
-                    <span class="feature-text">HSA/FSA Accepted</span>
-                  </div>
-                  <div class="feature-item">
-                    <div class="feature-icon">
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M20.3 7.3L9 18.6L3.7 13.3"
-                          stroke="white"
-                          stroke-width="2.5"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                      </svg>
-                    </div>
-                    <span class="feature-text">Free Shipping</span>
-                  </div>
-                  <div class="feature-item">
-                    <div class="feature-icon">
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M20.3 7.3L9 18.6L3.7 13.3"
-                          stroke="white"
-                          stroke-width="2.5"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        />
-                      </svg>
-                    </div>
-                    <span class="feature-text">Cancel Anytime</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div
-              class="w-full md:w-1/2 verified--text"
-            >
-              <div class="text-left mb-4 block md:hidden">
-                <span>Verified &amp; Certified</span>
-              </div>
-              <div
-                class="flex justify-start md:justify-end items-end md:items-center gap-4 md:gap-12 protocol--imgs"
-              >
-                <div class="flex-1 hidden md:block">
-                  <span>Verified &amp; Certified</span>
-                </div>
+      /* Buttons — same two shapes /prototype uses. */
+      .wl-btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; background: var(--green); color: #fff; border: none; border-radius: 999px; font-family: var(--font-sans); font-size: 15px; font-weight: 600; padding: 14px 24px; cursor: pointer; text-decoration: none; transition: background .15s; }
+      .wl-btn:hover { background: var(--green-deep); color: #fff; }
+      .wl-btn .wl-arw { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 999px; background: rgba(255,255,255,.16); }
+      .wl-btn--light { background: #fff; color: var(--green); border: 1px solid var(--line); }
+      .wl-btn--light:hover { background: #faf8f2; color: var(--green); }
+      .wl-btn--light .wl-arw { background: var(--green); color: #fff; }
+      .wl-btn-ghost { display: inline-flex; align-items: center; gap: 10px; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 11px 20px; font-size: 14px; font-weight: 600; color: var(--ink); text-decoration: none; cursor: pointer; transition: background .15s; }
+      .wl-btn-ghost:hover { background: #faf8f2; color: var(--ink); }
+      .wl-btn-ghost .wl-arw { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 999px; background: var(--green); color: #fff; }
+      .wl-page a:focus-visible, .wl-page button:focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; border-radius: 8px; }
 
-                <div class="flex-1">
-                  <img
-                    src="/assets/hipaa_badge.png"
-                    alt="Protocol Image"
-                    class="img-fluid"
-                  />
-                </div>
-                <div class="flex-1">
-                  <img
-                    src="/assets/49921676.png"
-                    alt="Protocol Image"
-                    class="img-fluid"
-                  />
-                </div>
-                <div class="flex-1">
-                  <img
-                    src="/assets/usa_badge.png"
-                    alt="Protocol Image"
-                    class="img-fluid"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          class="container z-2 relative blur--bg"
-          id="start-assessment"
-        >
-          <div class="grid grid-cols-1 md:grid-cols-2 items-center gap-x-6">
-            <div class="flex flex-col gap-4 left">
-              <strong>Start Assessment</strong>
-              <div class="from--to">
-                From <span>$99</span> Physician-supervised
-              </div>
-            </div>
-            <div
-              class="flex justify-start md:justify-end gap-4 mt-4 md:mt-0 right"
-            >
-              <a
-                href="javascript:void(0);"
-                class="cta--global w-full md:w-1/3 text-center"
-                id="start-assessment4"
-              >
-                <span>Start Your Assessment</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
+      /* ── Hero ───────────────────────────────────────────────── */
+      .wl-hero { position: relative; overflow: hidden; }
+      .wl-hero__img { display: none; }
+      @media (min-width: 1024px) {
+        .wl-hero__img {
+          /* Bottom-anchored at its own aspect ratio and pinned to the
+             content column, not the viewport — the shared vertical-hero
+             treatment. */
+          display: block; position: absolute; bottom: 0;
+          right: max(0px, calc(50% - 600px));
+          height: min(92%, 700px); width: auto; max-width: 44%;
+          object-fit: contain; object-position: right bottom;
+          -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 22%);
+          mask-image: linear-gradient(to right, transparent 0%, #000 22%);
+        }
+      }
+      .wl-hero__inner { position: relative; z-index: 2; padding-top: 40px; padding-bottom: 64px; }
+      .wl-hero__col { max-width: 560px; }
+      @media (min-width: 1024px) { .wl-hero__col { max-width: 54%; } }
+      .wl-hero__img-mob { display: block; width: auto; height: auto; max-height: 320px; margin: 10px auto 28px; }
+      @media (min-width: 1024px) { .wl-hero__img-mob { display: none; } }
+      .wl-hero h1 { font-size: clamp(2.6rem, 5.4vw, 4.2rem); line-height: 1.04; margin: 18px 0 20px; }
+      .wl-hero__sub { font-size: 1.05rem; color: var(--muted); margin: 0 0 26px; max-width: 46ch; }
 
-      <section>
-        
-          <div id="quiz--modal" class="modal">
-              <div class="modal-content">
-                  <span class="close" id="close--quiz"><img src="/assets/icons/close.png" /></span>
+      .wl-badgeline { display: inline-flex; align-items: center; gap: 8px; background: rgba(15,107,69,.06); border: 1px solid rgba(15,107,69,.16); border-radius: 999px; padding: 6px 14px 6px 10px; }
+      .wl-badgeline img { width: 16px; height: auto; }
+      .wl-badgeline span { font-family: var(--font-condensed); font-size: 11.5px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--brand); }
 
-                  <div class="processing-loader" id="loader"></div>
+      /* Duration doors */
+      .wl-goals { display: grid; gap: 10px; grid-template-columns: 1fr; margin: 0 0 14px; }
+      @media (min-width: 560px) { .wl-goals { grid-template-columns: repeat(3, 1fr); } }
+      .wl-goal { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 13px 18px; font-family: var(--font-sans); font-size: 15px; font-weight: 600; color: var(--ink); cursor: pointer; transition: border-color .15s, transform .15s; }
+      .wl-goal:hover { border-color: var(--brand); }
+      @media (hover: hover) and (prefers-reduced-motion: no-preference) { .wl-goal:hover { transform: translateY(-2px); } }
+      .wl-goal svg { flex: none; color: var(--brand); }
+      .wl-notsure { font-size: 14px; color: var(--muted); margin: 0 0 6px; }
+      .wl-notsure button { background: none; border: none; padding: 0; font: inherit; font-weight: 600; color: var(--brand); cursor: pointer; text-decoration: none; }
+      .wl-notsure button:hover { text-decoration: underline; }
+      .wl-hero__fineprint { font-family: var(--font-condensed); font-size: 12.5px; color: var(--muted); margin: 0 0 26px; }
 
-                  <div id="quiz--container"></div>
-              </div>
-          </div>
-      </section>
-      <section
-        class="counter--section"
-      >
-        <div class="container py-12">
-          <div class="grid grid-cols-1 md:grid-cols-12 gap-x-6">
-            <div class="md:col-span-6">
-              <div class="counter-stats grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
-                <div class="text-center md:text-left">
-                  <h4 class="mb-4">87%</h4>
-                  <div class="text-14-inter">See results in 30 days</div>
-                </div>
-                <div class="text-center md:text-left">
-                  <h4 class="mb-4">15 min</h4>
-                  <div class="text-14-inter">Average onset</div>
-                </div>
-                <div class="text-center md:text-left">
-                  <h4 class="mb-4">4.9</h4>
-                  <div class="text-14-inter">Trustpilot rating</div>
-                </div>
-              </div>
-            </div>
-            <div class="md:col-start-9 md:col-span-4">
-              <div class="alert p-2 md:p-6 mb-0">
-                <div class="flex gap-2">
-                  <div class="feature-icon">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                      <path
-                        d="M20.3 7.3L9 18.6L3.7 13.3"
-                        stroke="white"
-                        stroke-width="2.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      />
-                    </svg>
-                  </div>
-                  <div class="text-14-inter dark">
-                    Based on aggregated patient self-reports. Individual results
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-<section
-  class="why--choose pt-12"
->
-  <div class="container pt-12">
-    <div class="grid grid-cols-1 md:grid-cols-12 gap-0 md:gap-4">
-      <div class="order-2 md:order-1 md:col-span-6 pt-12 pb-12 md:pt-0 md:pb-0">
-        <div class="section--title mb-4">
-          <h2>
-            Why Patients<br />
-            <span class="highlight">Trust Freeley</span>
-          </h2>
-        </div>
+      .wl-hero__from { font-size: 1rem; margin: 0 0 8px; }
+      .wl-hero__from .wl-price { font-size: 1.7rem; }
+      .wl-hero__qual { font-family: var(--font-condensed); font-size: 12.5px; color: var(--muted); display: block; margin-top: 2px; }
 
-        <p class="section--description">
-          Freeley is a LegitScript Certified healthcare platform. All
-          treatments are prescribed by board-certified physicians and
-          compounded at 503A licensed pharmacies following USP standards.
-        </p>
+      /* ── Trust bar ──────────────────────────────────────────── */
+      .wl-trustbar { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+      .wl-trustbar ul { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 24px; list-style: none; margin: 0; padding-top: 20px; padding-bottom: 20px; }
+      @media (min-width: 900px) { .wl-trustbar ul { grid-template-columns: repeat(6, auto); justify-content: space-between; } }
+      .wl-trustbar li { display: flex; align-items: center; gap: 9px; font-size: 14px; font-weight: 500; }
+      .wl-trustbar svg { color: var(--brand); flex: none; }
+      .wl-certs { display: flex; flex-wrap: wrap; align-items: center; gap: 18px; padding-top: 18px; padding-bottom: 18px; }
+      .wl-certs > span { font-family: var(--font-condensed); font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+      .wl-certs img { height: 40px; width: auto; }
 
-        <div class="mb">
-          <div class="feature-item mb-4">
-            <div class="feature-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M20.3 7.3L9 18.6L3.7 13.3"
-                  stroke="white"
-                  stroke-width="2.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </div>
-            <span class="feature-text">Board-Certified Physicians</span>
+      /* ── Section furniture ──────────────────────────────────── */
+      .wl-sec { padding-top: 64px; padding-bottom: 64px; }
+      .wl-head { max-width: 660px; margin-bottom: 40px; }
+      .wl-head--center { text-align: center; margin-left: auto; margin-right: auto; }
+      .wl-head h2 { font-size: clamp(2rem, 3.8vw, 2.7rem); line-height: 1.1; margin: 14px 0 12px; }
+      .wl-head p { color: var(--muted); font-size: 15px; margin: 0; }
+
+      /* ── Inline CTA band ────────────────────────────────────── */
+      .wl-band { background: var(--green); color: #fff; border-radius: 22px; padding: 34px 32px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 22px; }
+      .wl-band h2 { font-family: var(--font-serif); font-size: clamp(1.5rem, 2.6vw, 2rem); color: #fff; margin: 0 0 6px; line-height: 1.15; }
+      .wl-band p { color: rgba(255,255,255,.75); font-size: 14px; margin: 0; }
+      .wl-band p b { color: var(--gold); font-family: var(--font-serif); font-size: 1.15rem; }
+
+      /* ── Patient-reported stats ─────────────────────────────── */
+      .wl-stats { display: grid; gap: 24px; grid-template-columns: 1fr; }
+      @media (min-width: 700px) { .wl-stats { grid-template-columns: repeat(3, 1fr); } }
+      .wl-stat__v { font-family: var(--font-serif); font-size: clamp(2.4rem, 4vw, 3.2rem); font-weight: 600; line-height: 1.05; letter-spacing: -0.02em; }
+      .wl-stat__l { font-size: 14.5px; color: var(--muted); margin-top: 6px; }
+
+      /* ── Mechanism / proof cards ────────────────────────────── */
+      .wl-mech { display: grid; gap: 16px; grid-template-columns: 1fr; }
+      @media (min-width: 780px) { .wl-mech { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+      .wl-mech__card { display: flex; flex-direction: column; height: 100%; border-radius: 18px; overflow: hidden; background: var(--card); }
+      .wl-mech__img { aspect-ratio: 4 / 3; overflow: hidden; }
+      .wl-mech__img img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+      .wl-mech__body { padding: 20px 22px 24px; }
+      .wl-mech__body h3 { font-family: var(--font-serif); font-size: 1.2rem; font-weight: 600; margin: 0 0 8px; line-height: 1.25; }
+      .wl-mech__body p { font-size: 13.5px; color: var(--muted); margin: 0; }
+
+      /* ── Product showcase (sw-script.js-driven) ─────────────── */
+      .wl-prod { display: grid; gap: 40px; grid-template-columns: 1fr; align-items: start; }
+      @media (min-width: 900px) { .wl-prod { grid-template-columns: 1fr 1fr; gap: 56px; } }
+      .wl-prod__stage { background: var(--card); border-radius: 22px; padding: 22px; }
+      .popular-badge { display: inline-block; font-family: var(--font-condensed); font-size: 11px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; background: var(--gold); color: #fff; border-radius: 999px; padding: 5px 12px; }
+      .wl-prod__frame { display: grid; place-items: center; padding: 26px 0 18px; min-height: 280px; }
+      .wl-prod__frame img { max-height: 260px; width: auto; transition: opacity .2s ease; }
+      .wl-prod__frame img.fade-out { opacity: 0; }
+      .wl-prod__frame img.fade-in { opacity: 1; }
+      .wl-prod__nav { display: flex; align-items: center; justify-content: space-between; }
+      .wl-navbtn { background: #fff; border: 1px solid var(--line); border-radius: 999px; width: 42px; height: 42px; display: grid; place-items: center; cursor: pointer; color: var(--green); transition: border-color .15s; }
+      .wl-navbtn:hover { border-color: var(--brand); }
+      #dotContainerSW { display: flex; align-items: center; gap: 7px; }
+      #dotContainerSW .dot-indicator { width: 18px; height: 6px; border-radius: 999px; background: var(--line); cursor: pointer; transform: scaleX(.34); transition: transform .2s ease, background .15s ease; }
+      #dotContainerSW .dot-indicator.active { background: var(--brand); transform: scaleX(1); }
+      #thumbnailsContainerSW { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+      #thumbnailsContainerSW .thumb-box { border: 1px solid var(--line); border-radius: 12px; padding: 5px; cursor: pointer; background: #fff; transition: border-color .15s; }
+      #thumbnailsContainerSW .thumb-box.active { border-color: var(--brand); }
+
+      .wl-trustpilot { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+      .wl-trustpilot span { font-family: var(--font-condensed); font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+      .wl-trustpilot img { height: 18px; width: auto; }
+      .product-title { font-family: var(--font-serif); font-size: clamp(1.7rem, 3vw, 2.2rem); font-weight: 600; margin: 0 0 8px; line-height: 1.15; }
+      .wl-prod__lede { font-size: 14.5px; color: var(--muted); margin: 0 0 20px; }
+
+      .wl-pricerow { display: flex; align-items: baseline; flex-wrap: wrap; gap: 12px; margin-bottom: 4px; }
+      .product-current-price { font-family: var(--font-serif); font-size: 2.6rem; font-weight: 600; color: var(--gold); line-height: 1; }
+      .wl-prod__per { font-family: var(--font-condensed); font-size: 13px; color: var(--muted); margin: 0 0 24px; }
+
+      #featuresListSW { margin-bottom: 24px; }
+      #featuresListSW .feature-item { display: flex; align-items: center; gap: 11px; margin-bottom: 11px; font-size: 14.5px; }
+      #featuresListSW .feature-icon { flex: none; width: 22px; height: 22px; border-radius: 999px; background: var(--brand); display: grid; place-items: center; }
+      .wl-note { display: flex; align-items: flex-start; gap: 10px; background: #fbf5e6; border: 1px solid #ecd9a8; border-radius: 12px; padding: 13px 15px; margin-bottom: 24px; }
+      .wl-note p { font-size: 13px; color: #6b5522; margin: 0; }
+      .wl-note svg { flex: none; margin-top: 1px; }
+
+      /* ── Journey ────────────────────────────────────────────── */
+      .wl-journey { position: relative; overflow: hidden; border-radius: 22px; background: var(--green); }
+      .wl-journey__bg { position: absolute; inset: 0; background-image: url('/assets/sw/Here_sWhatHappensNext.jpg'); background-size: cover; background-position: center; }
+      /* Same angled scrim as /prototype's journey: the left, where all the
+         type lives, carries the most cover. */
+      .wl-journey__scrim {
+        position: absolute; inset: 0;
+        background:
+          linear-gradient(102deg, rgba(18, 60, 44, .88) 0%, rgba(18, 60, 44, .66) 46%, rgba(18, 60, 44, .28) 100%),
+          linear-gradient(to bottom, rgba(13, 49, 34, .34) 0%, rgba(13, 49, 34, .06) 38%, rgba(13, 49, 34, .40) 100%);
+      }
+      /* Green italic emphasis dies on the green scrim — light gold keeps it
+         reading as emphasis, /prototype's call. */
+      .wl-journey .wl-serif em { color: #e6cd97; }
+      @media (max-width: 1099.98px) {
+        .wl-journey__bg { background-position: 74% center; }
+      }
+      .wl-journey__inner { position: relative; z-index: 1; padding: 44px 34px 44px; min-height: 560px; display: flex; flex-direction: column; justify-content: space-between; }
+      .wl-journey__head { max-width: 460px; }
+      .wl-journey__head .wl-eyebrow { color: #fff; opacity: .85; }
+      .wl-journey__head h2 { color: #fff; font-size: clamp(1.9rem, 3.4vw, 2.6rem); margin: 12px 0 22px; line-height: 1.12; }
+
+      /* Timeline, hand-built — /prototype's journey mechanism, same as the
+         other verticals. The viewBox crops gpl_desk.svg's 1420x860 space to
+         its graph region, so the export's own node coordinates still land
+         on the photo where the flattened graphic put them. */
+      .wl-journey__timeline { position: relative; width: 100%; aspect-ratio: 1250 / 460; margin-top: 28px; }
+      .wl-journey__svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+      .wl-jline { fill: none; stroke: #fff; stroke-width: 1; vector-effect: non-scaling-stroke; }
+      .wl-jstop { position: absolute; top: 0; bottom: 0; color: #fff; }
+      .wl-jstop--1 { left: 5.2%; width: 22%; }
+      .wl-jstop--2 { left: 29%; width: 22%; }
+      .wl-jstop--3 { left: 72%; width: 24%; }
+      .wl-jstop__badge { position: absolute; left: 0; display: inline-block; font-family: var(--font-condensed); font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--green); background: #fff; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+      /* Node ys within the cropped box are 67 / 35.2 / 6.3% — badge just
+         under its node, body under the badge. */
+      .wl-jstop--1 .wl-jstop__badge { top: 71%; }
+      .wl-jstop--2 .wl-jstop__badge { top: 39.5%; }
+      .wl-jstop--3 .wl-jstop__badge { top: 10.5%; }
+      .wl-jstop--1 .wl-jstop__body { top: 79%; }
+      .wl-jstop--2 .wl-jstop__body { top: 47.5%; }
+      .wl-jstop--3 .wl-jstop__body { top: 18.5%; }
+      /* Shadow keeps the copy legible where it crosses the photo's lighter
+         areas — cheaper than thickening the scrim. */
+      .wl-jstop__body { position: absolute; left: 0; right: 10px; text-shadow: 0 1px 12px rgba(13, 49, 34, .55); }
+      .wl-jstop__phase { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 5px; }
+      .wl-jstop__phase b { color: #fff; font-size: 14px; font-weight: 600; }
+      .wl-jstop__body p { font-size: 13px; color: rgba(255,255,255,.85); margin: 0; line-height: 1.45; }
+
+      /* Below 1100px the overlay columns can't hold the copy — same markup,
+         restacked as a vertical rail (the shared vertical breakpoint). */
+      @media (max-width: 1099.98px) {
+        .wl-journey__timeline { aspect-ratio: auto; margin-top: 30px; padding: 4px 0 44px 30px; }
+        .wl-journey__svg { display: none; }
+        .wl-journey__timeline::before { content: ''; position: absolute; left: 9px; top: 12px; bottom: 50px; width: 1px; background: rgba(255,255,255,.5); transform-origin: top; }
+        .wl-jstop, .wl-jstop__badge, .wl-jstop__body { position: static; width: auto; }
+        .wl-jstop { position: relative; left: 0; padding-bottom: 24px; }
+        .wl-jstop:last-child { padding-bottom: 0; }
+        .wl-jstop__badge { margin-bottom: 8px; }
+        .wl-jstop::after {
+          content: ''; position: absolute; left: -29px; top: 1px; width: 19px; height: 19px; border-radius: 50%;
+          background: radial-gradient(circle, #fff 0 4.5px, rgba(255, 255, 255, 0) 4.5px 56%, rgba(255, 255, 255, .9) 100%);
+        }
+      }
+
+      /* 20-second loop, /prototype's mechanism: offsets live in keyframe
+         percentages, draw stays linear so the stops keep meeting the line.
+         Node arrivals along this path are 0 / 28.8 / 78.8% of its length →
+         0 / 2.6 / 7.1% of the cycle (the same shape as /hair-loss's graph,
+         scaled). Base rules above already ARE the finished timeline. */
+      @media (prefers-reduced-motion: no-preference) {
+        .is-armed .wl-jline { stroke-dasharray: 100; stroke-dashoffset: 100; }
+        .is-armed .wl-jnode, .is-armed .wl-jstop { opacity: 0; }
+        .is-armed::before { scale: 1 0; }
+
+        .is-live .wl-jline,
+        .is-live::before,
+        .is-live .wl-jnode,
+        .is-live .wl-jstop { animation-duration: 20s; animation-timing-function: linear; animation-iteration-count: infinite; animation-fill-mode: both; }
+        .is-live .wl-jline { animation-name: wlDrawLine; }
+        .is-live::before { animation-name: wlDrawRail; }
+        .is-live .wl-jnode--1, .is-live .wl-jstop--1 { animation-name: wlStop1; }
+        .is-live .wl-jnode--2, .is-live .wl-jstop--2 { animation-name: wlStop2; }
+        .is-live .wl-jnode--3, .is-live .wl-jstop--3 { animation-name: wlStop3; }
+        .is-idle .wl-jline, .is-idle::before, .is-idle .wl-jnode, .is-idle .wl-jstop { animation-play-state: paused; }
+
+        @keyframes wlDrawLine {
+          0% { stroke-dashoffset: 100; }
+          9%, 88% { stroke-dashoffset: 0; }
+          97%, 100% { stroke-dashoffset: 100; }
+        }
+        @keyframes wlDrawRail {
+          0% { scale: 1 0; }
+          9%, 88% { scale: 1 1; }
+          97%, 100% { scale: 1 0; }
+        }
+        @keyframes wlStop1 {
+          0% { opacity: 0; translate: 0 12px; animation-timing-function: cubic-bezier(.22, .61, .36, 1); }
+          2.75%, 88% { opacity: 1; translate: 0 0; }
+          95%, 100% { opacity: 0; translate: 0 12px; }
+        }
+        @keyframes wlStop2 {
+          0%, 2.6% { opacity: 0; translate: 0 12px; animation-timing-function: cubic-bezier(.22, .61, .36, 1); }
+          5.35%, 88% { opacity: 1; translate: 0 0; }
+          95%, 100% { opacity: 0; translate: 0 12px; }
+        }
+        @keyframes wlStop3 {
+          0%, 7.1% { opacity: 0; translate: 0 12px; animation-timing-function: cubic-bezier(.22, .61, .36, 1); }
+          9.85%, 88% { opacity: 1; translate: 0 0; }
+          95%, 100% { opacity: 0; translate: 0 12px; }
+        }
+      }
+
+      /* ── Why trust ──────────────────────────────────────────── */
+      .wl-why { display: grid; gap: 40px; grid-template-columns: 1fr; align-items: center; }
+      @media (min-width: 900px) { .wl-why { grid-template-columns: 1fr 1fr; gap: 56px; } }
+      .wl-why__img { border-radius: 20px; overflow: hidden; }
+      .wl-why__img img { width: 100%; height: auto; display: block; }
+      .wl-why__pt { margin-bottom: 22px; }
+      .wl-why__pt-head { display: flex; align-items: center; gap: 10px; margin-bottom: 7px; }
+      .wl-why__pt-head h3 { font-size: 1rem; font-weight: 600; margin: 0; }
+      .wl-why__pt p { font-size: 14px; color: var(--muted); margin: 0; max-width: 52ch; }
+      .wl-tick { flex: none; width: 22px; height: 22px; border-radius: 999px; background: var(--brand); display: grid; place-items: center; }
+
+      /* ── Press ──────────────────────────────────────────────── */
+      .wl-press { display: flex; flex-wrap: wrap; align-items: center; gap: 34px; padding-top: 8px; padding-bottom: 56px; }
+      .wl-press > span { font-family: var(--font-condensed); font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+      .wl-press img { height: 22px; width: auto; opacity: .62; filter: grayscale(1); }
+
+      /* ── FAQ ────────────────────────────────────────────────── */
+      .wl-faqs { max-width: 780px; margin: 0 auto; }
+      .faq-item { border-bottom: 1px solid var(--line); }
+      .faq-question { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 22px 0; cursor: pointer; }
+      .faq-question-text { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 600; }
+      .faq-toggle-icon { flex: none; color: var(--green); transition: transform .25s ease; }
+      .faq-item.open .faq-toggle-icon { transform: rotate(180deg); }
+      .faq-answer { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .28s ease; }
+      .faq-item.open .faq-answer { grid-template-rows: 1fr; }
+      .faq-answer > div { overflow: hidden; }
+      .faq-answer p { font-size: 14.5px; color: var(--muted); margin: 0 0 22px; max-width: 62ch; line-height: 1.6; }
+
+      /* ── Referral + closing band ────────────────────────────── */
+      .wl-refer { background: var(--card); border-radius: 22px; padding: 40px 34px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px; }
+      .wl-refer h2 { font-family: var(--font-serif); font-size: clamp(1.6rem, 2.8vw, 2.1rem); margin: 0 0 8px; line-height: 1.15; }
+      .wl-refer p { color: var(--muted); font-size: 14.5px; margin: 0; max-width: 46ch; }
+
+      /* Closing CTA — /prototype's .final treatment, same as the other
+         verticals. */
+      .wl-close { position: relative; background: var(--green); color: #fff; overflow: hidden; }
+      .wl-close__pills { --s: 1px; position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+      .fpill {
+        position: absolute; border-radius: 999px;
+        width: calc(var(--w) * var(--s)); height: calc(var(--h) * var(--s));
+        right: calc(var(--x) * var(--s));
+        background-image: linear-gradient(90deg, var(--c1) 0 50%, var(--c2) 50% 100%);
+        box-shadow: 0 16px 32px rgba(0, 0, 0, .3);
+        transform: rotate(var(--rot));
+      }
+      .fpill--top { top: calc(var(--y) * var(--s)); }
+      .fpill--bottom { bottom: calc(var(--y) * var(--s)); }
+      .fpill::after {
+        content: ''; position: absolute; inset: 17% 13% auto; height: 21%;
+        border-radius: 999px; background: rgba(255, 255, 255, .26);
+      }
+      .fpill--ghost { background-image: none; border: 1.5px solid rgba(255, 255, 255, .3); box-shadow: none; }
+      .fpill--ghost::after { display: none; }
+      @media (prefers-reduced-motion: no-preference) {
+        .fpill { animation: fpillDrift var(--dur) ease-in-out infinite; animation-delay: var(--dly); }
+        .fpill:nth-child(even) { animation-direction: reverse; }
+      }
+      @keyframes fpillDrift {
+        0%, 100% { transform: rotate(var(--rot)) translate(0, 0); }
+        50% { transform: rotate(var(--rot)) translate(-9px, -13px); }
+      }
+      @media (max-width: 860px) {
+        .wl-close__pills { --s: .62px; }
+        .fpill:nth-child(n+4) { display: none; }
+      }
+      .wl-close::after { content: ''; position: absolute; inset: 0; background: linear-gradient(100deg, var(--green) 0%, var(--green) 38%, rgba(18,60,44,.55) 70%, rgba(18,60,44,.25) 100%); }
+      .wl-close__grid { position: relative; z-index: 1; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 26px; padding-top: 56px; padding-bottom: 56px; }
+      .wl-close h2 { font-family: var(--font-serif); font-size: clamp(1.9rem, 3.2vw, 2.5rem); margin: 0 0 10px; color: #fff; line-height: 1.12; }
+      .wl-close h2 em { font-style: italic; color: #cdb98f; }
+      .wl-close p { color: rgba(255,255,255,.65); font-size: 14.5px; margin: 0; max-width: 42ch; }
+      .wl-close__feats { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 18px; }
+      .wl-close__feats span { display: flex; align-items: center; gap: 8px; font-size: 13px; color: rgba(255,255,255,.85); }
+
+      /* ── Motion, gated exactly as /prototype gates it ───────── */
+      @supports (animation-timeline: view()) {
+        @media (prefers-reduced-motion: no-preference) {
+          .wl-mech__card, .wl-why__img { animation: wlRise linear both; animation-timeline: view(); animation-range: entry 6% cover 24%; }
+          @keyframes wlRise { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
+        }
+      }
+      @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+        .wl-mech__card { transition: translate .35s cubic-bezier(.22,.61,.36,1), box-shadow .35s ease; }
+        .wl-mech__card:hover { translate: 0 -6px; box-shadow: 0 20px 40px rgba(23,34,42,.14); }
+      }
+
+      /* ── Legacy cascade overrides — same set the other verticals need ── */
+      .wl-page #featuresListSW .feature-text { font-family: var(--font-sans); font-size: 14.5px; font-weight: 400; line-height: 1.45; color: var(--ink); }
+      .wl-page .faq-question-text { color: var(--ink); }
+      .wl-page .faq-item { background: transparent; border-radius: 0; }
+      .wl-page .faq-item.open .faq-answer { display: grid; }
+      .wl-page .faq-answer { padding: 0; margin-top: 0; }
+      .wl-page .faq-answer p { font-family: var(--font-sans); }
+
+      /* Quiz modal — chrome lives in global.css, matched to /prototype's
+         QuizModal for every route. Only the loader is local. */
+      .processing-loader { display: none; width: 34px; height: 34px; margin: 60px auto; border: 2.5px solid rgba(15, 107, 69, .18); border-top-color: var(--brand); border-radius: 50%; animation: wlSpin .8s linear infinite; }
+      @keyframes wlSpin { to { transform: rotate(360deg); } }
+    </style>
+  </Fragment>
+
+  <main class="wl-page">
+    <Header />
+
+    <!-- ═══ Hero ═══ -->
+    <section class="wl-hero">
+      <img class="wl-hero__img" src="/assets/sw/sw-hero.png" alt="A Freeley sexual-wellness patient" fetchpriority="high" />
+      <div class="wl-wrap wl-hero__inner">
+        <div class="wl-hero__col">
+          <div class="wl-badgeline">
+            <img src="/assets/trust-icon.svg" alt="" />
+            <span>LegitScript Certified</span>
           </div>
 
-          <p class="section--description">
-            Freeley is a LegitScript Certified healthcare platform. All
-            treatments are prescribed by board-certified physicians and
-            compounded at 503A licensed pharmacies following USP standards.
+          <h1 class="wl-serif">Live your best <em>sex life.</em></h1>
+          <p class="wl-hero__sub">
+            Clinical-grade 3-in-1 sublingual ED compound, prescribed by a licensed
+            U.S. physician. Fast-acting, reliable, and discreetly delivered.
           </p>
-        </div>
 
-        <div class="mb">
-          <div class="feature-item mb-4">
-            <div class="feature-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M20.3 7.3L9 18.6L3.7 13.3"
-                  stroke="white"
-                  stroke-width="2.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </div>
-            <span class="feature-text">PCAB-Accredited Pharmacies</span>
+          <img class="wl-hero__img-mob" src="/assets/sw/hero-mob.png" alt="A Freeley sexual-wellness patient" />
+
+          <div class="wl-hero__from">
+            From <span class="wl-price">$89</span>/month
+            <span class="wl-hero__qual">no membership fee, cancel anytime</span>
           </div>
 
-          <p class="section--description">
-            Medications are compounded at accredited pharmacies following USP
-            797 standards. Each batch is tested for potency, sterility, and
-            purity. Compounded medications are not FDA-approved.
+          <p class="wl-eyebrow" style="margin:26px 0 12px;">How long has this been going on?</p>
+          <div class="wl-goals">
+            {goals.map((g) => (
+              <button type="button" class="wl-goal" id={g.id}>
+                {g.label}
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+              </button>
+            ))}
+          </div>
+          <p class="wl-notsure">
+            Not sure? <button type="button" id="start-full-assessment">Start the full assessment →</button>
           </p>
+          <p class="wl-hero__fineprint">Free consultation if you don't qualify. Cancel anytime.</p>
         </div>
       </div>
+    </section>
 
-      <div class="order-1 md:order-2 md:col-start-8 md:col-span-5">
-        <div
-          class="process--col--right flex items-center justify-center"
-        >
-        </div>
+    <!-- ═══ Trust bar ═══ -->
+    <div class="wl-trustbar">
+      <div class="wl-wrap">
+        <ul>
+          {trustPoints.map((t) => (
+            <li>
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
+              {t}
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
-  </div>
-
-  <!-- Desktop Cards -->
-  <div class="container pb-12 homepage">
-    <div class="gorgeous--items hidden md:grid md:grid-cols-3 gap-x-6">
-      <div>
-        <div class="gorgeous--item flex items-end">
-          <div
-            class="text-content flex flex-col justify-end items-start h-full w-full relative z-1"
-          >
-            <h2 class="text-left mb-4 pr-12">Targeted Absorption</h2>
-            <div class="text-14-inter dark">
-              Dissolves rapidly under your tongue. Bypass the digestive system
-              so it works in 15 minutes, not hours.
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <div class="gorgeous--item flex items-end">
-          <div
-            class="text-content flex flex-col justify-end items-start h-full w-full relative z-1"
-          >
-            <h2 class="text-left mb-4 pr-12">Prime Arousal Pathways</h2>
-            <div class="text-14-inter dark">
-              Our formula includes Apomorphine to activate dopamine pathways,
-              priming your body's natural response.
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <div class="gorgeous--item flex items-end">
-          <div
-            class="text-content flex flex-col justify-end items-start h-full w-full relative z-1"
-          >
-            <h2 class="text-left mb-4 pr-12">Control &amp; Confidence</h2>
-            <div class="text-14-inter dark">
-              Tadalafil stays in your system supporting sustained blood flow for
-              up to 36 hours. Stop timing your pills.
-            </div>
-          </div>
-        </div>
-      </div>
+    <div class="wl-wrap wl-certs">
+      <span>Verified &amp; Certified</span>
+      <img src="/assets/hipaa_badge.png" alt="HIPAA Compliant" loading="lazy" />
+      <img src="/assets/49921676.png" alt="LegitScript Certified" loading="lazy" />
+      <img src="/assets/usa_badge.png" alt="Made in USA" loading="lazy" />
     </div>
-  </div>
 
-  <!-- Mobile Images -->
-  <div class="container pb-12 block md:hidden">
-    <div class="gorgeous--items grid grid-cols-1 gap-4">
-      <div class="gorgeous--item px-0">
-        <img src="/assets/sw/inside1-mob.svg" class="img-fluid" />
-      </div>
-
-      <div class="gorgeous--item px-0">
-        <img src="/assets/sw/inside2-mob.svg" class="img-fluid" />
-      </div>
-
-      <div class="gorgeous--item px-0">
-        <img src="/assets/sw/inside3-mob.svg" class="img-fluid" />
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Counter section was here -->
-
-      <section
-        class="three--gorgeous py-12 md:py-12"
-      >
-        <div class="container">
-          <div class="mb-12">
-            <div class="section--title">
-              <h2>
-                3-in-1<br /><span class="highlight"
-                  >Compounded sublingual formula</span
-                >
-              </h2>
-            </div>
+    <!-- ═══ Inline CTA band ═══ -->
+    <section class="wl-sec" style="padding-bottom:0;">
+      <div class="wl-wrap">
+        <div class="wl-band">
+          <div class="left">
+            <h2>Start your assessment</h2>
+            <p>From <b>$89</b>/month · physician-supervised · takes about 2 minutes</p>
           </div>
-
-
-
-
-<div class="homepage three-in-1">
-
-  <div class="gorgeous--items hidden md:grid md:grid-cols-3 gap-x-6">
-            <div>
-            <div class="gorgeous--item flex items-end justify-start ">
-              <h2 class="text-left">Sildenafil (Fast Onset)</h2>
-              </div>
-            </div>
-            <div>
-            <div class="gorgeous--item flex items-end justify-start">
-            <h2 class="text-left">Tadalafil (36-hour window)</h2>
-              </div>
-            </div>
-            <div>
-            <div class="gorgeous--item flex items-end justify-start">
-            <h2 class="text-left">Apomorphine (Mentalreadiness)</h2>
-              </div>
-            </div>
-          </div>
-
-
-</div>
-
-          <div class="gorgeous--items flex flex-col md:hidden gap-4">
-            <div class="gorgeous--item px-0">
-              <img src="/assets/sw/percent1-mob.svg" />
-            </div>
-            <div class="gorgeous--item px-0">
-              <img src="/assets/sw/percent2-mob.svg" />
-            </div>
-            <div class="gorgeous--item px-0">
-              <img src="/assets/sw/percent3-mob.svg" />
-            </div>
-          </div>
-        </div>
-      </section>
-
-<!-- =============================================
-     PRODUCT SHOWCASE SECTION - Sexual Wellness
-     ============================================= -->
-<section class="product-showcase-section">
-  <div class="container">
-    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-12 items-start">
-      <div class="md:col-span-5 m-0 product-left">
-
-        <!-- Mobile Product Card -->
-        <div class="product-mobile-card flex flex-col justify-between mb-4">
-          <div class="flex justify-start items-center">
-            <div class="popular-badge">Most Popular</div>
-          </div>
-
-          <div class="flex justify-center items-center grow my-6">
-            <div class="product-image-container">
-              <img id="mainProductImageSW" src="/assets/sw/product-main.svg" alt="Product Bottle" class="product-image" />
-            </div>
-          </div>
-
-          <!-- Bottom Nav -->
-          <div class="flex justify-between items-center px-2 pb-2">
-            <button class="nav-arrow" id="prevBtnSW" aria-label="Previous slide">
-              <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M19 8H1M1 8L8 15M1 8L8 1" stroke="#1a4331" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </button>
-
-            <div class="flex items-center gap-2" id="dotContainerSW">
-              <!-- Dots will be dynamically generated -->
-            </div>
-
-            <button class="nav-arrow" id="nextBtnSW" aria-label="Next slide">
-              <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M1 8H19M19 8L12 1M19 8L12 15" stroke="#1a4331" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
+          <div class="right">
+            <button type="button" class="wl-btn wl-btn--light" id="start-assessment4">
+              Check if I qualify <span class="wl-arw">→</span>
             </button>
           </div>
         </div>
+      </div>
+    </section>
 
-        <!-- Thumbnails -->
-        <div class="flex flex-wrap gap-2 gallery-thumbnails" id="thumbnailsContainerSW">
-          <!-- Thumbnails will be dynamically generated -->
+    <!-- ═══ Stats ═══ -->
+    <section class="wl-sec" style="padding-bottom:0;">
+      <div class="wl-wrap">
+        <div class="wl-stats">
+          {stats.map((s) => (
+            <div>
+              <div class="wl-stat__v wl-serif">{s.value}</div>
+              <div class="wl-stat__l">{s.label}</div>
+            </div>
+          ))}
+        </div>
+        <p class="wl-foot">*Based on aggregated patient self-reports. Individual results vary.</p>
+      </div>
+    </section>
+
+    <!-- ═══ What's inside ═══ -->
+    <section class="wl-sec">
+      <div class="wl-wrap">
+        <div class="wl-head">
+          <span class="wl-eyebrow">What's Inside</span>
+          <h2 class="wl-serif">Okay, but <em>how does it work?</em></h2>
+          <p>One sublingual troche, three active ingredients working together.</p>
+        </div>
+        <div class="wl-mech">
+          {mechanisms.map((m) => (
+            <div class="wl-mech__card">
+              <div class="wl-mech__img" style={`background:${m.tint}`}>
+                <img src={m.img} alt={m.title} loading="lazy" />
+              </div>
+              <div class="wl-mech__body">
+                <h3>{m.title}</h3>
+                <p>{m.desc}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
+    </section>
 
-      <div class="md:col-start-7 md:col-span-6 px-4 product-right">
-        <div class="product-details-content">
-          <div class="trustpilot-rating flex items-center gap-2 mb-2">
-            <span class="text-14-inter dark text-black font-bold">Trustpilot</span>
-            <img src="/assets/trust-pilot.svg" alt="Trustpilot">
-          </div>
-
-          <h1 class="product-title h2 mb-6"></h1>
-          <!-- Dynamic Details Container -->
-          <div id="medicationDetailsSW">
-            <!-- Details will be dynamically populated -->
-          </div>
-
-          <div class="price-container mb-6">
-            <div class="text-5xl font-semibold product-current-price">
+    <!-- ═══ 3-in-1 formula row ═══ -->
+    <section class="wl-sec" style="padding-top:0;">
+      <div class="wl-wrap">
+        <div class="wl-head">
+          <h2 class="wl-serif">3-in-1 <em>compounded sublingual formula.</em></h2>
+        </div>
+        <div class="wl-mech">
+          {proofCards.map((c) => (
+            <div class="wl-mech__card">
+              <div class="wl-mech__img" style={`background:${c.tint}`}>
+                <img src={c.img} alt={c.title} loading="lazy" />
+              </div>
+              <div class="wl-mech__body">
+                <h3>{c.title}</h3>
+              </div>
             </div>
-          </div>
-          <p class="text-14-inter mb-6">per month on the 12-month plan</p>
+          ))}
+        </div>
+        <p class="wl-foot">Compounded medications are not FDA-approved and are not equivalent to the brand-name drugs.</p>
+      </div>
+    </section>
 
-          <div class="mb-6" id="featuresListSW">
-            <!-- Features will be dynamically populated -->
+    <!-- ═══ Product showcase — every hook below is sw-script.js's ═══ -->
+    <section class="wl-sec" style="padding-top:0;">
+      <div class="wl-wrap wl-prod">
+        <div class="wl-prod__stage">
+          <div class="popular-badge">Most Popular</div>
+          <div class="wl-prod__frame">
+            <!-- src seeded with the product's first image — the exact value
+                 sw-script.js's initSW() assigns anyway. -->
+            <img id="mainProductImageSW" src="/assets/sw/product1.png" alt="Compounded 3-in-1 ED troche" />
           </div>
+          <div class="wl-prod__nav">
+            <button class="wl-navbtn" id="prevBtnSW" type="button" aria-label="Previous image">
+              <svg width="18" height="14" viewBox="0 0 20 16" fill="none"><path d="M19 8H1M1 8L8 15M1 8L8 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div id="dotContainerSW"></div>
+            <button class="wl-navbtn" id="nextBtnSW" type="button" aria-label="Next image">
+              <svg width="18" height="14" viewBox="0 0 20 16" fill="none"><path d="M1 8H19M19 8L12 1M19 8L12 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+          <div id="thumbnailsContainerSW"></div>
+        </div>
 
-          <div class="consultation-banner flex items-start gap-2 py-2 md:py-4 px-2 md:px-4">
+        <div>
+          <div class="wl-trustpilot">
+            <span>Trustpilot</span>
+            <img src="/assets/trust-pilot.svg" alt="Trustpilot rating" loading="lazy" />
+          </div>
+          <h2 class="product-title">3-in-1 ED Troche</h2>
+          <p class="wl-prod__lede">Sildenafil, tadalafil, and apomorphine in one sublingual dose.</p>
+
+          <div class="wl-pricerow">
+            <span class="product-current-price">$89.00</span>
+          </div>
+          <p class="wl-prod__per">per month on the 12-month plan</p>
+
+          <div id="featuresListSW"></div>
+
+          <div class="wl-note">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M8.00065 14.6673C11.6673 14.6673 14.6673 11.6673 14.6673 8.00065C14.6673 4.33398 11.6673 1.33398 8.00065 1.33398C4.33398 1.33398 1.33398 4.33398 1.33398 8.00065C1.33398 11.6673 4.33398 14.6673 8.00065 14.6673Z" stroke="#A57C00" stroke-linecap="round" stroke-linejoin="round"/>
               <path d="M8 5.33398V8.66732" stroke="#A57C00" stroke-linecap="round" stroke-linejoin="round"/>
               <path d="M7.99609 10.666H8.00208" stroke="#A57C00" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-            <p class="m-0 text-sm text-dark">Prescription subject to physician approval.</p>
+            <p>Prescription subject to physician approval.</p>
           </div>
 
-          <a href="javascript:void(0);" class="cta--global my-4 text-center" id="start-assessment5">
-            <span>Start Your Assessment</span>
-          </a>
+          <button type="button" class="wl-btn" id="start-assessment5" style="width:100%;">
+            Start Your Assessment <span class="wl-arw">→</span>
+          </button>
+          <p class="wl-foot">Compounded medications are not FDA-approved and are not equivalent to the brand-name drug.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ Journey ═══ -->
+    <section class="wl-sec" style="padding-top:0;">
+      <div class="wl-wrap">
+        <div class="wl-journey">
+          <div class="wl-journey__bg"></div>
+          <div class="wl-journey__scrim"></div>
+          <div class="wl-journey__inner">
+            <div class="wl-journey__head">
+              <span class="wl-eyebrow">Your Journey</span>
+              <h2 class="wl-serif">Here's what <em>happens next</em></h2>
+            </div>
+            <div class="wl-journey__timeline">
+              <svg class="wl-journey__svg" viewBox="100 340 1250 460" fill="none" aria-hidden="true">
+                <defs>
+                  <radialGradient id="swGlow">
+                    <stop offset="0.56" stop-color="#fff" stop-opacity="0" />
+                    <stop offset="1" stop-color="#fff" />
+                  </radialGradient>
+                </defs>
+                {/* The line from the flattened gpl_desk.svg export, verbatim. */}
+                <path class="wl-jline" pathLength="100" d="M170 648L466.413 502.219H759.891L1006.28 369H1250" />
+                {timeline.map((t, i) => (
+                  <g class={`wl-jnode wl-jnode--${i + 1}`}>
+                    <circle cx={t.x} cy={t.y} r="15" fill="url(#swGlow)" />
+                    <circle cx={t.x} cy={t.y} r="7" fill="#fff" />
+                  </g>
+                ))}
+              </svg>
+              {timeline.map((t, i) => (
+                <div class={`wl-jstop wl-jstop--${i + 1}`}>
+                  <span class="wl-jstop__badge">{t.badge}</span>
+                  <div class="wl-jstop__body">
+                    <div class="wl-jstop__phase">
+                      <b>{t.phase}</b>
+                    </div>
+                    <p>{t.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ Why trust Freeley ═══ -->
+    <section class="wl-sec" style="padding-top:0;">
+      <div class="wl-wrap wl-why">
+        <div>
+          <span class="wl-eyebrow">Verified, Not Assumed</span>
+          <h2 class="wl-serif" style="font-size:clamp(2rem,3.8vw,2.7rem); margin:14px 0 16px; line-height:1.1;">
+            Why patients <em>trust Freeley</em>
+          </h2>
+          <p style="color:var(--muted); font-size:15px; margin:0 0 28px; max-width:52ch;">
+            Freeley is a LegitScript Certified healthcare platform. Every treatment is prescribed
+            by a board-certified physician and compounded at a 503A licensed pharmacy following
+            USP standards.
+          </p>
+
+          <div class="wl-why__pt">
+            <div class="wl-why__pt-head">
+              <span class="wl-tick"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg></span>
+              <h3>Board-certified physicians</h3>
+            </div>
+            <p>A licensed U.S. physician reviews your intake, writes your prescription, and adjusts your plan at every check-in. No synchronous appointment required.</p>
+          </div>
+
+          <div class="wl-why__pt">
+            <div class="wl-why__pt-head">
+              <span class="wl-tick"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg></span>
+              <h3>PCAB-accredited pharmacies</h3>
+            </div>
+            <p>Medications are compounded at accredited pharmacies following USP 797 standards. Each batch is tested for potency, sterility, and purity. Compounded medications are not FDA-approved.</p>
+          </div>
+
+          <a href="/partner-pharmacies" class="wl-btn-ghost" style="margin-top:8px;">See our partner pharmacies <span class="wl-arw">→</span></a>
+        </div>
+        <div class="wl-why__img">
+          <img src="/assets/sw/WhyPatientsTrustFreeley.png" alt="LegitScript Certified seal" loading="lazy" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ Press ═══ -->
+    <div class="wl-wrap wl-press">
+      <span>Our treatments featured in</span>
+      {press.map((p) => <img src={p.src} alt={p.name} loading="lazy" />)}
+    </div>
+    <!-- .brand--grid--hero.swiper is initialised by sw-script.js -->
+    <div class="wl-wrap" style="display:none;">
+      <div class="swiper brand--grid--hero">
+        <div class="swiper-wrapper">
+          {press.map((p) => (
+            <div class="swiper-slide"><img src={p.src} alt={p.name} loading="lazy" /></div>
+          ))}
         </div>
       </div>
     </div>
-  </div>
-</section>
 
-<style>
-  .sw-glp{
-    background-image: url(/assets/sw/Here_sWhatHappensNext.jpg);
-    display: flex;
-    justify-content: center;
-    position: relative;
-    width: 100%;
-    min-height: 900px;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-    margin-top: 10px;
-  }
-</style>
-      <section class="sw-glp hidden md:flex justify-center py-2 desktop">
-        <div class="container py-12">
-          <div class="w-full gpl-desktop hidden md:flex flex-col justify-between">
-              <div class="overlay-gpl"></div>
-              <div class="relative z-1">
-              <div class="md:w-1/2">
-            <div class="journey-badge mb-4">Your Journey</div>
-              <h2 class="glp-heading mb-12">
-                Here's What <br /><em>Happens Next</em>
-              </h2>
+    <!-- ═══ FAQ ═══ -->
+    <section class="wl-sec" style="padding-top:0;">
+      <div class="wl-wrap">
+        <div class="wl-head wl-head--center">
+          <span class="wl-eyebrow">Common Questions</span>
+          <h2 class="wl-serif">Questions <em>&amp; answers.</em></h2>
+        </div>
+        <div class="wl-faqs">
+          {faqs.map((f) => (
+            <div class="faq-item">
+              <div class="faq-question">
+                <span class="faq-question-text">{f.q}</span>
+                <span class="faq-toggle-icon">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"/><path d="M8.47 10.74 12 14.26l3.53-3.52"/></svg>
+                </span>
               </div>
-              </div>
-                <img src="/assets/sw/graph.png" />
+              <div class="faq-answer"><div><p>{f.a}</p></div></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ Referral ═══ -->
+    <section class="wl-sec" style="padding-top:0;">
+      <div class="wl-wrap">
+        <div class="wl-refer">
+          <div>
+            <h2 class="wl-serif">Give $50, get $50</h2>
+            <p>Share Freeley with a friend. When they start their plan, you both save $50 on your next month.</p>
+          </div>
+          <a href="/about" class="wl-btn-ghost">Share &amp; save <span class="wl-arw">→</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ Closing band ═══ -->
+    <section class="wl-close">
+      <div class="wl-close__pills" aria-hidden="true">
+        {ctaPills.map((p) => (
+          <span
+            class:list={['fpill', `fpill--${p.edge}`, !p.c1 && 'fpill--ghost']}
+            style={`--w:${p.w};--h:${p.h};--x:${p.x};--y:${p.y};--rot:${p.rot}deg;--dur:${p.dur}s;--dly:${p.dly}s${p.c1 ? `;--c1:${p.c1};--c2:${p.c2}` : ''}`}
+          ></span>
+        ))}
+      </div>
+      <div class="wl-wrap wl-close__grid">
+        <div>
+          <h2 class="wl-serif">Feel better,<br /><em>starting today.</em></h2>
+          <p>Personalized care for every part of you, from weight to skin, sleep to sexual health.</p>
+          <div class="wl-close__feats">
+            <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> No credit card required</span>
+            <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Takes 2 minutes</span>
+            <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Cancel anytime</span>
           </div>
         </div>
-      </section>
+        <button type="button" class="wl-btn wl-btn--light" id="start-assessment6">
+          Start Your Assessment <span class="wl-arw">→</span>
+        </button>
+      </div>
+    </section>
 
+    <!-- Quiz modal — opened by every #start-assessment* trigger above -->
+    <div id="quiz--modal" class="modal">
+      <div class="modal-content">
+        <span class="close" id="close--quiz"><img src="/assets/icons/close.png" alt="Close" /></span>
+        <div class="processing-loader" id="loader"></div>
+        <div id="quiz--container"></div>
+      </div>
+    </div>
 
+    <Footer />
+  </main>
 
-
-
-
-
-      <section
-        class="glp-therapy-section flex justify-center py-2 md:hidden"
-        style="
-          background-image: url(&quot;/assets/sw/gpl_mob.png&quot;);
-        "
-      >
-        <div class="container py-12">
-          <div
-            class="block md:hidden glp-mobile-container flex flex-col justify-between"
-          >
-            <div class="relative z-1">
-              <div class="journey-badge mb-4">your journey</div>
-              <h1 class="glp-heading mb-12">
-                Here's What <br /><em>Happens Next</em>
-              </h1>
-              <div class="flex flex-col gap-6">
-                <div class="flex items-start gap-4">
-                  <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
-                    <circle
-                      cx="15"
-                      cy="15"
-                      r="15"
-                      fill="url(#paint0_radial_149_4297)"
-                    />
-                    <circle cx="15" cy="15" r="7" fill="white" />
-                    <defs>
-                      <radialGradient
-                        id="paint0_radial_149_4297"
-                        cx="0"
-                        cy="0"
-                        r="1"
-                        gradientUnits="userSpaceOnUse"
-                        gradientTransform="translate(15 15) rotate(90) scale(15)"
-                      >
-                        <stop
-                          offset="0.561867"
-                          stop-color="white"
-                          stop-opacity="0"
-                        />
-                        <stop offset="1" stop-color="white" />
-                      </radialGradient>
-                    </defs>
-                  </svg>
-                  <div class="flex flex-col items-start gap-2">
-                    <span class="timeline-badge">0 Minutes</span>
-                    <div class="flex items-center mb-4 gap-2">
-                      <div
-                        class="flex gap-2 items-center text-14-inter text-white"
-                      >
-                        <span class="dot"
-                          ><svg
-                            width="6"
-                            height="6"
-                            viewBox="0 0 6 6"
-                            fill="none"
-                          >
-                            <circle
-                              cx="3"
-                              cy="3"
-                              r="3"
-                              fill="white"
-                            /></svg></span
-                        >Direct Absorption
-                      </div>
-                    </div>
-                    <span class="text-14-inter text-white"
-                      >Place the minty troche under your tongue. It absorbs
-                      directly into your bloodstream through the mucosal
-                      membrane, bypassing the slow digestive process.</span
-                    >
-                  </div>
-                </div>
-                <div class="flex items-start gap-4">
-                  <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
-                    <circle
-                      cx="15"
-                      cy="15"
-                      r="15"
-                      fill="url(#paint0_radial_149_4297)"
-                    />
-                    <circle cx="15" cy="15" r="7" fill="white" />
-                    <defs>
-                      <radialGradient
-                        id="paint0_radial_149_4297"
-                        cx="0"
-                        cy="0"
-                        r="1"
-                        gradientUnits="userSpaceOnUse"
-                        gradientTransform="translate(15 15) rotate(90) scale(15)"
-                      >
-                        <stop
-                          offset="0.561867"
-                          stop-color="white"
-                          stop-opacity="0"
-                        />
-                        <stop offset="1" stop-color="white" />
-                      </radialGradient>
-                    </defs>
-                  </svg>
-                  <div class="flex flex-col items-start gap-2">
-                    <span class="timeline-badge">15 Minutes In </span>
-                    <div class="flex items-center mb-4 gap-2">
-                      <div
-                        class="flex gap-2 items-center text-14-inter text-white"
-                      >
-                        <span class="dot"
-                          ><svg
-                            width="6"
-                            height="6"
-                            viewBox="0 0 6 6"
-                            fill="none"
-                          >
-                            <circle
-                              cx="3"
-                              cy="3"
-                              r="3"
-                              fill="white"
-                            /></svg></span
-                        >Activation
-                      </div>
-                    </div>
-                    <span class="text-14-inter text-white"
-                      >The apomorphine primes your brain's dopamine receptors
-                      for arousal, while the sildenafil kicks in rapidly,
-                      increasing physical blood flow exactly when you need
-                      it.</span
-                    >
-                  </div>
-                </div>
-                <div class="flex items-start gap-4">
-                  <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
-                    <circle
-                      cx="15"
-                      cy="15"
-                      r="15"
-                      fill="url(#paint0_radial_149_4297)"
-                    />
-                    <circle cx="15" cy="15" r="7" fill="white" />
-                    <defs>
-                      <radialGradient
-                        id="paint0_radial_149_4297"
-                        cx="0"
-                        cy="0"
-                        r="1"
-                        gradientUnits="userSpaceOnUse"
-                        gradientTransform="translate(15 15) rotate(90) scale(15)"
-                      >
-                        <stop
-                          offset="0.561867"
-                          stop-color="white"
-                          stop-opacity="0"
-                        />
-                        <stop offset="1" stop-color="white" />
-                      </radialGradient>
-                    </defs>
-                  </svg>
-                  <div class="flex flex-col items-start gap-2">
-                    <span class="timeline-badge">Up to 36 Hours</span>
-                    <div class="flex items-center mb-4 gap-2">
-                      <div
-                        class="flex gap-2 items-center text-14-inter text-white"
-                      >
-                        <span class="dot"
-                          ><svg
-                            width="6"
-                            height="6"
-                            viewBox="0 0 6 6"
-                            fill="none"
-                          >
-                            <circle
-                              cx="3"
-                              cy="3"
-                              r="3"
-                              fill="white"
-                            /></svg></span
-                        >The Window
-                      </div>
-                    </div>
-                    <span class="text-14-inter text-white"
-                      >The tadalafil stays in your system, providing sustained
-                      readiness. If the moment arises tomorrow, you won't need
-                      to take another dose.</span
-                    >
-                  </div>
-                </div>
-                
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="faqs py-12">
-        <div class="container text-center py-12">
-          <div class="section--title">
-            <div class="bordered--heading inline-block px-4 mb-4">
-              <span class="uppercase">Common Questions</span>
-            </div>
-            <h2 class="mb-6">
-              Questions <span class="highlight"> & Answers.</span>
-            </h2>
-          </div>
-          <div class="">
-            <div class="faq-container">
-              <div class="faq-items">
-                <div class="faq-item">
-                  <div class="faq-question">
-                    <span class="faq-question-text"
-                      >What is a Troche?</span
-                    >
-                     <div class="faq-toggle-icon">
-                    <div class="arrow-plus">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#080808" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M8.4707 10.7402L12.0007 14.2602L15.5307 10.7402" stroke="#080808" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    </div>
-                    </div>
-                  </div>
-                  <div class="faq-answer">
-                    Most common side effects are mild gastrointestinal symptoms
-                    that typically improve over time. These may include nausea,
-                    vomiting, diarrhea, or constipation.
-                  </div>
-                </div>
-                <div class="faq-item">
-                  <div class="faq-question">
-                    <span class="faq-question-text"
-                      >Does it just give me an erection?</span
-                    >
-                     <div class="faq-toggle-icon">
-                    <div class="arrow-plus">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#080808" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M8.4707 10.7402L12.0007 14.2602L15.5307 10.7402" stroke="#080808" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    </div>
-                    </div>
-                  </div>
-                  <div class="faq-answer">
-                    Most common side effects are mild gastrointestinal symptoms
-                    that typically improve over time. These may include nausea,
-                    vomiting, diarrhea, or constipation.
-                  </div>
-                </div>
-                <div class="faq-item">
-                  <div class="faq-question">
-                    <span class="faq-question-text"
-                      >Do I have to do a video call?</span
-                    >
-                     <div class="faq-toggle-icon">
-                    <div class="arrow-plus">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#080808" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M8.4707 10.7402L12.0007 14.2602L15.5307 10.7402" stroke="#080808" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    </div>
-                    </div>
-                  </div>
-                  <div class="faq-answer">
-                    Most common side effects are mild gastrointestinal symptoms
-                    that typically improve over time. These may include nausea,
-                    vomiting, diarrhea, or constipation.
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="cta--inner__pages">
-        <div class="container py-12">
-          <div
-            class="md:w-1/2"
-          >
-            <div>
-              <div class="section--title">
-                <h2 class="text-white mb-4">Give $50, Get $50</h2>
-              </div>
-              <p class="text-white mb-12 pr-12">
-                Share Freeley with a friend. When they start their plan, you
-                both save $50 on your next month.
-              </p>
-            </div>
-            <div class="ctas flex gap-4">
-              <div
-                class="ctas flex flex-col md:flex-row items-start gap-4 w-full"
-              >
-                <a href="javascript:void(0)" class="global--qua--button">
-                  <img
-                    class="btn--icon"
-                    src="/assets/icons/arrow-right.svg"
-                  />
-                  Share & Save
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- footer unchanged -->
-      <div class="container-fluid">
-<div class="footer--header grid grid-cols-1 md:grid-cols-2 items-center pb-12 gap-x-6 gap-y-6">
-            <div
-              class="flex flex-col gap-4"
-            >
-              <h2 class="text-5xl mb-0 font-normal">
-                Feel better,<br />
-                <span class="italic">starting today</span>
-              </h2>
-              <p class="text-white/50 text-14-inter">
-                Personalized care for every part of you from weight to skin,
-                sleep to sexual health.
-              </p>
-            </div>
-
-            <div
-              class="flex flex-col items-start md:items-end gap-6"
-            >
-              <div>
-                <a
-                  class="global--qua--button bg-white px-4 pr-2 w-full"
-                  id="start-assessment6"
-                  href="javascript:void(0);"
-                >
-                  <img
-                    class="btn--icon"
-                    src="/assets/home/icons/icon-right-green.svg"
-                  />
-                  Start Your Assessment
-                </a>
-              </div>
-
-              <div
-                class="flex flex-wrap justify-start md:justify-end gap-4 text-white/50 text-sm"
-              >
-                <div
-                  class="flex text-white items-center gap-1 text-14-inter"
-                >
-                  <span class="text-white"
-                    ><svg
-                      width="18"
-                      height="18"
-                      viewBox="0 0 18 18"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M9 1.5C4.8675 1.5 1.5 4.8675 1.5 9C1.5 13.1325 4.8675 16.5 9 16.5C13.1325 16.5 16.5 13.1325 16.5 9C16.5 4.8675 13.1325 1.5 9 1.5ZM12.585 7.275L8.3325 11.5275C8.2275 11.6325 8.085 11.6925 7.935 11.6925C7.785 11.6925 7.6425 11.6325 7.5375 11.5275L5.415 9.405C5.1975 9.1875 5.1975 8.8275 5.415 8.61C5.6325 8.3925 5.9925 8.3925 6.21 8.61L7.935 10.335L11.79 6.48C12.0075 6.2625 12.3675 6.2625 12.585 6.48C12.8025 6.6975 12.8025 7.05 12.585 7.275Z"
-                        fill="white"
-                      />
-                    </svg>
-                  </span>
-                  No credit card required
-                </div>
-                <div
-                  class="flex text-white items-center gap-1 text-14-inter"
-                >
-                  <span class=""
-                    ><svg
-                      width="18"
-                      height="18"
-                      viewBox="0 0 18 18"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M9 1.5C4.8675 1.5 1.5 4.8675 1.5 9C1.5 13.1325 4.8675 16.5 9 16.5C13.1325 16.5 16.5 13.1325 16.5 9C16.5 4.8675 13.1325 1.5 9 1.5ZM12.585 7.275L8.3325 11.5275C8.2275 11.6325 8.085 11.6925 7.935 11.6925C7.785 11.6925 7.6425 11.6325 7.5375 11.5275L5.415 9.405C5.1975 9.1875 5.1975 8.8275 5.415 8.61C5.6325 8.3925 5.9925 8.3925 6.21 8.61L7.935 10.335L11.79 6.48C12.0075 6.2625 12.3675 6.2625 12.585 6.48C12.8025 6.6975 12.8025 7.05 12.585 7.275Z"
-                        fill="white"
-                      />
-                    </svg>
-                  </span>
-                  Takes 2 minutes
-                </div>
-                <div
-                  class="flex text-white items-center gap-1 text-14-inter"
-                >
-                  <span class="text-white"
-                    ><svg
-                      width="18"
-                      height="18"
-                      viewBox="0 0 18 18"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M9 1.5C4.8675 1.5 1.5 4.8675 1.5 9C1.5 13.1325 4.8675 16.5 9 16.5C13.1325 16.5 16.5 13.1325 16.5 9C16.5 4.8675 13.1325 1.5 9 1.5ZM12.585 7.275L8.3325 11.5275C8.2275 11.6325 8.085 11.6925 7.935 11.6925C7.785 11.6925 7.6425 11.6325 7.5375 11.5275L5.415 9.405C5.1975 9.1875 5.1975 8.8275 5.415 8.61C5.6325 8.3925 5.9925 8.3925 6.21 8.61L7.935 10.335L11.79 6.48C12.0075 6.2625 12.3675 6.2625 12.585 6.48C12.8025 6.6975 12.8025 7.05 12.585 7.275Z"
-                        fill="white"
-                      />
-                    </svg>
-                  </span>
-                  Cancel anytime
-                </div>
-              </div>
-            </div>
-          </div>
-</div>
-
-<Footer />
-    </main>
-    <script src="/style/script.js" is:inline></script>
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" is:inline></script>
-    <script src="/assets/js/sw-script.js" is:inline></script>
+  <script src="/style/script.js" is:inline></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" is:inline></script>
+  <script src="/assets/js/sw-script.js" is:inline></script>
+  <script is:inline>
+    /* Journey timeline: 20s loop, /prototype's protocol — is-armed is added
+       from JS on purpose, so a visitor without JS keeps the finished
+       timeline instead of a blank box. */
+    (function () {
+      var t = document.querySelector('.wl-journey__timeline');
+      if (!t || !matchMedia('(prefers-reduced-motion: no-preference)').matches) return;
+      t.classList.add('is-armed');
+      new IntersectionObserver(function (entries) {
+        var seen = entries[0].isIntersecting;
+        if (seen) t.classList.add('is-live');
+        t.classList.toggle('is-idle', !seen);
+      }, { threshold: 0.25 }).observe(t);
+    })();
+  </script>
 </Layout>

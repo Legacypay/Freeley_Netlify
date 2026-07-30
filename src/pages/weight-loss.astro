@@ -98,6 +98,29 @@ const mechanisms = [
   },
 ];
 
+// Decorative capsule drift behind the closing CTA — copied from /prototype's
+// final section (see its frontmatter for the placement rationale). Sizes and
+// offsets are UNITLESS and multiplied by --s in the CSS, so one number
+// rescales the whole arrangement on narrow screens even though the per-pill
+// values arrive as inline styles. Deeper pills sit further from the right
+// edge, where the section's green scrim is more opaque, so distance reads as
+// depth for free. `c1`/`c2` are the cap and body colours; omit them for an
+// outline-only ghost. #2c6b4c stands in for /prototype's --emph token, which
+// public/style/style.css does not define.
+const ctaPills = [
+  { w: 218, h: 76, x: -46, edge: 'top', y: -26, rot: -28, c1: 'var(--cream)', c2: 'var(--brand)', dur: 11, dly: 0 },
+  { w: 172, h: 60, x: 128, edge: 'bottom', y: -30, rot: -24, c1: 'var(--gold)', c2: 'var(--green-deep)', dur: 13, dly: -2 },
+  { w: 98, h: 35, x: 46, edge: 'bottom', y: 34, rot: -26, c1: 'var(--cream)', c2: 'var(--gold)', dur: 12, dly: -5 },
+  { w: 124, h: 44, x: 236, edge: 'top', y: 30, rot: -31, c1: '#fff', c2: '#2c6b4c', dur: 14, dly: -3 },
+  { w: 56, h: 20, x: 96, edge: 'top', y: 8, rot: -28, c1: 'var(--brand)', c2: 'var(--cream)', dur: 10, dly: -6 },
+  { w: 86, h: 31, x: 180, edge: 'bottom', y: 60, rot: -27, c1: 'var(--gold)', c2: 'var(--cream)', dur: 15, dly: -8 },
+  { w: 74, h: 27, x: 344, edge: 'bottom', y: 16, rot: -28, dur: 12, dly: -7 },
+  { w: 64, h: 23, x: 300, edge: 'top', y: 4, rot: -25, c1: 'var(--cream)', c2: '#2c6b4c', dur: 13, dly: -4 },
+  { w: 148, h: 52, x: 392, edge: 'top', y: -18, rot: -29, c1: '#2c6b4c', c2: 'var(--cream)', dur: 16, dly: -9 },
+  { w: 112, h: 40, x: 470, edge: 'bottom', y: -14, rot: -26, dur: 14, dly: -11 },
+  { w: 130, h: 46, x: 556, edge: 'top', y: 20, rot: -28, dur: 17, dly: -13 },
+];
+
 const press = [
   { src: '/assets/brands/bloomberg.svg', name: 'Bloomberg' },
   { src: '/assets/brands/forbes.svg', name: 'Forbes' },
@@ -108,20 +131,29 @@ const press = [
 // Timeline. The old page's fourth entry was hair-loss copy ("noticeably
 // thicker, denser hair") under a duplicated "Month 6" label — dropped
 // rather than rewritten, since a replacement would be an invented claim.
+// x/y are the node coordinates of the original graph.svg export (1117x451
+// viewBox), kept so the hand-built timeline lands on the background photo
+// exactly where the flattened graphic did — same mechanism as /prototype.
 const timeline = [
   {
+    x: 37,
+    y: 301,
     badge: 'Month 1',
     phase: 'The Reset',
     tag: 'Appetite Control',
     desc: "Your appetite decreases significantly. You'll naturally eat smaller portions and feel fuller much faster. Less bloating is common.",
   },
   {
+    x: 305,
+    y: 170,
     badge: 'Month 3',
     phase: 'The Momentum',
     tag: 'Visible Results',
     desc: "You're dropping consistent, healthy weight week over week. Clothes fit significantly better. Energy levels stabilize without sugar crashes.",
   },
   {
+    x: 586,
+    y: 66,
     badge: 'Month 6',
     phase: 'The Transformation',
     tag: 'Full Payoff',
@@ -183,14 +215,24 @@ const faqs = [
       .wl-hero__img { display: none; }
       @media (min-width: 1024px) {
         .wl-hero__img {
-          display: block; position: absolute; top: 0; right: 0;
-          /* no max-height: the column's own height sets the section height,
-             and any cap shorter than that leaves a hard horizontal cut where
-             the photo stops against the cream. */
-          width: 46%; height: 100%;
-          object-fit: cover; object-position: center 25%;
-          -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 30%);
-          mask-image: linear-gradient(to right, transparent 0%, #000 30%);
+          /* Anchored to the bottom at its own aspect ratio instead of
+             stretched to the section's full height — hero.png is a tight
+             697x1057 portrait, and covering the ~900px column blew the
+             subject up to twice the scale of /prototype's hero couple.
+             The photo's own near-cream backdrop means the free top edge
+             needs no mask; the left fade still blends it into the copy. */
+          /* right: 0 pins the photo to the VIEWPORT edge — .wl-hero is
+             full-bleed, so on wide screens it drifts ever further from the
+             1200px content column (358px away at 1920). Anchor it to the
+             column instead: 600px = half the .wl-wrap. Below 1200px the
+             max() falls back to the viewport edge. Same fix /prototype
+             applies to its hero badges. */
+          display: block; position: absolute; bottom: 0;
+          right: max(0px, calc(50% - 600px));
+          height: min(92%, 700px); width: auto; max-width: 44%;
+          object-fit: contain; object-position: right bottom;
+          -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 22%);
+          mask-image: linear-gradient(to right, transparent 0%, #000 22%);
         }
       }
       .wl-hero__inner { position: relative; z-index: 2; padding-top: 40px; padding-bottom: 64px; }
@@ -264,10 +306,6 @@ const faqs = [
       .wl-band h2 { font-family: var(--font-serif); font-size: clamp(1.5rem, 2.6vw, 2rem); color: #fff; margin: 0 0 6px; line-height: 1.15; }
       .wl-band p { color: rgba(255,255,255,.75); font-size: 14px; margin: 0; }
       .wl-band p b { color: var(--gold); font-family: var(--font-serif); font-size: 1.15rem; }
-      /* script.js pins this band on mobile scroll by adding .mobile-fixed.
-         global.css already handles position/radius and hides .left; the band
-         still carries section padding, so tighten it for the pinned state. */
-      .wl-band.mobile-fixed { padding: 12px 20px; }
 
       /* ── Mechanism cards (swiper row) ───────────────────────── */
       /* Clip at the wrap edge — swiper's own overflow:hidden is correct
@@ -344,21 +382,135 @@ const faqs = [
       /* ── Journey ────────────────────────────────────────────── */
       .wl-journey { position: relative; overflow: hidden; border-radius: 22px; background: var(--green); }
       .wl-journey__bg { position: absolute; inset: 0; background-image: url('/assets/wl/Here_sWhatHappensNext.png'); background-size: cover; background-position: center; }
-      .wl-journey__inner { position: relative; z-index: 1; padding: 44px 34px 0; min-height: 560px; display: flex; flex-direction: column; justify-content: space-between; }
+      /* Same angled scrim as /prototype's journey: the left, where all the
+         type lives, carries the most cover, and the photo still reads on
+         the right. Without it the white copy fell onto the bright sky and
+         the model's white top. */
+      .wl-journey__scrim {
+        position: absolute; inset: 0;
+        background:
+          linear-gradient(102deg, rgba(18, 60, 44, .88) 0%, rgba(18, 60, 44, .66) 46%, rgba(18, 60, 44, .28) 100%),
+          linear-gradient(to bottom, rgba(13, 49, 34, .34) 0%, rgba(13, 49, 34, .06) 38%, rgba(13, 49, 34, .40) 100%);
+      }
+      /* Green italic emphasis works on cream and dies on the green scrim —
+         light gold keeps it reading as emphasis, exactly /prototype's call. */
+      .wl-journey .wl-serif em { color: #e6cd97; }
+      /* Under the restack breakpoint the section is tall and narrow; cover
+         from `center` crops the model out entirely. Weight the crop toward
+         the right, where she stands — the scrim keeps the rail readable. */
+      @media (max-width: 1099.98px) {
+        .wl-journey__bg { background-position: 74% center; }
+      }
+      /* 44px bottom padding: stop 1's copy hangs below the timeline's
+         aspect box (the section's overflow:hidden was clipping it), and the
+         overhang grows as the box shrinks toward the restack breakpoint. */
+      .wl-journey__inner { position: relative; z-index: 1; padding: 44px 34px 44px; min-height: 560px; display: flex; flex-direction: column; justify-content: space-between; }
       .wl-journey__head { max-width: 460px; }
       .wl-journey__head .wl-eyebrow { color: #fff; opacity: .85; }
       .wl-journey__head h2 { color: #fff; font-size: clamp(1.9rem, 3.4vw, 2.6rem); margin: 12px 0 22px; line-height: 1.12; }
-      .wl-journey__graph { display: none; width: 100%; height: auto; }
-      @media (min-width: 900px) { .wl-journey__graph { display: block; } }
-      .wl-journey__list { display: flex; flex-direction: column; gap: 26px; padding-bottom: 44px; }
-      @media (min-width: 900px) { .wl-journey__list { display: none; } }
-      .wl-tl { display: flex; gap: 14px; }
-      .wl-tl__dot { flex: none; width: 14px; height: 14px; border-radius: 999px; background: #fff; margin-top: 5px; box-shadow: 0 0 0 6px rgba(255,255,255,.18); }
-      .wl-tl__badge { display: inline-block; font-family: var(--font-condensed); font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--green); background: #fff; border-radius: 999px; padding: 3px 10px; margin-bottom: 8px; }
-      .wl-tl__phase { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 8px; }
-      .wl-tl__phase b { color: #fff; font-size: 14.5px; font-weight: 600; }
-      .wl-tl__tag { font-size: 12.5px; color: #fff; border: 1px solid rgba(255,255,255,.45); border-radius: 999px; padding: 3px 11px; }
-      .wl-tl p { font-size: 13.5px; color: rgba(255,255,255,.82); margin: 0; line-height: 1.5; }
+      /* Timeline, hand-built — /prototype's journey mechanism. Replaces the
+         flattened graph.svg export (349 KB, every label baked into outlines)
+         with one inline path plus real DOM text: the line draws itself on
+         scroll and the copy stays selectable and screen-reader readable.
+         All coordinates are the export's own, expressed as % of its
+         1117x451 viewBox, so every node lands on the photo exactly where
+         the baked graphic put it. */
+      .wl-journey__timeline { position: relative; width: 100%; aspect-ratio: 1117 / 451; margin-top: 28px; }
+      .wl-journey__svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+      .wl-jline { fill: none; stroke: #fff; stroke-width: 1; vector-effect: non-scaling-stroke; }
+      .wl-jstop { position: absolute; top: 0; bottom: 0; color: #fff; }
+      .wl-jstop--1 { left: 2.8%; width: 22%; }
+      .wl-jstop--2 { left: 26.8%; width: 22%; }
+      .wl-jstop--3 { left: 52%; width: 22%; }
+      .wl-jstop__badge { position: absolute; left: 0; display: inline-block; font-family: var(--font-condensed); font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--green); background: #fff; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+      /* The photo is a model against a bright sky and every word here is
+         white on top of it — the shadow is what keeps stop 3's copy legible
+         where it crosses her shoulder. Cheaper than /prototype's scrim
+         layer, which would dim a photo this section was built around. */
+      .wl-jstop__body { position: absolute; left: 0; right: 10px; text-shadow: 0 1px 12px rgba(13, 49, 34, .55); }
+      /* Node ys are 66.7 / 37.7 / 14.6% — badge sits just under its node,
+         body under the badge. */
+      .wl-jstop--1 .wl-jstop__badge { top: 70.5%; }
+      .wl-jstop--2 .wl-jstop__badge { top: 41.5%; }
+      .wl-jstop--3 .wl-jstop__badge { top: 18.5%; }
+      .wl-jstop--1 .wl-jstop__body { top: 78.5%; }
+      .wl-jstop--2 .wl-jstop__body { top: 49.5%; }
+      .wl-jstop--3 .wl-jstop__body { top: 26.5%; }
+      .wl-jstop__phase { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 5px; }
+      .wl-jstop__phase b { color: #fff; font-size: 14px; font-weight: 600; }
+      .wl-jstop__tag { font-size: 11.5px; color: #fff; border: 1px solid rgba(255,255,255,.45); border-radius: 999px; padding: 2px 9px; }
+      .wl-jstop__body p { font-size: 13px; color: rgba(255,255,255,.85); margin: 0; line-height: 1.45; }
+
+      /* Below 1100px the three overlay columns can no longer hold this
+         page's longer stop copy — Month 1's paragraph ran out the bottom of
+         the aspect box. (/prototype restacks at 900, but its copy is half
+         the length.) Same markup, restacked as a vertical rail. */
+      @media (max-width: 1099.98px) {
+        .wl-journey__timeline { aspect-ratio: auto; margin-top: 30px; padding: 4px 0 44px 30px; }
+        .wl-journey__svg { display: none; }
+        .wl-journey__timeline::before { content: ''; position: absolute; left: 9px; top: 12px; bottom: 50px; width: 1px; background: rgba(255,255,255,.5); transform-origin: top; }
+        .wl-jstop, .wl-jstop__badge, .wl-jstop__body { position: static; width: auto; }
+        .wl-jstop { position: relative; left: 0; padding-bottom: 24px; }
+        .wl-jstop:last-child { padding-bottom: 0; }
+        .wl-jstop__badge { margin-bottom: 8px; }
+        .wl-jstop::after {
+          content: ''; position: absolute; left: -29px; top: 1px; width: 19px; height: 19px; border-radius: 50%;
+          background: radial-gradient(circle, #fff 0 4.5px, rgba(255, 255, 255, 0) 4.5px 56%, rgba(255, 255, 255, .9) 100%);
+        }
+      }
+
+      /* A 20-second loop: the line draws left to right over the first 1.8s,
+         each stop lights as the line reaches it, holds long enough to be
+         read, then clears and rebuilds. Same invariants as /prototype's
+         journey: per-stop offsets live in the KEYFRAME PERCENTAGES (delays
+         only apply to the first iteration of an infinite animation), and
+         the draw stays linear so the stops keep meeting the line. Stop
+         arrivals along the path are 0 / 26.4 / 52.9% of its length, mapped
+         onto the 0–9% draw window. Base rules above already ARE the
+         finished timeline, so with JS off or reduced motion on it renders
+         complete. */
+      @media (prefers-reduced-motion: no-preference) {
+        .is-armed .wl-jline { stroke-dasharray: 100; stroke-dashoffset: 100; }
+        .is-armed .wl-jnode, .is-armed .wl-jstop { opacity: 0; }
+        .is-armed::before { scale: 1 0; }
+
+        .is-live .wl-jline,
+        .is-live::before,
+        .is-live .wl-jnode,
+        .is-live .wl-jstop { animation-duration: 20s; animation-timing-function: linear; animation-iteration-count: infinite; animation-fill-mode: both; }
+        .is-live .wl-jline { animation-name: wlDrawLine; }
+        .is-live::before { animation-name: wlDrawRail; }
+        .is-live .wl-jnode--1, .is-live .wl-jstop--1 { animation-name: wlStop1; }
+        .is-live .wl-jnode--2, .is-live .wl-jstop--2 { animation-name: wlStop2; }
+        .is-live .wl-jnode--3, .is-live .wl-jstop--3 { animation-name: wlStop3; }
+        .is-idle .wl-jline, .is-idle::before, .is-idle .wl-jnode, .is-idle .wl-jstop { animation-play-state: paused; }
+
+        @keyframes wlDrawLine {
+          0% { stroke-dashoffset: 100; }
+          9%, 88% { stroke-dashoffset: 0; }
+          97%, 100% { stroke-dashoffset: 100; }
+        }
+        @keyframes wlDrawRail {
+          0% { scale: 1 0; }
+          9%, 88% { scale: 1 1; }
+          97%, 100% { scale: 1 0; }
+        }
+        @keyframes wlStop1 {
+          0% { opacity: 0; translate: 0 12px; animation-timing-function: cubic-bezier(.22, .61, .36, 1); }
+          2.75%, 88% { opacity: 1; translate: 0 0; }
+          95%, 100% { opacity: 0; translate: 0 12px; }
+        }
+        @keyframes wlStop2 {
+          0%, 2.4% { opacity: 0; translate: 0 12px; animation-timing-function: cubic-bezier(.22, .61, .36, 1); }
+          5.15%, 88% { opacity: 1; translate: 0 0; }
+          95%, 100% { opacity: 0; translate: 0 12px; }
+        }
+        @keyframes wlStop3 {
+          0%, 4.8% { opacity: 0; translate: 0 12px; animation-timing-function: cubic-bezier(.22, .61, .36, 1); }
+          7.55%, 88% { opacity: 1; translate: 0 0; }
+          95%, 100% { opacity: 0; translate: 0 12px; }
+        }
+      }
 
       /* ── Why trust ──────────────────────────────────────────── */
       .wl-why { display: grid; gap: 40px; grid-template-columns: 1fr; align-items: center; }
@@ -395,8 +547,46 @@ const faqs = [
       .wl-refer h2 { font-family: var(--font-serif); font-size: clamp(1.6rem, 2.8vw, 2.1rem); margin: 0 0 8px; line-height: 1.15; }
       .wl-refer p { color: var(--muted); font-size: 14.5px; margin: 0; max-width: 46ch; }
 
-      .wl-close { background: var(--green-deep); color: #fff; }
-      .wl-close__grid { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 26px; padding-top: 56px; padding-bottom: 56px; }
+      /* Closing CTA — /prototype's .final treatment, copied: green ground
+         (not green-deep, so the footer below still steps darker), a drift
+         of one-div capsules on the right, and a gradient that fades them
+         into flat green under the copy so the two never compete. */
+      .wl-close { position: relative; background: var(--green); color: #fff; overflow: hidden; }
+      .wl-close__pills { --s: 1px; position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+      .fpill {
+        position: absolute; border-radius: 999px;
+        width: calc(var(--w) * var(--s)); height: calc(var(--h) * var(--s));
+        right: calc(var(--x) * var(--s));
+        background-image: linear-gradient(90deg, var(--c1) 0 50%, var(--c2) 50% 100%);
+        box-shadow: 0 16px 32px rgba(0, 0, 0, .3);
+        transform: rotate(var(--rot));
+      }
+      .fpill--top { top: calc(var(--y) * var(--s)); }
+      .fpill--bottom { bottom: calc(var(--y) * var(--s)); }
+      /* Specular strip — what makes a pill read as a cylinder, not a lozenge. */
+      .fpill::after {
+        content: ''; position: absolute; inset: 17% 13% auto; height: 21%;
+        border-radius: 999px; background: rgba(255, 255, 255, .26);
+      }
+      .fpill--ghost { background-image: none; border: 1.5px solid rgba(255, 255, 255, .3); box-shadow: none; }
+      .fpill--ghost::after { display: none; }
+      /* Transform only, so it composites — the angle rides every keyframe. */
+      @media (prefers-reduced-motion: no-preference) {
+        .fpill { animation: fpillDrift var(--dur) ease-in-out infinite; animation-delay: var(--dly); }
+        .fpill:nth-child(even) { animation-direction: reverse; }
+      }
+      @keyframes fpillDrift {
+        0%, 100% { transform: rotate(var(--rot)) translate(0, 0); }
+        50% { transform: rotate(var(--rot)) translate(-9px, -13px); }
+      }
+      /* Narrow band: shrink the whole arrangement with one number and keep
+         only the three pills nearest the corner, clear of the wrapped copy. */
+      @media (max-width: 860px) {
+        .wl-close__pills { --s: .62px; }
+        .fpill:nth-child(n+4) { display: none; }
+      }
+      .wl-close::after { content: ''; position: absolute; inset: 0; background: linear-gradient(100deg, var(--green) 0%, var(--green) 38%, rgba(18,60,44,.55) 70%, rgba(18,60,44,.25) 100%); }
+      .wl-close__grid { position: relative; z-index: 1; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 26px; padding-top: 56px; padding-bottom: 56px; }
       .wl-close h2 { font-family: var(--font-serif); font-size: clamp(1.9rem, 3.2vw, 2.5rem); margin: 0 0 10px; color: #fff; line-height: 1.12; }
       .wl-close h2 em { font-style: italic; color: #cdb98f; }
       .wl-close p { color: rgba(255,255,255,.65); font-size: 14.5px; margin: 0; max-width: 42ch; }
@@ -428,6 +618,15 @@ const faqs = [
       .wl-page .medication-toggle .btn.active-medication { background: var(--green) !important; color: #fff !important; }
       .wl-page #featuresList .feature-text { font-family: var(--font-sans); font-size: 14.5px; font-weight: 400; line-height: 1.45; color: var(--ink); }
       .wl-page .faq-question-text { color: var(--ink); }
+      /* legacy .faq-item (style.css:2833) paints each row as a white
+         rounded bar; this page's FAQ is a flat bordered list. */
+      .wl-page .faq-item { background: transparent; border-radius: 0; }
+      /* legacy `.faq-item.open .faq-answer { display: block }`
+         (style.css:2932) outranks this page's `.faq-answer { display:
+         grid }` (0,3,0 vs 0,1,0) — with block, grid-template-rows is
+         inert and the open/close animation dies. Re-assert grid at the
+         same specificity; being later in the cascade, it wins. */
+      .wl-page .faq-item.open .faq-answer { display: grid; }
       /* legacy .faq-answer ships padding:14px 20px + margin-top, which
          leaves a gap even when the row is collapsed to 0fr. */
       .wl-page .faq-answer { padding: 0; margin-top: 0; }
@@ -439,13 +638,10 @@ const faqs = [
          verticals that rely on the bleed. */
       .wl-page .wl-mech.swiper, .wl-page .wl-ba.swiper { overflow: hidden !important; }
 
-      /* Quiz modal — legacy chrome, styling kept local so it no longer
-         depends on the old page's cascade. */
-      #quiz--modal { display: none; position: fixed; inset: 0; z-index: 9999; background: rgba(10,20,15,.55); }
-      #quiz--modal .modal-content { position: relative; background: #fff; max-width: 620px; margin: 6vh auto; border-radius: 18px; overflow: hidden; }
-      #quiz--modal .close { position: absolute; top: 12px; right: 12px; z-index: 2; cursor: pointer; }
-      #quiz--modal .close img { width: 26px; height: 26px; }
-      .processing-loader { display: none; width: 34px; height: 34px; margin: 60px auto; border: 3px solid var(--line); border-top-color: var(--brand); border-radius: 50%; animation: wlSpin .8s linear infinite; }
+      /* Quiz modal — chrome lives in global.css now, matched to
+         /prototype's QuizModal for every route that opens the quiz.
+         Only the loader stays local (spinner metrics from QuizModal). */
+      .processing-loader { display: none; width: 34px; height: 34px; margin: 60px auto; border: 2.5px solid rgba(15, 107, 69, .18); border-top-color: var(--brand); border-radius: 50%; animation: wlSpin .8s linear infinite; }
       @keyframes wlSpin { to { transform: rotate(360deg); } }
     </style>
   </Fragment>
@@ -541,11 +737,11 @@ const faqs = [
 
     <section class="wl-sec">
       <div class="wl-wrap">
-        <!-- id="start-assessment" (no digit) is NOT a quiz trigger — it is the
-             anchor public/style/script.js grabs to pin this band to the top of
-             the viewport on mobile. Its .left/.right children are what the
-             legacy .mobile-fixed rules hide and re-center. -->
-        <div class="wl-band" id="start-assessment">
+        <!-- Deliberately NO id="start-assessment": that id is the anchor
+             public/style/script.js uses to pin a band to the viewport top on
+             mobile scroll, and this page opts out — the band stays in flow.
+             (script.js is null-guarded for exactly this case.) -->
+        <div class="wl-band">
           <div class="left">
             <h2>Start your assessment</h2>
             <p>From <b>$99</b>/month · physician-supervised · takes about 2 minutes</p>
@@ -692,21 +888,36 @@ const faqs = [
       <div class="wl-wrap">
         <div class="wl-journey">
           <div class="wl-journey__bg"></div>
+          <div class="wl-journey__scrim"></div>
           <div class="wl-journey__inner">
             <div class="wl-journey__head">
               <span class="wl-eyebrow">Your Journey</span>
               <h2 class="wl-serif">Here's what <em>happens next</em></h2>
             </div>
-            <img class="wl-journey__graph" src="/assets/wl/graph.svg" alt="Expected progress across month one, month three, and month six of GLP-1 therapy" loading="lazy" />
-            <div class="wl-journey__list">
-              {timeline.map((t) => (
-                <div class="wl-tl">
-                  <span class="wl-tl__dot"></span>
-                  <div>
-                    <span class="wl-tl__badge">{t.badge}</span>
-                    <div class="wl-tl__phase">
+            <div class="wl-journey__timeline">
+              <svg class="wl-journey__svg" viewBox="0 0 1117 451" fill="none" aria-hidden="true">
+                <defs>
+                  <radialGradient id="wlGlow">
+                    <stop offset="0.56" stop-color="#fff" stop-opacity="0" />
+                    <stop offset="1" stop-color="#fff" />
+                  </radialGradient>
+                </defs>
+                {/* The line from the flattened graph.svg export, verbatim. */}
+                <path class="wl-jline" pathLength="100" d="M37 301L305.5 170L587 66L873.279 22H1117" />
+                {timeline.map((t, i) => (
+                  <g class={`wl-jnode wl-jnode--${i + 1}`}>
+                    <circle cx={t.x} cy={t.y} r="15" fill="url(#wlGlow)" />
+                    <circle cx={t.x} cy={t.y} r="7" fill="#fff" />
+                  </g>
+                ))}
+              </svg>
+              {timeline.map((t, i) => (
+                <div class={`wl-jstop wl-jstop--${i + 1}`}>
+                  <span class="wl-jstop__badge">{t.badge}</span>
+                  <div class="wl-jstop__body">
+                    <div class="wl-jstop__phase">
                       <b>{t.phase}</b>
-                      <span class="wl-tl__tag">{t.tag}</span>
+                      <span class="wl-jstop__tag">{t.tag}</span>
                     </div>
                     <p>{t.desc}</p>
                   </div>
@@ -810,6 +1021,14 @@ const faqs = [
 
     <!-- ═══ Closing band ═══ -->
     <section class="wl-close">
+      <div class="wl-close__pills" aria-hidden="true">
+        {ctaPills.map((p) => (
+          <span
+            class:list={['fpill', `fpill--${p.edge}`, !p.c1 && 'fpill--ghost']}
+            style={`--w:${p.w};--h:${p.h};--x:${p.x};--y:${p.y};--rot:${p.rot}deg;--dur:${p.dur}s;--dly:${p.dly}s${p.c1 ? `;--c1:${p.c1};--c2:${p.c2}` : ''}`}
+          ></span>
+        ))}
+      </div>
       <div class="wl-wrap wl-close__grid">
         <div>
           <h2 class="wl-serif">Feel better,<br /><em>starting today.</em></h2>
@@ -841,4 +1060,20 @@ const faqs = [
   <script src="/style/script.js" is:inline></script>
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" is:inline></script>
   <script src="/assets/js/wl-script.js" is:inline></script>
+  <script is:inline>
+    /* Journey timeline: 20s loop that starts when the section first reaches
+       the viewport and pauses whenever it leaves. Same protocol as
+       /prototype: is-armed is added from JS on purpose, so a visitor
+       without JS keeps the finished timeline instead of a blank box. */
+    (function () {
+      var t = document.querySelector('.wl-journey__timeline');
+      if (!t || !matchMedia('(prefers-reduced-motion: no-preference)').matches) return;
+      t.classList.add('is-armed');
+      new IntersectionObserver(function (entries) {
+        var seen = entries[0].isIntersecting;
+        if (seen) t.classList.add('is-live');
+        t.classList.toggle('is-idle', !seen);
+      }, { threshold: 0.25 }).observe(t);
+    })();
+  </script>
 </Layout>

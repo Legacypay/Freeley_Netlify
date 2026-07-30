@@ -20,11 +20,13 @@ document.querySelectorAll(
         // Create new iframe
         quizIframe = document.createElement('iframe');
         quizIframe.style.width = '100%';
-        quizIframe.style.height = '605px';
+        // Same frame metrics as /prototype's QuizModal: the quiz's first
+        // step is ~810px tall — shorter frames cut the Start button below
+        // the fold. White ground, no dark tint injected into the quiz body.
+        quizIframe.style.height = 'min(780px, calc(100vh - 56px))';
         quizIframe.style.border = 'none';
-        quizIframe.style.borderRadius = '0';
         quizIframe.style.display = 'none';
-        quizIframe.style.background = '#0000004D';
+        quizIframe.style.background = '#fff';
 
         // Load with cache-busting
         quizIframe.src = '/assessment-quiz?t=' + Date.now();
@@ -32,27 +34,6 @@ document.querySelectorAll(
         quizIframe.onload = function() {
             loader.style.display = 'none';
             quizIframe.style.display = 'block';
-
-            // Apply styles to iframe body (if you have access)
-            try {
-                const iframeDoc = quizIframe.contentDocument || quizIframe.contentWindow.document;
-                if (iframeDoc) {
-                    const style = iframeDoc.createElement('style');
-                    style.textContent = `
-                            body {
-                                background: #0000004D !important;
-                                border: 0 !important;
-                                border-radius: 0 !important;
-                                height: 100vh;
-                                margin: 0;
-                            }
-                        `;
-                    iframeDoc.head.appendChild(style);
-                }
-            } catch (e) {
-                // Cross-origin restrictions may prevent this
-                console.log('Cannot style iframe body due to CORS');
-            }
         };
 
         quizIframe.onerror = function() {

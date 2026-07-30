@@ -207,14 +207,17 @@ button {
     width: 100%;
     border: none !important;
     border-radius: 0 !important;
-    background: #0000004D !important;
+    background: #fff !important;
 }
 
 /* The quiz modal relied on Bootstrap's .modal for its overlay behavior
    (hidden by default, fixed full-screen, above everything). Bootstrap
    was dropped in the Astro migration, so without these rules the modal
    renders as a plain in-flow div buried mid-page. The open/close JS
-   toggles display directly. */
+   toggles display directly.
+   Chrome matches /prototype's QuizModal <dialog> (green scrim, centered
+   white card, round close chip) so the quiz looks the same from every
+   route that opens it. */
 
 .modal {
     display: none;
@@ -223,28 +226,45 @@ button {
     width: 100%;
     height: 100%;
     z-index: 1055;
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(18, 60, 44, 0.55);
+    overflow-y: auto;
 }
 
 .modal-content {
     position: relative;
-    width: 100%;
-    height: 100%;
+    width: min(760px, calc(100vw - 28px));
+    height: auto;
+    margin: 24px auto;
+    background: #fff;
     border: none !important;
-    border-top: 1px solid rgb(0 0 0) !important;
-    border-bottom: 1px solid rgb(0 0 0) !important;
-    border-left: 1px solid rgb(0 0 0) !important;
-    border-radius: 0 !important;
+    border-radius: 22px !important;
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, .32);
 }
 
 .modal-content .close {
     position: absolute;
+    display: grid;
+    place-items: center;
     cursor: pointer;
-    top: 25px;
-    right: 25px;
-    width: 25px;
-    height: 25px;
+    top: 14px;
+    right: 14px;
+    width: 34px;
+    height: 34px;
     z-index: 1;
+    background: rgba(255, 255, 255, .92);
+    border: 1px solid rgba(0, 0, 0, .12);
+    border-radius: 999px;
+}
+
+.modal-content .close:hover {
+    background: #fff;
+    border-color: rgba(0, 0, 0, .28);
+}
+
+.modal-content .close img {
+    width: 14px;
+    height: 14px;
 }
 
 
@@ -777,17 +797,13 @@ input[type="number"] {
 
 /* Hide scrollbar for iframe */
 
+/* In-flow, not absolute: the card modal (.modal-content, /prototype chrome)
+   takes its height from this container — absolutely positioning it collapsed
+   the card to 0px. The 100vh !important iframe height belonged to the old
+   full-screen modal; the scripts now set the /prototype frame height inline. */
 #quiz--container {
-    position: absolute;
-    top: 0;
-    left: 0;
+    position: relative;
     width: 100%;
-    height: 100%;
-}
-
-#quiz--container iframe {
-    height: 100vh !important;
-    backdrop-filter: blur(14px) !important;
 }
 
 
@@ -818,8 +834,10 @@ input[type="number"] {
     height: 0 !important;
 }
 
+/* The card can run taller than a short viewport — the overlay scrolls,
+   the page behind it doesn't. (hidden belonged to the full-screen modal.) */
 .modal {
-    overflow: hidden !important;
+    overflow-y: auto !important;
 }
 
 

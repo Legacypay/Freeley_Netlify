@@ -1,42 +1,69 @@
 ---
+// Site header — /prototype's nav, one for one: logo | links | CTA on a
+// space-between row, burger + slide-down panel under 1024px. Styles live in
+// public/style/style.css ("Header section").
+//
+// The CTA keeps id="start-assessment-header": the vertical scripts
+// (wl/hl/sw/longevity) bind it to open the quiz modal. On pages without the
+// modal the inline script below falls back to navigating to the quiz page,
+// so the button is never dead.
 import { Image } from 'astro:assets';
 import logo from '../assets/brand/freeley_logo_transparent_green.webp';
+
+const nav = [
+  { label: 'GLP-1 Weight Loss', href: '/weight-loss' },
+  { label: 'Hair Loss', href: '/hair-loss' },
+  { label: 'Sexual Wellness', href: '/sexual-wellness' },
+  { label: 'Longevity', href: '/longevity' },
+  { label: 'How It Works', href: '/how-it-works' },
+  { label: 'Pricing', href: '/pricing' },
+  { label: 'About Us', href: '/about' },
+];
 ---
 
 <header>
-  <div class="container">
-    <nav class="navbar-custom">
-      <div class="flex items-center w-full">
-        <a href="/" class="navbar-brand-custom">
-          <Image src={logo} alt="Freeley logo" loading="eager" />
-        </a>
-        <div class="navbar-nav-custom hidden lg:flex justify-end mr-0 md:mr-12">
-          <a href="/weight-loss" class="navbar-link">GLP-1 Weight Loss</a>
-          <span class="navbar-separator">•</span>
-          <a href="/hair-loss" class="navbar-link">Hair Loss</a>
-          <span class="navbar-separator">•</span>
-          <a href="/sexual-wellness" class="navbar-link">Sexual Wellness</a>
-          <span class="navbar-separator">•</span>
-          <a href="/longevity" class="navbar-link">Longevity</a>
-          <span class="navbar-separator">•</span>
-          <a href="/how-it-works" class="navbar-link">How it Works</a>
-          <span class="navbar-separator">•</span>
-          <a href="/pricing" class="navbar-link">Pricing</a>
-        </div>
-        <div class="navbar-actions">
-          <button class="btn-check-eligibility p-0" id="start-assessment-header">
-            Check Eligibility
-          </button>
-        </div>
-      </div>
-      <div id="mobile-nav-menu" class="navbar-nav-custom lg:hidden mt-3" style="display: none">
-        <a href="/weight-loss" class="navbar-link block mb-2">GLP-1 Weight Loss</a>
-        <a href="/hair-loss" class="navbar-link block mb-2">Hair Loss</a>
-        <a href="/sexual-wellness" class="navbar-link block mb-2">Sexual Wellness</a>
-        <a href="/longevity" class="navbar-link block mb-2">Longevity</a>
-        <a href="/how-it-works" class="navbar-link block mb-2">How it Works</a>
-        <a href="/pricing" class="navbar-link block mb-2">Pricing</a>
-      </div>
+  <div class="container navbar-custom">
+    <a href="/" class="navbar-brand-custom">
+      <Image src={logo} alt="Freeley" loading="eager" />
+    </a>
+    <nav class="navbar-nav-custom">
+      {nav.map((item) => <a href={item.href} class="navbar-link">{item.label}</a>)}
     </nav>
+    <div class="navbar-actions">
+      <button type="button" class="btn-check-eligibility" id="start-assessment-header">
+        Start Assessment <span class="navbar-cta-arw">→</span>
+      </button>
+      <button type="button" class="navbar-burger" id="siteNavBurger" aria-label="Open menu" aria-expanded="false" aria-controls="siteNavMobile">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
   </div>
+  <nav class="navbar-mobile" id="siteNavMobile">
+    {nav.map((item) => <a href={item.href} class="navbar-link">{item.label}</a>)}
+    {/* An <a>, not the modal trigger: on phones the quiz page beats a
+        modal-in-iframe, and the id must stay unique to the desktop CTA. */}
+    <a href="/assessment-quiz" class="navbar-mobile-cta">Start Assessment <span class="navbar-cta-arw">→</span></a>
+  </nav>
+
+  <script is:inline>
+    (function () {
+      var b = document.getElementById('siteNavBurger');
+      var m = document.getElementById('siteNavMobile');
+      if (b && m) {
+        b.addEventListener('click', function () {
+          var open = m.classList.toggle('open');
+          b.setAttribute('aria-expanded', String(open));
+        });
+      }
+      /* Pages without the quiz modal get a real destination instead of a
+         dead button. Runs alongside the vertical scripts' own handler —
+         when #quiz--modal exists this does nothing. */
+      var cta = document.getElementById('start-assessment-header');
+      if (cta) {
+        cta.addEventListener('click', function () {
+          if (!document.getElementById('quiz--modal')) window.location.href = '/assessment-quiz';
+        });
+      }
+    })();
+  </script>
 </header>
