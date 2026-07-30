@@ -98,6 +98,20 @@
   to = "/assets/:splat"
   status = 200
 
+# Legacy site-wide CSS/JS, loaded via absolute paths from Layout.astro and
+# several pages (weight-loss, longevity, hair-loss, etc). Without these the
+# catch-all below answers /global.css, /style/style.css and /style/script.js
+# with the waitlist HTML, which the browser then rejects for MIME mismatch.
+[[redirects]]
+  from = "/global.css"
+  to = "/global.css"
+  status = 200
+
+[[redirects]]
+  from = "/style/*"
+  to = "/style/:splat"
+  status = 200
+
 [[redirects]]
   from = "/waitlist"
   to = "/waitlist"
