@@ -103,16 +103,18 @@
   to = "/waitlist"
   status = 200
 
-# Client preview of the redesigned landing (src/pages/prototype.astro).
-# /preview is the shareable mockup URL; it is the ONE route that bypasses the
-# gate. Kept out of search results by the page's own meta plus the matching
-# X-Robots-Tag header further down (the site-wide header says "index, follow").
-# Internal links on it (/pricing, /how-it-works…) still hit the waitlist — this
-# is a landing mockup, not a navigable site. Remove along with the gate.
+# Client preview of the redesigned landing (src/pages/prototype.astro) and inner pages.
+# /preview is the shareable mockup URL; /preview/* allows browsing any page under /preview/[route].
 [[redirects]]
   from = "/preview"
   to = "/prototype"
   status = 200
+
+[[redirects]]
+  from = "/preview/*"
+  to = "/:splat"
+  status = 200
+
 
 # The route /preview rewrites to. Excepted as well because /preview exists only
 # as the rule above — it 404s on a local dev server, so in-page links (the logo,
@@ -259,12 +261,18 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
-# The /preview mockup must never be indexed. More specific than the site-wide
+# The /preview mockup & sub-pages must never be indexed. More specific than the site-wide
 # "/*" rule above, which sets "index, follow" for the real pages.
 [[headers]]
   for = "/preview"
   [headers.values]
     X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/preview/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
 
 # Same for the comparison page it links to — part of the same mockup.
 [[headers]]

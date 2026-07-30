@@ -61,5 +61,18 @@ const { title, bodyClass } = Astro.props;
   </head>
   <body class={bodyClass}>
     <slot />
+    <script is:inline>
+      if (window.location.pathname.startsWith('/preview')) {
+        document.addEventListener('click', function (e) {
+          var a = e.target.closest('a');
+          if (!a) return;
+          var href = a.getAttribute('href');
+          if (href && href.startsWith('/') && !href.startsWith('//') && !href.startsWith('/preview') && !href.startsWith('mailto:') && !href.startsWith('tel:')) {
+            e.preventDefault();
+            window.location.href = '/preview' + (href === '/' ? '' : href);
+          }
+        });
+      }
+    </script>
   </body>
 </html>

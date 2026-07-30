@@ -61,7 +61,10 @@ const nav = [
       var cta = document.getElementById('start-assessment-header');
       if (cta) {
         cta.addEventListener('click', function () {
-          if (!document.getElementById('quiz--modal')) window.location.href = '/assessment-quiz';
+          if (!document.getElementById('quiz--modal')) {
+            var target = window.location.pathname.startsWith('/preview') ? '/preview/assessment-quiz' : '/assessment-quiz';
+            window.location.href = target;
+          }
         });
       }
     })();
