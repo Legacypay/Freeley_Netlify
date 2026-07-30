@@ -11,10 +11,10 @@
 //   live text  .product-title .product-current-price .popular-badge
 //   swipers    .brand--grid--hero.swiper
 //   accordion  .faq-item > .faq-question   (public/style/script.js toggles .open)
-// One product, no medication toggle — sw-script.js drives a single
-// swProductData object ($89/mo 3-in-1 troche). Its legacy originalPrice
-// ($49, LOWER than the price) was never rendered by the old markup and is
-// deliberately not rendered here either.
+// Medication toggle (Tadalafil $99 / Olympus $139) — the discontinued
+// 3-in-1 troche this page used to sell (Sildenafil/Tadalafil/Apomorphine)
+// isn't an active Strive SKU; sw-script.js now drives a keyed
+// swProductData object, same pattern as hl-script.js on /hair-loss.
 //
 // Deliberately NO id="start-assessment": that id is the anchor
 // public/style/script.js uses to pin a band to the viewport top on mobile
@@ -56,6 +56,9 @@ const stats = [
 
 // "What's inside" cards — copy from the old page's desktop cards, art is
 // the page's own card PNGs (previously desktop-only CSS backgrounds).
+// Card 2 was rewritten when the page moved off the discontinued 3-in-1
+// troche to the real Tadalafil/Olympus toggle — it now describes that
+// choice instead of an ingredient (apomorphine) neither product contains.
 const mechanisms = [
   {
     title: 'Targeted absorption',
@@ -64,8 +67,8 @@ const mechanisms = [
     tint: '#D2CBC2',
   },
   {
-    title: 'Primes arousal pathways',
-    desc: "Our formula includes Apomorphine to activate dopamine pathways, priming your body's natural response.",
+    title: 'Two formulas, one goal',
+    desc: 'Start with Tadalafil for reliable blood flow, or step up to Olympus to add Oxytocin and Bremelanotide for arousal itself.',
     img: '/assets/sw/Primes_Arousal_Pathways.png',
     tint: '#C6CCDA',
   },
@@ -75,14 +78,6 @@ const mechanisms = [
     img: '/assets/sw/Control_&_Confidence.png',
     tint: '#E4DDD4',
   },
-];
-
-// "3-in-1 compounded sublingual formula" — the old page's second card row.
-// "(Mentalreadiness)" was a typo in the legacy heading; spaced here.
-const proofCards = [
-  { title: 'Sildenafil — fast onset', img: '/assets/sw/Sildenafil_(FastOnset).png', tint: '#E4DDD4' },
-  { title: 'Tadalafil — 36-hour window', img: '/assets/sw/Tadalafil_(36-hour_window).png', tint: '#D1D9DC' },
-  { title: 'Apomorphine — mental readiness', img: '/assets/sw/Apomorphine_(Mentalreadiness).png', tint: '#F6EEE0' },
 ];
 
 const press = [
@@ -109,7 +104,7 @@ const timeline = [
     y: 502,
     badge: '15 Minutes In',
     phase: 'Activation',
-    desc: "The apomorphine primes your brain's dopamine receptors for arousal, while the sildenafil kicks in rapidly, increasing physical blood flow exactly when you need it.",
+    desc: 'Tadalafil increases physical blood flow exactly when you need it — with Olympus, Oxytocin and Bremelanotide begin priming arousal pathways at the same time.',
   },
   {
     x: 1004,
@@ -131,7 +126,7 @@ const faqs = [
   },
   {
     q: 'Does it just give me an erection?',
-    a: 'No — the 3-in-1 formula works on more than blood flow. Sildenafil acts fast, tadalafil supports sustained blood flow for up to 36 hours, and apomorphine primes the dopamine pathways involved in arousal.',
+    a: "No — Tadalafil supports sustained blood flow for up to 36 hours. If you choose Olympus, Oxytocin and Bremelanotide also work on arousal itself, not just blood flow.",
   },
   {
     q: 'Do I have to do a video call?',
@@ -531,14 +526,14 @@ const ctaPills = [
 
           <h1 class="wl-serif">Live your best <em>sex life.</em></h1>
           <p class="wl-hero__sub">
-            Clinical-grade 3-in-1 sublingual ED compound, prescribed by a licensed
-            U.S. physician. Fast-acting, reliable, and discreetly delivered.
+            Clinical-grade sublingual sexual wellness medication, prescribed by a
+            licensed U.S. physician. Fast-acting, reliable, and discreetly delivered.
           </p>
 
           <img class="wl-hero__img-mob" src="/assets/sw/hero-mob.png" alt="A Freeley sexual-wellness patient" />
 
           <div class="wl-hero__from">
-            From <span class="wl-price">$89</span>/month
+            From <span class="wl-price">$99</span>/month
             <span class="wl-hero__qual">no membership fee, cancel anytime</span>
           </div>
 
@@ -585,7 +580,7 @@ const ctaPills = [
         <div class="wl-band">
           <div class="left">
             <h2>Start your assessment</h2>
-            <p>From <b>$89</b>/month · physician-supervised · takes about 2 minutes</p>
+            <p>From <b>$99</b>/month · physician-supervised · takes about 2 minutes</p>
           </div>
           <div class="right">
             <button type="button" class="wl-btn wl-btn--light" id="start-assessment4">
@@ -617,7 +612,7 @@ const ctaPills = [
         <div class="wl-head">
           <span class="wl-eyebrow">What's Inside</span>
           <h2 class="wl-serif">Okay, but <em>how does it work?</em></h2>
-          <p>One sublingual troche, three active ingredients working together.</p>
+          <p>A fast-dissolving sublingual tablet, dosed to your goals.</p>
         </div>
         <div class="wl-mech">
           {mechanisms.map((m) => (
@@ -632,28 +627,6 @@ const ctaPills = [
             </div>
           ))}
         </div>
-      </div>
-    </section>
-
-    <!-- ═══ 3-in-1 formula row ═══ -->
-    <section class="wl-sec" style="padding-top:0;">
-      <div class="wl-wrap">
-        <div class="wl-head">
-          <h2 class="wl-serif">3-in-1 <em>compounded sublingual formula.</em></h2>
-        </div>
-        <div class="wl-mech">
-          {proofCards.map((c) => (
-            <div class="wl-mech__card">
-              <div class="wl-mech__img" style={`background:${c.tint}`}>
-                <img src={c.img} alt={c.title} loading="lazy" />
-              </div>
-              <div class="wl-mech__body">
-                <h3>{c.title}</h3>
-              </div>
-            </div>
-          ))}
-        </div>
-        <p class="wl-foot">Compounded medications are not FDA-approved and are not equivalent to the brand-name drugs.</p>
       </div>
     </section>
 
