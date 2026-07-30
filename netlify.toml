@@ -112,6 +112,18 @@
   to = "/style/:splat"
   status = 200
 
+# Product card images on /pricing (image-18.png etc.) and the assessment
+# quiz's inline script — same absolute-path problem as above.
+[[redirects]]
+  from = "/products-imgs/*"
+  to = "/products-imgs/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/quiz-scripts/*"
+  to = "/quiz-scripts/:splat"
+  status = 200
+
 [[redirects]]
   from = "/waitlist"
   to = "/waitlist"
