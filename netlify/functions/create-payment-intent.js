@@ -61,6 +61,11 @@ exports.handler = async (event) => {
     let compoundKey = 'default';
     if (treatment === 'weight-loss') {
       compoundKey = (compound === 'tirzepatide' || compound === 'tirz') ? 'tirzepatide' : 'semaglutide';
+    } else if (treatment === 'longevity') {
+      compoundKey = (compound === 'nad' || compound === 'nad+') ? 'premium' : 'standard';
+    } else if (treatment === 'sexual-wellness' || treatment === 'ed') {
+      const premiumCompounds = ['olympus', 'olympus-plus', 'olympus-peak', 'olympus-max'];
+      compoundKey = premiumCompounds.includes(String(compound || '').toLowerCase()) ? 'premium' : 'standard';
     }
 
     // Get pricing

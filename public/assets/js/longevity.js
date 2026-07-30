@@ -101,7 +101,7 @@ window.addEventListener('click', function(e) {
                 "Customized stack tailored to you",
                 "Physician review & expedited cold-shipping"
             ],
-            price: "$149",
+            price: "$129",
             originalPrice: null,
             badge: "Most Popular"
         },
@@ -121,7 +121,7 @@ window.addEventListener('click', function(e) {
                 "Customized stack tailored to you",
                 "Physician review & expedited cold-shipping"
             ],
-            price: "$199",
+            price: "$189",
             originalPrice: null,
             badge: "Premium Choice"
         },

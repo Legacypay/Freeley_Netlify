@@ -240,10 +240,10 @@ var Tawk_API = Tawk_API || {},
     // DATA CONFIGURATION - Edit this section only
     // =============================================
     const hairMedicationData = {
-        finasteride: {
-            name: "Finasteride",
-            title: "Compounded Finasteride + Minoxidil",
-            description: "Finasteride is a DHT blocker that helps prevent hair loss and promote regrowth.",
+        cedar: {
+            name: "Cedar",
+            title: "Cedar Hair Growth Tablet",
+            description: "Biotin, Finasteride, and Minoxidil combined in one daily tablet — DHT-blocking and follicle-stimulating action together.",
             images: [
                 "/assets/hl/product1.png",
                 "/assets/hl/product2.png",
@@ -252,18 +252,18 @@ var Tawk_API = Tawk_API || {},
                 "/assets/hl/product5.png"
             ],
             features: [
-                "Synergistic 2-in-1 compounded formula",
-                "Choose between Oral Pill or Topical Spray",
+                "Biotin 5mg / Finasteride 1mg / Minoxidil 2.5mg",
+                "One tablet by mouth, once daily",
                 "Precision-dosed by licensed physicians"
             ],
-            price: "$39.00",
-            originalPrice: "$49.00",
+            price: "$89.00",
+            originalPrice: null,
             badge: "Most Popular"
         },
-        minoxidil: {
-            name: "Minoxidil",
-            title: "Compounded Minoxidil",
-            description: "Minoxidil is a vasodilator that stimulates hair follicles and promotes growth.",
+        ivy: {
+            name: "Ivy",
+            title: "Ivy Hair Tablet (Women 45+)",
+            description: "Minoxidil and Dutasteride with Biotin, formulated for women 45 and older.",
             images: [
                 "/assets/hl/product1.png",
                 "/assets/hl/product2.png",
@@ -272,18 +272,18 @@ var Tawk_API = Tawk_API || {},
                 "/assets/hl/product5.png"
             ],
             features: [
-                "Synergistic 2-in-1 compounded formula",
-                "Choose between Oral Pill or Topical Spray",
+                "Minoxidil 1mg / Dutasteride 0.4mg with Biotin",
+                "One tablet by mouth, once daily",
                 "Precision-dosed by licensed physicians"
             ],
-            price: "$34.00",
-            originalPrice: "$44.00",
-            badge: "Best Value"
+            price: "$89.00",
+            originalPrice: null,
+            badge: "For Women 45+"
         },
-        biotin: {
-            name: "Biotin",
-            title: "Compounded Biotin",
-            description: "Biotin is an essential vitamin that strengthens hair and promotes healthy growth.",
+        willow: {
+            name: "Willow",
+            title: "Willow Hair Tablet (Women Under 45)",
+            description: "Minoxidil and Spironolactone with Biotin, formulated for women under 45.",
             images: [
                 "/assets/hl/product1.png",
                 "/assets/hl/product2.png",
@@ -292,20 +292,20 @@ var Tawk_API = Tawk_API || {},
                 "/assets/hl/product5.png"
             ],
             features: [
-                "Synergistic 2-in-1 compounded formula",
-                "Choose between Oral Pill or Topical Spray",
+                "Minoxidil 1mg / Spironolactone 60mg with Biotin",
+                "One tablet by mouth, once daily",
                 "Precision-dosed by licensed physicians"
             ],
-            price: "$29.00",
-            originalPrice: "$39.00",
-            badge: "Essential Support"
+            price: "$89.00",
+            originalPrice: null,
+            badge: "For Women Under 45"
         }
     };
 
     // =============================================
     // GALLERY STATE
     // =============================================
-    let currentHairMedication = 'finasteride';
+    let currentHairMedication = 'cedar';
     let currentHairIndex = 0;
 
     // =============================================
@@ -388,7 +388,7 @@ var Tawk_API = Tawk_API || {},
         if (currentPrice) currentPrice.textContent = data.price;
 
         const originalPrice = document.querySelector('.text-decoration-line-through');
-        if (originalPrice) originalPrice.textContent = data.originalPrice;
+        if (originalPrice) originalPrice.textContent = data.originalPrice || '';
 
         const badge = document.querySelector('.popular-badge');
         if (badge) badge.textContent = data.badge;
@@ -495,7 +495,7 @@ var Tawk_API = Tawk_API || {},
             const medication = this.getAttribute('data-medication') ||
                 this.textContent.trim().toLowerCase();
 
-            if (medication === 'finasteride' || medication === 'minoxidil' || medication === 'biotin') {
+            if (medication === 'cedar' || medication === 'ivy' || medication === 'willow') {
                 switchHairMedication(medication);
             }
         });

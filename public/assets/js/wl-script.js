@@ -101,8 +101,8 @@ window.addEventListener('click', function(e) {
                 "Average 15% body weight loss",
                 "Starts as low as $99.29 for month one",
             ],
-            price: "$99*",
-            originalPrice: "$249.00",
+            price: "$199*",
+            originalPrice: "$299.00",
             badge: "Most Popular"
         },
         tirzepatide: {
@@ -121,8 +121,8 @@ window.addEventListener('click', function(e) {
                 "Average 15% body weight loss",
                 "Starts as low as $99.29 for month one",
             ],
-            price: "$129*",
-            originalPrice: "$349.00",
+            price: "$299*",
+            originalPrice: "$399.00",
             badge: "Premium Choice"
         }
     };
