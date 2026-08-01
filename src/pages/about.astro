@@ -11,20 +11,23 @@
 //  - Two closing CTAs stacked back to back (a "cta--sec"/"cta--sec-home-mobile"
 //    banner with its own copy, immediately followed by the real "Feel better,
 //    starting today" footer band). The first banner is removed; the second is
-//    kept and re-skinned as the one capsule-drift wl-close band every other
-//    rebuilt page ends with (same ctaPills array, same copy already used
-//    site-wide).
+//    kept and now renders through the shared <FinalCta> component
+//    (src/components/FinalCta.astro), same as every other rebuilt page.
 //  - id="start-assessment" removed from the footer CTA (reserved by
 //    public/style/script.js for the mobile sticky-bar pin) — it now just
 //    carries the .js-start-quiz trigger class.
-//  - "Built to be different" swiper reuses card1.png as both slide 1 and 4:
-//    confirmed via a glob of public/assets/about/ that no 4th unique image
-//    exists, so the duplicate is kept as-is rather than inventing new art.
+//  - "Built to be different" used to be a Swiper carousel that reused
+//    card1.png as a 4th slide (no unique 4th image exists under
+//    public/assets/about/). Since there are only 3 real cards, it's now a
+//    static 3-up row instead of a carousel — Swiper (JS/CSS) removed, it was
+//    only used by this section.
 //  - No FAQ section exists on this page, so the FAQ copy-paste bug pattern
 //    doesn't apply here.
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import FinalCta from '../components/FinalCta.astro';
+import QuizModal from '../components/QuizModal.astro';
 
 const differentiators = [
   'Same price regardless of dosage',
@@ -58,30 +61,17 @@ const values = [
   },
 ];
 
-// "Built to be different" cards — card1.png is intentionally reused for slide
-// 4 (see note above), same as the pre-rebuild markup.
+// "Built to be different" cards — only 3 real, distinct images exist under
+// public/assets/about/, rendered as a static row (see note above).
 const differentCards = [
   '/assets/about/card1.png',
   '/assets/about/card2.png',
   '/assets/about/card3.png',
-  '/assets/about/card1.png',
 ];
 
-// Decorative capsule drift behind the closing CTA — same 11-pill array used
-// on every rebuilt page (how-it-works.astro, longevity.astro, ...).
-const ctaPills = [
-  { w: 218, h: 76, x: -46, edge: 'top', y: -26, rot: -28, c1: 'var(--cream)', c2: 'var(--brand)', dur: 11, dly: 0 },
-  { w: 172, h: 60, x: 128, edge: 'bottom', y: -30, rot: -24, c1: 'var(--gold)', c2: 'var(--green-deep)', dur: 13, dly: -2 },
-  { w: 98, h: 35, x: 46, edge: 'bottom', y: 34, rot: -26, c1: 'var(--cream)', c2: 'var(--gold)', dur: 12, dly: -5 },
-  { w: 124, h: 44, x: 236, edge: 'top', y: 30, rot: -31, c1: '#fff', c2: '#2c6b4c', dur: 14, dly: -3 },
-  { w: 56, h: 20, x: 96, edge: 'top', y: 8, rot: -28, c1: 'var(--brand)', c2: 'var(--cream)', dur: 10, dly: -6 },
-  { w: 86, h: 31, x: 180, edge: 'bottom', y: 60, rot: -27, c1: 'var(--gold)', c2: 'var(--cream)', dur: 15, dly: -8 },
-  { w: 74, h: 27, x: 344, edge: 'bottom', y: 16, rot: -28, dur: 12, dly: -7 },
-  { w: 64, h: 23, x: 300, edge: 'top', y: 4, rot: -25, c1: 'var(--cream)', c2: '#2c6b4c', dur: 13, dly: -4 },
-  { w: 148, h: 52, x: 392, edge: 'top', y: -18, rot: -29, c1: '#2c6b4c', c2: 'var(--cream)', dur: 16, dly: -9 },
-  { w: 112, h: 40, x: 470, edge: 'bottom', y: -14, rot: -26, dur: 14, dly: -11 },
-  { w: 130, h: 46, x: 556, edge: 'top', y: 20, rot: -28, dur: 17, dly: -13 },
-];
+// The closing-CTA pill decoration array used to live here — moved into the
+// shared FinalCta.astro component so every page gets the same fixed
+// placements instead of its own drifting copy.
 ---
 
 <Layout title="About | Freeley">
@@ -143,52 +133,16 @@ const ctaPills = [
       .ab-process__item h3 { font-family: var(--font-serif); font-weight: 600; font-size: 1.15rem; color: var(--ink); margin: 0 0 8px; }
       .ab-process__item p { font-family: var(--font-sans); font-size: 13.5px; line-height: 1.6; color: var(--muted); margin: 0; }
 
-      /* ── "Built to be different" cards carousel ─────────────────── */
-      .ab-cards-swiper { padding-bottom: 10px; }
-      .ab-cards-swiper .swiper-slide { width: 300px; }
-      @media (min-width: 700px) { .ab-cards-swiper .swiper-slide { width: 340px; } }
+      /* ── "Built to be different" cards (static 3-up row) ─────────── */
+      .ab-cards-row { display: grid; grid-template-columns: 1fr; gap: 24px; }
+      @media (min-width: 700px) { .ab-cards-row { grid-template-columns: repeat(3, 1fr); } }
       .ab-card { border-radius: 20px; overflow: hidden; transition: transform .3s ease; }
       .ab-card:hover { transform: translateY(-6px); }
       .ab-card img { width: 100%; display: block; }
 
-      /* ── Closing band (same capsule treatment every rebuilt page uses) ── */
-      .wl-close { position: relative; background: var(--green); color: #fff; overflow: hidden; }
-      .wl-close__pills { --s: 1px; position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
-      .fpill {
-        position: absolute; border-radius: 999px;
-        width: calc(var(--w) * var(--s)); height: calc(var(--h) * var(--s));
-        right: calc(var(--x) * var(--s));
-        background-image: linear-gradient(90deg, var(--c1) 0 50%, var(--c2) 50% 100%);
-        box-shadow: 0 16px 32px rgba(0, 0, 0, .3);
-        transform: rotate(var(--rot));
-      }
-      .fpill--top { top: calc(var(--y) * var(--s)); }
-      .fpill--bottom { bottom: calc(var(--y) * var(--s)); }
-      .fpill::after { content: ''; position: absolute; inset: 17% 13% auto; height: 21%; border-radius: 999px; background: rgba(255, 255, 255, .26); }
-      .fpill--ghost { background-image: none; border: 1.5px solid rgba(255, 255, 255, .3); box-shadow: none; }
-      .fpill--ghost::after { display: none; }
-      @media (prefers-reduced-motion: no-preference) {
-        .fpill { animation: fpillDrift var(--dur) ease-in-out infinite; animation-delay: var(--dly); }
-        .fpill:nth-child(even) { animation-direction: reverse; }
-      }
-      @keyframes fpillDrift {
-        0%, 100% { transform: rotate(var(--rot)) translate(0, 0); }
-        50% { transform: rotate(var(--rot)) translate(-9px, -13px); }
-      }
-      @media (max-width: 860px) {
-        .wl-close__pills { --s: .62px; }
-        .fpill:nth-child(n+4) { display: none; }
-      }
-      .wl-close::after { content: ''; position: absolute; inset: 0; background: linear-gradient(100deg, var(--green) 0%, var(--green) 38%, rgba(18,60,44,.55) 70%, rgba(18,60,44,.25) 100%); }
-      .wl-close__grid { position: relative; z-index: 1; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 26px; padding-top: 56px; padding-bottom: 56px; }
-      .wl-close h2 { font-family: var(--font-serif); font-size: clamp(1.9rem, 3.2vw, 2.5rem); margin: 0 0 10px; color: #fff; line-height: 1.12; }
-      .wl-close h2 em { font-style: italic; color: #cdb98f; }
-      .wl-close p { color: rgba(255,255,255,.65); font-size: 14.5px; margin: 0; max-width: 42ch; }
-      .wl-close__feats { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 18px; }
-      .wl-close__feats span { display: flex; align-items: center; gap: 8px; font-size: 13px; color: rgba(255,255,255,.85); }
+      /* Closing band — now the shared <FinalCta> component
+         (src/components/FinalCta.astro); its background/pill CSS lives there. */
 
-      .processing-loader { display: none; width: 34px; height: 34px; margin: 60px auto; border: 2.5px solid rgba(15, 107, 69, .18); border-top-color: var(--brand); border-radius: 50%; animation: wlSpin .8s linear infinite; }
-      @keyframes wlSpin { to { transform: rotate(360deg); } }
     </style>
   </Fragment>
 
@@ -267,130 +221,28 @@ const ctaPills = [
         </div>
       </div>
       <div class="wl-wrap">
-        {/* Only 4 real cards (card1.png doubles as slide 4 — no unique 4th
-            image exists under /assets/about/), too few to loop cleanly across
-            a wide viewport, so this uses rewind instead of loop:true. */}
-        <div class="swiper ab-cards-swiper">
-          <div class="swiper-wrapper">
-            {differentCards.map((img) => (
-              <div class="swiper-slide ab-card">
-                <img src={img} alt="" loading="lazy" />
-              </div>
-            ))}
-          </div>
+        <div class="ab-cards-row">
+          {differentCards.map((img) => (
+            <div class="ab-card">
+              <img src={img} alt="" loading="lazy" />
+            </div>
+          ))}
         </div>
       </div>
     </section>
 
-    <!-- ═══ Closing band ═══ -->
-    <section class="wl-close">
-      <div class="wl-close__pills" aria-hidden="true">
-        {ctaPills.map((p) => (
-          <span
-            class:list={['fpill', `fpill--${p.edge}`, !p.c1 && 'fpill--ghost']}
-            style={`--w:${p.w};--h:${p.h};--x:${p.x};--y:${p.y};--rot:${p.rot}deg;--dur:${p.dur}s;--dly:${p.dly}s${p.c1 ? `;--c1:${p.c1};--c2:${p.c2}` : ''}`}
-          ></span>
-        ))}
-      </div>
-      <div class="wl-wrap wl-close__grid">
-        <div>
-          <h2 class="wl-serif">Feel better,<br /><em>starting today.</em></h2>
-          <p>Personalized care for every part of you, from weight to skin, sleep to sexual health.</p>
-          <div class="wl-close__feats">
-            <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> No credit card required</span>
-            <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Takes 2 minutes</span>
-            <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Cancel anytime</span>
-          </div>
-        </div>
-        <button type="button" class="wl-btn wl-btn--light js-start-quiz">
-          Start Your Assessment <span class="wl-arw">→</span>
-        </button>
-      </div>
-    </section>
-
-    <!-- Quiz modal — opened by every .js-start-quiz trigger above -->
-    <div id="quiz--modal" class="modal">
-      <div class="modal-content">
-        <span class="close" id="close--quiz"><img src="/assets/icons/close.png" alt="Close" /></span>
-        <div class="processing-loader" id="loader"></div>
-        <div id="quiz--container"></div>
-      </div>
-    </div>
+    <!-- ═══ Closing band — shared component (see src/components/FinalCta.astro) ═══ -->
+    <FinalCta features={['No credit card required', 'Takes 2 minutes', 'Cancel anytime']}>
+      Feel better,<br /><em>starting today.</em>
+      <Fragment slot="subheading">Personalized care for every part of you, from weight to skin, sleep to sexual health.</Fragment>
+      <a href="/assessment-quiz" class="wl-btn wl-btn--light js-start-quiz" slot="cta">
+        Start Your Assessment <span class="wl-arw">→</span>
+      </a>
+    </FinalCta>
 
     <Footer />
   </main>
-
-  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" is:inline></script>
-  <script is:inline>
-    new Swiper('.ab-cards-swiper', {
-      slidesPerView: 'auto',
-      spaceBetween: 24,
-      rewind: true,
-      grabCursor: true,
-      autoplay: { delay: 5000, pauseOnMouseEnter: true, disableOnInteraction: false },
-    });
-  </script>
-
-  <script is:inline>
-    (function () {
-      var modal = document.getElementById('quiz--modal');
-      var loader = document.getElementById('loader');
-      var quizContainer = document.getElementById('quiz--container');
-      var quizIframe = null;
-
-      document.querySelectorAll('#start-assessment-header, .js-start-quiz').forEach(function (button) {
-        button.addEventListener('click', function () {
-          if (quizIframe) { quizIframe.remove(); quizIframe = null; }
-
-          modal.style.display = 'block';
-          loader.style.display = 'block';
-          quizContainer.innerHTML = '';
-
-          quizIframe = document.createElement('iframe');
-          quizIframe.style.width = '100%';
-          quizIframe.style.height = 'min(780px, calc(100vh - 56px))';
-          quizIframe.style.border = 'none';
-          quizIframe.style.display = 'none';
-          quizIframe.style.background = '#fff';
-          quizIframe.src = '/assessment-quiz?t=' + Date.now();
-
-          quizIframe.onload = function () {
-            loader.style.display = 'none';
-            quizIframe.style.display = 'block';
-          };
-          quizIframe.onerror = function () {
-            loader.style.display = 'none';
-            quizContainer.innerHTML = '<p>Unable to load quiz.</p>';
-          };
-
-          quizContainer.appendChild(quizIframe);
-        });
-      });
-
-      function closeQuiz() {
-        modal.style.display = 'none';
-        if (quizIframe) {
-          try {
-            quizIframe.src = 'about:blank';
-            quizIframe.contentWindow.document.write('');
-            quizIframe.contentWindow.document.clear();
-          } catch (e) {}
-          quizIframe.remove();
-          quizIframe = null;
-        }
-        quizContainer.innerHTML = '';
-        loader.style.display = 'none';
-      }
-
-      document.getElementById('close--quiz').addEventListener('click', closeQuiz);
-      document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && modal.style.display === 'block') closeQuiz();
-      });
-      window.addEventListener('click', function (e) {
-        if (e.target === modal) closeQuiz();
-      });
-    })();
-  </script>
+  <QuizModal />
 
   <!--Start of Tawk.to Script-->
   <script type="text/javascript" is:inline>
