@@ -1,0 +1,115 @@
+---
+// Shared final-CTA-with-pills section, extracted from /prototype (src/pages/
+// prototype.astro), the Impeccable direction's source of truth. Every page
+// used to keep its own independent copy of this section (own ctaPills array,
+// own .final-equivalent CSS) which let bugs drift and reappear per-page:
+// background color mismatched against .foot below it, and rotated bottom
+// pills clipping past the section's overflow:hidden edge into the footer
+// seam. Centralizing here guarantees every page gets the same fixed
+// behavior, the same way Footer.astro already centralizes the footer.
+//
+// Heading, subheading and the CTA button/link stay slotted rather than
+// hardcoded: each page's own copy and its own button/modal-trigger wiring
+// (some pages link into QuizModal.astro, others trigger a page-local legacy
+// modal) differ and are out of scope here — only the section's background,
+// pill decoration and layout are shared. Slotted content keeps the parent
+// page's own scoped styles (e.g. .serif/.pill), so heading/button classes
+// authored on the page still apply without being redeclared here.
+interface Props {
+  features: string[];
+}
+const { features } = Astro.props;
+
+// Same placements/timings as /prototype, with the two bugs already fixed:
+// bottom-edge pills need `y >= (w*sin(|rot|) + h*cos(|rot|))/2 - h/2` of
+// clearance so their rotated bounding box doesn't clip past the section's
+// overflow:hidden edge into the footer seam below it.
+const ctaPills = [
+  { w: 218, h: 76, x: -46, edge: 'top', y: -26, rot: -28, c1: 'var(--cream)', c2: 'var(--brand)', dur: 11, dly: 0 },
+  { w: 172, h: 60, x: 128, edge: 'bottom', y: 36, rot: -24, c1: 'var(--gold)', c2: 'var(--green-deep)', dur: 13, dly: -2 },
+  { w: 98, h: 35, x: 46, edge: 'bottom', y: 34, rot: -26, c1: 'var(--cream)', c2: 'var(--gold)', dur: 12, dly: -5 },
+  { w: 124, h: 44, x: 236, edge: 'top', y: 30, rot: -31, c1: '#fff', c2: 'var(--emph)', dur: 14, dly: -3 },
+  { w: 56, h: 20, x: 96, edge: 'top', y: 8, rot: -28, c1: 'var(--brand)', c2: 'var(--cream)', dur: 10, dly: -6 },
+  { w: 86, h: 31, x: 180, edge: 'bottom', y: 60, rot: -27, c1: 'var(--gold)', c2: 'var(--cream)', dur: 15, dly: -8 },
+  { w: 74, h: 27, x: 344, edge: 'bottom', y: 20, rot: -28, dur: 12, dly: -7 },
+  { w: 64, h: 23, x: 300, edge: 'top', y: 4, rot: -25, c1: 'var(--cream)', c2: 'var(--emph)', dur: 13, dly: -4 },
+  { w: 148, h: 52, x: 392, edge: 'top', y: -18, rot: -29, c1: 'var(--emph)', c2: 'var(--cream)', dur: 16, dly: -9 },
+  { w: 112, h: 40, x: 470, edge: 'bottom', y: 26, rot: -26, dur: 14, dly: -11 },
+  { w: 130, h: 46, x: 556, edge: 'top', y: 20, rot: -28, dur: 17, dly: -13 },
+];
+---
+
+<section class="final-cta">
+  <div class="final-cta__pills" aria-hidden="true">
+    {ctaPills.map((p) => (
+      <span
+        class:list={['fcp', `fcp--${p.edge}`, !p.c1 && 'fcp--ghost']}
+        style={`--w:${p.w};--h:${p.h};--x:${p.x};--y:${p.y};--rot:${p.rot}deg;--dur:${p.dur}s;--dly:${p.dly}s${p.c1 ? `;--c1:${p.c1};--c2:${p.c2}` : ''}`}
+      ></span>
+    ))}
+  </div>
+  <div class="wrap final-cta__grid">
+    <div>
+      <h2 class="final-cta__heading"><slot /></h2>
+      <p class="final-cta__sub"><slot name="subheading" /></p>
+    </div>
+    <div class="final-cta__feats">
+      {features.map((f) => (
+        <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5" /></svg> {f}</span>
+      ))}
+    </div>
+    <slot name="cta" />
+  </div>
+</section>
+
+<style>
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 28px; }
+
+  .final-cta { position: relative; color: #fff; background: var(--green-deep); overflow: hidden; }
+  /* Covers the whole section (inset:0) so this, not .final-cta's own
+     background, is what's actually visible — both use --green-deep so
+     there's no seam against .foot directly below. */
+  .final-cta::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(100deg, var(--green-deep) 0%, var(--green-deep) 38%, rgba(13, 49, 34, .55) 70%, rgba(13, 49, 34, .25) 100%);
+  }
+  .final-cta__grid { position: relative; z-index: 1; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 26px; padding-top: 64px; padding-bottom: 64px; }
+  .final-cta__heading { font-family: var(--font-display); font-weight: 600; font-optical-sizing: auto; letter-spacing: -0.02em; text-wrap: balance; margin: 0; color: #fff; font-size: clamp(1.9rem, 3.2vw, 2.4rem); line-height: 1.1; }
+  .final-cta__heading em { font-style: italic; font-weight: 600; color: var(--emph); }
+  .final-cta__sub { color: rgba(255, 255, 255, .75); font-size: 14px; margin: 10px 0 0; }
+  .final-cta__feats { display: flex; flex-wrap: wrap; gap: 22px; }
+  .final-cta__feats span { display: flex; align-items: center; gap: 8px; font-size: 13px; color: rgba(255, 255, 255, .85); }
+  .final-cta__feats svg { flex: none; }
+
+  .final-cta__pills { --s: 1px; position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+  .fcp {
+    position: absolute; border-radius: 999px;
+    width: calc(var(--w) * var(--s)); height: calc(var(--h) * var(--s));
+    right: calc(var(--x) * var(--s));
+    background-image: linear-gradient(90deg, var(--c1) 0 50%, var(--c2) 50% 100%);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, .3);
+    transform: rotate(var(--rot));
+  }
+  .fcp--top { top: calc(var(--y) * var(--s)); }
+  .fcp--bottom { bottom: calc(var(--y) * var(--s)); }
+  .fcp::after {
+    content: ''; position: absolute; inset: 17% 13% auto; height: 21%;
+    border-radius: 999px; background: rgba(255, 255, 255, .26);
+  }
+  .fcp--ghost { background-image: none; border: 1.5px solid rgba(255, 255, 255, .3); box-shadow: none; }
+  .fcp--ghost::after { display: none; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .fcp { animation: fcpDrift var(--dur) ease-in-out infinite; animation-delay: var(--dly); }
+    .fcp:nth-child(even) { animation-direction: reverse; }
+  }
+  @keyframes fcpDrift {
+    0%, 100% { transform: rotate(var(--rot)) translate(0, 0); }
+    50% { transform: rotate(var(--rot)) translate(-9px, -13px); }
+  }
+
+  @media (max-width: 860px) {
+    .final-cta__pills { --s: .62px; }
+    .fcp:nth-child(n+4) { display: none; }
+  }
+</style>

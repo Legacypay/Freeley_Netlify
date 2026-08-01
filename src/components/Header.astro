@@ -55,13 +55,14 @@ const nav = [
           b.setAttribute('aria-expanded', String(open));
         });
       }
-      /* Pages without the quiz modal get a real destination instead of a
+      /* Pages without any quiz modal get a real destination instead of a
          dead button. Runs alongside the vertical scripts' own handler —
-         when #quiz--modal exists this does nothing. */
+         when #quiz--modal (legacy div) or #quizModal (shared QuizModal.astro
+         dialog) exists, one of those owns this click instead. */
       var cta = document.getElementById('start-assessment-header');
       if (cta) {
         cta.addEventListener('click', function () {
-          if (!document.getElementById('quiz--modal')) {
+          if (!document.getElementById('quiz--modal') && !document.getElementById('quizModal')) {
             var target = window.location.pathname.startsWith('/preview') ? '/preview/assessment-quiz' : '/assessment-quiz';
             window.location.href = target;
           }

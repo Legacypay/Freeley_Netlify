@@ -1147,76 +1147,82 @@ function setupCheckout() {
 }
 
 // ============================================================
-// OPTION CLICK HANDLERS
-// ============================================================
-
-document.querySelectorAll('.option--item').forEach(item => {
-  item.addEventListener('click', function () {
-    const parentOptions = this.closest('.options');
-    if (!parentOptions) return;
-
-    const isMultiSelect = parentOptions.dataset.multiSelect === 'true';
-
-    if (isMultiSelect) {
-      this.classList.toggle('active');
-      const selected = parentOptions.querySelectorAll('.option--item.active');
-      const errorMsg = parentOptions.closest('.step-body')?.querySelector('.error-message');
-      if (selected.length > 0 && errorMsg) {
-        errorMsg.classList.remove('show');
-      }
-    } else {
-      parentOptions.querySelectorAll('.option--item').forEach(opt => {
-        opt.classList.remove('active');
-      });
-      this.classList.add('active');
-      const errorMsg = parentOptions.closest('.step-body')?.querySelector('.error-message');
-      if (errorMsg) errorMsg.classList.remove('show');
-    }
-  });
-});
-
-// ============================================================
-// INPUT VALIDATION
-// ============================================================
-
-document.getElementById('heightFeet')?.addEventListener('input', function () {
-  this.classList.remove('validation-error');
-  document.getElementById('heightError')?.classList.remove('show');
-});
-
-document.getElementById('heightInches')?.addEventListener('input', function () {
-  this.classList.remove('validation-error');
-  document.getElementById('heightError')?.classList.remove('show');
-});
-
-document.getElementById('stateSelect')?.addEventListener('change', function () {
-  this.style.borderColor = '';
-  document.getElementById('stateError')?.classList.remove('show');
-});
-
-document.querySelectorAll('.text--input input').forEach(input => {
-  input.addEventListener('keydown', function (e) {
-    if (e.key === 'Enter') {
-      const step = this.closest('.quiz-step');
-      if (step) {
-        const nextBtn = step.querySelector('.quiz-btn-primary');
-        if (nextBtn) nextBtn.click();
-      }
-    }
-  });
-  input.addEventListener('input', function () {
-    this.classList.remove('validation-error');
-    const errorMsgId = this.id + 'Error';
-    const errorMsg = document.getElementById(errorMsgId);
-    if (errorMsg) errorMsg.classList.remove('show');
-  });
-});
-
-// ============================================================
 // INITIALIZATION
 // ============================================================
+// Collapsed into one callable function instead of top-level-parse-time code
+// + a DOMContentLoaded listener: QuizModal.astro injects this quiz's markup
+// into an already-loaded parent page (no iframe, so it can auto-size to
+// content), and on that page DOMContentLoaded already fired long ago — a
+// listener would simply never run. Exposing initFreeleyQuiz() lets the modal
+// call it directly, on first load AND on every reopen (the modal reuses this
+// same script across opens instead of re-adding the <script> tag each time,
+// since PRODUCTS/selectedProducts etc. below are top-level const/let — they'd
+// throw "already declared" if the script parsed twice in one page).
+function initFreeleyQuiz() {
+  // Explicit reset: a fresh iframe used to guarantee clean state on every
+  // open. Now the script instance persists across reopens, so anything that
+  // isn't naturally re-derived from the DOM/sessionStorage must be reset here.
+  selectedProducts = [];
+  isTransitioning = false;
 
-document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('.option--item').forEach(item => {
+    item.addEventListener('click', function () {
+      const parentOptions = this.closest('.options');
+      if (!parentOptions) return;
+
+      const isMultiSelect = parentOptions.dataset.multiSelect === 'true';
+
+      if (isMultiSelect) {
+        this.classList.toggle('active');
+        const selected = parentOptions.querySelectorAll('.option--item.active');
+        const errorMsg = parentOptions.closest('.step-body')?.querySelector('.error-message');
+        if (selected.length > 0 && errorMsg) {
+          errorMsg.classList.remove('show');
+        }
+      } else {
+        parentOptions.querySelectorAll('.option--item').forEach(opt => {
+          opt.classList.remove('active');
+        });
+        this.classList.add('active');
+        const errorMsg = parentOptions.closest('.step-body')?.querySelector('.error-message');
+        if (errorMsg) errorMsg.classList.remove('show');
+      }
+    });
+  });
+
+  document.getElementById('heightFeet')?.addEventListener('input', function () {
+    this.classList.remove('validation-error');
+    document.getElementById('heightError')?.classList.remove('show');
+  });
+
+  document.getElementById('heightInches')?.addEventListener('input', function () {
+    this.classList.remove('validation-error');
+    document.getElementById('heightError')?.classList.remove('show');
+  });
+
+  document.getElementById('stateSelect')?.addEventListener('change', function () {
+    this.style.borderColor = '';
+    document.getElementById('stateError')?.classList.remove('show');
+  });
+
+  document.querySelectorAll('.text--input input').forEach(input => {
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        const step = this.closest('.quiz-step');
+        if (step) {
+          const nextBtn = step.querySelector('.quiz-btn-primary');
+          if (nextBtn) nextBtn.click();
+        }
+      }
+    });
+    input.addEventListener('input', function () {
+      this.classList.remove('validation-error');
+      const errorMsgId = this.id + 'Error';
+      const errorMsg = document.getElementById(errorMsgId);
+      if (errorMsg) errorMsg.classList.remove('show');
+    });
+  });
+
   document.querySelectorAll('.quiz-step').forEach(step => {
     step.classList.remove('active', 'slide-out');
   });
@@ -1246,4 +1252,12 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     } catch (e) { }
   }
-});
+}
+
+window.initFreeleyQuiz = initFreeleyQuiz;
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initFreeleyQuiz);
+} else {
+  initFreeleyQuiz();
+}

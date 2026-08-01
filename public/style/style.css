@@ -3124,7 +3124,9 @@ section.cta--inner__pages::after {
  * *--------------------------*/
 
 .footer {
-    background-color: var(--secondary-color);
+    /* Migrated to the Impeccable palette (2026-07-23) so this matches
+       /prototype's .foot instead of the pre-refresh --secondary-color green. */
+    background-color: var(--green-deep);
     color: #e8e8e8;
     padding: 60px 40px 30px;
     font-size: 14px;
@@ -3138,7 +3140,7 @@ section.cta--inner__pages::after {
 /* The pre-footer strip uses white text and expects the footer's dark
    green behind it; its bare .container-fluid wrapper has no background. */
 .container-fluid:has(> .footer--header) {
-    background-color: var(--secondary-color);
+    background-color: var(--green-deep);
     padding: 48px 40px 0;
 }
 

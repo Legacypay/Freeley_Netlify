@@ -31,10 +31,32 @@
     /* 760, not 940: the quiz page lays out to about 710px, so a wider dialog just
        added white gutters either side of it. */
     width: min(760px, calc(100vw - 28px));
+    /* Without this cap the dialog grows to the iframe's full height, the
+       browser centers the oversized box on the page, and it overflows both
+       top and bottom of the viewport — dragging the close button (anchored
+       to the dialog's own top edge) off-screen above the fold. Capping here
+       and letting .qm__frame scroll internally keeps the whole dialog,
+       close button included, inside the visible viewport at all times. */
+    max-height: calc(100vh - 32px);
+    /* Restores the UA default centering technique (dialog:modal { inset:0;
+       margin:auto }): pages that load Tailwind (src/styles/tailwind.css,
+       via Layout.astro) get its Preflight reset — `*, ::backdrop { margin:
+       0 }` — which zeroes this out. Author styles always beat UA styles
+       regardless of specificity, so without restating it here the dialog
+       pins to the top-left instead of centering. /prototype and /compare
+       don't load Layout.astro/Tailwind, so they never hit this — only the
+       pages that do (weight-loss, hair-loss, etc.) showed it. */
+    margin: auto;
     padding: 0; border: 0; border-radius: 22px; overflow: hidden;
     background: #fff; color: inherit;
     box-shadow: 0 30px 80px rgba(0, 0, 0, .32);
   }
+  /* display must stay scoped to [open]: an unconditional `display: flex` on
+     .qm would override the UA default `dialog:not([open]) { display: none }`
+     (author styles always win over UA styles) — the closed dialog would then
+     render in normal flow at the end of <body>, i.e. sitting visibly right
+     after the footer instead of staying hidden until showModal(). */
+  .qm[open] { display: flex; flex-direction: column; }
   .qm::backdrop { background: rgba(18, 60, 44, .55); }
   .qm[open] { animation: qmIn .28s cubic-bezier(.22, .61, .36, 1); }
   @keyframes qmIn { from { opacity: 0; transform: translateY(12px) scale(.98); } to { opacity: 1; transform: none; } }
@@ -49,15 +71,19 @@
   .qm__close:hover { background: #fff; border-color: rgba(0, 0, 0, .28); }
   .qm__close:focus-visible { outline: 2px solid var(--focus, #0f6b45); outline-offset: 2px; }
 
-  .qm__frame { display: block; min-height: 320px; }
-  .qm__frame iframe {
-    display: block; width: 100%; border: 0;
-    /* The quiz's first step is ~810px tall; at 660 the Start button opened below
-       the fold of the frame and looked like the modal had cut it off. */
-    height: min(780px, calc(100vh - 56px));
-    opacity: 0; transition: opacity .3s ease;
-  }
-  .qm__frame iframe.is-ready { opacity: 1; }
+  /* No fixed height here on purpose: the quiz used to load in an <iframe>,
+     an isolated document whose content height the parent can't see — hence
+     the old hardcoded height guess. It's injected directly into this DOM
+     now (see the script below), so it gets real, auto-sizing layout height;
+     .qm's own max-height + this overflow-y:auto are what cap it. */
+  .qm__frame { flex: 1 1 auto; overflow-y: auto; min-height: 320px; }
+  /* .quiz-popup (public/style/quizstyle.css) is authored for the standalone
+     /assessment-quiz page: max-width:750px + margin:0 auto centers it in an
+     otherwise-unconstrained <body>. Cloned into this ~760px-wide dialog
+     (background #fff) that gap becomes a visible white seam against the
+     quiz's own cream hero background — invisible on the standalone page,
+     obvious here. Fill the frame exactly instead of centering with a gap. */
+  .qm__frame .quiz-popup { max-width: none; margin: 0; }
 
   .qm__loader {
     position: absolute; top: 50%; left: 50%; width: 34px; height: 34px;
@@ -81,31 +107,71 @@
 
     var frame = dlg.querySelector('.qm__frame');
     var loader = dlg.querySelector('.qm__loader');
-    var iframe = null;
+    // Fetched and parsed once, then cloned into the frame on every open —
+    // the markup is static, no need to refetch it each time. Replaces the
+    // old <iframe src="/assessment-quiz?t="+Date.now()>: that forced a fresh
+    // iframe realm (and a network round-trip) on every open purely to reset
+    // state, which asw.js's initFreeleyQuiz() now does explicitly instead.
+    var quizTemplate = null;
+
+    function addStylesheetOnce(href) {
+      if (document.querySelector('link[href="' + href + '"]')) return;
+      var link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = href;
+      document.head.appendChild(link);
+    }
 
     function destroy() {
-      if (iframe) {
-        // Blank the document before detaching: the quiz keeps state, and the
-        // original modal reset it the same way so a reopen starts clean.
-        try { iframe.src = 'about:blank'; } catch (e) {}
-        iframe.remove();
-        iframe = null;
-      }
+      // Only the cloned markup is removed — never the asw.js <script> tag or
+      // the stylesheets. asw.js declares top-level const/let (PRODUCTS,
+      // selectedProducts, ...); a classic script parsed twice in the same
+      // document throws "Identifier already declared", so it's loaded once
+      // per page and its exposed window.initFreeleyQuiz() is what re-runs
+      // setup on every subsequent open instead.
       frame.replaceChildren();
+    }
+
+    function runQuiz() {
+      var clone = quizTemplate.cloneNode(true);
+      frame.appendChild(clone);
+      if (window.initFreeleyQuiz) {
+        window.initFreeleyQuiz();
+      } else {
+        var script = document.createElement('script');
+        script.src = '/quiz-scripts/asw.js';
+        script.addEventListener('load', function () { window.initFreeleyQuiz(); });
+        document.body.appendChild(script);
+      }
+      loader.hidden = true;
     }
 
     function open() {
       destroy();
       loader.hidden = false;
-      iframe = document.createElement('iframe');
-      iframe.title = 'Freeley free assessment';
-      iframe.setAttribute('loading', 'eager');
-      iframe.addEventListener('load', function () {
-        loader.hidden = true;
-        iframe.classList.add('is-ready');
-      });
-      iframe.src = '/assessment-quiz?t=' + Date.now();
-      frame.appendChild(iframe);
+      addStylesheetOnce('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');
+      addStylesheetOnce('/style/quizstyle.css');
+
+      if (quizTemplate) {
+        runQuiz();
+      } else {
+        fetch('/assessment-quiz')
+          .then(function (res) { return res.text(); })
+          .then(function (html) {
+            // DOMParser-created documents have base URI about:blank, not this
+            // page's origin — root-relative src="/assets/..." attributes
+            // (the badge images, product placeholder) fail to resolve
+            // against it and ship as broken images. Rewrite them to
+            // absolute URLs against the real origin before cloning.
+            var doc = new DOMParser().parseFromString(html, 'text/html');
+            quizTemplate = doc.querySelector('.quiz-popup');
+            quizTemplate.querySelectorAll('img[src^="/"]').forEach(function (img) {
+              img.setAttribute('src', location.origin + img.getAttribute('src'));
+            });
+            runQuiz();
+          });
+      }
+
       dlg.showModal();
       document.documentElement.classList.add('qm-open');
     }
@@ -127,5 +193,13 @@
         open();
       });
     });
+
+    // The shared header CTA (src/components/Header.astro) stays a <button>
+    // rather than an <a> — it's shared with pages that still run their own
+    // legacy #quiz--modal (e.g. index.astro) and turning it into a real link
+    // would fire that page's un-guarded click handler AND a real navigation.
+    // Wire it here instead, only on pages that render this component.
+    var headerCta = document.getElementById('start-assessment-header');
+    if (headerCta) headerCta.addEventListener('click', function () { open(); });
   })();
 </script>
