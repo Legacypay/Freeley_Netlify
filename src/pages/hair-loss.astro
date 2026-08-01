@@ -255,6 +255,9 @@ const faqs = [
       .wl-ba__box--after .wl-ba__label { background: var(--green); color: #fff; }
       .wl-ba__quote { font-family: var(--font-serif); font-size: 1.05rem; font-style: italic; margin: 16px 0 6px; }
       .wl-ba__note { font-size: 11.5px; color: var(--muted); margin: 0; line-height: 1.4; }
+      .wl-ba__grid { display: flex; gap: 20px; padding-top: 6px; padding-bottom: 16px; }
+      .wl-ba__grid .wl-ba__card { flex: 0 0 320px; }
+      @media (min-width: 700px) { .wl-ba__grid .wl-ba__card { flex-basis: 400px; } }
 
       /* ── Product showcase (hl-script.js-driven) ─────────────── */
       .wl-prod { display: grid; gap: 40px; grid-template-columns: 1fr; align-items: start; }
@@ -299,7 +302,7 @@ const faqs = [
 
       /* ── Journey ────────────────────────────────────────────── */
       .wl-journey { position: relative; overflow: hidden; border-radius: 22px; background: var(--green); }
-      .wl-journey__bg { position: absolute; inset: 0; background-image: url('/assets/hl/Here_s_What_Happens_Next.png'); background-size: cover; background-position: center; }
+      .wl-journey__bg { position: absolute; inset: 0; background-image: url('/assets/hl/Here_s_What_Happens_Next.jpg'); background-size: cover; background-position: center; }
       /* Same angled scrim as /prototype's journey: the left, where all the
          type lives, carries the most cover. */
       .wl-journey__scrim {
@@ -584,27 +587,24 @@ const faqs = [
         </div>
       </div>
       <div class="wl-wrap">
-        <!-- .transformSwiper.swiper is initialised by hl-script.js -->
-        <div class="swiper transformSwiper wl-ba">
-          <div class="swiper-wrapper">
-            {[1, 2, 3, 4].map(() => (
-              <div class="swiper-slide">
-                <div class="wl-ba__card">
-                  <div class="wl-ba__pair">
-                    <div class="wl-ba__box">
-                      <span class="wl-ba__label">Before</span>
-                      <img src="/assets/hl/before.png" alt="Patient before treatment" loading="lazy" />
-                    </div>
-                    <div class="wl-ba__box wl-ba__box--after">
-                      <span class="wl-ba__label">After</span>
-                      <img src="/assets/hl/after.png" alt="Patient after treatment" loading="lazy" />
-                    </div>
-                  </div>
-                  <p class="wl-ba__quote">94% of patients see results.</p>
-                  <p class="wl-ba__note">Individual results vary. Photos representative of typical outcomes.</p>
-                </div>
+        <!-- Static single card: only one real before/after pair exists.
+             Do not loop this to fake variety — before/after photos are
+             presented as real patient results, so a fabricated or repeated
+             set is a deceptive-advertising risk, not a design choice. -->
+        <div class="wl-ba__grid">
+          <div class="wl-ba__card">
+            <div class="wl-ba__pair">
+              <div class="wl-ba__box">
+                <span class="wl-ba__label">Before</span>
+                <img src="/assets/hl/before.png" alt="Patient before treatment" loading="lazy" />
               </div>
-            ))}
+              <div class="wl-ba__box wl-ba__box--after">
+                <span class="wl-ba__label">After</span>
+                <img src="/assets/hl/after.png" alt="Patient after treatment" loading="lazy" />
+              </div>
+            </div>
+            <p class="wl-ba__quote">94% of patients see results.</p>
+            <p class="wl-ba__note">Individual results vary. Photos representative of typical outcomes.</p>
           </div>
         </div>
       </div>
@@ -772,7 +772,7 @@ const faqs = [
           <a href="/partner-pharmacies" class="wl-btn-ghost" style="margin-top:8px;">See our partner pharmacies <span class="wl-arw">→</span></a>
         </div>
         <div class="wl-why__img">
-          <img src="/assets/sw/WhyPatientsTrustFreeley.png" alt="LegitScript Certified seal" loading="lazy" />
+          <img src="/assets/hl/why-trust-freeley-lifestyle.jpg" alt="Freeley patient in a calm, everyday setting" loading="lazy" />
         </div>
       </div>
     </section>
