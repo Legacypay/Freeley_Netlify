@@ -24,6 +24,8 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import FinalCta from '../components/FinalCta.astro';
+import QuizModal from '../components/QuizModal.astro';
 
 const steps = [
   {
@@ -132,22 +134,6 @@ const safetyCards = [
   { img: '/assets/howItsWork/yourSafety2.png', alt: 'HIPAA-Compliant Infrastructure — your data is encrypted and never sold' },
   { img: '/assets/howItsWork/yourSafety3.png', alt: 'Adverse Event Monitoring — physicians are notified of any reported side effects' },
 ];
-
-// Decorative capsule drift behind the closing CTA — /prototype's final
-// section, same arrangement every rebuilt page uses.
-const ctaPills = [
-  { w: 218, h: 76, x: -46, edge: 'top', y: -26, rot: -28, c1: 'var(--cream)', c2: 'var(--brand)', dur: 11, dly: 0 },
-  { w: 172, h: 60, x: 128, edge: 'bottom', y: -30, rot: -24, c1: 'var(--gold)', c2: 'var(--green-deep)', dur: 13, dly: -2 },
-  { w: 98, h: 35, x: 46, edge: 'bottom', y: 34, rot: -26, c1: 'var(--cream)', c2: 'var(--gold)', dur: 12, dly: -5 },
-  { w: 124, h: 44, x: 236, edge: 'top', y: 30, rot: -31, c1: '#fff', c2: '#2c6b4c', dur: 14, dly: -3 },
-  { w: 56, h: 20, x: 96, edge: 'top', y: 8, rot: -28, c1: 'var(--brand)', c2: 'var(--cream)', dur: 10, dly: -6 },
-  { w: 86, h: 31, x: 180, edge: 'bottom', y: 60, rot: -27, c1: 'var(--gold)', c2: 'var(--cream)', dur: 15, dly: -8 },
-  { w: 74, h: 27, x: 344, edge: 'bottom', y: 16, rot: -28, dur: 12, dly: -7 },
-  { w: 64, h: 23, x: 300, edge: 'top', y: 4, rot: -25, c1: 'var(--cream)', c2: '#2c6b4c', dur: 13, dly: -4 },
-  { w: 148, h: 52, x: 392, edge: 'top', y: -18, rot: -29, c1: '#2c6b4c', c2: 'var(--cream)', dur: 16, dly: -9 },
-  { w: 112, h: 40, x: 470, edge: 'bottom', y: -14, rot: -26, dur: 14, dly: -11 },
-  { w: 130, h: 46, x: 556, edge: 'top', y: 20, rot: -28, dur: 17, dly: -13 },
-];
 ---
 
 <Layout title="How It Works | Freeley">
@@ -180,12 +166,29 @@ const ctaPills = [
       .wl-hiw-hero p { color: var(--muted); font-size: 16px; max-width: 56ch; margin: 0 auto 28px; }
 
       /* ── Scroll-storytelling timeline ───────────────────────── */
-      .wl-tl { position: relative; padding: 60px 0 10px; }
-      .wl-tl__line {
-        position: absolute; left: 50%; top: 0; bottom: 60px; width: 2px; transform: translateX(-50%); z-index: 1;
-        background: repeating-linear-gradient(to bottom, var(--brand) 0px, var(--brand) 16px, transparent 16px, transparent 38px);
+      /* Longhands, not a padding shorthand: this element also carries
+         .wl-wrap (class="wl-wrap wl-tl"), whose padding-left/right:28px a
+         shorthand here would silently zero out — the exact trap documented
+         elsewhere in this codebase — which is why the timeline text sat
+         flush against the screen edge on mobile. */
+      .wl-tl { position: relative; padding-top: 60px; padding-bottom: 10px; }
+      /* Connects the alternating left/right desktop rows down the center
+         column — only make sense once .wl-tl__row actually has side-by-side
+         columns. Below 900px the row is a single stacked column, so this
+         line ran straight down the middle of the text/image instead. */
+      .wl-tl__line { display: none; }
+      @media (min-width: 900px) {
+        .wl-tl__line {
+          display: block; position: absolute; left: 50%; top: 0; bottom: 60px; width: 2px; transform: translateX(-50%); z-index: 1;
+          background: repeating-linear-gradient(to bottom, var(--brand) 0px, var(--brand) 16px, transparent 16px, transparent 38px);
+        }
       }
-      .wl-tl__row { position: relative; z-index: 2; display: grid; grid-template-columns: 1fr; gap: 20px; margin-bottom: 48px; }
+      .wl-tl__row {
+        position: relative; z-index: 2; display: grid; grid-template-columns: 1fr; gap: 20px; margin-bottom: 48px;
+        opacity: 0; transform: translateY(28px); transition: opacity .5s ease, transform .5s ease;
+      }
+      .wl-tl__row.is-in { opacity: 1; transform: translateY(0); }
+      @media (prefers-reduced-motion: reduce) { .wl-tl__row { opacity: 1; transform: none; } }
       .wl-tl__row:last-child { margin-bottom: 0; }
       @media (min-width: 900px) {
         .wl-tl__row { grid-template-columns: 1fr 84px 1fr; align-items: center; gap: 0; margin-bottom: 88px; }
@@ -216,12 +219,45 @@ const ctaPills = [
       .wl-tl__img img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
       /* ── Platform features carousel ─────────────────────────── */
-      .wl-feat-swiper { padding-bottom: 46px; }
-      .wl-feat-swiper .swiper-slide { width: 280px; }
-      @media (min-width: 700px) { .wl-feat-swiper .swiper-slide { width: 320px; } }
-      .wl-feat__card { position: relative; border-radius: 20px; overflow: hidden; height: 380px; padding: 26px 24px; display: flex; flex-direction: column; justify-content: flex-end; }
-      .wl-feat__icon { position: absolute; inset: 0; background-repeat: no-repeat; }
-      .wl-feat__body { position: relative; z-index: 1; }
+      /* Bento: one featured card (tall, left) + the other 3 stacked (right).
+         Only 4 real items — a grid that shows all of them at once reads
+         better than a carousel/dots for a fixed, small set like this. */
+      .wl-feat-bento { display: grid; gap: 16px; grid-template-columns: 1fr; }
+      @media (min-width: 780px) {
+        .wl-feat-bento { grid-template-columns: 1.3fr 1fr; grid-template-rows: repeat(3, 1fr); }
+        .wl-feat__card--0 { grid-column: 1; grid-row: 1 / 4; }
+        .wl-feat__card--1 { grid-column: 2; grid-row: 1; }
+        .wl-feat__card--2 { grid-column: 2; grid-row: 2; }
+        .wl-feat__card--3 { grid-column: 2; grid-row: 3; }
+      }
+      .wl-feat__card {
+        position: relative; border-radius: 20px; overflow: hidden; min-height: 220px;
+        padding: 26px 24px; display: flex; flex-direction: column; justify-content: flex-end;
+        box-shadow: 0 1px 2px rgba(23, 34, 42, .05);
+        transition: transform .3s ease, box-shadow .3s ease;
+        opacity: 0; transform: translateY(22px);
+      }
+      .wl-feat__card.is-in { opacity: 1; transform: translateY(0); }
+      @media (prefers-reduced-motion: reduce) { .wl-feat__card { opacity: 1; transform: none; } }
+      .wl-feat__card:hover { transform: translateY(-6px); box-shadow: 0 16px 34px rgba(23, 34, 42, .14); }
+      .wl-feat__card.is-in:hover { transform: translateY(-6px); }
+      @media (min-width: 780px) { .wl-feat__card--0 { min-height: 380px; } }
+      .wl-feat__icon {
+        position: absolute; inset: 0; background-repeat: no-repeat;
+        transition: transform .3s ease;
+      }
+      .wl-feat__card:hover .wl-feat__icon { transform: scale(1.04); }
+      /* The 3 stacked (short, wide) cards give the icon art much less height
+         than the tall swiper cards it was originally sized for — full
+         opacity there put the text right on top of the artwork's shapes.
+         Fading it and adding a scrim behind the text keeps it legible
+         without having to re-tune every icon's position/size by hand. */
+      .wl-feat__card:not(.wl-feat__card--0) .wl-feat__icon { opacity: .55; }
+      .wl-feat__body {
+        position: relative; z-index: 1;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, .82) 35%);
+        margin: -20px -24px -26px; padding: 20px 24px 26px;
+      }
       .wl-feat__body h3 { font-family: var(--font-serif); font-weight: 600; font-size: 1.3rem; margin: 0 0 10px; color: var(--ink); line-height: 1.2; }
       .wl-feat__body p { font-family: var(--font-sans); font-size: 13.5px; color: rgba(23,34,42,.68); margin: 0; line-height: 1.55; }
       .wl-swiper-dots.swiper-pagination { position: static; margin-top: 4px; }
@@ -247,44 +283,6 @@ const ctaPills = [
       .wl-safety__card { border-radius: 20px; overflow: hidden; box-shadow: 0 20px 44px rgba(23,34,42,.14); }
       .wl-safety__card img { width: 100%; display: block; }
 
-      /* ── Closing band (same capsule treatment every rebuilt page uses) ── */
-      .wl-close { position: relative; background: var(--green); color: #fff; overflow: hidden; }
-      .wl-close__pills { --s: 1px; position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
-      .fpill {
-        position: absolute; border-radius: 999px;
-        width: calc(var(--w) * var(--s)); height: calc(var(--h) * var(--s));
-        right: calc(var(--x) * var(--s));
-        background-image: linear-gradient(90deg, var(--c1) 0 50%, var(--c2) 50% 100%);
-        box-shadow: 0 16px 32px rgba(0, 0, 0, .3);
-        transform: rotate(var(--rot));
-      }
-      .fpill--top { top: calc(var(--y) * var(--s)); }
-      .fpill--bottom { bottom: calc(var(--y) * var(--s)); }
-      .fpill::after { content: ''; position: absolute; inset: 17% 13% auto; height: 21%; border-radius: 999px; background: rgba(255, 255, 255, .26); }
-      .fpill--ghost { background-image: none; border: 1.5px solid rgba(255, 255, 255, .3); box-shadow: none; }
-      .fpill--ghost::after { display: none; }
-      @media (prefers-reduced-motion: no-preference) {
-        .fpill { animation: fpillDrift var(--dur) ease-in-out infinite; animation-delay: var(--dly); }
-        .fpill:nth-child(even) { animation-direction: reverse; }
-      }
-      @keyframes fpillDrift {
-        0%, 100% { transform: rotate(var(--rot)) translate(0, 0); }
-        50% { transform: rotate(var(--rot)) translate(-9px, -13px); }
-      }
-      @media (max-width: 860px) {
-        .wl-close__pills { --s: .62px; }
-        .fpill:nth-child(n+4) { display: none; }
-      }
-      .wl-close::after { content: ''; position: absolute; inset: 0; background: linear-gradient(100deg, var(--green) 0%, var(--green) 38%, rgba(18,60,44,.55) 70%, rgba(18,60,44,.25) 100%); }
-      .wl-close__grid { position: relative; z-index: 1; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 26px; padding-top: 56px; padding-bottom: 56px; }
-      .wl-close h2 { font-family: var(--font-serif); font-size: clamp(1.9rem, 3.2vw, 2.5rem); margin: 0 0 10px; color: #fff; line-height: 1.12; }
-      .wl-close h2 em { font-style: italic; color: #cdb98f; }
-      .wl-close p { color: rgba(255,255,255,.65); font-size: 14.5px; margin: 0; max-width: 42ch; }
-      .wl-close__feats { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 18px; }
-      .wl-close__feats span { display: flex; align-items: center; gap: 8px; font-size: 13px; color: rgba(255,255,255,.85); }
-
-      .processing-loader { display: none; width: 34px; height: 34px; margin: 60px auto; border: 2.5px solid rgba(15, 107, 69, .18); border-top-color: var(--brand); border-radius: 50%; animation: wlSpin .8s linear infinite; }
-      @keyframes wlSpin { to { transform: rotate(360deg); } }
     </style>
   </Fragment>
 
@@ -297,7 +295,7 @@ const ctaPills = [
         <span class="wl-eyebrow">How It Works</span>
         <h1 class="wl-serif">From your couch<br />to your <em>doorstep</em></h1>
         <p>The entire Freeley experience — from your first visit to your first refill — is designed to be effortless, fast, and fully remote.</p>
-        <button type="button" class="wl-btn js-start-quiz">See if You Qualify <span class="wl-arw">→</span></button>
+        <a href="/assessment-quiz" class="wl-btn js-start-quiz">See if You Qualify <span class="wl-arw">→</span></a>
       </div>
     </section>
 
@@ -331,23 +329,16 @@ const ctaPills = [
         </div>
       </div>
       <div class="wl-wrap">
-        <div class="swiper wl-feat-swiper">
-          <div class="swiper-wrapper">
-            {/* Rendered twice: with only 4 real cards, Swiper's loop needs
-                more slides than fit twice across a wide viewport to clone
-                from cleanly. Pagination dots are skipped for this carousel
-                (autoplay + drag is enough) so the duplication doesn't show
-                up as a confusing doubled dot count. */}
-            {[...feats, ...feats].map((f) => (
-              <div class="swiper-slide wl-feat__card" style={`background:${f.gradient}`}>
-                <div class="wl-feat__icon" style={`background-image:url('${f.icon}'); background-size:${f.iconSize}; background-position:${f.iconPos}`}></div>
-                <div class="wl-feat__body">
-                  <h3>{f.title}</h3>
-                  <p>{f.desc}</p>
-                </div>
+        <div class="wl-feat-bento">
+          {feats.map((f, i) => (
+            <div class={`wl-feat__card wl-feat__card--${i}`} style={`background:${f.gradient}`}>
+              <div class="wl-feat__icon" style={`background-image:url('${f.icon}'); background-size:${f.iconSize}; background-position:${f.iconPos}`}></div>
+              <div class="wl-feat__body">
+                <h3>{f.title}</h3>
+                <p>{f.desc}</p>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>
@@ -398,44 +389,37 @@ const ctaPills = [
     </section>
 
     <!-- ═══ Closing band ═══ -->
-    <section class="wl-close">
-      <div class="wl-close__pills" aria-hidden="true">
-        {ctaPills.map((p) => (
-          <span
-            class:list={['fpill', `fpill--${p.edge}`, !p.c1 && 'fpill--ghost']}
-            style={`--w:${p.w};--h:${p.h};--x:${p.x};--y:${p.y};--rot:${p.rot}deg;--dur:${p.dur}s;--dly:${p.dly}s${p.c1 ? `;--c1:${p.c1};--c2:${p.c2}` : ''}`}
-          ></span>
-        ))}
-      </div>
-      <div class="wl-wrap wl-close__grid">
-        <div>
-          <h2 class="wl-serif">Feel better,<br /><em>starting today.</em></h2>
-          <p>Personalized care for every part of you, from weight to skin, sleep to sexual health.</p>
-          <div class="wl-close__feats">
-            <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> No credit card required</span>
-            <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Takes 2 minutes</span>
-            <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Cancel anytime</span>
-          </div>
-        </div>
-        <button type="button" class="wl-btn wl-btn--light js-start-quiz">
-          Start Your Assessment <span class="wl-arw">→</span>
-        </button>
-      </div>
-    </section>
-
-    <!-- Quiz modal — opened by every .js-start-quiz trigger above -->
-    <div id="quiz--modal" class="modal">
-      <div class="modal-content">
-        <span class="close" id="close--quiz"><img src="/assets/icons/close.png" alt="Close" /></span>
-        <div class="processing-loader" id="loader"></div>
-        <div id="quiz--container"></div>
-      </div>
-    </div>
+    <FinalCta features={['No credit card required', 'Takes 2 minutes', 'Cancel anytime']}>
+      Feel better,<br /><em>starting today.</em>
+      <Fragment slot="subheading">Personalized care for every part of you, from weight to skin, sleep to sexual health.</Fragment>
+      <a href="/assessment-quiz" class="wl-btn wl-btn--light js-start-quiz" slot="cta">
+        Start Your Assessment <span class="wl-arw">→</span>
+      </a>
+    </FinalCta>
 
     <Footer />
+    <QuizModal />
   </main>
 
   <script is:inline>
+    /* Timeline rows themselves fade/rise in as they enter the viewport
+       scrolling down, and fade back out if you scroll back up past them —
+       same toggle-on-isIntersecting approach as the number dots below,
+       just applied to the whole row so it reads on mobile too (the number
+       circles are desktop-only). */
+    (function () {
+      var rows = document.querySelectorAll('.wl-tl__row');
+      if (!rows.length) return;
+      if (!('IntersectionObserver' in window)) {
+        rows.forEach(function (r) { r.classList.add('is-in'); });
+        return;
+      }
+      var obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { e.target.classList.toggle('is-in', e.isIntersecting); });
+      }, { rootMargin: '0px 0px -10% 0px', threshold: 0 });
+      rows.forEach(function (r) { obs.observe(r); });
+    })();
+
     /* Lights up each timeline number once its row crosses ~80% down the
        viewport, and un-lights it if you scroll back up past that line —
        same "how far have I scrolled" feedback the original page used,
@@ -448,17 +432,34 @@ const ctaPills = [
       }, { rootMargin: '0px 0px -20% 0px', threshold: 0 });
       nums.forEach(function (n) { obs.observe(n); });
     })();
+
+    // Bento cards fade/rise into place once, staggered left-to-right/top-to-
+    // bottom by their existing --0..--3 order — stays observed rather than
+    // toggling off so a user who scrolls back up and back down still sees it.
+    (function () {
+      var cards = document.querySelectorAll('.wl-feat__card');
+      if (!cards.length) return;
+      if (!('IntersectionObserver' in window)) {
+        cards.forEach(function (c) { c.classList.add('is-in'); });
+        return;
+      }
+      var obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) e.target.classList.add('is-in');
+        });
+      }, { rootMargin: '0px 0px -10% 0px', threshold: 0.15 });
+      cards.forEach(function (c, i) {
+        c.style.transitionDelay = (i * 90) + 'ms';
+        obs.observe(c);
+      });
+    })();
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" is:inline></script>
   <script is:inline>
-    new Swiper('.wl-feat-swiper', {
-      slidesPerView: 'auto',
-      spaceBetween: 20,
-      loop: true,
-      autoplay: { delay: 4200, pauseOnMouseEnter: true, disableOnInteraction: false },
-      grabCursor: true,
-    });
+    // "The Platform" used to be a .wl-feat-swiper carousel here — only 4 real
+    // cards, now a static bento grid (.wl-feat-bento) instead; still on the
+    // page (see markup above), just no Swiper instance for it anymore.
     new Swiper('.wl-safety-swiper', {
       slidesPerView: 'auto',
       spaceBetween: 20,
@@ -467,69 +468,6 @@ const ctaPills = [
       pagination: { el: '.wl-safety-swiper .swiper-pagination', clickable: true },
       grabCursor: true,
     });
-  </script>
-
-  <script is:inline>
-    (function () {
-      var modal = document.getElementById('quiz--modal');
-      var loader = document.getElementById('loader');
-      var quizContainer = document.getElementById('quiz--container');
-      var quizIframe = null;
-
-      document.querySelectorAll('#start-assessment-header, .js-start-quiz').forEach(function (button) {
-        button.addEventListener('click', function () {
-          if (quizIframe) { quizIframe.remove(); quizIframe = null; }
-
-          modal.style.display = 'block';
-          loader.style.display = 'block';
-          quizContainer.innerHTML = '';
-
-          quizIframe = document.createElement('iframe');
-          quizIframe.style.width = '100%';
-          // Same frame metrics as /prototype's QuizModal, shared with every
-          // rebuilt page: quiz's first step is ~810px tall.
-          quizIframe.style.height = 'min(780px, calc(100vh - 56px))';
-          quizIframe.style.border = 'none';
-          quizIframe.style.display = 'none';
-          quizIframe.style.background = '#fff';
-          quizIframe.src = '/assessment-quiz?t=' + Date.now();
-
-          quizIframe.onload = function () {
-            loader.style.display = 'none';
-            quizIframe.style.display = 'block';
-          };
-          quizIframe.onerror = function () {
-            loader.style.display = 'none';
-            quizContainer.innerHTML = '<p>Unable to load quiz.</p>';
-          };
-
-          quizContainer.appendChild(quizIframe);
-        });
-      });
-
-      function closeQuiz() {
-        modal.style.display = 'none';
-        if (quizIframe) {
-          try {
-            quizIframe.src = 'about:blank';
-            quizIframe.contentWindow.document.write('');
-            quizIframe.contentWindow.document.clear();
-          } catch (e) {}
-          quizIframe.remove();
-          quizIframe = null;
-        }
-        quizContainer.innerHTML = '';
-        loader.style.display = 'none';
-      }
-
-      document.getElementById('close--quiz').addEventListener('click', closeQuiz);
-      document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && modal.style.display === 'block') closeQuiz();
-      });
-      window.addEventListener('click', function (e) {
-        if (e.target === modal) closeQuiz();
-      });
-    })();
   </script>
 
   <!--Start of Tawk.to Script-->
