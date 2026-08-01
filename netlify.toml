@@ -129,25 +129,18 @@
   to = "/waitlist"
   status = 200
 
-# Client preview of the redesigned landing (src/pages/prototype.astro) and inner pages.
-# /preview is the shareable mockup URL; /preview/* allows browsing any page under /preview/[route].
+# Client preview of the redesigned landing. /prototype was promoted to be
+# index.astro itself (2026-07-31), so /preview is now just a shareable, noindex
+# alias for the live homepage. /preview/* allows browsing any page under
+# /preview/[route].
 [[redirects]]
   from = "/preview"
-  to = "/prototype"
+  to = "/"
   status = 200
 
 [[redirects]]
   from = "/preview/*"
   to = "/:splat"
-  status = 200
-
-
-# The route /preview rewrites to. Excepted as well because /preview exists only
-# as the rule above — it 404s on a local dev server, so in-page links (the logo,
-# the back link on /compare) point at /prototype to work in both places.
-[[redirects]]
-  from = "/prototype"
-  to = "/prototype"
   status = 200
 
 # The full comparison table, linked from the capsule on /preview. Without this
@@ -306,7 +299,3 @@
   [headers.values]
     X-Robots-Tag = "noindex, nofollow"
 
-[[headers]]
-  for = "/prototype"
-  [headers.values]
-    X-Robots-Tag = "noindex, nofollow"

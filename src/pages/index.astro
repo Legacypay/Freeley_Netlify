@@ -987,10 +987,7 @@ const press = [
     <!-- Header -->
     <header>
       <div class="wrap nav">
-        {/* /prototype, not /preview: /preview exists only as a Netlify redirect,
-            so it 404s on the local dev server. Both are excepted from the
-            waitlist catch-all, so this works in either place. */}
-        <a href="/prototype" class="nav__logo"><Image src={logo} alt="Freeley" /></a>
+        <a href="/" class="nav__logo"><Image src={logo} alt="Freeley" /></a>
         <nav class="nav__links">
           {nav.map((item) => <a href={item.href}>{item.label}</a>)}
         </nav>
