@@ -301,9 +301,8 @@ const faqs = [
       .wl-mech__body p { font-size: 13.5px; color: var(--muted); margin: 0; }
 
       /* ── Before / after ─────────────────────────────────────── */
-      .wl-ba.swiper { overflow: hidden; padding-top: 6px; padding-bottom: 16px; }
-      .wl-ba .swiper-slide { width: 320px; height: auto; }
-      @media (min-width: 700px) { .wl-ba .swiper-slide { width: 400px; } }
+      .wl-ba__grid { display: grid; gap: 20px; grid-template-columns: 1fr; padding-top: 6px; padding-bottom: 16px; }
+      @media (min-width: 700px) { .wl-ba__grid { grid-template-columns: repeat(3, 1fr); } }
       .wl-ba__card { background: var(--card); border-radius: 18px; padding: 16px; height: 100%; }
       .wl-ba__pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
       .wl-ba__box { position: relative; border-radius: 12px; overflow: hidden; background: #fff; }
@@ -730,28 +729,23 @@ const faqs = [
         </div>
       </div>
       <div class="wl-wrap">
-        <!-- .transformSwiper.swiper is initialised by wl-script.js -->
-        <div class="swiper transformSwiper wl-ba">
-          <div class="swiper-wrapper">
-            {[1, 2, 3].map((_, i) => (
-              <div class="swiper-slide">
-                <div class="wl-ba__card">
-                  <div class="wl-ba__pair">
-                    <div class="wl-ba__box">
-                      <span class="wl-ba__label">Before</span>
-                      <img src={`/assets/wl/before-${i + 1}.png`} alt="Patient before treatment" loading="lazy" />
-                    </div>
-                    <div class="wl-ba__box wl-ba__box--after">
-                      <span class="wl-ba__label">After</span>
-                      <img src={`/assets/wl/after-${i + 1}.png`} alt="Patient after twelve weeks of treatment" loading="lazy" />
-                    </div>
-                  </div>
-                  <p class="wl-ba__quote">Real patient progress over 12 weeks.</p>
-                  <p class="wl-ba__note">Individual results vary. Photos representative of typical outcomes.</p>
+        <div class="wl-ba__grid">
+          {[1, 2, 3].map((_, i) => (
+            <div class="wl-ba__card">
+              <div class="wl-ba__pair">
+                <div class="wl-ba__box">
+                  <span class="wl-ba__label">Before</span>
+                  <img src={`/assets/wl/before-${i + 1}.png`} alt="Patient before treatment" loading="lazy" />
+                </div>
+                <div class="wl-ba__box wl-ba__box--after">
+                  <span class="wl-ba__label">After</span>
+                  <img src={`/assets/wl/after-${i + 1}.png`} alt="Patient after twelve weeks of treatment" loading="lazy" />
                 </div>
               </div>
-            ))}
-          </div>
+              <p class="wl-ba__quote">Real patient progress over 12 weeks.</p>
+              <p class="wl-ba__note">Individual results vary. Photos representative of typical outcomes.</p>
+            </div>
+          ))}
         </div>
       </div>
     </section>
