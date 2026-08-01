@@ -1,2300 +1,1411 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import { Image } from 'astro:assets';
-import image18 from '../assets/products-imgs/image-18.png';
-import image19 from '../assets/products-imgs/image-19.png';
-import image20 from '../assets/products-imgs/image-20.png';
-import image21 from '../assets/products-imgs/image-21.png';
-import beforeImg from '../assets/before-after/before.png';
-import afterImg from '../assets/before-after/after.png';
+// PROTOTYPE — new clean landing design (client mockup, 2026-07-21).
+// Standalone route: does NOT touch the live home or the waitlist gate.
+// View locally with `npm run dev` → http://localhost:4321/prototype
+// Reuses the Figma v5 export in public/assets/brand/_figma_v5/ + src badges.
+// ponytail: hard-coded content arrays — it's a prototype, wire to CMS/data later.
+import { Image, Font } from 'astro:assets';
+import { heroRows } from '../data/compare';
+import QuizModal from '../components/QuizModal.astro';
+import FinalCta from '../components/FinalCta.astro';
+import logo from '../assets/brand/freeley_logo_transparent_green.webp';
+import logoWhite from '../assets/brand/freeley_logo_transparent_white.webp';
+// Hero trust badges — exactly the set used on the original landing (index.astro):
+// Trustpilot / LegitScript / Made in USA, from src/assets/badges/.
 import trustPilot from '../assets/badges/trust_pilot.png';
 import legitScript from '../assets/badges/49921676.png';
+import hipaaBadge from '../assets/badges/hipaa_badge.png';
 import usaBadge from '../assets/badges/usa_badge.png';
-import closeIcon from '../assets/icons/close.png';
-import arrowCircleRight from '../assets/icons/arrow-circle-right.png';
-import heroMob from '../assets/home/hero-mob.png';
+// Image sources live in src/assets/ so the Image component can optimize them at
+// build time (static build → sharp runs on Netlify's builder, nothing at runtime).
+import heroCouple from '../assets/figma-v5/hero-couple-green.jpg';
+import vialWeightLoss from '../assets/figma-v5/vial-weight-loss.png';
+import vialSexualWellness from '../assets/figma-v5/vial-sexual-wellness.png';
+import vialHairLoss from '../assets/figma-v5/vial-hair-loss.png';
+import vialLongevity from '../assets/figma-v5/vial-longevity.png';
+import pressForbes from '../assets/figma-v5/press-forbes.png';
+import pressBloomberg from '../assets/figma-v5/press-bloomberg.png';
+import pressNyt from '../assets/figma-v5/press-nyt.png';
+import pressTechCrunch from '../assets/figma-v5/press-techcrunch.png';
+
+// Every link points at a route that really exists — `href="#"` is a dead link
+// for keyboard and screen-reader users, and the site pages are already built.
+const ASSESSMENT = '/assessment-quiz';
+
+const nav = [
+  { label: 'GLP-1 Weight Loss', href: '/weight-loss' },
+  { label: 'Hair Loss', href: '/hair-loss' },
+  { label: 'Sexual Wellness', href: '/sexual-wellness' },
+  { label: 'Longevity', href: '/longevity' },
+  { label: 'How It Works', href: '/how-it-works' },
+  { label: 'Pricing', href: '/pricing' },
+  { label: 'About Us', href: '/about' },
+];
+
+const trustBar = [
+  { label: 'Licensed U.S. Physicians', icon: 'stethoscope' },
+  { label: 'US Pharmacy Compounded', icon: 'pharmacy' },
+  { label: 'HIPAA Compliant', icon: 'lock' },
+  { label: 'Discreet Shipping', icon: 'box' },
+  { label: 'FSA / HSA Eligible', icon: 'card' },
+];
+
+const steps = [
+  { n: '1', title: 'Complete Intake', desc: 'A quick online assessment takes just 2 minutes.' },
+  { n: '2', title: 'Physician Review', desc: 'A licensed physician reviews your answers and creates your plan.' },
+  { n: '3', title: 'Delivered to You', desc: 'Your medication is compounded and shipped discreetly to your door.' },
+];
+
+// "The Process" — 4-step breakdown, restored from index.astro's own process
+// section (was never carried into this redesign). rectangle-32.png and the
+// trust-card photos below are pre-existing public/ assets, referenced
+// directly rather than through astro:assets since Image only optimizes
+// files under src/ — these already ship unoptimized on the live homepage.
+const processSteps = [
+  { n: '1', title: 'Complete Intake', desc: 'A quick, secure health questionnaire. Takes 5 minutes from your phone. No appointment needed.' },
+  { n: '2', title: 'Doctor Reviews', desc: 'A board-certified physician reviews your profile within 24 hours and writes your personalized Rx.' },
+  { n: '3', title: 'Pharmacy Compounds', desc: 'Your prescription is sent to a 503A-licensed compounding pharmacy for precise formulation.' },
+  { n: '4', title: 'Delivered to You', desc: 'Discreet, climate-controlled packaging shipped directly to your door. Refills are automatic.' },
+];
+
+// "Real Doctors / Real Providers / Pharmacy Grade" — restored trust section.
+const trustCards = [
+  { img: '/assets/home/Real_Doctors.png', label: 'Real Doctors', desc: 'Every visit reviewed by a board-certified, licensed U.S. physician.' },
+  { img: '/assets/home/Real_Providers.png', label: 'Real Providers', desc: 'Medications sourced and dispensed by our licensed pharmacy partners.' },
+  { img: '/assets/home/Pharmacy_Grade.png', label: 'Pharmacy Grade', desc: '503A-licensed compounding, tested for potency, sterility, and purity.' },
+];
+
+const stats = [
+  { value: '15%', label: 'Avg. body weight lost', sub: 'Average body weight loss with physician-guided GLP-1 treatment, not diet alone.' },
+  { value: '24hr', label: 'Avg. physician response', sub: 'From intake to physician review and prescription — often same day.' },
+  { value: '96%', label: 'Patient satisfaction', sub: 'Across all four treatment programs, from internal patient surveys.' },
+  { value: '48hr', label: 'Door-to-Door Delivery', sub: 'Medication delivered to your door within 2 business days.' },
+];
+
+// x/y are the node coordinates of the original graph-home.svg export, kept so the
+// hand-built timeline lands on the photo exactly where the flattened SVG did.
+const journeyStops = [
+  { x: 45, y: 345, label: 'Week 1-2', copy: 'Reduced appetite and cravings begin. Starter dose calibration.' },
+  { x: 343, y: 199, label: 'Month 1', copy: 'Average 5–8 lbs lost. Energy improves. Dosage may be adjusted.' },
+  { x: 635, y: 199, label: 'Month 3', copy: 'Significant weight reduction. Metabolic markers improve. Visible results.' },
+  { x: 879, y: 66, label: 'Month 6', copy: '15%+ body weight lost. Maintenance phase. Long-term metabolic health.' },
+];
+
+// ── The 3D capsule ────────────────────────────────────────────────────────────
+// Drawn as depth slices, not as a cylinder of radial faces. Cut a capsule with
+// planes perpendicular to the camera axis and the cross-section at depth z is
+// EXACTLY a stadium of half-height sqrt(r² − z²) — the cylindrical middle
+// (y² + z² = r²) and the spherical domes (centres at ±x0) both reduce to it.
+// So every slice is one div with border-radius:999px and the domes cost nothing:
+// no ring stacks, no dome approximation, no seams.
+//
+// Sizes are emitted UNITLESS and multiplied by --u in the CSS, so one variable
+// rescales the whole capsule on small screens while the geometry stays exact.
+// Shading is baked here rather than applied with filter: brightness(), which
+// would promote all 64 slices to their own compositor layers.
+const POD_R = 104;  // capsule radius
+const POD_X0 = 190; // half-length of the straight section
+const POD_SLICES = 32;
+const podSlices = Array.from({ length: POD_SLICES }, (_, i) => {
+  const z = -POD_R + (2 * POD_R * (i + 0.5)) / POD_SLICES;
+  const h = Math.sqrt(POD_R * POD_R - z * z);
+  // Front slices catch the light; the curve keeps the falloff off-linear so the
+  // stack reads as a lit cylinder rather than a flat gradient.
+  const lit = 0.58 + 0.42 * Math.pow((z + POD_R) / (2 * POD_R), 0.7);
+  const shade = (c: number[]) => c.map((v) => Math.round(v * lit)).join(' ');
+  return {
+    z: +z.toFixed(2),
+    h: +h.toFixed(2),
+    w: +(POD_X0 + h).toFixed(2),
+    cap: shade([26, 122, 82]),
+    body: shade([243, 240, 232]),
+  };
+});
+
+// The capsule opens onto the four `hero` rows; /compare renders all eight from
+// the same module, so the two can never drift.
+
+// The final-CTA pill decoration array used to live here — moved into the
+// shared FinalCta.astro component so every page gets the same fixed
+// placements instead of its own drifting copy.
+
+const products = [
+  { name: 'GLP-1 Weight Loss', img: vialWeightLoss, href: '/weight-loss', desc: 'Semaglutide or Tirzepatide compounded for effective, clinician-supervised weight loss.', price: '$99' },
+  { name: 'Sexual Wellness', img: vialSexualWellness, href: '/sexual-wellness', desc: 'Physician-prescribed treatments for performance, libido, and confidence.', price: '$59' },
+  { name: 'Hair Loss', img: vialHairLoss, href: '/hair-loss', desc: 'Clinically proven solutions to stop hair loss and support regrowth.', price: '$29' },
+  { name: 'Longevity & Peptides', img: vialLongevity, href: '/longevity', desc: 'Peptides and therapies to optimize energy, recovery, and long-term health.', price: '$129' },
+];
+
+const testimonials = [
+  { quote: 'I’ve lost 34 lbs in 4 months. My cravings are gone and I finally feel in control.', name: 'Jessica R.', tag: '34 lbs lost' },
+  { quote: 'The process was so easy and the support from my doctor is unmatched.', name: 'Mark T.', tag: '28 lbs lost' },
+  { quote: 'Freeley changed my confidence, my energy, and my life.', name: 'Amanda L.', tag: '22 lbs lost' },
+];
+
+const press = [
+  { src: pressForbes, name: 'Forbes' },
+  { src: pressBloomberg, name: 'Bloomberg' },
+  { src: pressNyt, name: 'The New York Times' },
+  { src: pressTechCrunch, name: 'TechCrunch' },
+];
 ---
 
-<Layout title="Compounded GLP-1 & Peptide Telehealth | Freeley Wellness">
-  <Fragment slot="head">
-    <!-- Font playfair display embed -->
-    <style>
-        .verified-badges img {
-            height: 44px;
-            width: auto;
-            object-fit: contain;
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <Font cssVariable="--font-display" preload />
+    <Font cssVariable="--font-text" preload />
+    <Font cssVariable="--font-condensed" />
+    <title>Freeley — Prototype</title>
+    <meta
+      name="description"
+      content="Physician-prescribed GLP-1 weight loss, sexual wellness, hair and longevity care — compounded by licensed U.S. pharmacies and delivered to your door from $99/month."
+    />
+    <style is:inline>
+      /* Hallmark · audit-fix pass · 2026-07-21
+       * Kept by client brand: italic display emphasis + gold price.
+       * Applied: footer, mobile nav, focus-visible, broken split-rhythm,
+       * fewer eyebrows, quote-led testimonials, overflow-clip, minmax grids.
+       *
+       * ── Impeccable direction contract · 2026-07-23 ──────────────────────
+       * THESIS: A compounded prescription is a document before it is a
+       *   product. This page speaks in that document's voice — dispensing
+       *   record, not apothecary romance — and refuses the soft
+       *   wellness-brand register the category defaults to.
+       * OWN-WORLD: Client-pinned palette untouched (cream, forest green,
+       *   gold). The change is the voice, in two families. Source Serif 4,
+       *   drawn as a companion face for documents and interfaces: low
+       *   contrast, upright, no flourish, with an optical-size axis spent on
+       *   legibility. Under it, Archivo, an American grotesque whose width
+       *   axis gives a native condensed register for the compliance
+       *   microtype a real Rx label carries. Both replace training-default
+       *   faces (Playfair Display, Inter). Owner call 2026-07-23: an earlier
+       *   didone pass was rejected — its contrast read as italic everywhere.
+       * STORY: A licensed physician decides, a licensed pharmacy compounds,
+       *   it arrives at the door. Whatever you came for.
+       * FIRST VIEWPORT: Display headline at 4.8rem with the italic carrying
+       *   the refusal; price and primary action directly beneath.
+       * FORM: Grounded structure #3 (the dispensary document) · seed 5c02a55e
+       *   · staging held to type, per owner scope: visual design stays.
+       * ─────────────────────────────────────────────────────────────────── */
+      :root {
+        --green: #123c2c;
+        --green-deep: #0d3122;
+        --brand: #0f6b45;
+        --emph: #2c6b4c;
+        --cream: #f6f2e9;
+        --card: #efe9dd;
+        --ink: #1a1c1a;
+        --muted: #63665f;
+        --gold: #c39a4e;
+        --line: #e5ded0;
+        --check: #1f8a55;
+        --x: #c2513f;
+        --focus: #0f6b45;
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; overflow-x: clip; }
+      body {
+        font-family: var(--font-text);
+        color: var(--ink);
+        background: var(--cream);
+        -webkit-font-smoothing: antialiased;
+        line-height: 1.55;
+      }
+      img { max-width: 100%; display: block; }
+      a:focus-visible, button:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 8px; }
+      .wrap { max-width: 1200px; margin: 0 auto; padding: 0 28px; }
+      /* Display — Source Serif 4, drawn as a companion for documents and
+         interfaces: low stroke contrast, upright, no flourish. It keeps the
+         optical-size axis (8..60), so the same face tightens for small sizes
+         and opens for display, but it spends that axis on legibility rather
+         than on hairline drama. Owner call 2026-07-23: the didone was read as
+         italic wherever it appeared, so the whole face was replaced. */
+      .serif {
+        font-family: var(--font-display);
+        font-weight: 600;
+        font-optical-sizing: auto;
+        letter-spacing: -0.02em;
+        text-wrap: balance;
+      }
+      .serif em { font-style: italic; font-weight: 600; color: var(--emph); }
+
+      /* Compliance register — Archivo held narrow on its width axis. This is the
+         voice a real prescription label uses for everything the law makes it
+         carry, and it is why this pairing beats a second decorative face. */
+            .eyebrow {
+        font-family: var(--font-condensed);
+        font-size: 11.5px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;
+        color: var(--brand);
+      }
+      .pill {
+        display: inline-flex; align-items: center; gap: 10px;
+        background: var(--green); color: #fff; border: none; border-radius: 999px;
+        font-family: var(--font-text); font-size: 15px; font-weight: 600;
+        padding: 14px 24px; cursor: pointer; text-decoration: none; transition: background .15s;
+      }
+      .pill:hover { background: var(--green-deep); }
+      .pill--light { background: #fff; color: var(--green); border: 1px solid var(--line); }
+      .pill--light:hover { background: #faf8f2; }
+      .pill .arw { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 999px; background: rgba(255,255,255,.16); }
+      .pill--light .arw { background: var(--green); color: #fff; }
+      .ghost {
+        display: inline-flex; align-items: center; gap: 10px;
+        background: #fff; border: 1px solid var(--line); border-radius: 999px;
+        padding: 11px 20px; font-size: 14px; font-weight: 600; color: var(--ink);
+        text-decoration: none; cursor: pointer; transition: background .15s;
+      }
+      .ghost:hover { background: #faf8f2; }
+      .ghost .arw { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 999px; background: var(--green); color: #fff; }
+      .price { font-family: var(--font-display); color: var(--gold); font-weight: 600; }
+
+      /* Header */
+      header { position: absolute; top: 0; left: 0; right: 0; z-index: 20; }
+      header .pill { box-shadow: 0 6px 18px rgba(18, 60, 44, .18); }
+      /* padding longhands wherever a class shares its element with .wrap — a
+         `padding` shorthand would zero out .wrap's `padding: 0 28px`. */
+      .nav { display: flex; align-items: center; justify-content: space-between; padding-top: 22px; padding-bottom: 22px; gap: 24px; }
+      .nav__logo img { height: 30px; width: auto; }
+      .nav__links { display: none; gap: 22px; font-size: 14px; font-weight: 500; color: var(--ink); }
+      .nav__links a { color: inherit; text-decoration: none; white-space: nowrap; }
+      .nav__links a:hover { color: var(--brand); }
+      @media (min-width: 1024px) { .nav__links { display: flex; } }
+      .nav__right { display: flex; align-items: center; gap: 12px; }
+      .nav__burger { display: inline-flex; flex-direction: column; justify-content: center; gap: 5px; width: 40px; height: 40px; padding: 9px; background: #fff; border: 1px solid var(--line); border-radius: 10px; cursor: pointer; }
+      .nav__burger span { display: block; height: 2px; width: 100%; background: var(--ink); border-radius: 2px; }
+      .nav__cta { display: none; }
+      @media (min-width: 1024px) { .nav__burger { display: none; } .nav__cta { display: inline-flex; } }
+      .nav__mobile { display: none; flex-direction: column; background: var(--cream); border-top: 1px solid var(--line); box-shadow: 0 12px 24px rgba(0,0,0,.08); padding: 10px 28px 18px; }
+      .nav__mobile.open { display: flex; }
+      /* :not(.pill) — otherwise this beats .pill's own color/padding (higher
+         specificity: class+tag vs. class) and the CTA renders with black text. */
+      .nav__mobile a:not(.pill) { color: var(--ink); text-decoration: none; font-size: 15px; font-weight: 500; padding: 11px 0; border-bottom: 1px solid var(--line); }
+      .nav__mobile a:not(.pill):last-of-type { border-bottom: none; }
+      .nav__mobile .pill { justify-content: center; margin-top: 12px; }
+      @media (min-width: 1024px) { .nav__mobile { display: none !important; } }
+
+      /* Hero */
+      .hero { position: relative; background: var(--cream); overflow: hidden; }
+      .hero__img { display: none; }
+      @media (min-width: 1024px) {
+        .hero__img {
+          display: block; position: absolute; top: 84px; right: 0;
+          width: 50%; height: calc(100% - 84px); max-height: 760px;
+          object-fit: cover; object-position: center 22%;
+          /* soft fade of the left edge into the cream — no hard vertical seam */
+          -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 26%);
+          mask-image: linear-gradient(to right, transparent 0%, #000 26%);
         }
-        .verified-badges img.badge--lg {
-            height: 58px;
+      }
+      /* Longhands on purpose: a `padding` shorthand here would zero out the
+         horizontal padding this element inherits from .wrap's `padding: 0 28px`. */
+      .hero__inner { position: relative; z-index: 5; padding-top: 150px; padding-bottom: 72px; }
+      .hero__col { max-width: 560px; }
+      @media (min-width: 1024px) { .hero__col { max-width: 50%; } }
+      .hero__img-mob { display: none; }
+      @media (max-width: 1023px) {
+        .hero__img-mob {
+          /* height:auto is load-bearing: without it the height="1024" attribute
+             Astro's <Image> emits wins (no author height rule), and a determined
+             height disables aspect-ratio entirely — the image renders 1024px tall. */
+          display: block; width: 100%; height: auto; border-radius: 18px;
+          aspect-ratio: 16 / 10; object-fit: cover; object-position: center 18%;
+          margin: 8px 0 26px;
         }
-        @media (max-width: 768px) {
-            .verified-badges img {
-                height: 36px;
-            }
-            .verified-badges img.badge--lg {
-                height: 46px;
-            }
+      }
+      .hero h1 { font-size: clamp(2.9rem, 6.2vw, 4.8rem); line-height: 1.02; letter-spacing: -0.021em; margin: 20px 0 22px; }
+      .hero__sub { font-size: 1.05rem; color: var(--muted); margin: 0 0 22px; }
+      .hero__qual { font-family: var(--font-condensed); font-size: 12.5px; color: var(--muted); display: block; margin-top: 4px; }
+      .hero__from { font-size: 1rem; color: var(--ink); margin-bottom: 22px; }
+      .hero__from .price { font-size: 1.6rem; }
+      .hero__proof { display: flex; align-items: center; gap: 14px; margin-top: 26px; }
+      .avatars { display: flex; }
+      /* ponytail: stylized avatar placeholders — swap for real patient photos when available. */
+      .avatars span {
+        width: 36px; height: 36px; border-radius: 999px; margin-left: -12px;
+        border: 2px solid var(--cream); box-shadow: 0 2px 6px rgba(0,0,0,.14);
+        background-repeat: no-repeat; background-position: center 5px; background-size: 24px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffffff'%3E%3Ccircle cx='12' cy='8.5' r='3.6'/%3E%3Cpath d='M4.5 21c0-4 3.6-6 7.5-6s7.5 2 7.5 6z'/%3E%3C/svg%3E");
+      }
+      .avatars span:first-child { margin-left: 0; }
+      .avatars span:nth-child(1) { background-color: #c2a98a; }
+      .avatars span:nth-child(2) { background-color: #9fb193; }
+      .avatars span:nth-child(3) { background-color: #cbb197; }
+      .avatars span:nth-child(4) { background-color: #8fa791; }
+      .hero__count b { display: block; font-size: 15px; }
+      .hero__count span { font-size: 13px; color: var(--muted); }
+      .hero__rating { display: flex; align-items: center; gap: 10px; margin-top: 18px; font-size: 14px; font-weight: 600; }
+      .stars { color: #00b67a; letter-spacing: 1px; }
+      /* .hero is full-bleed, so a plain `right: 24px` pins the badges to the
+         viewport edge and they drift ever further from the copy as the screen
+         grows — on 4K they end up ~1300px right of the content column. Anchor
+         them to that column instead: 572px = half the 1200px .wrap minus its
+         28px padding, so their right edge lands on the same line every other
+         section ends at. Below ~1200px the max() falls back to the old 24px. */
+      .hero__badges { position: absolute; z-index: 6; right: max(24px, calc(50% - 572px)); bottom: 20px; display: flex; gap: 14px; align-items: center; }
+      .hero__badges img { height: 38px; width: auto; background: #fff; border-radius: 8px; padding: 5px 8px; box-shadow: 0 4px 16px rgba(0,0,0,.12); }
+      .hero__badges img.lg { height: 48px; }
+      .badge-mob { display: none; }
+
+      /* Trust bar */
+      /* .trustbar is the cream divider band under the hero — a position treatment,
+         not tied to any one set of contents. The trust points moved out of it and
+         the press logos moved in; the list styles below travel with the list. */
+      .trustbar { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--cream); }
+      .trustbar .wrap { padding-block: 18px; }
+      .trustlist { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 18px; list-style: none; margin: 0; padding: 0; }
+      .trustlist li { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500; color: var(--ink); }
+      .trustlist svg { color: var(--brand); flex: none; }
+
+      /* Steps band */
+      .band { background: var(--green); color: #fff; border-radius: 22px; margin: 46px 0; padding: 44px; }
+      .band__grid { display: grid; gap: 34px; grid-template-columns: 1fr; }
+      @media (min-width: 900px) { .band__grid { grid-template-columns: 0.8fr 2.4fr; align-items: center; } }
+      .band h2 { font-size: 2rem; margin: 0; color: #fff; line-height: 1.15; }
+      .steps { display: grid; gap: 26px; grid-template-columns: 1fr; }
+      @media (min-width: 700px) { .steps { grid-template-columns: repeat(3, 1fr); } }
+      .step { display: flex; gap: 14px; }
+      .step__ic { flex: none; width: 46px; height: 46px; border-radius: 12px; background: rgba(255,255,255,.10); display: grid; place-items: center; }
+      .step__n { font-family: var(--font-display); font-size: 1.5rem; color: #cdb98f; line-height: 1; }
+      .step h3 { font-size: 1rem; margin: 0 0 6px; font-weight: 600; }
+      .step p { font-size: 13px; color: rgba(255,255,255,.72); margin: 0; }
+      .band__foot { margin-top: 26px; }
+      .band__foot a { color: rgba(255,255,255,.85); font-size: 13px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+
+      /* Full-width section with a centered head — breaks the split rhythm */
+      section.fullsec { padding: 56px 0; }
+      .center-head { text-align: center; max-width: 640px; margin: 0 auto 42px; }
+      .center-head h2 { font-size: clamp(2.1rem, 4vw, 2.7rem); margin: 0 0 14px; line-height: 1.08; }
+      .center-head p { color: var(--muted); font-size: 15px; margin: 0; }
+      .center-cta { text-align: center; margin-top: 32px; }
+
+      /* Generic split section: intro + grid */
+      section.split { padding: 56px 0; }
+      .split__grid { display: grid; gap: 34px; grid-template-columns: 1fr; }
+      @media (min-width: 960px) { .split__grid { grid-template-columns: 280px 1fr; } }
+      .intro h2 { font-size: clamp(2.1rem, 3.6vw, 2.6rem); margin: 12px 0 16px; line-height: 1.08; }
+      .intro p { color: var(--muted); font-size: 15px; margin: 0 0 22px; max-width: 260px; }
+
+      /* "The Process" — restored from index.astro. Mirrors .split__grid but
+         swaps the 280px intro column for an even split (text | phone photo),
+         and the step row below runs the full width under both. */
+      .process__top { display: grid; gap: 34px; grid-template-columns: 1fr; align-items: center; }
+      @media (min-width: 900px) { .process__top { grid-template-columns: 1fr 1fr; } }
+      .process__img { display: flex; justify-content: center; }
+      .process__img img { max-width: 100%; height: auto; }
+      /* The hand rises into frame on scroll — a bigger, slower rise than the
+         stat/prod cards elsewhere, since this is the section's one signature
+         moment, not a repeated list-item reveal. */
+      @supports (animation-timeline: view()) {
+        @media (prefers-reduced-motion: no-preference) {
+          .process__img img { animation: phoneRise ease-out both; animation-timeline: view(); animation-range: entry 5% cover 55%; }
+          @keyframes phoneRise { from { opacity: 0; transform: translateY(90px) scale(.94); } to { opacity: 1; transform: none; } }
         }
-        .swiper_before_after {}
-        .swiper_before_after .swiper-slide {
-            max-width: fit-content;
-            width: 100%;
+      }
+      .process__steps { display: grid; gap: 28px; grid-template-columns: repeat(2, 1fr); margin-top: 56px; }
+      @media (min-width: 700px) { .process__steps { grid-template-columns: repeat(4, 1fr); } }
+      .process__step { border-top: 2px solid var(--line); padding-top: 18px; }
+      .process__step .step__n { font-family: var(--font-display); font-size: 1.3rem; color: var(--gold); display: block; margin-bottom: 10px; }
+      .process__step h3 { font-size: 1rem; margin: 0 0 6px; font-weight: 600; }
+      .process__step p { font-size: 13px; color: var(--muted); margin: 0; }
+
+      /* "Your Journey" — restored full-bleed photo section (index.astro's
+         your_journey_What_to_expect_on.png). The timeline that sits on top of it
+         is built below; its nodes are hand-positioned against this exact photo,
+         so the two sizes have to stay locked together. */
+      .journey { position: relative; overflow: hidden; border-radius: 22px; margin: 0 0 46px; background: var(--green); }
+      .journey__bg { position: absolute; inset: 0; background-image: url('/assets/home/your_journey_What_to_expect_on.png'); background-size: cover; background-position: center; }
+      .journey__watermark { position: absolute; inset: 0; background-image: url('/assets/home/Frame_399.png'); background-size: cover; opacity: .5; mix-blend-mode: overlay; }
+      /* The photo is a model against a bright sky, and every word in this section
+         is white on top of it. Without a scrim the copy fell onto her skin and
+         her light grey joggers and stopped being readable — worst on mobile,
+         where the text spans the full width. Angled so the left, where all the
+         type lives, carries the most cover and the photo still reads on the
+         right. */
+      .journey__scrim {
+        position: absolute; inset: 0;
+        background:
+          linear-gradient(102deg, rgba(18, 60, 44, .88) 0%, rgba(18, 60, 44, .66) 46%, rgba(18, 60, 44, .28) 100%),
+          linear-gradient(to bottom, rgba(13, 49, 34, .34) 0%, rgba(13, 49, 34, .06) 38%, rgba(13, 49, 34, .40) 100%);
+      }
+      .journey__inner { position: relative; z-index: 1; padding: 56px 40px 0; min-height: 620px; display: flex; flex-direction: column; justify-content: space-between; }
+      .journey__head { max-width: 420px; }
+      .journey__head h2 { color: #fff; font-size: clamp(2rem, 3.6vw, 2.7rem); margin: 14px 0 22px; line-height: 1.1; }
+      /* The page emphasises with brand green italics, which works on cream and
+         disappears here — dark green on sky blue, then dark green on the green
+         scrim. Light gold keeps the emphasis reading as emphasis, and it is
+         already the page's second accent (prices, step numerals). */
+      .journey em { color: #e6cd97; }
+      .journey__head .eyebrow { color: #fff; opacity: .85; }
+      /* Timeline, hand-built. Replaces the flattened graph-home.svg export
+         (231 KB, every label baked into outlines) with one inline path plus real
+         DOM text: the line can now draw itself as you scroll, and the copy stays
+         selectable, translatable and screen-reader readable. All coordinates are
+         the export's own, expressed as % of its 1125x464 viewBox, so every node
+         still lands on the photo exactly where it used to. */
+      .journey__timeline { position: relative; width: 100%; aspect-ratio: 1125 / 464; margin-top: 28px; }
+      .journey__svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+      .jline { fill: none; stroke: #fff; stroke-width: 1; vector-effect: non-scaling-stroke; }
+      .jstop { position: absolute; top: 0; bottom: 0; color: #fff; }
+      .jstop--1 { left: 0;     width: 26%; }
+      .jstop--2 { left: 26.9%; width: 25%; }
+      .jstop--3 { left: 52.8%; width: 21%; }
+      .jstop--4 { left: 74.5%; width: 25%; }
+      .jstop__badge {
+        position: absolute; left: 0; padding: 6px 15px; border-radius: 999px;
+        background: rgba(255, 255, 255, .2); white-space: nowrap;
+        font-family: var(--font-condensed); font-size: 13px; font-weight: 600;
+      }
+      .jstop__text { position: absolute; left: 0; right: 16px; margin: 0; padding-left: 17px; font-size: 13px; line-height: 1.45; }
+      .jstop__text::before { content: ''; position: absolute; left: 0; top: .52em; width: 6px; height: 6px; border-radius: 50%; background: #004c27; }
+      .jstop--1 .jstop__badge { top: 60.1%; }
+      .jstop--2 .jstop__badge { top: 28.7%; }
+      .jstop--3 .jstop__badge { top: 28.7%; }
+      .jstop--4 .jstop__badge { top: 0; }
+      .jstop--1 .jstop__text { top: 83.2%; }
+      .jstop--2 .jstop__text { top: 53.7%; }
+      .jstop--3 .jstop__text { top: 54.5%; }
+      .jstop--4 .jstop__text { top: 25%; }
+
+      /* Under 900px the four columns are ~90px wide — unreadable. Same markup,
+         restacked as a vertical rail. */
+      @media (max-width: 899.98px) {
+        .journey__timeline { aspect-ratio: auto; margin-top: 34px; padding: 4px 0 4px 30px; }
+        .journey__svg { display: none; }
+        .journey__timeline::before { content: ''; position: absolute; left: 9px; top: 12px; bottom: 12px; width: 1px; background: rgba(255, 255, 255, .5); transform-origin: top; }
+        .jstop, .jstop__badge, .jstop__text { position: static; width: auto; }
+        /* left: 0 is load-bearing. .jstop--N carries the desktop staircase
+           (left: 26.9% and friends) and `position: relative` below re-activates
+           it, which pushed the last three stops up to 65px past the right edge
+           and clipped their copy on every phone. */
+        .jstop { position: relative; left: 0; padding-bottom: 24px; }
+        .jstop:last-child { padding-bottom: 0; }
+        .jstop__badge { display: inline-block; margin-bottom: 9px; }
+        .jstop__text { padding-left: 0; }
+        .jstop__text::before { display: none; }
+        .jstop::after {
+          content: ''; position: absolute; left: -29px; top: 1px; width: 19px; height: 19px; border-radius: 50%;
+          background: radial-gradient(circle, #fff 0 4.5px, rgba(255, 255, 255, 0) 4.5px 56%, rgba(255, 255, 255, .9) 100%);
         }
-        .featured-logos {
-            justify-content: flex-start;
+      }
+      @media (max-width: 767.98px) {
+        .journey__inner { padding: 40px 24px 0; min-height: 480px; }
+      }
+
+      /* A 20-second loop: the line draws left to right over the first 1.8s, each
+         stop lights as the line reaches it, the finished timeline holds long
+         enough to actually be read, then it clears and rebuilds.
+
+         Every element shares the same 20s period, and the per-stop offsets live
+         in the KEYFRAME PERCENTAGES rather than in animation-delay. That is not a
+         style choice: animation-delay applies only to the first iteration, so on
+         an infinite animation the stops would drift out of sync with the line
+         from the second loop onward. The percentages are the node positions along
+         the path (0 / 28.8 / 54.4 / 78.8% of its length) mapped onto the draw
+         window — 0 / 2.6 / 4.9 / 7.1% of the cycle — which is also why the draw
+         stays `linear`: ease it and the stops no longer meet the line.
+
+         is-armed / is-live / is-idle are set by the script at the bottom.
+         ponytail: the base rules above already ARE the finished timeline, so with
+         JS off or reduced motion on it just renders complete. Nothing to fall
+         back to, nothing that can get stuck invisible. */
+      @media (prefers-reduced-motion: no-preference) {
+        .is-armed .jline { stroke-dasharray: 100; stroke-dashoffset: 100; }
+        .is-armed .jnode, .is-armed .jstop { opacity: 0; }
+        .is-armed::before { scale: 1 0; }
+
+        .is-live .jline,
+        .is-live::before,
+        .is-live .jnode,
+        .is-live .jstop { animation-duration: 20s; animation-timing-function: linear; animation-iteration-count: infinite; animation-fill-mode: both; }
+        .is-live .jline { animation-name: jDrawLine; }
+        .is-live::before { animation-name: jDrawRail; }
+        .is-live .jnode--1, .is-live .jstop--1 { animation-name: jStop1; }
+        .is-live .jnode--2, .is-live .jstop--2 { animation-name: jStop2; }
+        .is-live .jnode--3, .is-live .jstop--3 { animation-name: jStop3; }
+        .is-live .jnode--4, .is-live .jstop--4 { animation-name: jStop4; }
+        /* Nothing runs while the section is off screen. */
+        .is-idle .jline, .is-idle::before, .is-idle .jnode, .is-idle .jstop { animation-play-state: paused; }
+
+        @keyframes jDrawLine {
+          0% { stroke-dashoffset: 100; }
+          9%, 88% { stroke-dashoffset: 0; }
+          97%, 100% { stroke-dashoffset: 100; }
         }
-        .featured-logos span {
-            opacity: 0.3;
+        @keyframes jDrawRail {
+          0% { scale: 1 0; }
+          9%, 88% { scale: 1 1; }
+          97%, 100% { scale: 1 0; }
         }
-        .rhemsleves-row {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 15px;
+        /* Same shape four times, offset by each node's arrival. The easing is
+           declared inside the keyframe so the short fade keeps its curve instead
+           of inheriting the linear timing the 20s cycle needs. */
+        @keyframes jStop1 {
+          0% { opacity: 0; translate: 0 12px; animation-timing-function: cubic-bezier(.22, .61, .36, 1); }
+          2.75%, 88% { opacity: 1; translate: 0 0; }
+          95%, 100% { opacity: 0; translate: 0 12px; }
         }
-        @media (max-width: 768px) {
-            .rhemsleves-row {
-                display: flex;
-                gap: 15px;
-                margin-bottom: 15px;
-                flex-direction: column;
-                max-width: 100%;
-                overflow: hidden;
-            }
+        @keyframes jStop2 {
+          0%, 2.6% { opacity: 0; translate: 0 12px; animation-timing-function: cubic-bezier(.22, .61, .36, 1); }
+          5.35%, 88% { opacity: 1; translate: 0 0; }
+          95%, 100% { opacity: 0; translate: 0 12px; }
         }
+        @keyframes jStop3 {
+          0%, 4.9% { opacity: 0; translate: 0 12px; animation-timing-function: cubic-bezier(.22, .61, .36, 1); }
+          7.65%, 88% { opacity: 1; translate: 0 0; }
+          95%, 100% { opacity: 0; translate: 0 12px; }
+        }
+        @keyframes jStop4 {
+          0%, 7.1% { opacity: 0; translate: 0 12px; animation-timing-function: cubic-bezier(.22, .61, .36, 1); }
+          9.85%, 88% { opacity: 1; translate: 0 0; }
+          95%, 100% { opacity: 0; translate: 0 12px; }
+        }
+      }
+
+      /* Product cards */
+      .stats { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
+      @media (min-width: 1024px) {
+        .stats { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+        .stat--1, .stat--4 { grid-column: span 7; }
+        .stat--2, .stat--3 { grid-column: span 5; }
+      }
+      .stat { position: relative; overflow: hidden; border-radius: 16px; padding: 26px 30px; min-height: 309px; display: flex; flex-direction: column; justify-content: flex-end; background: linear-gradient(180deg, #E7EAF0 0%, #F3F4EF 100%); }
+      .stat::after { content: ''; position: absolute; inset: 0; background-repeat: no-repeat; }
+      .stat__body { position: relative; z-index: 1; max-width: 66%; }
+      .stat__v { font-family: var(--font-display); font-size: clamp(3.4rem, 5vw, 4.1rem); font-weight: 600; line-height: 1.08; letter-spacing: -0.022em; }
+      .stat__l { font-size: 16px; font-weight: 500; margin-top: 4px; color: var(--brand); }
+      .stat__s { font-size: 15px; color: #000; margin-top: 16px; line-height: 1.4; }
+
+      /* Text placement mirrors the reference bento: card 1 top-left, 2 & 4 bottom-left, 3 bottom-centered */
+      .stat--1 { justify-content: flex-start; background: linear-gradient(101.13deg, #D2CBC2 33.46%, #F0E9E0 100%); }
+      .stat--1 .stat__body { max-width: 40%; }
+      .stat--1::before { content: ''; position: absolute; top: 0; left: 0; width: 340px; height: 100%; background: url('/assets/home/white-ellipse.png') no-repeat; background-size: contain; }
+      .stat--1::after { background-image: url('/assets/home/girl-belly.png'); background-position: right center; background-size: contain; }
+      .stat--2 { background: radial-gradient(139.32% 139.32% at 50% 100%, #F6EEE0 0%, #FFDAAD 100%); }
+      .stat--2::after { background-image: url('/assets/home/24hr.Avg.physician.esponse.png'); background-position: right 22px top 22px; background-size: 180px auto; }
+      .stat--3 { background: radial-gradient(107.61% 107.61% at 50.12% 100%, #F8FEFF 0%, #C7D0E4 100%); }
+      .stat--3 .stat__body { max-width: 100%; text-align: center; }
+      .stat--3::before { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 80%; height: 64%; border-radius: 50%; background: url('/assets/home/ellipse_35.png') no-repeat; background-size: contain; }
+      .stat--3::after { background-image: url('/assets/home/96_Patient satisfaction.png'); background-position: center -220px; background-size: calc(100% + 100px) auto; }
+      .stat--4 .stat__body { max-width: 38%; }
+      .stat--4::after { background-image: url('/assets/home/48hr_Door-to-Door_Delivery.png'); background-position: right -30px center; background-size: auto 110%; }
+
+      /* On one column the artwork on cards 2 and 4 is sized to the card, so it
+         grew to cover the whole tile and the copy ended up printed over vials and
+         a cardboard box — dark type on dark artwork, unreadable. The layering was
+         never wrong (.stat__body already sits at z-index 1); the artwork was
+         simply too big. Pin it to the top-right at a fixed height, hand the lower
+         half to the text, and add the height that split needs.
+         Cards 1 and 3 place their art clear of the copy already — left alone. */
+      @media (max-width: 639.98px) {
+        .stat--2, .stat--4 { min-height: 344px; }
+        .stat--2 .stat__body, .stat--4 .stat__body { max-width: 100%; }
+        .stat--2::after { background-size: auto 104px; background-position: right 14px top 16px; }
+        .stat--4::after { background-size: auto 132px; background-position: right -8px top 14px; }
+      }
+
+      /* Hover: lift the card, push the artwork in a touch. Uses the standalone
+         `translate` / `scale` properties, not `transform`, so it composes with
+         the scroll-in animation below instead of fighting it. */
+      @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+        .stat { transition: translate .4s cubic-bezier(.22,.61,.36,1), box-shadow .4s ease; }
+        .stat::after { transition: scale .6s cubic-bezier(.22,.61,.36,1); }
+        .stat:hover { translate: 0 -6px; box-shadow: 0 20px 44px rgba(23, 34, 42, .16); }
+        .stat:hover::after { scale: 1.045; }
+        /* Scale from the side the artwork sits on, so it grows into the card
+           instead of drifting off the edge. */
+        .stat--1::after, .stat--4::after { transform-origin: right center; }
+        .stat--2::after { transform-origin: right top; }
+        .stat--3::after { transform-origin: center top; }
+        .stat__v, .stat__l, .stat__s { transition: translate .4s cubic-bezier(.22,.61,.36,1); }
+        .stat:hover .stat__v { translate: 0 -2px; }
+      }
+
+      /* Scroll-in reveal, native scroll-driven animation — no JS, no library.
+         ponytail: gated behind @supports; browsers without view() just show the
+         cards immediately, which is the correct fallback, not a broken one. */
+      @supports (animation-timeline: view()) {
+        @media (prefers-reduced-motion: no-preference) {
+          .stat { animation: statIn linear both; animation-timeline: view(); animation-range: entry 8% cover 24%; }
+          @keyframes statIn { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
+        }
+      }
+
+      @media (max-width: 1023px) {
+        .stat__body, .stat--1 .stat__body, .stat--4 .stat__body { max-width: 68%; }
+        .stat--1::after { background-image: url('/assets/home/girl-belly-mobile.png'); background-position: right center; }
+        .stat--3::after { background-size: calc(100% + 210px) auto; }
+      }
+      .footnote { font-size: 11.5px; color: var(--muted); margin-top: 16px; }
+
+      /* ── The 3D capsule ─────────────────────────────────────────────────────
+         One big capsule that splits open and reveals what Freeley includes, in
+         the exact space it occupied. See the frontmatter for why each slice is a
+         plain rounded div: the cross-section of a capsule at depth z IS a
+         stadium, so this is exact geometry, not an approximation, and the domes
+         need no special case.
+
+         The reveal is absolutely positioned over the stage, so opening changes
+         NO layout — nothing below the section moves, and there is no height to
+         animate. The halves swing to nearly edge-on (rotateY 74°) rather than
+         sliding far apart, which is what lets a 588px capsule open inside an
+         820px column without the halves leaving the grid cell.
+
+         Two invariants that are easy to undo by accident: the idle motion
+         animates .pod__stage ALONE (the 64 slices ride along as one composited
+         3D subtree — animating them individually is the mistake this design
+         exists to avoid), and slice sizes are emitted unitless and multiplied by
+         --u, so one number rescales the whole capsule per breakpoint.
+
+         ponytail: no 3D library, no JavaScript. <details> supplies the toggle and
+         keeps every value in the DOM — indexable, screen-reader reachable,
+         expandable by find-in-page. A WebGL canvas would have cost ~155 KB and
+         hidden all of it. */
+      .pod { --u: 1px; --r: 104; --x0: 190; position: relative; display: block; }
+      /* Full column to itself now, so the capsule scales up on wide screens. */
+      @media (min-width: 1040px) { .pod { --u: 1.3px; } }
+      .pod__trigger { display: block; cursor: pointer; list-style: none; border-radius: 26px; }
+      .pod__trigger::-webkit-details-marker { display: none; }
+      .pod__trigger:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; }
+
+      .pod__scene {
+        position: relative;
+        display: flex; justify-content: center; align-items: center;
+        min-height: calc(var(--r) * 2.5 * var(--u));
+        perspective: calc(1500 * var(--u));
+      }
+      /* Contact shadow. Deliberately on the scene, not the stage: the stage is
+         what drifts, and a shadow that floats along with the object it belongs to
+         kills the illusion. Anchored here, the capsule reads as rising off it. */
+      /* ::before, not ::after — it paints before the element's children, so it
+         sits under the capsule without a negative z-index, which would have
+         depended on whichever ancestor happens to form the stacking context. */
+      .pod__scene::before {
+        content: ''; position: absolute; left: 50%;
+        bottom: calc(var(--r) * .06 * var(--u));
+        width: calc((var(--x0) + var(--r)) * 1.75 * var(--u));
+        height: calc(var(--r) * .3 * var(--u));
+        transform: translateX(-50%);
+        background: radial-gradient(50% 50% at 50% 50%, rgba(18, 60, 44, .24), rgba(18, 60, 44, 0) 70%);
+        transition: opacity .9s ease, transform .9s cubic-bezier(.2, .8, .25, 1);
+        pointer-events: none;
+      }
+      /* Halves apart, the mass under them spreads and thins. scaleX rather than
+         width: same look, composited instead of re-laid-out every frame. */
+      .pod[open] .pod__scene::before { opacity: .55; transform: translateX(-50%) scaleX(1.43); }
+      .pod__stage {
+        position: relative;
+        width: calc((var(--x0) + var(--r)) * 2 * var(--u));
+        height: calc(var(--r) * 2 * var(--u));
+        transform-style: preserve-3d;
+        animation: podIdle 9s ease-in-out infinite;
+      }
+      @keyframes podIdle {
+        0%, 100% { transform: translateY(calc(-6 * var(--u))) rotateY(-7deg) rotateZ(-1.4deg); }
+        50%      { transform: translateY(calc(6 * var(--u)))  rotateY(7deg)  rotateZ(1.4deg); }
+      }
+
+      /* Each half is a zero-sized anchor at the joint, so its default
+         transform-origin sits exactly on the seam — rotateY pivots the half about
+         the joint, the way a real capsule comes apart. */
+      .pod__half {
+        position: absolute; left: 50%; top: 50%;
+        transform-style: preserve-3d;
+        transition: transform .9s cubic-bezier(.2, .8, .25, 1), opacity .7s ease;
+      }
+      .pod__slice {
+        position: absolute;
+        width: calc(var(--w) * var(--u));
+        height: calc(var(--h) * 2 * var(--u));
+        top: calc(var(--h) * -1 * var(--u));
+        transform: translateZ(calc(var(--z) * var(--u)));
+        /* Depth shading is baked into the inline background. --gloss adds the
+           roll-off around the cylinder, which depth alone cannot express: a tight
+           specular band near the top, a core shadow low down, and a bounce rim on
+           the very bottom edge. The narrow highlight is what stops it reading as
+           a flat lozenge — a wide soft one just looks like a gradient. */
+        --gloss: linear-gradient(
+          to bottom,
+          rgba(255, 255, 255, .10) 0%,
+          rgba(255, 255, 255, .58) 13%,
+          rgba(255, 255, 255, .16) 27%,
+          rgba(255, 255, 255, 0) 44%,
+          rgba(0, 0, 0, .14) 68%,
+          rgba(0, 0, 0, .34) 90%,
+          rgba(255, 255, 255, .18) 100%
+        );
+        background-image: var(--gloss);
+      }
+      /* One horizontal layer per half carries both ends: the outer dome falling
+         away from the light, and the darker seam where the two halves meet. The
+         stops are mirrored because the joint is on the right of the cap and on
+         the left of the body. */
+      .pod__half--cap .pod__slice {
+        left: calc(var(--w) * -1 * var(--u)); border-radius: 999px 3px 3px 999px;
+        background-image: linear-gradient(90deg, rgba(0, 0, 0, .20), transparent 14%, transparent 88%, rgba(0, 0, 0, .24)), var(--gloss);
+      }
+      .pod__half--body .pod__slice {
+        left: 0; border-radius: 3px 999px 999px 3px;
+        background-image: linear-gradient(90deg, rgba(0, 0, 0, .28), transparent 12%, transparent 86%, rgba(0, 0, 0, .20)), var(--gloss);
+      }
+
+      /* Opens sideways: each half slides outward along the capsule's own axis and
+         pivots a little about the joint. The head now sits above the capsule
+         instead of beside it, which is what freed the width for this travel. */
+      /* .42 opacity turned the halves into pale blobs and they stopped reading as
+         a capsule at all. Higher opacity keeps their colour, and a stronger
+         rotateY foreshortens the flat inner edge so it reads as a cut face
+         turning away rather than a rounded rectangle. */
+      .pod[open] .pod__half--cap { transform: translateX(calc(var(--x0) * -.92 * var(--u))) rotateY(-24deg) rotateZ(-2.5deg); opacity: .58; }
+      .pod[open] .pod__half--body { transform: translateX(calc(var(--x0) * .92 * var(--u))) rotateY(24deg) rotateZ(2.5deg); opacity: .58; }
+
+      .pod__hint {
+        display: block; text-align: center; margin-top: 2px;
+        font-family: var(--font-condensed); font-size: 12.5px;
+        letter-spacing: .14em; text-transform: uppercase; color: var(--muted);
+      }
+      .pod__hint--open, .pod[open] .pod__hint--shut { display: none; }
+      .pod[open] .pod__hint--open { display: inline; }
+
+      /* Out of flow on purpose — see the block comment. Centred on the capsule,
+         not on the section, so it lands where the capsule was. */
+      .pod__reveal {
+        position: absolute; left: 50%; top: calc(var(--r) * 1.25 * var(--u));
+        /* Sized to the OPENING, not to the capsule. The halves travel .92·x0
+           each, so the gap between them is 1.84·x0 — a panel wider than that cut
+           diagonally across the green half instead of sitting inside the opening. */
+        width: min(100%, calc(var(--x0) * 2.05 * var(--u)));
+        transform: translate(-50%, -50%);
+        animation: podReveal .65s cubic-bezier(.2, .8, .25, 1) .18s both;
+      }
+      @keyframes podReveal {
+        from { opacity: 0; transform: translate(-50%, -50%) scale(.88); }
+        to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      }
+      .pod__eyebrow {
+        margin: 0 0 10px; text-align: center;
+        font-family: var(--font-condensed); font-size: 12px;
+        letter-spacing: .16em; text-transform: uppercase; color: var(--brand);
+      }
+      .pod__gives {
+        list-style: none; margin: 0; padding: 8px 10px;
+        background: rgba(255, 255, 255, .94); border: 1px solid var(--line);
+        border-radius: 20px; box-shadow: 0 14px 38px rgba(18, 60, 44, .13);
+        backdrop-filter: blur(3px);
+      }
+      .pod__gives li {
+        display: flex; align-items: center; justify-content: space-between;
+        gap: 14px; flex-wrap: wrap; padding: 9px 12px;
+      }
+      .pod__gives li + li { box-shadow: inset 0 1px 0 var(--line); }
+      .pod__gives-label { font-size: 14px; font-weight: 500; }
+      .pod__gives-val {
+        display: flex; align-items: center; margin-left: auto;
+        font-size: 14.5px; font-weight: 700; color: var(--brand);
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* Link to the full comparison, not a disclosure. */
+      .pod__more { display: flex; justify-content: center; margin-top: 26px; }
+      .pod__more-btn {
+        display: inline-flex; align-items: center; gap: 10px; padding: 11px 12px 11px 24px;
+        background: #fff; border: 1px solid var(--line); border-radius: 999px;
+        font-size: 14px; font-weight: 600; color: var(--ink); text-decoration: none;
+        transition: border-color .3s ease, box-shadow .3s ease;
+      }
+      .pod__more-btn .arw { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 999px; background: var(--green); color: #fff; }
+      @media (hover: hover) { .pod__more-btn:hover { border-color: #d6cbb4; box-shadow: 0 8px 20px rgba(18, 60, 44, .10); } }
+
+      /* Half the slices below 640px. Tilt is bounded to ±7°, so at this scale the
+         lateral offset between adjacent slices stays under a pixel — the volume
+         still reads, at half the overdraw. */
+      @media (max-width: 639.98px) {
+        .pod { --u: .5px; }
+        .pod__slice:nth-child(even) { display: none; }
+        /* The reveal drops into normal flow here rather than floating over the
+           capsule. Centring a ~230px panel on a 104px capsule needed a 300px
+           scene, which sat mostly empty the rest of the time — about 94px of dead
+           air above and below. Opening now costs a layout shift, which on a phone
+           is the ordinary, expected behaviour. */
+        .pod__scene { min-height: calc(var(--r) * 2.7 * var(--u)); }
+        .pod__reveal {
+          position: static; transform: none; width: auto; padding-top: 20px;
+          animation-name: podRevealFlow;
+        }
+        @keyframes podRevealFlow {
+          from { opacity: 0; transform: translateY(14px) scale(.96); }
+          to { opacity: 1; transform: none; }
+        }
+        .pod__gives li { padding: 8px 10px; }
+        .pod__gives-label { font-size: 13.5px; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .pod__stage { animation: none; }
+        .pod__half { transition: opacity .3s ease; }
+        .pod[open] .pod__half--cap, .pod[open] .pod__half--body { transform: none; opacity: .12; }
+        .pod__reveal { animation: none; }
+        .pod__more-btn { transition: none; }
+      }
+
+      .ic-y { color: var(--check); }
+      .ic-n { color: var(--x); }
+
+      /* Product cards */
+      .prods { display: grid; gap: 16px; grid-template-columns: repeat(1, minmax(0, 1fr)); }
+      @media (min-width: 640px) { .prods { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+      @media (min-width: 1100px) { .prods { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+      .prod { background: var(--card); border-radius: 18px; padding: 22px; display: flex; flex-direction: column; }
+      .prod__img { position: relative; height: 150px; display: grid; place-items: center; margin-bottom: 14px; }
+      /* position: relative keeps the vial painting ABOVE the hover halo — the
+         halo is a positioned pseudo, so a static img would sit under it. */
+      .prod__img img { position: relative; max-height: 150px; width: auto; object-fit: contain; }
+      .prod h3 { font-family: var(--font-display); font-size: 1.45rem; font-weight: 600; margin: 0 0 8px; text-align: center; }
+      .prod p { font-size: 13px; color: var(--muted); text-align: center; margin: 0 0 18px; flex: 1; }
+      .prod__price { text-align: center; margin-bottom: 14px; }
+      .prod__price .price { font-size: 1.5rem; }
+      .prod__price small { color: var(--muted); font-size: 13px; }
+      .prod .pill { justify-content: center; width: 100%; font-size: 14px; padding: 12px; }
+
+      /* The funnel's decision row: the motion here has a job — pull the eye to
+         one card at a time and make the CTA read as the next step. */
+      .prod { position: relative; border: 1px solid transparent; }
+      /* Soft halo behind the vial, revealed on hover. */
+      .prod__img::before {
+        content: ''; position: absolute; inset: -10% 8% 0;
+        background: radial-gradient(closest-side, rgba(15, 107, 69, .16), transparent 70%);
+        opacity: 0; pointer-events: none;
+      }
+      @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+        .prod__img img { transition: translate .5s cubic-bezier(.22,.61,.36,1), scale .5s cubic-bezier(.22,.61,.36,1); }
+        .prod__img::before { transition: opacity .45s ease; }
+        .prod .pill { transition: translate .35s cubic-bezier(.22,.61,.36,1); }
+        .prod__price .price { transition: color .35s ease; }
+
+        .prod:hover { translate: 0 -8px; box-shadow: 0 22px 48px rgba(23, 34, 42, .16); border-color: var(--brand); }
+        .prod:hover .prod__img img { translate: 0 -8px; scale: 1.06; }
+        .prod:hover .prod__img::before { opacity: 1; }
+        .prod:hover .prod__price .price { color: var(--brand); }
+        .prod:hover .pill { translate: 0 -2px; }
+
+        /* Dim the siblings so the hovered card is the only live option — the
+           whole point of a funnel row. Dims with `filter: opacity()`, not
+           `opacity`: the scroll-in keyframes below animate `opacity`, and an
+           animation with fill `both` outranks a plain declaration, so this
+           would silently never apply. `filter` composes instead of colliding. */
+        .prod { transition: translate .4s cubic-bezier(.22,.61,.36,1), box-shadow .4s ease, border-color .4s ease, filter .4s ease; }
+        .prods:hover .prod { filter: opacity(.62); }
+        .prods:hover .prod:hover { filter: none; }
+      }
+
+      /* Staggered scroll-in. The cards sit in one row, so they share the same
+         view() progress — the stagger comes from shifting each card's
+         animation-range, not from a delay (delays don't apply to scroll
+         timelines). ponytail: same @supports fallback as the bento. */
+      @supports (animation-timeline: view()) {
+        @media (prefers-reduced-motion: no-preference) {
+          .prod { animation: prodIn linear both; animation-timeline: view(); }
+          .prod:nth-child(1) { animation-range: entry 6% cover 20%; }
+          .prod:nth-child(2) { animation-range: entry 12% cover 26%; }
+          .prod:nth-child(3) { animation-range: entry 18% cover 32%; }
+          .prod:nth-child(4) { animation-range: entry 24% cover 38%; }
+          @keyframes prodIn { from { opacity: 0; transform: translateY(30px) scale(.97); } to { opacity: 1; transform: none; } }
+        }
+      }
+
+      /* "Real Doctors / Real Providers / Pharmacy Grade" — restored trust
+         section, reusing index.astro's three photos. */
+      .trust { display: grid; gap: 16px; grid-template-columns: 1fr; }
+      @media (min-width: 780px) { .trust { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+      .trust__card { border-radius: 18px; overflow: hidden; background: var(--card); }
+      .trust__img { aspect-ratio: 4 / 3; overflow: hidden; }
+      .trust__img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+      .trust__body { padding: 20px 22px 24px; }
+      .trust__body h3 { font-family: var(--font-display); font-size: 1.2rem; font-weight: 600; margin: 0 0 6px; }
+      .trust__body p { font-size: 13.5px; color: var(--muted); margin: 0; }
+
+      /* Staggered scroll-in, same mechanism as .stat/.prod above. */
+      @supports (animation-timeline: view()) {
+        @media (prefers-reduced-motion: no-preference) {
+          .trust__card { animation: trustIn linear both; animation-timeline: view(); }
+          .trust__card:nth-child(1) { animation-range: entry 8% cover 26%; }
+          .trust__card:nth-child(2) { animation-range: entry 14% cover 32%; }
+          .trust__card:nth-child(3) { animation-range: entry 20% cover 38%; }
+          @keyframes trustIn { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: none; } }
+        }
+      }
+
+      /* Testimonials — quote-led (no duplicated imagery) */
+      .tcards { display: grid; gap: 16px; grid-template-columns: 1fr; }
+      @media (min-width: 780px) { .tcards { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+      .tcard { background: var(--card); border-radius: 16px; padding: 24px; }
+      .tcard__stars { color: #00b67a; letter-spacing: 2px; font-size: 14px; margin-bottom: 14px; }
+      .tcard__quote { font-family: var(--font-display); font-size: 1.28rem; line-height: 1.42; color: var(--ink); margin: 0 0 16px; }
+      .tcard__meta { font-size: 13px; }
+      .tcard__name { font-weight: 600; }
+      .tcard__tag { color: var(--brand); }
+
+      /* Press */
+      .trustpoints { padding: 30px 0 56px; }
+      /* Label on its own line, logos in a row beneath it — the label used to sit
+         inline at the far left, which made the four logos read as a continuation
+         of the sentence rather than as a set. */
+      .press__row { display: flex; flex-direction: column; align-items: center; gap: 15px; }
+      .press__label { font-size: 12px; font-family: var(--font-condensed); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+      .press__logos { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 22px 54px; }
+      .press__logos img { height: 24px; width: auto; opacity: .72; filter: grayscale(1); }
+
+      /* Final CTA — now the shared <FinalCta> component
+         (src/components/FinalCta.astro); its background/pill CSS lives there. */
+
+      /* Footer */
+      .foot { background: var(--green-deep); color: rgba(255,255,255,.75); }
+      .foot__grid { display: grid; gap: 34px; grid-template-columns: 1fr; padding-top: 56px; padding-bottom: 34px; }
+      @media (min-width: 780px) { .foot__grid { grid-template-columns: 1.7fr 1fr 1fr 1fr; } }
+      .foot__logo { height: 30px; width: auto; opacity: .95; }
+      .foot__brand p { font-size: 14px; max-width: 260px; margin: 16px 0 0; line-height: 1.6; }
+      .foot__col h3 { color: #fff; font-size: 13px; font-weight: 600; letter-spacing: .04em; margin: 0 0 14px; }
+      .foot__col a { display: block; color: rgba(255,255,255,.7); text-decoration: none; font-size: 14px; padding: 6px 0; }
+      .foot__col a:hover { color: #fff; }
+      .foot__bottom { border-top: 1px solid rgba(255,255,255,.12); padding-top: 22px; padding-bottom: 40px; display: flex; flex-wrap: wrap; gap: 10px 32px; justify-content: space-between; }
+      .foot__bottom span { font-size: 12px; color: rgba(255,255,255,.55); }
+      .foot__bottom .disc { max-width: 640px; font-family: var(--font-condensed); letter-spacing: 0.015em; }
+
+      @media (max-width: 1023px) {
+        .badge-mob { display: block; margin-top: 26px; }
+        .hero__badges { display: none; }
+        .hero__inner { padding-top: 104px; }
+      }
     </style>
-  </Fragment>
+  </head>
 
-    <main class="homepage">
-        <!-- Header -->
-        <Header />
-
-      <!-- Hero Section -->
-      <section class="hero py-5">
-
-        <div class="container hero--container py-5">
-       <div class="fig-hero__couple" aria-hidden="true">
+  <body>
+    <!-- Header -->
+    <header>
+      <div class="wrap nav">
+        {/* /prototype, not /preview: /preview exists only as a Netlify redirect,
+            so it 404s on the local dev server. Both are excepted from the
+            waitlist catch-all, so this works in either place. */}
+        <a href="/prototype" class="nav__logo"><Image src={logo} alt="Freeley" /></a>
+        <nav class="nav__links">
+          {nav.map((item) => <a href={item.href}>{item.label}</a>)}
+        </nav>
+        <div class="nav__right">
+          <a href={ASSESSMENT} class="pill nav__cta">Start Assessment <span class="arw">→</span></a>
+          <button class="nav__burger" id="navBurger" aria-label="Open menu" aria-expanded="false" aria-controls="navMobile">
+            <span></span><span></span><span></span>
+          </button>
         </div>
-          <div class="grid grid-cols-1 md:grid-cols-12 relative">
-            <div class="md:col-span-8 lg:col-span-7">
-              <div
-                class="bordered--heading inline-block px-4 mb-3"
-              >
-                <span class="uppercase">Physician-Prescribed</span>
-              </div>
-              <h1
-                class="flex flex-col"
-              >
-                Your Last Diet Didn't Fail.
-                <span class="text-highlight">Your Biology Did.</span>
-              </h1>
-              <p
-                class="lead"
-              >
-                Real doctors. Real Rx. Delivered to your door
-              </p>
-              <Image
-                src={heroMob}
-                alt="Freeley patients"
-                loading="eager"
-                fetchpriority="high"
-                class="hero-img-mobile w-full rounded-2xl mb-6"
-              />
-              <div
-                class="bordered--heading extra-border mt-4 inline-block px-4 mb-6"
-              >
-                <span class="uppercase"
-                  >WHAT'S YOUR WEIGHT LOSS GOAL?</span
-                >
-              </div>
-              <div
-                class="mb-6"
-              >
-                <div class="weight-guide grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-2 m-0">
-                  <div
-                    class="weight-item"
-                    id="start-assessment1"
-                  >
-                    <span class="weight-range">10–25 lbs </span
-                    ><span
-                      ><img src="/assets/icons/arrow-right-green.svg" alt="" loading="eager" /></span>
-                  </div>
-                  <div
-                    class="weight-item"
-                    id="start-assessment2"
-                  >
-                    <span class="weight-range">25–50 lbs </span
-                    ><span
-                      ><img src="/assets/icons/arrow-right-green.svg" alt="" loading="eager" /></span>
-                  </div>
-                  <div
-                    class="weight-item"
-                    id="start-assessment3"
-                  >
-                    <span class="weight-range">50+ lbs</span>
-                    <span
-                      ><img src="/assets/icons/arrow-right-green.svg" alt="" loading="eager" /></span>
-                  </div>
-                </div>
-                <div class="assessment-link">
-                  <span>Not sure? </span
-                  ><button type="button" id="start-full-assessment"
-                    >Start the full assessment</button
-                  >
-                </div>
-              </div>
-              <div
-                class="steps--container md:flex hidden"
-              >
+      </div>
+      <nav class="nav__mobile" id="navMobile">
+        {nav.map((item) => <a href={item.href}>{item.label}</a>)}
+        <a href={ASSESSMENT} class="pill">Start Assessment <span class="arw">→</span></a>
+      </nav>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+      <Image class="hero__img" src={heroCouple} alt="Freeley patients" widths={[900, 1400]} sizes="50vw" loading="eager" fetchpriority="high" />
+      <div class="wrap hero__inner">
+        <div class="hero__col">
+          <span class="eyebrow">Physician-Prescribed Care</span>
+          <h1 class="serif">Care that never starts <em>in a waiting room.</em></h1>
+          <p class="hero__sub">Weight, sexual wellness, hair, longevity — prescribed by licensed U.S. physicians, compounded by licensed pharmacies, delivered discreetly to your door.</p>
+          <Image class="hero__img-mob" src={heroCouple} alt="Freeley patients" widths={[600, 900]} sizes="100vw" loading="lazy" />
+          <div class="hero__from">GLP-1 weight loss from <span class="price">$99</span>/month <span class="hero__qual">on the 12-month plan</span></div>
+          <a href={ASSESSMENT} class="pill">Start Your Assessment <span class="arw">→</span></a>
+
+          <div class="hero__proof">
+            <div class="avatars"><span></span><span></span><span></span><span></span></div>
+            <div class="hero__count"><b>12,000+</b><span>Patients treated</span></div>
+          </div>
+          <div class="hero__rating">
+            <span class="stars">★★★★★</span> Excellent · <b>4.9/5</b> on Trustpilot
+          </div>
+
+          <!-- badges shown inline on mobile (overlay on desktop) -->
+          <div class="badge-mob hero__badges" style="position:static;">
+            <Image src={trustPilot} alt="Trustpilot rating" />
+            <Image src={legitScript} class="lg" alt="LegitScript certified" />
+            <Image src={hipaaBadge} alt="HIPAA Compliant" />
+            <Image src={usaBadge} alt="Made in USA" />
+          </div>
+        </div>
+      </div>
+      <div class="hero__badges">
+        <Image src={trustPilot} alt="Trustpilot rating" />
+        <Image src={legitScript} class="lg" alt="LegitScript certified" />
+        <Image src={hipaaBadge} alt="HIPAA Compliant" />
+        <Image src={usaBadge} alt="Made in USA" />
+      </div>
+    </section>
+
+    <!-- Featured In -->
+    <div class="trustbar">
+      <div class="wrap press__row">
+        <span class="press__label">Featured In</span>
+        <div class="press__logos">
+          {press.map((p) => <Image src={p.src} alt={p.name} height={48} loading="lazy" />)}
+        </div>
+      </div>
+    </div>
+
+    <!-- Steps band -->
+    <div class="wrap">
+      <div class="band">
+        <div class="band__grid">
+          <h2 class="serif">Get started in 3 simple steps</h2>
+          <div>
+            <div class="steps">
+              {steps.map((s) => (
                 <div class="step">
-                  <div class="step--number">1</div>
-                  <div class="flex gap-2 flex-col">
-                    <div class="step-title">2 Minute Intake</div>
-                    <div class="step--subtitle">Quick & secure</div>
+                  <div class="step__ic"><span class="step__n">{s.n}</span></div>
+                  <div>
+                    <h3>{s.title}</h3>
+                    <p>{s.desc}</p>
                   </div>
                 </div>
-                <div class="step">
-                  <div class="step--number">2</div>
-                  <div class="flex gap-2 flex-col">
-                    <div class="step-title">Physician Reviewed</div>
-                    <div class="step--subtitle">Same Day</div>
-                  </div>
-                </div>
-                <div class="step">
-                  <div class="step--number">3</div>
-                  <div class="flex gap-2 flex-col">
-                    <div class="step-title">Delivered in 48hrs</div>
-                    <div class="step--subtitle">To your door</div>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                class="steps--container gap-4 md:hidden grid grid-cols-1"
-              >
-                <div class="step mb-2">
-                  <div class="step--number">1</div>
-                  <div class="flex gap-2 flex-col">
-                    <div class="step-title">2 Minute Intake</div>
-                  </div>
-                </div>
-                <div class="step mb-2">
-                  <div class="step--number">2</div>
-                  <div class="flex gap-2 flex-col">
-                    <div class="step-title">Physician Reviewed</div>
-                  </div>
-                </div>
-                <div class="step mb-2">
-                  <div class="step--number">3</div>
-                  <div class="flex gap-2 flex-col">
-                    <div class="step-title">Delivered in 48hrs</div>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                class="hero--testimonial pr-0 mb-0 md:mb-12 md:pr-12 mt-6"
-              >
-                <p class="text-black mb-6">Testimonials</p>
-                <span
-                  >&#8220;I tried every diet app imaginable. Nothing stuck until my
-                  doctor started me on semaglutide through Freeley. The cravings
-                  just… stopped. I&#8217;m down 31 lbs and my A1C went from 6.4 to
-                  5.6.&#8221;</span
-                >
-              </div>
+              ))}
             </div>
-            <div class="md:col-span-4 lg:col-span-5"></div>
+            <div class="band__foot"><a href="/how-it-works">See how it works →</a></div>
           </div>
         </div>
-        <div
-          class="container position-relative z-2 py-3 percentage--container"
-        >
-          <div class="grid grid-cols-1 md:grid-cols-2 protocol--text">
-            <div class="flex flex-col md:flex-row gap-2">
-              <div class="percentage">15%</div>
-              <div>
-                <p>
-                  Average body weight lost by patients on our physician-guided
-                  GLP-1 protocol
-                </p>
-                <p class="medicine-footer-note">*Based on internal program data.</p>
+      </div>
+    </div>
+
+    <!-- Products -->
+    <section class="split">
+      <div class="wrap split__grid">
+        <div class="intro">
+          <h2 class="serif">Precision medicine<br /><em>for every body</em></h2>
+          <p>Clinically validated protocols, compounded to your exact prescription by licensed pharmacies.</p>
+          <a href="/pricing" class="ghost">Explore all treatments <span class="arw">→</span></a>
+        </div>
+        <div>
+          <div class="prods">
+            {products.map((p) => (
+              <div class="prod">
+                <div class="prod__img"><Image src={p.img} alt={p.name} height={300} loading="lazy" /></div>
+                <h3>{p.name}</h3>
+                <p>{p.desc}</p>
+                <div class="prod__price"><span class="price">{p.price}</span><small>/mo*</small></div>
+                {/* The quiz, not the product page: this is the conversion action,
+                    and /weight-loss et al. sit behind the waitlist gate anyway.
+                    Staying an <a> to the real quiz keeps the no-JS fallback. */}
+                <a href={ASSESSMENT} class="pill">See if you qualify</a>
               </div>
+            ))}
+          </div>
+          <p class="footnote">*Price reflects the 12-month plan. 1-, 3-, and 6-month plans available at higher monthly rates.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials (full-width, quote-led — no duplicated imagery) -->
+    <section class="fullsec">
+      <div class="wrap">
+        <div class="center-head">
+          <h2 class="serif">Real results. <em>Real people.</em></h2>
+          <p>See how Freeley is helping patients look, feel, and live better.</p>
+        </div>
+        <div class="tcards">
+          {testimonials.map((t) => (
+            <div class="tcard">
+              <div class="tcard__stars">★★★★★</div>
+              <p class="tcard__quote">“{t.quote}”</p>
+              <div class="tcard__meta"><span class="tcard__name">{t.name}</span> · <span class="tcard__tag">{t.tag}</span></div>
             </div>
-            <div class="verified--text">
-              <div class="text-left mb-4 block md:hidden">
-                <span>Verified &amp; Certified</span>
-              </div>
-              <div
-                class="flex justify-start md:justify-end items-end md:items-center gap-4 md:gap-12 protocol--imgs"
-              >
-                <div class="flex-1 hidden md:block">
-                  <span>Verified &amp; Certified</span>
+          ))}
+        </div>
+        <p class="footnote" style="text-align:center;">*Individual results may vary. Quotes are from Freeley weight-loss patients; results are not typical or guaranteed.</p>
+        <div class="center-cta"><a href="/about" class="ghost">Read more stories <span class="arw">→</span></a></div>
+      </div>
+    </section>
+
+    <!-- Your Journey (restored from index.astro — the photo + timeline graph
+         are index.astro's original pre-aligned pair, reused as-is) -->
+    <section>
+      <div class="wrap">
+        <div class="journey">
+          <div class="journey__bg"></div>
+          <div class="journey__watermark"></div>
+          <div class="journey__scrim"></div>
+          <div class="journey__inner">
+            <div class="journey__head">
+              <span class="eyebrow">Your Journey</span>
+              <h2 class="serif">What to expect on <em>GLP-1 therapy</em></h2>
+              <a href={ASSESSMENT} class="pill pill--light">Start Your Assessment <span class="arw">→</span></a>
+            </div>
+            <div class="journey__timeline">
+              <svg class="journey__svg" viewBox="0 0 1125 464" fill="none" aria-hidden="true">
+                <defs>
+                  <radialGradient id="jGlow">
+                    <stop offset="0.56" stop-color="#fff" stop-opacity="0" />
+                    <stop offset="1" stop-color="#fff" />
+                  </radialGradient>
+                </defs>
+                <path class="jline" pathLength="100" d="M45 345L341.413 199.219H634.891L881.279 66H1125" />
+                {journeyStops.map((s, i) => (
+                  <g class={`jnode jnode--${i + 1}`}>
+                    <circle cx={s.x} cy={s.y} r="15" fill="url(#jGlow)" />
+                    <circle cx={s.x} cy={s.y} r="7" fill="#fff" />
+                  </g>
+                ))}
+              </svg>
+              {journeyStops.map((s, i) => (
+                <div class={`jstop jstop--${i + 1}`}>
+                  <span class="jstop__badge">{s.label}</span>
+                  <p class="jstop__text">{s.copy}</p>
                 </div>
-                <div class="verified-badges flex items-center gap-6">
-                  <Image
-                    src={trustPilot}
-                    alt="Trustpilot rating"
-                    loading="eager"
-                  />
-                  <Image
-                    src={legitScript}
-                    alt="LegitScript certification badge"
-                    class="badge--lg"
-                    loading="eager"
-                  />
-                  <Image
-                    src={usaBadge}
-                    alt="USA-based badge"
-                    loading="eager"
-                  />
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
-        <div
-          class="container z-2 position-relative blur--bg"
-          id="start-assessment"
-        >
-          <div class="grid grid-cols-1 md:grid-cols-2 items-center">
-            <div class="flex flex-col gap-4 left">
-              <strong>Start Assessment</strong>
-              <div class="from--to">
-                From <span>$99</span> Physician-supervised
+      </div>
+    </section>
+
+    <!-- Real Doctors / Real Providers / Pharmacy Grade (restored from index.astro) -->
+    <section class="fullsec" style="padding-top:0;">
+      <div class="wrap">
+        <div class="center-head">
+          <span class="eyebrow">Verified, Not Assumed</span>
+          <h2 class="serif" style="margin-top:14px;">Real physicians. <em>Real pharmacies.</em></h2>
+          <p>Every layer of care is licensed, credentialed, and checkable.</p>
+        </div>
+        <div class="trust">
+          {trustCards.map((t) => (
+            <div class="trust__card">
+              <div class="trust__img"><img src={t.img} alt={t.label} loading="lazy" width="600" height="450" style="height:auto;" /></div>
+              <div class="trust__body">
+                <h3>{t.label}</h3>
+                <p>{t.desc}</p>
               </div>
             </div>
-            <div
-              class="flex justify-start md:justify-end gap-4 mt-4 md:mt-0 right"
-            >
-              <button
-                type="button"
-                id="start-assessment4"
-                class="cta--global w-full md:w-1/3 text-center"
-                ><span>Start Your Assessment</span></button
-              >
-            </div>
-          </div>
+          ))}
         </div>
-      </section>
+      </div>
+    </section>
 
-      <section>
-        <div id="quiz--modal" class="modal">
-          <div class="modal-content">
-            <span class="close" id="close--quiz"
-              ><Image src={closeIcon} alt="Close" loading="lazy"
-            /></span>
-            <div class="processing-loader" id="loader"></div>
-            <div id="quiz--container"></div>
-          </div>
+    <!-- Comparison -->
+    <section class="split" style="padding-top:0;">
+      <div class="wrap">
+        {/* Head sits above the capsule rather than beside it, so the capsule gets
+            the full column and its halves have room to travel sideways. */}
+        <div class="center-head">
+          <h2 class="serif">Why patients choose <em>Freeley</em></h2>
+          <p>We combine the best of telehealth with real medical care.</p>
         </div>
-      </section>
-
-      <!-- Benefits -->
-      <section class="benefits py-5">
-        <div class="container">
-          <div class="benefits-grid grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="benefits-grid__lead">
-              <div class="benefit--item">
-                <div class="item--img"></div>
-                <div class="flex justify-between pt-4 px-4">
-                  <h3>Weight Loss</h3>
-                  <Image src={arrowCircleRight} alt="" loading="lazy" />
+        <details class="pod">
+          <summary class="pod__trigger">
+            <div class="pod__scene">
+              <div class="pod__stage" aria-hidden="true">
+                <div class="pod__half pod__half--cap">
+                  {podSlices.map((s) => (
+                    <span class="pod__slice" style={`--w:${s.w};--h:${s.h};--z:${s.z};background:rgb(${s.cap})`}></span>
+                  ))}
+                </div>
+                <div class="pod__half pod__half--body">
+                  {podSlices.map((s) => (
+                    <span class="pod__slice" style={`--w:${s.w};--h:${s.h};--z:${s.z};background:rgb(${s.body})`}></span>
+                  ))}
                 </div>
               </div>
             </div>
-            <div class="benefits-grid__offset">
-              <div class="benefit--item">
-                <div class="item--img"></div>
-                <div class="flex justify-between pt-4 px-4">
-                  <h3>Sexual Wellness</h3>
-                  <Image src={arrowCircleRight} alt="" loading="lazy" />
-                </div>
-              </div>
-            </div>
-            <div>
-              <div class="benefit--item">
-                <div class="item--img"></div>
-                <div class="flex justify-between pt-4 px-4">
-                  <h3>Hair Loss</h3>
-                  <Image src={arrowCircleRight} alt="" loading="lazy" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+            <span class="pod__hint">
+              <span class="pod__hint--shut">Open the capsule</span>
+              <span class="pod__hint--open">Close</span>
+            </span>
+          </summary>
 
-      <!-- Precision Medicine Cards -->
-      <section class="precision-medicine">
-        <div class="container">
-          <div
-            class="section-heading md:w-1/2"
-          >
-            <div class="section--title mt-2">
-              <h2>
-                Precision medicine<br /><span class="highlight"
-                  >for every body</span
-                >
-              </h2>
-            </div>
-            <p>
-              Clinically validated protocols, compounded to your exact
-              prescription by licensed pharmacies.
-            </p>
-          </div>
-          <div class="medicine-grid">
-            <div
-              class="medicine-card"
-            >
-              <div class="product-image">
-                <Image
-                  src={image18}
-                  alt="GLP-1 Weight Loss"
-                />
-              </div>
-              <h3>GLP-1 Weight Loss</h3>
-              <ul class="feature-list mb-6">
+          {/* Absolutely positioned over .pod__scene, so opening the capsule
+              changes no layout at all — the contents land exactly in the space
+              the capsule occupied, and nothing below the section moves. */}
+          <div class="pod__reveal">
+            <p class="pod__eyebrow">What Freeley gives you</p>
+            <ul class="pod__gives">
+              {heroRows.map((row) => (
                 <li>
-                  <span class="list-icon"
-                    ><svg viewBox="0 0 24 24">
-                      <path
-                        d="M9.5 15.5L5.8 11.8L4.4 13.2L9.5 18.3L19.6 8.2L18.2 6.8Z"
-                      /></svg></span
-                  >Compounded GLP-1 receptor agonist
+                  <span class="pod__gives-label">{row.label}</span>
+                  <span class="pod__gives-val">
+                    {row.cells[0] === 'y' ? (
+                      <svg class="ic-y" role="img" aria-label="Included" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18ZM8.5 12l2.5 2.5 4.5-5" /></svg>
+                    ) : (
+                      row.cells[0]
+                    )}
+                  </span>
                 </li>
-                <li>
-                  <span class="list-icon"
-                    ><svg viewBox="0 0 24 24">
-                      <path
-                        d="M9.5 15.5L5.8 11.8L4.4 13.2L9.5 18.3L19.6 8.2L18.2 6.8Z"
-                      /></svg></span
-                  >Average 15% body weight loss
-                </li>
-                <li>
-                  <span class="list-icon"
-                    ><svg viewBox="0 0 24 24">
-                      <path
-                        d="M9.5 15.5L5.8 11.8L4.4 13.2L9.5 18.3L19.6 8.2L18.2 6.8Z"
-                      /></svg></span
-                  >Starts as low as $99.29 for month one
-                </li>
-              </ul>
-              <div class="price flex justify-between">
-                <div class="text-14-inter dark">Starting at</div>
-                <div>
-                  <span>$99*</span><small class="text-14-inter">/month</small>
-                </div>
-              </div>
-              <button type="button" class="global--qua--button w-full"
-                ><img
-                  class="btn--icon"
-                  src="/assets/icons/arrow-right.svg"
-                  alt="" loading="lazy" />See if you Qualify</button
-              >
-              <div class="cancel-text">Cancel Anytime</div>
-            </div>
-            <div
-              class="medicine-card"
-            >
-              <div class="product-image">
-                <Image
-                  src={image19}
-                  alt="Sexual Wellness"
-                />
-              </div>
-              <h3>Sexual Wellness</h3>
-              <ul class="feature-list mb-6">
-                <li>
-                  <span class="list-icon"
-                    ><svg viewBox="0 0 24 24">
-                      <path
-                        d="M9.5 15.5L5.8 11.8L4.4 13.2L9.5 18.3L19.6 8.2L18.2 6.8Z"
-                      /></svg></span
-                  >Dissolves under the tongue (Sublingual)
-                </li>
-                <li>
-                  <span class="list-icon"
-                    ><svg viewBox="0 0 24 24">
-                      <path
-                        d="M9.5 15.5L5.8 11.8L4.4 13.2L9.5 18.3L19.6 8.2L18.2 6.8Z"
-                      /></svg></span
-                  >Sildenafil + Tadalafil + Apomorphine
-                </li>
-                <li>
-                  <span class="list-icon"
-                    ><svg viewBox="0 0 24 24">
-                      <path
-                        d="M9.5 15.5L5.8 11.8L4.4 13.2L9.5 18.3L19.6 8.2L18.2 6.8Z"
-                      /></svg></span
-                  >Physician consultation & fast shipping included
-                </li>
-              </ul>
-              <div class="price flex justify-between">
-                <div class="text-14-inter dark">Starting at</div>
-                <div>
-                  <span>$59</span><small class="text-14-inter">/month</small>
-                </div>
-              </div>
-              <button type="button" class="global--qua--button w-full"
-                ><img
-                  class="btn--icon"
-                  src="/assets/icons/arrow-right.svg"
-                  alt="" loading="lazy" />See if you Qualify</button
-              >
-              <div class="cancel-text">Cancel Anytime</div>
-            </div>
-            <div
-              class="medicine-card"
-            >
-              <div class="product-image">
-                <Image
-                  src={image20}
-                  alt="Hair Loss"
-                />
-              </div>
-              <h3>Hair Loss</h3>
-              <ul class="feature-list mb-6">
-                              <li>
-                  <span class="list-icon"
-                    ><svg viewBox="0 0 24 24">
-                      <path
-                        d="M9.5 15.5L5.8 11.8L4.4 13.2L9.5 18.3L19.6 8.2L18.2 6.8Z"
-                      /></svg></span
-                  >Synergistic 2-in-1 compounded formula
-                </li>
-                <li>
-                  <span class="list-icon"
-                    ><svg viewBox="0 0 24 24">
-                      <path
-                        d="M9.5 15.5L5.8 11.8L4.4 13.2L9.5 18.3L19.6 8.2L18.2 6.8Z"
-                      /></svg></span
-                  >Choose between Oral Pill or Topical Spray
-                </li>
-                <li>
-                  <span class="list-icon"
-                    ><svg viewBox="0 0 24 24">
-                      <path
-                        d="M9.5 15.5L5.8 11.8L4.4 13.2L9.5 18.3L19.6 8.2L18.2 6.8Z"
-                      /></svg></span
-                  >Precision-dosed by licensed physicians
-                </li>
-              </ul>
-              <div class="price flex justify-between">
-                <div class="text-14-inter dark">Starting at</div>
-                <div>
-                  <span>$29</span><small class="text-14-inter">/month</small>
-                </div>
-              </div>
-              <button type="button" class="global--qua--button w-full"
-                ><img
-                  class="btn--icon"
-                  src="/assets/icons/arrow-right.svg"
-                  alt="" loading="lazy" />See if you Qualify</button
-              >
-              <div class="cancel-text">Cancel Anytime</div>
-            </div>
-            <div
-              class="medicine-card"
-            >
-              <div class="product-image">
-                <Image
-                  src={image21}
-                  alt="Longevity & Peptides"
-                />
-              </div>
-              <h3>Longevity & Peptides</h3>
-              <ul class="feature-list mb-6">
-                <li>
-                  <span class="list-icon"
-                    ><svg viewBox="0 0 24 24">
-                      <path
-                        d="M9.5 15.5L5.8 11.8L4.4 13.2L9.5 18.3L19.6 8.2L18.2 6.8Z"
-                      /></svg></span
-                  >Sourced from 503A US pharmacies
-                </li>
-                <li>
-                  <span class="list-icon"
-                    ><svg viewBox="0 0 24 24">
-                      <path
-                        d="M9.5 15.5L5.8 11.8L4.4 13.2L9.5 18.3L19.6 8.2L18.2 6.8Z"
-                      /></svg></span
-                  >Customized stack tailored to you
-                </li>
-                <li>
-                  <span class="list-icon"
-                    ><svg viewBox="0 0 24 24">
-                      <path
-                        d="M9.5 15.5L5.8 11.8L4.4 13.2L9.5 18.3L19.6 8.2L18.2 6.8Z"
-                      /></svg></span
-                  >Physician review & expedited cold-shipping
-                </li>
-              </ul>
-              <div class="price flex justify-between">
-                <div class="text-14-inter dark">Starting at</div>
-                <div>
-                  <span>$99</span><small class="text-14-inter">/month</small>
-                </div>
-              </div>
-              <button type="button" class="global--qua--button w-full"
-                ><img
-                  class="btn--icon"
-                  src="/assets/icons/arrow-right.svg"
-                  alt="" loading="lazy" />See if you Qualify</button
-              >
-              <div class="cancel-text">Cancel Anytime</div>
-            </div>
+              ))}
+            </ul>
           </div>
-          <div
-            class="medicine-footer-note"
-          >
-            <p>
-              *Price reflects the 12-month plan. 1-, 3-, and 6-month plan
-              lengths available at higher monthly rates. See checkout for full
-              pricing.
-            </p>
-            <p>
-              Freely does not manufacture compounded medications. Actual product
-              appearance and labeling of the medication you receive will differ
-              from website images.
-            </p>
+        </details>
+
+        {/* The full eight-row comparison lives on its own page now. A link,
+            not a disclosure: it is a different depth of content, and /compare
+            renders every row from the same data module this capsule reads. */}
+        <div class="pod__more">
+          <a href="/compare" class="pod__more-btn">See full comparison <span class="arw">→</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats (full-width, centered head — breaks the split rhythm) -->
+    <section class="fullsec">
+      <div class="wrap">
+        <div class="center-head">
+          <h2 class="serif">Real results from <em>real patients</em></h2>
+          <p>Clinically proven treatments. Physician-supervised care.</p>
+        </div>
+        <div class="stats">
+          {stats.map((s, i) => (
+            <div class={`stat stat--${i + 1}`}>
+              <div class="stat__body">
+                <div class="stat__v serif">{s.value}</div>
+                <div class="stat__l">{s.label}</div>
+                <div class="stat__s">{s.sub}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <p class="footnote" style="text-align:center;">*Individual results may vary. Based on internal patient data.</p>
+        <div class="center-cta"><a href="/about" class="ghost">View patient stories <span class="arw">→</span></a></div>
+      </div>
+    </section>
+
+    <!-- The Process (restored from index.astro — was dropped from this redesign) -->
+    <section class="split">
+      <div class="wrap">
+        <div class="process__top">
+          <div>
+            <span class="eyebrow">The Process</span>
+            <h2 class="serif" style="margin:12px 0 16px;">From visit to doorstep<br /><em>in under a week</em></h2>
+            <p style="color:var(--muted); font-size:15px; margin:0 0 22px; max-width:38ch;">Everything happens on your schedule, from your phone.</p>
+            <a href="/about" class="ghost">About Us <span class="arw">→</span></a>
+          </div>
+          <div class="process__img">
+            <img src="/assets/frame-242.svg" alt="The Freeley assessment on a patient's phone" loading="lazy" width="362" height="366" style="height:auto; max-width:340px;" />
           </div>
         </div>
-      </section>
-
-      <!-- Patient Results Swiper -->
-      <section class="patient-results overflow-hidden">
-        <div class="container">
-          <div class="results-header">
-            <div class="section--title mt-2">
-              <h2>
-                Why patients switch<br /><span class="highlight"
-                  >to Freeley</span
-                >
-              </h2>
+        <div class="process__steps">
+          {processSteps.map((s) => (
+            <div class="process__step">
+              <span class="step__n serif">{s.n}</span>
+              <h3>{s.title}</h3>
+              <p>{s.desc}</p>
             </div>
-            <p>
-              Real stories from real patients. Names changed for privacy —
-              results and timelines are authentic.
-            </p>
-          </div>
-          <div
-            class="swiper results-grid"
-          >
-            <div class="swiper-wrapper">
-              <div class="swiper-slide">
-                <div class="result-card">
-                  <div class="weight-loss">-31 lbs</div>
-                  <div class="duration">in 3 months</div>
-                  <div class="review">
-                    &#8220;I tried every diet app imaginable. Nothing stuck until my
-                    doctor started me on semaglutide through Freely. The
-                    cravings just&#8230; stopped. I&#8217;m down 31 lbs and my A1C went
-                    from 6.4 to 5.6.&#8221;
-                  </div>
-                  <h4>Maria K.</h4>
-                  <span class="treatment">Semaglutide · Austin, TX</span>
-                </div>
-              </div>
-              <div class="swiper-slide">
-                <div class="result-card">
-                  <div class="weight-loss">-45 lbs</div>
-                  <div class="duration">in 4 months</div>
-                  <div class="review">
-                    &#8220;I couldn&#8217;t believe how easy it was. The medication arrived
-                    at my door, and the doctors actually listened. Down 45 lbs
-                    and feeling better than ever.&#8221;
-                  </div>
-                  <h4>James R.</h4>
-                  <span class="treatment">Tirzepatide · Portland, OR</span>
-                </div>
-              </div>
-              <div class="swiper-slide">
-                <div class="result-card">
-                  <div class="weight-loss">-28 lbs</div>
-                  <div class="duration">in 2.5 months</div>
-                  <div class="review">
-                    &#8220;After years of struggling with my weight, Freely made it
-                    simple. No more guesswork. My energy is through the roof and
-                    I finally feel in control.&#8221;
-                  </div>
-                  <h4>Sarah T.</h4>
-                  <span class="treatment">Semaglutide · Miami, FL</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- Transformation Section -->
-      <section class="transformation-section overflow-hidden">
-        <div class="container">
-          <div class="heading-wrap">
-            <div class="section--title mt-2">
-              <h2>
-                Numbers that speak<br /><span class="highlight"
-                  >for themselves</span
-                >
-              </h2>
-            </div>
-            <p>
-              Results from real Freeley patients under physician supervision.
-            </p>
-          </div>
-          <div
-            class="swiper swiper_before_after transformation-slider"
-          >
-            <div class="swiper-wrapper">
-              <div class="swiper-slide">
-                <div class="transform-card">
-                  <div class="compare-wrapper">
-                    <div class="before-box">
-                      <span class="compare-label">Before</span
-                      ><Image src={beforeImg} alt="Before" loading="lazy" />
-                    </div>
-                    <div class="after-box">
-                      <span class="compare-label">After</span
-                      ><Image src={afterImg} alt="After" loading="lazy" />
-                    </div>
-                  </div>
-                  <div class="transform-quote">
-                    &#8220;Down 37 lbs. Food noise gone. Life changed.&#8221;
-                  </div>
-                  <div class="transform-author">
-                    Sarah K.<span>• GLP-1 Weight Loss Program</span>
-                  </div>
-                </div>
-              </div>
-              <div class="swiper-slide">
-                <div class="transform-card">
-                  <div class="compare-wrapper">
-                    <div class="before-box">
-                      <span class="compare-label">Before</span
-                      ><Image src={beforeImg} alt="Before" loading="lazy" />
-                    </div>
-                    <div class="after-box">
-                      <span class="compare-label">After</span
-                      ><Image src={afterImg} alt="After" loading="lazy" />
-                    </div>
-                  </div>
-                  <div class="transform-quote">
-                    &#8220;I feel more energetic and confident in my body.&#8221;
-                  </div>
-                  <div class="transform-author">
-                    James L.<span>• GLP-1 Weight Loss Program</span>
-                  </div>
-                </div>
-              </div>
-              <div class="swiper-slide">
-                <div class="transform-card">
-                  <div class="compare-wrapper">
-                    <div class="before-box">
-                      <span class="compare-label">Before</span
-                      ><Image src={beforeImg} alt="Before" loading="lazy" />
-                    </div>
-                    <div class="after-box">
-                      <span class="compare-label">After</span
-                      ><Image src={afterImg} alt="After" loading="lazy" />
-                    </div>
-                  </div>
-                  <div class="transform-quote">
-                    &#8220;Lost 42 lbs and kept it off for 6 months!&#8221;
-                  </div>
-                  <div class="transform-author">
-                    Michael T.<span>• GLP-1 Weight Loss Program</span>
-                  </div>
-                </div>
-              </div>
-              <div class="swiper-slide">
-                <div class="transform-card">
-                  <div class="compare-wrapper">
-                    <div class="before-box">
-                      <span class="compare-label">Before</span
-                      ><Image src={beforeImg} alt="Before" loading="lazy" />
-                    </div>
-                    <div class="after-box">
-                      <span class="compare-label">After</span
-                      ><Image src={afterImg} alt="After" loading="lazy" />
-                    </div>
-                  </div>
-                  <div class="transform-quote">
-                    &#8220;My A1C dropped from 7.2 to 5.8. Unbelievable.&#8221;
-                  </div>
-                  <div class="transform-author">
-                    David R.<span>• GLP-1 Weight Loss Program</span>
-                  </div>
-                </div>
-              </div>
-              <div class="swiper-slide">
-                <div class="transform-card">
-                  <div class="compare-wrapper">
-                    <div class="before-box">
-                      <span class="compare-label">Before</span
-                      ><Image src={beforeImg} alt="Before" loading="lazy" />
-                    </div>
-                    <div class="after-box">
-                      <span class="compare-label">After</span
-                      ><Image src={afterImg} alt="After" loading="lazy" />
-                    </div>
-                  </div>
-                  <div class="transform-quote">
-                    &#8220;Finally comfortable in my own skin after 10 years.&#8221;
-                  </div>
-                  <div class="transform-author">
-                    Jessica M.<span>• GLP-1 Weight Loss Program</span>
-                  </div>
-                </div>
-              </div>
-              <div class="swiper-slide">
-                <div class="transform-card">
-                  <div class="compare-wrapper">
-                    <div class="before-box">
-                      <span class="compare-label">Before</span
-                      ><Image src={beforeImg} alt="Before" loading="lazy" />
-                    </div>
-                    <div class="after-box">
-                      <span class="compare-label">After</span
-                      ><Image src={afterImg} alt="After" loading="lazy" />
-                    </div>
-                  </div>
-                  <div class="transform-quote">
-                    &#8220;No more cravings. Down 28 lbs in 3 months.&#8221;
-                  </div>
-                  <div class="transform-author">
-                    Amanda W.<span>• GLP-1 Weight Loss Program</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- desktop -->
-          <div class="featured-wrap hidden md:block">
-            <p id="themselves">Trusted & Featured In</p>
-            <div class="featured-logos">
-              <span>
-                <svg
-                  width="168"
-                  height="31"
-                  viewBox="0 0 168 31"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  xmlns:xlink="http://www.w3.org/1999/xlink"
-                >
-                  <rect
-                    width="167.021"
-                    height="30.9686"
-                    fill="url(#pattern0_149_2908)"
-                  />
-                  <defs>
-                    <pattern
-                      id="pattern0_149_2908"
-                      patternContentUnits="objectBoundingBox"
-                      width="1"
-                      height="1"
-                    >
-                      <use
-                        xlink:href="#image0_149_2908"
-                        transform="scale(0.00104167 0.00561798)"
-                      />
-                    </pattern>
-                    <image
-                      id="image0_149_2908"
-                      width="960"
-                      height="178"
-                      preserveAspectRatio="none"
-                      xlink:href="/assets/press/press-logo-1.png"
-                    />
-                  </defs>
-                </svg>
-              </span>
-              <span>
-                <svg
-                  width="122"
-                  height="31"
-                  viewBox="0 0 122 31"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  xmlns:xlink="http://www.w3.org/1999/xlink"
-                >
-                  <rect
-                    width="121.05"
-                    height="30.743"
-                    fill="url(#pattern0_149_2909)"
-                  />
-                  <defs>
-                    <pattern
-                      id="pattern0_149_2909"
-                      patternContentUnits="objectBoundingBox"
-                      width="1"
-                      height="1"
-                    >
-                      <use
-                        xlink:href="#image0_149_2909"
-                        transform="matrix(0.000290644 0 0 0.00114441 -0.0952381 -1.84375)"
-                      />
-                    </pattern>
-                    <image
-                      id="image0_149_2909"
-                      width="4096"
-                      height="4096"
-                      preserveAspectRatio="none"
-                      xlink:href="/assets/press/press-logo-2.png"
-                    />
-                  </defs>
-                </svg>
-              </span>
-              <span
-                ><svg
-                  width="253"
-                  height="39"
-                  viewBox="0 0 253 39"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  xmlns:xlink="http://www.w3.org/1999/xlink"
-                >
-                  <rect
-                    width="252.53"
-                    height="38.9617"
-                    fill="url(#pattern0_149_2910)"
-                  />
-                  <defs>
-                    <pattern
-                      id="pattern0_149_2910"
-                      patternContentUnits="objectBoundingBox"
-                      width="1"
-                      height="1"
-                    >
-                      <use
-                        xlink:href="#image0_149_2910"
-                        transform="matrix(0.000260417 0 0 0.00168789 0 -0.084756)"
-                      />
-                    </pattern>
-                    <image
-                      id="image0_149_2910"
-                      width="3840"
-                      height="649"
-                      preserveAspectRatio="none"
-                      xlink:href="/assets/press/press-logo-3.png"
-                    />
-                  </defs>
-                </svg>
-              </span>
-              <span>
-                <svg
-                  width="208"
-                  height="31"
-                  viewBox="0 0 208 31"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  xmlns:xlink="http://www.w3.org/1999/xlink"
-                >
-                  <rect
-                    width="209.742"
-                    height="30.6879"
-                    fill="url(#pattern0_149_2913)"
-                  />
-                  <defs>
-                    <pattern
-                      id="pattern0_149_2913"
-                      patternContentUnits="objectBoundingBox"
-                      width="1"
-                      height="1"
-                    >
-                      <use
-                        xlink:href="#image0_149_2913"
-                        transform="matrix(0.000396511 0 0 0.00271003 -0.506344 -2.46612)"
-                      />
-                    </pattern>
-                    <image
-                      style="filter: brightness(0.1)"
-                      id="image0_149_2913"
-                      width="3840"
-                      height="2160"
-                      preserveAspectRatio="none"
-                      xlink:href="/assets/press/press-logo-4.png"
-                    />
-                  </defs>
-                </svg>
-              </span>
-            </div>
-          </div>
-          <!-- mobile -->
-          <div class="featured-wrap block md:hidden">
-            <p id="themselves">Trusted & Featured In</p>
-            <div class="flex gap-4 mt-4 md:hidden">
-              <div class="swiper brand--grid--hero--2">
-                <div class="swiper-wrapper items-end">
-                  <div class="swiper-slide">
-                    <img
-                      src="/assets/brands/bloomberg.svg"
-                      alt="Bloomberg logo" loading="lazy" />
-                  </div>
-                  <div class="swiper-slide">
-                    <img
-                      src="/assets/brands/forbes.svg"
-                      alt="Forbes logo" loading="lazy" />
-                  </div>
-                  <div class="swiper-slide">
-                    <img
-                      src="/assets/brands/new_york.svg"
-                      alt="The New York Times logo" loading="lazy" />
-                  </div>
-                  <div class="swiper-slide">
-                    <img
-                      src="/assets/brands/tech_crunch.svg"
-                      alt="TechCrunch logo" loading="lazy" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+    <!-- Trust points -->
+    <section class="trustpoints">
+      <div class="wrap">
+        <ul class="trustlist">
+          {trustBar.map((t) => (
+            <li>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                {t.icon === 'stethoscope' && <path d="M6 3v6a4 4 0 0 0 8 0V3M10 17a5 5 0 0 0 10 0v-2M20 13a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z" />}
+                {t.icon === 'pharmacy' && <path d="M4 8a4 4 0 0 1 4-4h8a4 4 0 0 1 0 8H8a4 4 0 0 1-4-4ZM12 12v8M8 16h8" />}
+                {t.icon === 'lock' && <path d="M6 10V7a6 6 0 0 1 12 0v3M5 10h14v11H5z" />}
+                {t.icon === 'box' && <path d="M12 3 3 7.5v9L12 21l9-4.5v-9L12 3ZM3 7.5 12 12l9-4.5" />}
+                {t.icon === 'card' && <path d="M3 6h18v12H3zM3 10h18" />}
+              </svg>
+              {t.label}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
 
-          <!-- <div class="featured-wrap swiper d-block d-md-none">
-            <p id="themselves">Trusted & Featured In</p>
-            <div class="swiper-wrapper featured-logos ">
-                <div class="swiper-slide">
-              <span>Bloomberg</span>
-              </div>
-              <div class="swiper-slide">
-              <span>Forbes</span>
-              </div>
-              <div class="swiper-slide">
-              <span>The New York Times</span>
-              </div>
-              <div class="swiper-slide">
-              <span>TechCrunch</span>
-              </div>
-            </div>
-          </div> -->
+    <!-- Final CTA — shared component (see src/components/FinalCta.astro) -->
+    <FinalCta features={['2-Minute Intake', 'Free Assessment', 'No Commitment', 'Cancel Anytime']}>
+      You deserve a plan<br />that works with your body.
+      <Fragment slot="subheading">Start your free assessment today.</Fragment>
+      <a href={ASSESSMENT} class="pill pill--light" slot="cta">Start Your Assessment <span class="arw">→</span></a>
+    </FinalCta>
+
+    <!-- Footer -->
+    <footer class="foot">
+      <div class="wrap foot__grid">
+        <div class="foot__brand">
+          <Image src={logoWhite} alt="Freeley" class="foot__logo" />
+          <p>Physician-prescribed, doctor-guided care — compounded by licensed U.S. pharmacies and delivered to your door.</p>
         </div>
-      </section>
-
-      <!-- Comparison Table -->
-      <section class="comparison-section">
-        <div class="container text-left md:text-center">
-          <div
-            class="comparison-header mt-2"
-          >
-            <div class="section--title desktop">
-              <h2>Why patients choose <span class="highlight">Freeley</span></h2>
-            </div>
-
-            <div class="section--title mobile">
-              <h2>
-                Why patients choose <br /><span class="highlight">Freeley</span>
-              </h2>
-            </div>
-
-            <p>
-              See how we compare to traditional clinics and other telehealth
-              providers.
-            </p>
-          </div>
-          <div
-            class="comparison-table-wrap"
-          >
-            <table class="comparison-table">
-              <thead>
-                <tr>
-                  <th></th>
-                  <th class="highlighted">Freeley</th>
-                  <th>Traditional Clinics</th>
-                  <th>Retail Pharmacy</th>
-                  <th>Other Telehealth</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr class="light-row">
-                  <td>Board-certified physician oversight</td>
-                  <td>
-                    <span class="icon-check"
-                      ><img src="/assets/icons/table-check.svg" alt="Included" loading="lazy" /></span>
-                  </td>
-                  <td>
-                    <span class="icon-check"
-                      ><img src="/assets/icons/table-check.svg" alt="Included" loading="lazy" /></span>
-                  </td>
-                  <td>–</td>
-                  <td>Varies</td>
-                </tr>
-                <tr class="dark-row">
-                  <td>No in-person visit required</td>
-                  <td>
-                    <span class="icon-check"
-                      ><img src="/assets/icons/table-check.svg" alt="Included" loading="lazy" /></span>
-                  </td>
-                  <td>
-                    <span class="icon-cross"
-                      ><img src="/assets/icons/table-cross.svg" alt="Not included" loading="lazy" /></span>
-                  </td>
-                  <td>
-                    <span class="icon-cross"
-                      ><img src="/assets/icons/table-cross.svg" alt="Not included" loading="lazy" /></span>
-                  </td>
-                  <td>
-                    <span class="icon-check"
-                      ><img src="/assets/icons/table-check.svg" alt="Included" loading="lazy" /></span>
-                  </td>
-                </tr>
-                <tr class="light-row">
-                  <td>Compounded medication options</td>
-                  <td>
-                    <span class="icon-check"
-                      ><img src="/assets/icons/table-check.svg" alt="Included" loading="lazy" /></span>
-                  </td>
-                  <td>Rarely</td>
-                  <td>
-                    <span class="icon-cross"
-                      ><img src="/assets/icons/table-cross.svg" alt="Not included" loading="lazy" /></span>
-                  </td>
-                  <td>Some</td>
-                </tr>
-                <tr class="dark-row">
-                  <td>Monthly price (GLP-1 weight loss)</td>
-                  <td class="price-cell">$99/month</td>
-                  <td>$300-500+</td>
-                  <td>Varies</td>
-                  <td>$199-$399</td>
-                </tr>
-                <tr class="light-row">
-                  <td>Free shipping & discreet delivery</td>
-                  <td>
-                    <span class="icon-check"
-                      ><img src="/assets/icons/table-check.svg" alt="Included" loading="lazy" /></span>
-                  </td>
-                  <td>
-                    <span class="icon-cross"
-                      ><img src="/assets/icons/table-cross.svg" alt="Not included" loading="lazy" /></span>
-                  </td>
-                  <td>Varies</td>
-                  <td>
-                    <span class="icon-check"
-                      ><img src="/assets/icons/table-check.svg" alt="Included" loading="lazy" /></span>
-                  </td>
-                </tr>
-                <tr class="dark-row">
-                  <td>Compounded GLP-1 availability</td>
-                  <td>
-                    <span class="icon-check"
-                      ><img src="/assets/icons/table-check.svg" alt="Included" loading="lazy" /></span>
-                  </td>
-                  <td>
-                    <span class="icon-check"
-                      ><img src="/assets/icons/table-check.svg" alt="Included" loading="lazy" /></span>
-                  </td>
-                  <td>
-                    <span class="icon-check"
-                      ><img src="/assets/icons/table-check.svg" alt="Included" loading="lazy" /></span>
-                  </td>
-                  <td>Some</td>
-                </tr>
-                <tr class="light-row">
-                  <td>Insurance not required</td>
-                  <td>
-                    <span class="icon-check"
-                      ><img src="/assets/icons/table-check.svg" alt="Included" loading="lazy" /></span>
-                  </td>
-                  <td>
-                    <span class="icon-cross"
-                      ><img src="/assets/icons/table-cross.svg" alt="Not included" loading="lazy" /></span>
-                  </td>
-                  <td>Varies</td>
-                  <td>
-                    <span class="icon-check"
-                      ><img src="/assets/icons/table-check.svg" alt="Included" loading="lazy" /></span>
-                  </td>
-                </tr>
-                <tr class="dark-row">
-                  <td>FSA / HSA eligible</td>
-                  <td>
-                    <span class="icon-check"
-                      ><img src="/assets/icons/table-check.svg" alt="Included" loading="lazy" /></span>
-                  </td>
-                  <td>
-                    <span class="icon-check"
-                      ><img src="/assets/icons/table-check.svg" alt="Included" loading="lazy" /></span>
-                  </td>
-                  <td>
-                    <span class="icon-check"
-                      ><img src="/assets/icons/table-check.svg" alt="Included" loading="lazy" /></span>
-                  </td>
-                  <td>Some</td>
-                </tr>
-                <tr class="light-row">
-                  <td>No membership or hidden fees</td>
-                  <td>
-                    <span class="icon-check"
-                      ><img src="/assets/icons/table-check.svg" alt="Included" loading="lazy" /></span>
-                  </td>
-                  <td>
-                    <span class="icon-cross"
-                      ><img src="/assets/icons/table-cross.svg" alt="Not included" loading="lazy" /></span>
-                  </td>
-                  <td>
-                    <span class="icon-check"
-                      ><img src="/assets/icons/table-check.svg" alt="Included" loading="lazy" /></span>
-                  </td>
-                  <td>Varies</td>
-                </tr>
-                <tr class="dark-row">
-                  <td>Cancel anytime — no contracts</td>
-                  <td>
-                    <span class="icon-check"
-                      ><img src="/assets/icons/table-check.svg" alt="Included" loading="lazy" /></span>
-                  </td>
-                  <td>N/A</td>
-                  <td>N/A</td>
-                  <td>Varies</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <button
-            type="button"
-            id="start-assessment7"
-            class="global--qua--button mt-6 md:mt-0"
-            ><img
-              class="btn--icon"
-              src="/assets/icons/arrow-right.svg"
-              alt="" loading="lazy" />Start Your Assessment</button
-          >
-          <div class="steps-row">
-            <div class="step-item"><span>1</span>2 Minute Intake</div>
-            <div class="step-item"><span>2</span>Physician Reviewed</div>
-            <div class="step-item"><span>3</span>Delivered in 48hrs</div>
-          </div>
+        <div class="foot__col">
+          <h3>Treatments</h3>
+          <a href="/weight-loss">GLP-1 Weight Loss</a>
+          <a href="/sexual-wellness">Sexual Wellness</a>
+          <a href="/hair-loss">Hair Loss</a>
+          <a href="/longevity">Longevity &amp; Peptides</a>
         </div>
-      </section>
-
-      <!-- ========== RESTORED SECTION: Numbers that speak for themselves (rhemsleves-main) ========== -->
-      <section id="rhemsleves-main" class="">
-        <div class="container">
-          <div class="heading-wrap">
-            <div class="section--title">
-              <h2>
-                Numbers that speak<br /><span class="highlight"
-                  >for themselves</span
-                >
-              </h2>
-            </div>
-            <p class="transform-subtitle">
-              Results from real Freeley patients under physician supervision.
-            </p>
-            <p class="medicine-footer-note">*Based on internal program data.</p>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-12 gap-x-6">
-            <div class="md:col-span-7">
-              <div class="numbers--item item--1">
-                <div class="text-content w-full md:w-1/2 lg:w-1/3">
-                  <div class="numbers--text">15%</div>
-                  <div class="green--text  mb-4">Avg. body weight lost</div>
-                  <div class="dark">
-                    Average body weight loss with physician-guided GLP-1
-                    treatment, not diet alone.
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="md:col-span-5">
-              <div class="numbers--item item--2 flex items-end">
-                <div class="text-content md:w-2/3">
-                  <div class="numbers--text">24hr</div>
-                  <div class="green--text  mb-4">Avg. physician response</div>
-                  <div class="dark">
-                    From intake to physician review and prescription — often same day.
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="md:col-span-5">
-              <div class="numbers--item item--3 flex justify-center items-end">
-                <div class="text-content w-full">
-                  <div class="numbers--text text-center">96%</div>
-                  <div class="green--text text-center mb-4">Patient satisfaction</div>
-                  <div class="dark text-center ">
-                    Intake to prescription — same day in most cases.
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="md:col-span-7 ">
-              <div class="numbers--item item--4 item--2 flex items-end">
-              <div class="text-content md:w-1/3">
-                <div class="numbers--text ">48hr</div>
-                  <div class="green--text  mb-4">Door-to-Door Delivery</div>
-                  <div class="dark">
-                      Medication delivered to your door within 2 business days.
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- <div class="hidden md:block">
-            <img src="/assets/home/4-cards.png" class="w-full" />
-          </div> -->
+        <div class="foot__col">
+          <h3>Company</h3>
+          <a href="/how-it-works">How It Works</a>
+          <a href="/pricing">Pricing</a>
+          <a href="/about">About Us</a>
+          <a href="/partner-pharmacies">Partner Pharmacies</a>
         </div>
-      </section>
-
-      <section id="rhemsleves-mobile" class="hidden">
-        <div class="container">
-          <div class="heading-wrap">
-            <div class="section--title">
-              <h2>
-                Numbers that speak<br /><span class="highlight"
-                  >for themselves</span
-                >
-              </h2>
-            </div>
-            <p class="transform-subtitle">
-              Results from real Freeley patients under physician supervision.
-            </p>
-          </div>
-          <div class="grid grid-cols-1">
-            <div class="w-full">
-              <img src="/assets/home/moible1.svg" class="w-full" alt="Average body weight lost statistic" loading="lazy" />
-            </div>
-            <div class="w-full">
-              <img src="/assets/home/moible2.svg" class="w-full" alt="Average physician response time statistic" loading="lazy" />
-            </div>
-            <div class="w-full">
-              <img src="/assets/home/moible3.svg" class="w-full" alt="Patient satisfaction statistic" loading="lazy" />
-            </div>
-            <div class="w-full">
-              <img src="/assets/home/moible4.svg" class="w-full" alt="Door-to-door delivery time statistic" loading="lazy" />
-            </div>
-          </div>
+        <div class="foot__col">
+          <h3>Legal</h3>
+          <a href="/privacy">Privacy Policy</a>
+          <a href="/terms">Terms of Service</a>
+          <a href="/hipaa">HIPAA Notice</a>
+          <a href="/telehealth-consent">Telehealth Consent</a>
         </div>
-      </section>
+      </div>
+      <div class="wrap foot__bottom">
+        <span>© 2026 Freeley. All rights reserved.</span>
+        <span class="disc">Freeley does not manufacture compounded medications. Product images are illustrative; actual medication appearance and labeling will differ.</span>
+      </div>
+    </footer>
 
-      <!-- ========== RESTORED SECTION: What to expect on GLP-1 therapy (glp-therapy-section) ========== -->
-      <section class="glp-therapy-section">
-        <div class="container py-12">
-          <div class="w-full gpl-desktop hidden md:flex flex-col justify-between">
-              <div class="overlay-gpl"></div>
-              <div class="grid grid-cols-1 md:grid-cols-2 relative z-1">
-              <div>
-            <div class="journey-badge mb-4">Your Journey</div>
-              <h2 class="glp-heading mb-12">
-                What to expect on<br /><em>GLP-1 therapy</em>
-              </h2>
-              </div>
-              <div class="flex justify-end items-start">
-                <button type="button" id="start-assessment8" class="global--qua--button mt-12 md:mt-0" style="visibility: visible; animation-name: fadeInUp;"><img class="btn--icon" src="/assets/icons/arrow-right.svg" alt="" loading="lazy">Start Your Assessment</button>
-                    </div>
-            </div>
-            <img src="/assets/home/graph-home.svg" alt="Expected results graph over the course of GLP-1 therapy" loading="lazy" />
-            </div>
-            <div class="block md:hidden glp-mobile-container flex flex-col justify-between">
-                <div class="relative z-1">
-                    <div class="journey-badge mb-4">Your Journey</div>
-                    <h1 class="glp-heading mb-12">
-                        What to expect on<br /><em>GLP-1 therapy</em>
-                    </h1>
-                    <div class="flex flex-col gap-6">
-                        <div class="flex items-start gap-4">
-                            <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
-                    <circle
-                      cx="15"
-                      cy="15"
-                      r="15"
-                      fill="url(#paint0_radial_149_4297)"
-                    />
-                    <circle cx="15" cy="15" r="7" fill="white" />
-                    <defs>
-                      <radialGradient
-                        id="paint0_radial_149_4297"
-                        cx="0"
-                        cy="0"
-                        r="1"
-                        gradientUnits="userSpaceOnUse"
-                        gradientTransform="translate(15 15) rotate(90) scale(15)"
-                      >
-                        <stop
-                          offset="0.561867"
-                          stop-color="white"
-                          stop-opacity="0"
-                        />
-                        <stop offset="1" stop-color="white" />
-                      </radialGradient>
-                    </defs>
-                  </svg>
-                            <div class="flex flex-col items-start gap-2">
-                                <span class="timeline-badge">Week 1-2</span
-                    ><span class="timeline-text"
-                      >Reduced appetite and cravings begin. Starter dose
-                      calibration.</span
-                    >
-                  </div>
-                </div>
-                <div class="flex items-start gap-4">
-                  <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
-                    <circle
-                      cx="15"
-                      cy="15"
-                      r="15"
-                      fill="url(#paint0_radial_149_4297)"
-                    />
-                    <circle cx="15" cy="15" r="7" fill="white" />
-                    <defs>
-                      <radialGradient
-                        id="paint0_radial_149_4297"
-                        cx="0"
-                        cy="0"
-                        r="1"
-                        gradientUnits="userSpaceOnUse"
-                        gradientTransform="translate(15 15) rotate(90) scale(15)"
-                      >
-                        <stop
-                          offset="0.561867"
-                          stop-color="white"
-                          stop-opacity="0"
-                        />
-                        <stop offset="1" stop-color="white" />
-                      </radialGradient>
-                    </defs>
-                  </svg>
-                  <div class="flex flex-col items-start gap-2">
-                    <span class="timeline-badge">Month 1</span
-                    ><span class="timeline-text"
-                      >Average 5–8 lbs lost. Energy improves. Dosage may be
-                      adjusted.</span
-                    >
-                  </div>
-                </div>
-                <div class="flex items-start gap-4">
-                  <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
-                    <circle
-                      cx="15"
-                      cy="15"
-                      r="15"
-                      fill="url(#paint0_radial_149_4297)"
-                    />
-                    <circle cx="15" cy="15" r="7" fill="white" />
-                    <defs>
-                      <radialGradient
-                        id="paint0_radial_149_4297"
-                        cx="0"
-                        cy="0"
-                        r="1"
-                        gradientUnits="userSpaceOnUse"
-                        gradientTransform="translate(15 15) rotate(90) scale(15)"
-                      >
-                        <stop
-                          offset="0.561867"
-                          stop-color="white"
-                          stop-opacity="0"
-                        />
-                        <stop offset="1" stop-color="white" />
-                      </radialGradient>
-                    </defs>
-                  </svg>
-                  <div class="flex flex-col items-start gap-2">
-                    <span class="timeline-badge">Month 3</span
-                    ><span class="timeline-text"
-                      >Significant weight reduction. Metabolic markers improve.
-                      Visible results.</span
-                    >
-                  </div>
-                </div>
-                <div class="flex items-start gap-4">
-                  <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
-                    <circle
-                      cx="15"
-                      cy="15"
-                      r="15"
-                      fill="url(#paint0_radial_149_4297)"
-                    />
-                    <circle cx="15" cy="15" r="7" fill="white" />
-                    <defs>
-                      <radialGradient
-                        id="paint0_radial_149_4297"
-                        cx="0"
-                        cy="0"
-                        r="1"
-                        gradientUnits="userSpaceOnUse"
-                        gradientTransform="translate(15 15) rotate(90) scale(15)"
-                      >
-                        <stop
-                          offset="0.561867"
-                          stop-color="white"
-                          stop-opacity="0"
-                        />
-                        <stop offset="1" stop-color="white" />
-                      </radialGradient>
-                    </defs>
-                  </svg>
-                  <div class="flex flex-col items-start gap-2">
-                    <span class="timeline-badge">Month 6</span
-                    ><span class="timeline-text"
-                      >15%+ body weight lost. Maintenance phase. Long-term
-                      metabolic health.</span
-                    >
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="relative z-1 mt-12 pt-4">
-              <button type="button" id="start-assessment9" class="global--qua--button"
-                ><img
-                  class="btn--icon"
-                  src="/assets/icons/arrow-right.svg"
-                  alt="" loading="lazy" />See if you Qualify</button
-              >
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Process Section -->
-      <section class="process py-5">
-        <div class="container">
-          <div class="grid grid-cols-1 md:grid-cols-12 pt-12">
-            <div
-              class="md:col-span-6 py-12 process--col--left"
-            >
-              <div class="bordered--heading inline-block px-4 mb-4">
-                <span class="uppercase">The Process</span>
-                            </div>
-                            <div class="section--title">
-                                <h2>
-                                    From visit to doorstepin<br /><span class="highlight">under a week</span
-                  >
-                </h2>
-              </div>
-              <div class="w-full">
-                <p class="section--description">
-                  Everything happens on your schedule, from your phone.
-                </p>
-              </div>
-              <a href="/about" class="global--qua--button mt-6"
-                ><img
-                  class="btn--icon"
-                  src="/assets/icons/arrow-right.svg"
-                  alt="" loading="lazy" />About Us</a
-              >
-            </div>
-            <div
-              class="md:col-span-5 md:col-start-8 flex justify-center process--col--right"
-            >
-              <img src="/assets/frame-242.svg" alt="Illustration of the Freeley delivery process" loading="lazy" />
-            </div>
-          </div>
-        </div>
-        <div class="container py-6">
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-x-6 gap-y-4 process--items">
-            <div
-              class="flex flex-col gap-6 process--item"
-            >
-              <div class="process--icon">
-                <svg width="3" height="9" viewBox="0 0 3 9" fill="none">
-                  <path
-                    d="M0.000359401 1.54805V4.64916e-05H2.89236V8.74805H1.16436V1.54805H0.000359401Z"
-                    fill="#004C27"
-                  />
-                </svg>
-              </div>
-              <div class="process--title">Complete Intake</div>
-              <div class="process--desc">
-                A quick, secure health questionnaire. Takes 5 minutes from your
-                phone. No appointment needed.
-              </div>
-            </div>
-            <div
-              class="flex flex-col gap-6 process--item"
-            >
-              <div class="process--icon">
-                <svg width="6" height="9" viewBox="0 0 6 9" fill="none">
-                  <path
-                    d="M0.636656 7.04394C1.40466 6.40394 2.01666 5.87194 2.47266 5.44794C2.92866 5.01594 3.30866 4.56794 3.61266 4.10394C3.91666 3.63994 4.06866 3.18394 4.06866 2.73594C4.06866 2.32794 3.97266 2.00794 3.78066 1.77594C3.58866 1.54394 3.29266 1.42794 2.89266 1.42794C2.49266 1.42794 2.18466 1.56394 1.96866 1.83594C1.75266 2.09994 1.64066 2.46394 1.63266 2.92794H0.000656292C0.0326563 1.96794 0.316656 1.23994 0.852656 0.743941C1.39666 0.247941 2.08466 -5.93662e-05 2.91666 -5.93662e-05C3.82866 -5.93662e-05 4.52866 0.243941 5.01666 0.731941C5.50466 1.21194 5.74866 1.84794 5.74866 2.63994C5.74866 3.26394 5.58066 3.85994 5.24466 4.42794C4.90866 4.99594 4.52466 5.49194 4.09266 5.91594C3.66066 6.33194 3.09666 6.83594 2.40066 7.42794H5.94066V8.81994H0.0126563V7.57194L0.636656 7.04394Z"
-                    fill="#004C27"
-                  />
-                </svg>
-              </div>
-              <div class="process--title">Doctor Reviews</div>
-              <div class="process--desc">
-                A board-certified physician reviews your profile within 24 hours
-                and writes your personalized Rx.
-              </div>
-            </div>
-            <div
-              class="flex flex-col gap-6 process--item"
-            >
-              <div class="process--icon">
-                <svg width="6" height="10" viewBox="0 0 6 10" fill="none">
-                  <path
-                    d="M0.120938 2.50815C0.160938 1.70815 0.440938 1.09215 0.960938 0.660148C1.48894 0.220148 2.18094 0.00014782 3.03694 0.00014782C3.62094 0.00014782 4.12094 0.104148 4.53694 0.312148C4.95294 0.512148 5.26494 0.788148 5.47294 1.14015C5.68894 1.48415 5.79694 1.87615 5.79694 2.31615C5.79694 2.82015 5.66494 3.24815 5.40094 3.60015C5.14494 3.94415 4.83694 4.17615 4.47694 4.29615V4.34415C4.94094 4.48815 5.30094 4.74415 5.55694 5.11215C5.82094 5.48015 5.95294 5.95215 5.95294 6.52815C5.95294 7.00815 5.84094 7.43615 5.61694 7.81215C5.40094 8.18815 5.07694 8.48415 4.64494 8.70015C4.22094 8.90815 3.70894 9.01215 3.10894 9.01215C2.20494 9.01215 1.46894 8.78415 0.900938 8.32815C0.332938 7.87215 0.0329375 7.20015 0.000937521 6.31215H1.63294C1.64894 6.70415 1.78094 7.02015 2.02894 7.26015C2.28494 7.49215 2.63294 7.60815 3.07294 7.60815C3.48094 7.60815 3.79294 7.49615 4.00894 7.27215C4.23294 7.04015 4.34494 6.74415 4.34494 6.38415C4.34494 5.90415 4.19294 5.56015 3.88894 5.35215C3.58494 5.14415 3.11294 5.04015 2.47294 5.04015H2.12494V3.66015H2.47294C3.60894 3.66015 4.17694 3.28015 4.17694 2.52015C4.17694 2.17615 4.07294 1.90815 3.86494 1.71615C3.66494 1.52415 3.37294 1.42815 2.98894 1.42815C2.61294 1.42815 2.32094 1.53215 2.11294 1.74015C1.91294 1.94015 1.79694 2.19615 1.76494 2.50815H0.120938Z"
-                    fill="#004C27"
-                  />
-                </svg>
-              </div>
-              <div class="process--title">Pharmacy Compounds</div>
-              <div class="process--desc">
-                Your prescription is sent to a 503A-licensed compounding
-                pharmacy for precise formulation.
-              </div>
-            </div>
-            <div
-              class="flex flex-col gap-6 process--item"
-            >
-              <div class="process--icon">
-                <svg width="7" height="9" viewBox="0 0 7 9" fill="none">
-                  <path
-                    d="M-0.0004531 6.93614V5.61614L3.92355 0.000136375H5.87955V5.47214H6.93555V6.93614H5.87955V8.64014H4.19955V6.93614H-0.0004531ZM4.30755 1.80014L1.84755 5.47214H4.30755V1.80014Z"
-                    fill="#004C27"
-                  />
-                </svg>
-              </div>
-              <div class="process--title">Deliverd to you</div>
-              <div class="process--desc">
-                Discreet, climate-controlled packaging shipped directly to your
-                door. Refills are automatic.
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="three--gorgeous py-0 md:py-12 desktop pixel-600">
-        <div class="container py-5">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 gorgeous--items">
-            <div>
-            <div class="gorgeous--item">
-              <h2 class="text-center">Real Doctors</h2>
-              </div>
-            </div>
-            <div>
-            <div class="gorgeous--item">
-            <h2 class="text-center">Real Providers</h2>
-              </div>
-            </div>
-            <div>
-            <div class="gorgeous--item">
-            <h2 class="text-center">Pharmacy Grade</h2>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      <section class="three--gorgeous py-0 md:py-12 mobile">
-        <div class="container py-5">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 gorgeous--items">
-            <div class="gorgeous--item">
-              <img
-                loading="lazy"
-                decoding="async"
-                src="/assets/home/gor-mob-1.svg"
-                alt="Real Doctors"
-              />
-            </div>
-            <div
-              class="gorgeous--item"
-            >
-              <img src="/assets/home/gor-mob-2.svg" alt="Real Providers" loading="lazy" />
-            </div>
-            <div
-              class="gorgeous--item"
-            >
-              <img src="/assets/home/gor-mob-3.svg" alt="Pharmacy Grade" loading="lazy" />
-            </div>
-          </div>
-        </div>
-      </section>
-      <!-- FAQS -->
-      <section class="faqs py-5">
-        <div class="container text-center py-5">
-          <div class="section--title mt-2">
-                            <h2 class="mb-6">
-                                Your safety,
-                                <span class="highlight"> Answered.</span>
-                            </h2>
-
-                            <p>
-                                Real questions from real patients. Direct, honest answers from our medical team.
-                            </p>
-                        </div>
-
-                        <div class="faq-container">
-                            <div class="faq-items">
-                                <!-- FAQ 1 -->
-                                <div class="faq-item open">
-                                    <div class="faq-question">
-                                        <span class="faq-question-text">Is GLP-1 medication safe?</span
-                  >
-                  <div class="faq-toggle-icon">
-                    <svg
-                      class="icon-plus"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z"
-                        fill="#C97F56"
-                      />
-                      <path d="M8 12H16" stroke="white" stroke-width="1.5" />
-                      <path d="M12 16V8" stroke="white" stroke-width="1.5" />
-                    </svg>
-
-                    <svg
-                      class="icon-minus"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        d="M11.9199 22C17.4199 22 21.9199 17.5 21.9199 12C21.9199 6.5 17.4199 2 11.9199 2C6.41992 2 1.91992 6.5 1.91992 12C1.91992 17.5 6.41992 22 11.9199 22Z"
-                        fill="#C97F561A"
-                        fill-opacity="0.1"
-                      />
-                      <path
-                        d="M7.91992 12H15.9199"
-                        stroke="#ffffff"
-                        stroke-width="1.5"
-                      />
-                    </svg>
-                  </div>
-                </div>
-                <div class="faq-answer">
-                  GLP-1 medications have been studied and prescribed clinically
-                  for nearly 20 years. Every Freely patient is screened by a
-                  board-certified physician for medical history, current
-                  medications, and contraindications before any prescription is
-                  written. Your treatment is monitored continuously by your
-                  provider.
-                </div>
-              </div>
-
-              <!-- FAQ 2 -->
-              <div
-                class="faq-item"
-              >
-                <div class="faq-question">
-                  <span class="faq-question-text"
-                    >What side effects should I expect?</span
-                  >
-                  <div class="faq-toggle-icon">
-                    <svg
-                      class="icon-plus"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z"
-                        fill="#C97F56"
-                      />
-                      <path d="M8 12H16" stroke="white" stroke-width="1.5" />
-                      <path d="M12 16V8" stroke="white" stroke-width="1.5" />
-                    </svg>
-
-                    <svg
-                      class="icon-minus"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        d="M11.9199 22C17.4199 22 21.9199 17.5 21.9199 12C21.9199 6.5 17.4199 2 11.9199 2C6.41992 2 1.91992 6.5 1.91992 12C1.91992 17.5 6.41992 22 11.9199 22Z"
-                        fill="#C97F561A"
-                        fill-opacity="0.1"
-                      />
-                      <path
-                        d="M7.91992 12H15.9199"
-                        stroke="#ffffff"
-                        stroke-width="1.5"
-                      />
-                    </svg>
-                  </div>
-                </div>
-                <div class="faq-answer">
-                  Most common side effects are mild gastrointestinal symptoms
-                  that typically improve over time. These may include nausea,
-                  vomiting, diarrhea, or constipation.
-                </div>
-              </div>
-
-              <!-- FAQ 3 -->
-              <div
-                class="faq-item"
-              >
-                <div class="faq-question">
-                  <span class="faq-question-text"
-                    >How quickly will I see results?</span
-                  >
-                  <div class="faq-toggle-icon">
-                    <svg
-                      class="icon-plus"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z"
-                        fill="#C97F56"
-                      />
-                      <path d="M8 12H16" stroke="white" stroke-width="1.5" />
-                      <path d="M12 16V8" stroke="white" stroke-width="1.5" />
-                    </svg>
-
-                    <svg
-                      class="icon-minus"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        d="M11.9199 22C17.4199 22 21.9199 17.5 21.9199 12C21.9199 6.5 17.4199 2 11.9199 2C6.41992 2 1.91992 6.5 1.91992 12C1.91992 17.5 6.41992 22 11.9199 22Z"
-                        fill="#C97F56"
-                        fill-opacity="0.1"
-                      />
-                      <path
-                        d="M7.91992 12H15.9199"
-                        stroke="#ffffff"
-                        stroke-width="1.5"
-                      />
-                    </svg>
-                  </div>
-                </div>
-                <div class="faq-answer">
-                  Timelines vary from patient to patient based on starting
-                  dose, metabolism, and treatment plan. Many patients begin
-                  noticing changes within the first few weeks of treatment,
-                  with your physician adjusting your dose over time to fit
-                  your response.
-                </div>
-              </div>
-
-              <!-- FAQ 4 -->
-              <div
-                class="faq-item"
-              >
-                <div class="faq-question">
-                  <span class="faq-question-text"
-                    >What happens if I stop taking it?</span
-                  >
-                  <div class="faq-toggle-icon">
-                    <svg
-                      class="icon-plus"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z"
-                        fill="#C97F56"
-                      />
-                      <path d="M8 12H16" stroke="white" stroke-width="1.5" />
-                      <path d="M12 16V8" stroke="white" stroke-width="1.5" />
-                    </svg>
-
-                    <svg
-                      class="icon-minus"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        d="M11.9199 22C17.4199 22 21.9199 17.5 21.9199 12C21.9199 6.5 17.4199 2 11.9199 2C6.41992 2 1.91992 6.5 1.91992 12C1.91992 17.5 6.41992 22 11.9199 22Z"
-                        fill="#C97F56"
-                        fill-opacity="0.1"
-                      />
-                      <path
-                        d="M7.91992 12H15.9199"
-                        stroke="#ffffff"
-                        stroke-width="1.5"
-                      />
-                    </svg>
-                  </div>
-                </div>
-                <div class="faq-answer">
-                  GLP-1 medications work while you're taking them. If you
-                  stop, appetite and weight trends can gradually return
-                  toward your baseline, which is why your physician works
-                  with you on a long-term plan rather than a fixed end date.
-                </div>
-              </div>
-
-              <!-- FAQ 5 -->
-              <div
-                class="faq-item"
-              >
-                <div class="faq-question">
-                  <span class="faq-question-text"
-                    >Will I need to take it forever?</span
-                  >
-                  <div class="faq-toggle-icon">
-                    <svg
-                      class="icon-plus"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z"
-                        fill="#C97F56"
-                      />
-                      <path d="M8 12H16" stroke="white" stroke-width="1.5" />
-                      <path d="M12 16V8" stroke="white" stroke-width="1.5" />
-                    </svg>
-
-                    <svg
-                      class="icon-minus"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        d="M11.9199 22C17.4199 22 21.9199 17.5 21.9199 12C21.9199 6.5 17.4199 2 11.9199 2C6.41992 2 1.91992 6.5 1.91992 12C1.91992 17.5 6.41992 22 11.9199 22Z"
-                        fill="#C97F56"
-                        fill-opacity="0.1"
-                      />
-                      <path
-                        d="M7.91992 12H15.9199"
-                        stroke="#ffffff"
-                        stroke-width="1.5"
-                      />
-                    </svg>
-                  </div>
-                </div>
-                <div class="faq-answer">
-                  There's no one-size-fits-all timeline. Your physician
-                  reassesses your treatment regularly and discusses whether
-                  to continue, adjust, or eventually taper your plan based on
-                  how you're responding.
-                </div>
-              </div>
-
-              <!-- FAQ 6 -->
-              <div
-                class="faq-item"
-              >
-                <div class="faq-question">
-                  <span class="faq-question-text"
-                    >Who shouldn't take GLP-1 medication?</span
-                  >
-                  <div class="faq-toggle-icon">
-                    <svg
-                      class="icon-plus"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z"
-                        fill="#C97F56"
-                      />
-                      <path d="M8 12H16" stroke="white" stroke-width="1.5" />
-                      <path d="M12 16V8" stroke="white" stroke-width="1.5" />
-                    </svg>
-
-                    <svg
-                      class="icon-minus"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        d="M11.9199 22C17.4199 22 21.9199 17.5 21.9199 12C21.9199 6.5 17.4199 2 11.9199 2C6.41992 2 1.91992 6.5 1.91992 12C1.91992 17.5 6.41992 22 11.9199 22Z"
-                        fill="#C97F56"
-                        fill-opacity="0.1"
-                      />
-                      <path
-                        d="M7.91992 12H15.9199"
-                        stroke="#ffffff"
-                        stroke-width="1.5"
-                      />
-                    </svg>
-                  </div>
-                </div>
-                <div class="faq-answer">
-                  GLP-1 medications aren't right for everyone. During your
-                  intake, a licensed physician reviews your medical history,
-                  current medications, and any conditions that could affect
-                  eligibility before approving treatment.
-                </div>
-              </div>
-
-              <!-- FAQ 7 -->
-              <div
-                class="faq-item"
-              >
-                <div class="faq-question">
-                  <span class="faq-question-text"
-                    >Is my consultation actually with a real doctor?</span
-                  >
-                  <div class="faq-toggle-icon">
-                    <svg
-                      class="icon-plus"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z"
-                        fill="#C97F56"
-                      />
-                      <path d="M8 12H16" stroke="white" stroke-width="1.5" />
-                      <path d="M12 16V8" stroke="white" stroke-width="1.5" />
-                    </svg>
-
-                    <svg
-                      class="icon-minus"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        d="M11.9199 22C17.4199 22 21.9199 17.5 21.9199 12C21.9199 6.5 17.4199 2 11.9199 2C6.41992 2 1.91992 6.5 1.91992 12C1.91992 17.5 6.41992 22 11.9199 22Z"
-                        fill="#C97F56"
-                        fill-opacity="0.1"
-                      />
-                      <path
-                        d="M7.91992 12H15.9199"
-                        stroke="#ffffff"
-                        stroke-width="1.5"
-                      />
-                    </svg>
-                  </div>
-                </div>
-                <div class="faq-answer">
-                  Yes. Every consultation is conducted by an independently
-                  licensed physician through our clinical partners — never a
-                  chatbot or unlicensed reviewer. You'll have a real
-                  conversation about your health history before any
-                  prescription decision is made.
-                </div>
-              </div>
-
-              <!-- FAQ 8 -->
-              <div
-                class="faq-item"
-              >
-                <div class="faq-question">
-                  <span class="faq-question-text"
-                    >What if it doesn't work for me?</span
-                  >
-                  <div class="faq-toggle-icon">
-                    <svg
-                      class="icon-plus"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z"
-                        fill="#C97F56"
-                      />
-                      <path d="M8 12H16" stroke="white" stroke-width="1.5" />
-                      <path d="M12 16V8" stroke="white" stroke-width="1.5" />
-                    </svg>
-
-                    <svg
-                      class="icon-minus"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        d="M11.9199 22C17.4199 22 21.9199 17.5 21.9199 12C21.9199 6.5 17.4199 2 11.9199 2C6.41992 2 1.91992 6.5 1.91992 12C1.91992 17.5 6.41992 22 11.9199 22Z"
-                        fill="#C97F56"
-                        fill-opacity="0.1"
-                      />
-                      <path
-                        d="M7.91992 12H15.9199"
-                        stroke="#ffffff"
-                        stroke-width="1.5"
-                      />
-                    </svg>
-                  </div>
-                </div>
-                <div class="faq-answer">
-                  Response varies by individual, and your treatment plan
-                  isn't static. If your current approach isn't producing the
-                  results you expected, your physician reassesses your dose,
-                  medication, or overall plan at your next check-in.
-                </div>
-              </div>
-
-              <div
-                class="assessment-link text-left"
-              >
-                <span>Have a different question? </span>
-                                        <button type="button">Talk to a physician →</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        </section>
-                        <section class="cta--sec desktop">
-                            <div class="container py-5">
-                                <div class="md:w-1/2">
-                                    <div class="section--title">
-                                        <h2 class="text-light">The Future of Weight Loss Starts Here</h2>
-                                    </div>
-                                    <p class="text-light mb-12">
-                                        Start with a free medical visit. No commitment. No insurance required.
-                                    </p>
-                                    <div class="ctas flex gap-4">
-                                        <div class="ctas flex flex-col md:flex-row items-center md:items-start gap-4 w-full">
-                                            <button type="button" id="start-assessment5" class="global--qua--button"><img class="btn--icon" src="/assets/icons/arrow-right.svg" alt="" loading="lazy" />Start Your Assessment</button><a href="/pricing" class="global--qua--button secondory px-12">Or browse plan pricing</a
-                >
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <style>
-        .cta--sec-home-mobile {
-          min-height: 725px;
-          background-color: #81b3d8;
-          position: relative;
-        }
-        .cta--sec-home-mobile > .container {
-          position: relative;
-          z-index: 1;
-        }
-        .cta--sec-home-mobile:before {
-          content: "";
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background-size: cover;
-          background-repeat: no-repeat;
-          background-image: url("/assets/frame_399.png");
-        }
-        .cta--sec-home-mobile:after {
-          content: "";
-          position: absolute;
-          left: 0;
-          bottom: 0;
-          width: 100%;
-          height: 70%;
-          background-size: cover;
-          background-position: bottom;
-          background-repeat: no-repeat;
-          background-image: url(/assets/home/cta-girl-mob.png);
-        }
-        .cta--sec-home-mobile .secondory {
-          justify-content: flex-end;
-        }
-        .cta--sec-home-mobile .container>.md\:w-1\/2 {
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          min-height: 530px;
-        }
-      </style>
-
-      <section class="cta--sec-home-mobile py-5 mobile">
-        <div class="container py-5">
-            <div class="md:w-1/2">
-              <div class="section--title">
-                <h2 class="text-light">
-                  The Future of Weight Loss Starts Here
-                </h2>
-              </div>
-
-              <p class="text-light mb-12">
-                Start with a free medical visit. No commitment. No insurance
-                required.
-              </p>
-
-              <div class="flex flex-col md:flex-row gap-4">
-                <button type="button" id="start-assessment10" class="global--qua--button px-4 w-full">
-                  <img
-                    class="btn--icon"
-                    src="/assets/icons/arrow-right.svg"
-                    alt="" loading="lazy" />
-                  Start Your Assessment
-                </button>
-
-                                            <a href="/pricing" class="global--qua--button secondory px-4 w-full">
-                  Or browse plan pricing
-                </a>
-                                        </div>
-                                    </div>
-                                </div>
-                        </section>
-                        <!-- Footer -->
-                        <Footer />
-    </main>
-
-    <script src="/style/script.js" is:inline></script>
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" is:inline></script>
     <script is:inline>
-        const modal = document.getElementById("quiz--modal");
-        const loader = document.getElementById("loader");
-        const quizContainer = document.getElementById("quiz--container");
-        let quizIframe = null;
-        document
-            .querySelectorAll(
-                "#start-assessment1, #start-assessment2, #start-assessment3, #start-assessment4, #start-assessment5, #start-assessment7, #start-assessment8, #start-assessment9, #start-assessment10, #start-full-assessment, #start-assessment-header",
-            )
-            .forEach((button) => {
-                button.addEventListener("click", () => {
-                    // If iframe exists, remove it first
-                    if (quizIframe) {
-                        quizIframe.remove();
-                        quizIframe = null;
-                    }
-
-                    modal.style.display = "block";
-                    loader.style.display = "block";
-                    quizContainer.innerHTML = "";
-
-                    // Create new iframe
-                    quizIframe = document.createElement("iframe");
-                    quizIframe.style.width = "100%";
-                    quizIframe.style.height = "605px";
-                    quizIframe.style.border = "none";
-                    quizIframe.style.borderRadius = "0";
-                    quizIframe.style.display = "none";
-                    quizIframe.style.background = "#0000004D";
-
-                    // Load with cache-busting
-                    quizIframe.src = "/assessment-quiz?t=" + Date.now();
-
-                    quizIframe.onload = function() {
-                        loader.style.display = "none";
-                        quizIframe.style.display = "block";
-
-                        // Apply styles to iframe body (if you have access)
-                        try {
-                            const iframeDoc =
-                                quizIframe.contentDocument ||
-                                quizIframe.contentWindow.document;
-                            if (iframeDoc) {
-                                const style = iframeDoc.createElement("style");
-                                style.textContent = `
-                            body {
-                                background: #0000004D !important;
-                                border: 0 !important;
-                                border-radius: 0 !important;
-                                height: 100vh;
-                                margin: 0;
-                            }
-                        `;
-                                iframeDoc.head.appendChild(style);
-                            }
-                        } catch (e) {
-                            // Cross-origin restrictions may prevent this
-                            console.log("Cannot style iframe body due to CORS");
-                        }
-                    };
-
-                    quizIframe.onerror = function() {
-                        loader.style.display = "none";
-                        quizContainer.innerHTML = "<p>Unable to load quiz.</p>";
-                    };
-
-                    quizContainer.appendChild(quizIframe);
-                });
-            });
-
-        function closeQuiz() {
-            // Hide modal
-            modal.style.display = "none";
-
-            // Remove iframe completely
-            if (quizIframe) {
-                // Clear iframe content
-                try {
-                    quizIframe.src = "about:blank";
-                    quizIframe.contentWindow.document.write("");
-                    quizIframe.contentWindow.document.clear();
-                } catch (e) {}
-
-                // Remove from DOM
-                quizIframe.remove();
-                quizIframe = null;
-            }
-
-            // Clear container
-            quizContainer.innerHTML = "";
-            loader.style.display = "none";
-        }
-
-        document
-            .getElementById("close--quiz")
-            .addEventListener("click", closeQuiz);
-
-        // Close on Escape key
-        document.addEventListener("keydown", function(e) {
-            if (e.key === "Escape" && modal.style.display === "block") {
-                closeQuiz();
-            }
+      (function () {
+        var b = document.getElementById('navBurger');
+        var m = document.getElementById('navMobile');
+        if (!b || !m) return;
+        b.addEventListener('click', function () {
+          var open = m.classList.toggle('open');
+          b.setAttribute('aria-expanded', String(open));
         });
+      })();
 
-        // Close when clicking outside
-        window.addEventListener("click", function(e) {
-            if (e.target === modal) {
-                closeQuiz();
-            }
-        });
+      /* Your Journey timeline: a 20s loop that starts the first time the section
+         reaches the viewport and pauses whenever it leaves, so nothing animates
+         off screen. The observer is deliberately NOT disconnected — it is what
+         drives that pause. is-armed (the empty starting state) is added from JS
+         on purpose: a visitor without JS keeps the finished timeline instead of
+         staring at a blank box. */
+      (function () {
+        var t = document.querySelector('.journey__timeline');
+        if (!t || !matchMedia('(prefers-reduced-motion: no-preference)').matches) return;
+        t.classList.add('is-armed');
+        new IntersectionObserver(function (entries) {
+          var seen = entries[0].isIntersecting;
+          if (seen) t.classList.add('is-live');
+          t.classList.toggle('is-idle', !seen);
+        }, { threshold: 0.25 }).observe(t);
+      })();
     </script>
 
     <script is:inline>
-        new Swiper(".patient-results .swiper", {
-            slidesPerView: "auto",
-            autoplay: {
-                delay: 5000,
-                pauseOnMouseEnter: true,
-                disableOnInteraction: false,
-            },
-            direction: "horizontal",
-            rewind: true,
-            spaceBetween: 24,
-            freeMode: false,
-            grabCursor: true,
+      if (window.location.pathname.startsWith('/preview')) {
+        document.addEventListener('click', function (e) {
+          var a = e.target.closest('a');
+          if (!a) return;
+          var href = a.getAttribute('href');
+          if (href && href.startsWith('/') && !href.startsWith('//') && !href.startsWith('/preview') && !href.startsWith('mailto:') && !href.startsWith('tel:')) {
+            e.preventDefault();
+            window.location.href = '/preview' + (href === '/' ? '' : href);
+          }
         });
-        new Swiper(".transformation-slider.swiper", {
-            slidesPerView: "auto",
-            autoplay: {
-                delay: 5000,
-                pauseOnMouseEnter: true,
-                disableOnInteraction: false,
-            },
-            direction: "horizontal",
-            rewind: true,
-            spaceBetween: 24,
-            freeMode: false,
-            grabCursor: true,
-        });
-
-        new Swiper(".brand--grid--hero--2.swiper", {
-            slidesPerView: "auto",
-            autoplay: {
-                delay: 5000,
-                pauseOnMouseEnter: true,
-                disableOnInteraction: false,
-            },
-            rewind: true,
-            spaceBetween: 24,
-            freeMode: false,
-            grabCursor: true,
-        });
+      }
     </script>
 
-    <!--Start of Tawk.to Script-->
-    <script type="text/javascript" is:inline>
-        var Tawk_API = Tawk_API || {},
-            Tawk_LoadStart = new Date();
-        (function() {
-            var s1 = document.createElement("script"),
-                s0 = document.getElementsByTagName("script")[0];
-            s1.async = true;
-            s1.src = "https://embed.tawk.to/6a454f1fb271bd1d477e9990/1jsfbq5mb";
-            s1.charset = "UTF-8";
-            s1.setAttribute("crossorigin", "*");
-            s0.parentNode.insertBefore(s1, s0);
-        })();
-    </script>
-    <!--End of Tawk.to Script-->
-
-</Layout>
+    <QuizModal />
+  </body>
+</html>

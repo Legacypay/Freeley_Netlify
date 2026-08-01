@@ -1,0 +1,2300 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { Image } from 'astro:assets';
+import image18 from '../assets/products-imgs/image-18.png';
+import image19 from '../assets/products-imgs/image-19.png';
+import image20 from '../assets/products-imgs/image-20.png';
+import image21 from '../assets/products-imgs/image-21.png';
+import beforeImg from '../assets/before-after/before.png';
+import afterImg from '../assets/before-after/after.png';
+import trustPilot from '../assets/badges/trust_pilot.png';
+import legitScript from '../assets/badges/49921676.png';
+import usaBadge from '../assets/badges/usa_badge.png';
+import closeIcon from '../assets/icons/close.png';
+import arrowCircleRight from '../assets/icons/arrow-circle-right.png';
+import heroMob from '../assets/home/hero-mob.png';
+---
+
+<Layout title="Compounded GLP-1 & Peptide Telehealth | Freeley Wellness">
+  <Fragment slot="head">
+    <!-- Font playfair display embed -->
+    <style>
+        .verified-badges img {
+            height: 44px;
+            width: auto;
+            object-fit: contain;
+        }
+        .verified-badges img.badge--lg {
+            height: 58px;
+        }
+        @media (max-width: 768px) {
+            .verified-badges img {
+                height: 36px;
+            }
+            .verified-badges img.badge--lg {
+                height: 46px;
+            }
+        }
+        .swiper_before_after {}
+        .swiper_before_after .swiper-slide {
+            max-width: fit-content;
+            width: 100%;
+        }
+        .featured-logos {
+            justify-content: flex-start;
+        }
+        .featured-logos span {
+            opacity: 0.3;
+        }
+        .rhemsleves-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        @media (max-width: 768px) {
+            .rhemsleves-row {
+                display: flex;
+                gap: 15px;
+                margin-bottom: 15px;
+                flex-direction: column;
+                max-width: 100%;
+                overflow: hidden;
+            }
+        }
+    </style>
+  </Fragment>
+
+    <main class="homepage">
+        <!-- Header -->
+        <Header />
+
+      <!-- Hero Section -->
+      <section class="hero py-5">
+
+        <div class="container hero--container py-5">
+       <div class="fig-hero__couple" aria-hidden="true">
+        </div>
+          <div class="grid grid-cols-1 md:grid-cols-12 relative">
+            <div class="md:col-span-8 lg:col-span-7">
+              <div
+                class="bordered--heading inline-block px-4 mb-3"
+              >
+                <span class="uppercase">Physician-Prescribed</span>
+              </div>
+              <h1
+                class="flex flex-col"
+              >
+                Your Last Diet Didn't Fail.
+                <span class="text-highlight">Your Biology Did.</span>
+              </h1>
+              <p
+                class="lead"
+              >
+                Real doctors. Real Rx. Delivered to your door
+              </p>
+              <Image
+                src={heroMob}
+                alt="Freeley patients"
+                loading="eager"
+                fetchpriority="high"
+                class="hero-img-mobile w-full rounded-2xl mb-6"
+              />
+              <div
+                class="bordered--heading extra-border mt-4 inline-block px-4 mb-6"
+              >
+                <span class="uppercase"
+                  >WHAT'S YOUR WEIGHT LOSS GOAL?</span
+                >
+              </div>
+              <div
+                class="mb-6"
+              >
+                <div class="weight-guide grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-2 m-0">
+                  <div
+                    class="weight-item"
+                    id="start-assessment1"
+                  >
+                    <span class="weight-range">10–25 lbs </span
+                    ><span
+                      ><img src="/assets/icons/arrow-right-green.svg" alt="" loading="eager" /></span>
+                  </div>
+                  <div
+                    class="weight-item"
+                    id="start-assessment2"
+                  >
+                    <span class="weight-range">25–50 lbs </span
+                    ><span
+                      ><img src="/assets/icons/arrow-right-green.svg" alt="" loading="eager" /></span>
+                  </div>
+                  <div
+                    class="weight-item"
+                    id="start-assessment3"
+                  >
+                    <span class="weight-range">50+ lbs</span>
+                    <span
+                      ><img src="/assets/icons/arrow-right-green.svg" alt="" loading="eager" /></span>
+                  </div>
+                </div>
+                <div class="assessment-link">
+                  <span>Not sure? </span
+                  ><button type="button" id="start-full-assessment"
+                    >Start the full assessment</button
+                  >
+                </div>
+              </div>
+              <div
+                class="steps--container md:flex hidden"
+              >
+                <div class="step">
+                  <div class="step--number">1</div>
+                  <div class="flex gap-2 flex-col">
+                    <div class="step-title">2 Minute Intake</div>
+                    <div class="step--subtitle">Quick & secure</div>
+                  </div>
+                </div>
+                <div class="step">
+                  <div class="step--number">2</div>
+                  <div class="flex gap-2 flex-col">
+                    <div class="step-title">Physician Reviewed</div>
+                    <div class="step--subtitle">Same Day</div>
+                  </div>
+                </div>
+                <div class="step">
+                  <div class="step--number">3</div>
+                  <div class="flex gap-2 flex-col">
+                    <div class="step-title">Delivered in 48hrs</div>
+                    <div class="step--subtitle">To your door</div>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="steps--container gap-4 md:hidden grid grid-cols-1"
+              >
+                <div class="step mb-2">
+                  <div class="step--number">1</div>
+                  <div class="flex gap-2 flex-col">
+                    <div class="step-title">2 Minute Intake</div>
+                  </div>
+                </div>
+                <div class="step mb-2">
+                  <div class="step--number">2</div>
+                  <div class="flex gap-2 flex-col">
+                    <div class="step-title">Physician Reviewed</div>
+                  </div>
+                </div>
+                <div class="step mb-2">
+                  <div class="step--number">3</div>
+                  <div class="flex gap-2 flex-col">
+                    <div class="step-title">Delivered in 48hrs</div>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="hero--testimonial pr-0 mb-0 md:mb-12 md:pr-12 mt-6"
+              >
+                <p class="text-black mb-6">Testimonials</p>
+                <span
+                  >&#8220;I tried every diet app imaginable. Nothing stuck until my
+                  doctor started me on semaglutide through Freeley. The cravings
+                  just… stopped. I&#8217;m down 31 lbs and my A1C went from 6.4 to
+                  5.6.&#8221;</span
+                >
+              </div>
+            </div>
+            <div class="md:col-span-4 lg:col-span-5"></div>
+          </div>
+        </div>
+        <div
+          class="container position-relative z-2 py-3 percentage--container"
+        >
+          <div class="grid grid-cols-1 md:grid-cols-2 protocol--text">
+            <div class="flex flex-col md:flex-row gap-2">
+              <div class="percentage">15%</div>
+              <div>
+                <p>
+                  Average body weight lost by patients on our physician-guided
+                  GLP-1 protocol
+                </p>
+                <p class="medicine-footer-note">*Based on internal program data.</p>
+              </div>
+            </div>
+            <div class="verified--text">
+              <div class="text-left mb-4 block md:hidden">
+                <span>Verified &amp; Certified</span>
+              </div>
+              <div
+                class="flex justify-start md:justify-end items-end md:items-center gap-4 md:gap-12 protocol--imgs"
+              >
+                <div class="flex-1 hidden md:block">
+                  <span>Verified &amp; Certified</span>
+                </div>
+                <div class="verified-badges flex items-center gap-6">
+                  <Image
+                    src={trustPilot}
+                    alt="Trustpilot rating"
+                    loading="eager"
+                  />
+                  <Image
+                    src={legitScript}
+                    alt="LegitScript certification badge"
+                    class="badge--lg"
+                    loading="eager"
+                  />
+                  <Image
+                    src={usaBadge}
+                    alt="USA-based badge"
+                    loading="eager"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="container z-2 position-relative blur--bg"
+          id="start-assessment"
+        >
+          <div class="grid grid-cols-1 md:grid-cols-2 items-center">
+            <div class="flex flex-col gap-4 left">
+              <strong>Start Assessment</strong>
+              <div class="from--to">
+                From <span>$99</span> Physician-supervised
+              </div>
+            </div>
+            <div
+              class="flex justify-start md:justify-end gap-4 mt-4 md:mt-0 right"
+            >
+              <button
+                type="button"
+                id="start-assessment4"
+                class="cta--global w-full md:w-1/3 text-center"
+                ><span>Start Your Assessment</span></button
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div id="quiz--modal" class="modal">
+          <div class="modal-content">
+            <span class="close" id="close--quiz"
+              ><Image src={closeIcon} alt="Close" loading="lazy"
+            /></span>
+            <div class="processing-loader" id="loader"></div>
+            <div id="quiz--container"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Benefits -->
+      <section class="benefits py-5">
+        <div class="container">
+          <div class="benefits-grid grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="benefits-grid__lead">
+              <div class="benefit--item">
+                <div class="item--img"></div>
+                <div class="flex justify-between pt-4 px-4">
+                  <h3>Weight Loss</h3>
+                  <Image src={arrowCircleRight} alt="" loading="lazy" />
+                </div>
+              </div>
+            </div>
+            <div class="benefits-grid__offset">
+              <div class="benefit--item">
+                <div class="item--img"></div>
+                <div class="flex justify-between pt-4 px-4">
+                  <h3>Sexual Wellness</h3>
+                  <Image src={arrowCircleRight} alt="" loading="lazy" />
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="benefit--item">
+                <div class="item--img"></div>
+                <div class="flex justify-between pt-4 px-4">
+                  <h3>Hair Loss</h3>
+                  <Image src={arrowCircleRight} alt="" loading="lazy" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Precision Medicine Cards -->
+      <section class="precision-medicine">
+        <div class="container">
+          <div
+            class="section-heading md:w-1/2"
+          >
+            <div class="section--title mt-2">
+              <h2>
+                Precision medicine<br /><span class="highlight"
+                  >for every body</span
+                >
+              </h2>
+            </div>
+            <p>
+              Clinically validated protocols, compounded to your exact
+              prescription by licensed pharmacies.
+            </p>
+          </div>
+          <div class="medicine-grid">
+            <div
+              class="medicine-card"
+            >
+              <div class="product-image">
+                <Image
+                  src={image18}
+                  alt="GLP-1 Weight Loss"
+                />
+              </div>
+              <h3>GLP-1 Weight Loss</h3>
+              <ul class="feature-list mb-6">
+                <li>
+                  <span class="list-icon"
+                    ><svg viewBox="0 0 24 24">
+                      <path
+                        d="M9.5 15.5L5.8 11.8L4.4 13.2L9.5 18.3L19.6 8.2L18.2 6.8Z"
+                      /></svg></span
+                  >Compounded GLP-1 receptor agonist
+                </li>
+                <li>
+                  <span class="list-icon"
+                    ><svg viewBox="0 0 24 24">
+                      <path
+                        d="M9.5 15.5L5.8 11.8L4.4 13.2L9.5 18.3L19.6 8.2L18.2 6.8Z"
+                      /></svg></span
+                  >Average 15% body weight loss
+                </li>
+                <li>
+                  <span class="list-icon"
+                    ><svg viewBox="0 0 24 24">
+                      <path
+                        d="M9.5 15.5L5.8 11.8L4.4 13.2L9.5 18.3L19.6 8.2L18.2 6.8Z"
+                      /></svg></span
+                  >Starts as low as $99.29 for month one
+                </li>
+              </ul>
+              <div class="price flex justify-between">
+                <div class="text-14-inter dark">Starting at</div>
+                <div>
+                  <span>$99*</span><small class="text-14-inter">/month</small>
+                </div>
+              </div>
+              <button type="button" class="global--qua--button w-full"
+                ><img
+                  class="btn--icon"
+                  src="/assets/icons/arrow-right.svg"
+                  alt="" loading="lazy" />See if you Qualify</button
+              >
+              <div class="cancel-text">Cancel Anytime</div>
+            </div>
+            <div
+              class="medicine-card"
+            >
+              <div class="product-image">
+                <Image
+                  src={image19}
+                  alt="Sexual Wellness"
+                />
+              </div>
+              <h3>Sexual Wellness</h3>
+              <ul class="feature-list mb-6">
+                <li>
+                  <span class="list-icon"
+                    ><svg viewBox="0 0 24 24">
+                      <path
+                        d="M9.5 15.5L5.8 11.8L4.4 13.2L9.5 18.3L19.6 8.2L18.2 6.8Z"
+                      /></svg></span
+                  >Dissolves under the tongue (Sublingual)
+                </li>
+                <li>
+                  <span class="list-icon"
+                    ><svg viewBox="0 0 24 24">
+                      <path
+                        d="M9.5 15.5L5.8 11.8L4.4 13.2L9.5 18.3L19.6 8.2L18.2 6.8Z"
+                      /></svg></span
+                  >Sildenafil + Tadalafil + Apomorphine
+                </li>
+                <li>
+                  <span class="list-icon"
+                    ><svg viewBox="0 0 24 24">
+                      <path
+                        d="M9.5 15.5L5.8 11.8L4.4 13.2L9.5 18.3L19.6 8.2L18.2 6.8Z"
+                      /></svg></span
+                  >Physician consultation & fast shipping included
+                </li>
+              </ul>
+              <div class="price flex justify-between">
+                <div class="text-14-inter dark">Starting at</div>
+                <div>
+                  <span>$59</span><small class="text-14-inter">/month</small>
+                </div>
+              </div>
+              <button type="button" class="global--qua--button w-full"
+                ><img
+                  class="btn--icon"
+                  src="/assets/icons/arrow-right.svg"
+                  alt="" loading="lazy" />See if you Qualify</button
+              >
+              <div class="cancel-text">Cancel Anytime</div>
+            </div>
+            <div
+              class="medicine-card"
+            >
+              <div class="product-image">
+                <Image
+                  src={image20}
+                  alt="Hair Loss"
+                />
+              </div>
+              <h3>Hair Loss</h3>
+              <ul class="feature-list mb-6">
+                              <li>
+                  <span class="list-icon"
+                    ><svg viewBox="0 0 24 24">
+                      <path
+                        d="M9.5 15.5L5.8 11.8L4.4 13.2L9.5 18.3L19.6 8.2L18.2 6.8Z"
+                      /></svg></span
+                  >Synergistic 2-in-1 compounded formula
+                </li>
+                <li>
+                  <span class="list-icon"
+                    ><svg viewBox="0 0 24 24">
+                      <path
+                        d="M9.5 15.5L5.8 11.8L4.4 13.2L9.5 18.3L19.6 8.2L18.2 6.8Z"
+                      /></svg></span
+                  >Choose between Oral Pill or Topical Spray
+                </li>
+                <li>
+                  <span class="list-icon"
+                    ><svg viewBox="0 0 24 24">
+                      <path
+                        d="M9.5 15.5L5.8 11.8L4.4 13.2L9.5 18.3L19.6 8.2L18.2 6.8Z"
+                      /></svg></span
+                  >Precision-dosed by licensed physicians
+                </li>
+              </ul>
+              <div class="price flex justify-between">
+                <div class="text-14-inter dark">Starting at</div>
+                <div>
+                  <span>$29</span><small class="text-14-inter">/month</small>
+                </div>
+              </div>
+              <button type="button" class="global--qua--button w-full"
+                ><img
+                  class="btn--icon"
+                  src="/assets/icons/arrow-right.svg"
+                  alt="" loading="lazy" />See if you Qualify</button
+              >
+              <div class="cancel-text">Cancel Anytime</div>
+            </div>
+            <div
+              class="medicine-card"
+            >
+              <div class="product-image">
+                <Image
+                  src={image21}
+                  alt="Longevity & Peptides"
+                />
+              </div>
+              <h3>Longevity & Peptides</h3>
+              <ul class="feature-list mb-6">
+                <li>
+                  <span class="list-icon"
+                    ><svg viewBox="0 0 24 24">
+                      <path
+                        d="M9.5 15.5L5.8 11.8L4.4 13.2L9.5 18.3L19.6 8.2L18.2 6.8Z"
+                      /></svg></span
+                  >Sourced from 503A US pharmacies
+                </li>
+                <li>
+                  <span class="list-icon"
+                    ><svg viewBox="0 0 24 24">
+                      <path
+                        d="M9.5 15.5L5.8 11.8L4.4 13.2L9.5 18.3L19.6 8.2L18.2 6.8Z"
+                      /></svg></span
+                  >Customized stack tailored to you
+                </li>
+                <li>
+                  <span class="list-icon"
+                    ><svg viewBox="0 0 24 24">
+                      <path
+                        d="M9.5 15.5L5.8 11.8L4.4 13.2L9.5 18.3L19.6 8.2L18.2 6.8Z"
+                      /></svg></span
+                  >Physician review & expedited cold-shipping
+                </li>
+              </ul>
+              <div class="price flex justify-between">
+                <div class="text-14-inter dark">Starting at</div>
+                <div>
+                  <span>$99</span><small class="text-14-inter">/month</small>
+                </div>
+              </div>
+              <button type="button" class="global--qua--button w-full"
+                ><img
+                  class="btn--icon"
+                  src="/assets/icons/arrow-right.svg"
+                  alt="" loading="lazy" />See if you Qualify</button
+              >
+              <div class="cancel-text">Cancel Anytime</div>
+            </div>
+          </div>
+          <div
+            class="medicine-footer-note"
+          >
+            <p>
+              *Price reflects the 12-month plan. 1-, 3-, and 6-month plan
+              lengths available at higher monthly rates. See checkout for full
+              pricing.
+            </p>
+            <p>
+              Freely does not manufacture compounded medications. Actual product
+              appearance and labeling of the medication you receive will differ
+              from website images.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Patient Results Swiper -->
+      <section class="patient-results overflow-hidden">
+        <div class="container">
+          <div class="results-header">
+            <div class="section--title mt-2">
+              <h2>
+                Why patients switch<br /><span class="highlight"
+                  >to Freeley</span
+                >
+              </h2>
+            </div>
+            <p>
+              Real stories from real patients. Names changed for privacy —
+              results and timelines are authentic.
+            </p>
+          </div>
+          <div
+            class="swiper results-grid"
+          >
+            <div class="swiper-wrapper">
+              <div class="swiper-slide">
+                <div class="result-card">
+                  <div class="weight-loss">-31 lbs</div>
+                  <div class="duration">in 3 months</div>
+                  <div class="review">
+                    &#8220;I tried every diet app imaginable. Nothing stuck until my
+                    doctor started me on semaglutide through Freely. The
+                    cravings just&#8230; stopped. I&#8217;m down 31 lbs and my A1C went
+                    from 6.4 to 5.6.&#8221;
+                  </div>
+                  <h4>Maria K.</h4>
+                  <span class="treatment">Semaglutide · Austin, TX</span>
+                </div>
+              </div>
+              <div class="swiper-slide">
+                <div class="result-card">
+                  <div class="weight-loss">-45 lbs</div>
+                  <div class="duration">in 4 months</div>
+                  <div class="review">
+                    &#8220;I couldn&#8217;t believe how easy it was. The medication arrived
+                    at my door, and the doctors actually listened. Down 45 lbs
+                    and feeling better than ever.&#8221;
+                  </div>
+                  <h4>James R.</h4>
+                  <span class="treatment">Tirzepatide · Portland, OR</span>
+                </div>
+              </div>
+              <div class="swiper-slide">
+                <div class="result-card">
+                  <div class="weight-loss">-28 lbs</div>
+                  <div class="duration">in 2.5 months</div>
+                  <div class="review">
+                    &#8220;After years of struggling with my weight, Freely made it
+                    simple. No more guesswork. My energy is through the roof and
+                    I finally feel in control.&#8221;
+                  </div>
+                  <h4>Sarah T.</h4>
+                  <span class="treatment">Semaglutide · Miami, FL</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Transformation Section -->
+      <section class="transformation-section overflow-hidden">
+        <div class="container">
+          <div class="heading-wrap">
+            <div class="section--title mt-2">
+              <h2>
+                Numbers that speak<br /><span class="highlight"
+                  >for themselves</span
+                >
+              </h2>
+            </div>
+            <p>
+              Results from real Freeley patients under physician supervision.
+            </p>
+          </div>
+          <div
+            class="swiper swiper_before_after transformation-slider"
+          >
+            <div class="swiper-wrapper">
+              <div class="swiper-slide">
+                <div class="transform-card">
+                  <div class="compare-wrapper">
+                    <div class="before-box">
+                      <span class="compare-label">Before</span
+                      ><Image src={beforeImg} alt="Before" loading="lazy" />
+                    </div>
+                    <div class="after-box">
+                      <span class="compare-label">After</span
+                      ><Image src={afterImg} alt="After" loading="lazy" />
+                    </div>
+                  </div>
+                  <div class="transform-quote">
+                    &#8220;Down 37 lbs. Food noise gone. Life changed.&#8221;
+                  </div>
+                  <div class="transform-author">
+                    Sarah K.<span>• GLP-1 Weight Loss Program</span>
+                  </div>
+                </div>
+              </div>
+              <div class="swiper-slide">
+                <div class="transform-card">
+                  <div class="compare-wrapper">
+                    <div class="before-box">
+                      <span class="compare-label">Before</span
+                      ><Image src={beforeImg} alt="Before" loading="lazy" />
+                    </div>
+                    <div class="after-box">
+                      <span class="compare-label">After</span
+                      ><Image src={afterImg} alt="After" loading="lazy" />
+                    </div>
+                  </div>
+                  <div class="transform-quote">
+                    &#8220;I feel more energetic and confident in my body.&#8221;
+                  </div>
+                  <div class="transform-author">
+                    James L.<span>• GLP-1 Weight Loss Program</span>
+                  </div>
+                </div>
+              </div>
+              <div class="swiper-slide">
+                <div class="transform-card">
+                  <div class="compare-wrapper">
+                    <div class="before-box">
+                      <span class="compare-label">Before</span
+                      ><Image src={beforeImg} alt="Before" loading="lazy" />
+                    </div>
+                    <div class="after-box">
+                      <span class="compare-label">After</span
+                      ><Image src={afterImg} alt="After" loading="lazy" />
+                    </div>
+                  </div>
+                  <div class="transform-quote">
+                    &#8220;Lost 42 lbs and kept it off for 6 months!&#8221;
+                  </div>
+                  <div class="transform-author">
+                    Michael T.<span>• GLP-1 Weight Loss Program</span>
+                  </div>
+                </div>
+              </div>
+              <div class="swiper-slide">
+                <div class="transform-card">
+                  <div class="compare-wrapper">
+                    <div class="before-box">
+                      <span class="compare-label">Before</span
+                      ><Image src={beforeImg} alt="Before" loading="lazy" />
+                    </div>
+                    <div class="after-box">
+                      <span class="compare-label">After</span
+                      ><Image src={afterImg} alt="After" loading="lazy" />
+                    </div>
+                  </div>
+                  <div class="transform-quote">
+                    &#8220;My A1C dropped from 7.2 to 5.8. Unbelievable.&#8221;
+                  </div>
+                  <div class="transform-author">
+                    David R.<span>• GLP-1 Weight Loss Program</span>
+                  </div>
+                </div>
+              </div>
+              <div class="swiper-slide">
+                <div class="transform-card">
+                  <div class="compare-wrapper">
+                    <div class="before-box">
+                      <span class="compare-label">Before</span
+                      ><Image src={beforeImg} alt="Before" loading="lazy" />
+                    </div>
+                    <div class="after-box">
+                      <span class="compare-label">After</span
+                      ><Image src={afterImg} alt="After" loading="lazy" />
+                    </div>
+                  </div>
+                  <div class="transform-quote">
+                    &#8220;Finally comfortable in my own skin after 10 years.&#8221;
+                  </div>
+                  <div class="transform-author">
+                    Jessica M.<span>• GLP-1 Weight Loss Program</span>
+                  </div>
+                </div>
+              </div>
+              <div class="swiper-slide">
+                <div class="transform-card">
+                  <div class="compare-wrapper">
+                    <div class="before-box">
+                      <span class="compare-label">Before</span
+                      ><Image src={beforeImg} alt="Before" loading="lazy" />
+                    </div>
+                    <div class="after-box">
+                      <span class="compare-label">After</span
+                      ><Image src={afterImg} alt="After" loading="lazy" />
+                    </div>
+                  </div>
+                  <div class="transform-quote">
+                    &#8220;No more cravings. Down 28 lbs in 3 months.&#8221;
+                  </div>
+                  <div class="transform-author">
+                    Amanda W.<span>• GLP-1 Weight Loss Program</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- desktop -->
+          <div class="featured-wrap hidden md:block">
+            <p id="themselves">Trusted & Featured In</p>
+            <div class="featured-logos">
+              <span>
+                <svg
+                  width="168"
+                  height="31"
+                  viewBox="0 0 168 31"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns:xlink="http://www.w3.org/1999/xlink"
+                >
+                  <rect
+                    width="167.021"
+                    height="30.9686"
+                    fill="url(#pattern0_149_2908)"
+                  />
+                  <defs>
+                    <pattern
+                      id="pattern0_149_2908"
+                      patternContentUnits="objectBoundingBox"
+                      width="1"
+                      height="1"
+                    >
+                      <use
+                        xlink:href="#image0_149_2908"
+                        transform="scale(0.00104167 0.00561798)"
+                      />
+                    </pattern>
+                    <image
+                      id="image0_149_2908"
+                      width="960"
+                      height="178"
+                      preserveAspectRatio="none"
+                      xlink:href="/assets/press/press-logo-1.png"
+                    />
+                  </defs>
+                </svg>
+              </span>
+              <span>
+                <svg
+                  width="122"
+                  height="31"
+                  viewBox="0 0 122 31"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns:xlink="http://www.w3.org/1999/xlink"
+                >
+                  <rect
+                    width="121.05"
+                    height="30.743"
+                    fill="url(#pattern0_149_2909)"
+                  />
+                  <defs>
+                    <pattern
+                      id="pattern0_149_2909"
+                      patternContentUnits="objectBoundingBox"
+                      width="1"
+                      height="1"
+                    >
+                      <use
+                        xlink:href="#image0_149_2909"
+                        transform="matrix(0.000290644 0 0 0.00114441 -0.0952381 -1.84375)"
+                      />
+                    </pattern>
+                    <image
+                      id="image0_149_2909"
+                      width="4096"
+                      height="4096"
+                      preserveAspectRatio="none"
+                      xlink:href="/assets/press/press-logo-2.png"
+                    />
+                  </defs>
+                </svg>
+              </span>
+              <span
+                ><svg
+                  width="253"
+                  height="39"
+                  viewBox="0 0 253 39"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns:xlink="http://www.w3.org/1999/xlink"
+                >
+                  <rect
+                    width="252.53"
+                    height="38.9617"
+                    fill="url(#pattern0_149_2910)"
+                  />
+                  <defs>
+                    <pattern
+                      id="pattern0_149_2910"
+                      patternContentUnits="objectBoundingBox"
+                      width="1"
+                      height="1"
+                    >
+                      <use
+                        xlink:href="#image0_149_2910"
+                        transform="matrix(0.000260417 0 0 0.00168789 0 -0.084756)"
+                      />
+                    </pattern>
+                    <image
+                      id="image0_149_2910"
+                      width="3840"
+                      height="649"
+                      preserveAspectRatio="none"
+                      xlink:href="/assets/press/press-logo-3.png"
+                    />
+                  </defs>
+                </svg>
+              </span>
+              <span>
+                <svg
+                  width="208"
+                  height="31"
+                  viewBox="0 0 208 31"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns:xlink="http://www.w3.org/1999/xlink"
+                >
+                  <rect
+                    width="209.742"
+                    height="30.6879"
+                    fill="url(#pattern0_149_2913)"
+                  />
+                  <defs>
+                    <pattern
+                      id="pattern0_149_2913"
+                      patternContentUnits="objectBoundingBox"
+                      width="1"
+                      height="1"
+                    >
+                      <use
+                        xlink:href="#image0_149_2913"
+                        transform="matrix(0.000396511 0 0 0.00271003 -0.506344 -2.46612)"
+                      />
+                    </pattern>
+                    <image
+                      style="filter: brightness(0.1)"
+                      id="image0_149_2913"
+                      width="3840"
+                      height="2160"
+                      preserveAspectRatio="none"
+                      xlink:href="/assets/press/press-logo-4.png"
+                    />
+                  </defs>
+                </svg>
+              </span>
+            </div>
+          </div>
+          <!-- mobile -->
+          <div class="featured-wrap block md:hidden">
+            <p id="themselves">Trusted & Featured In</p>
+            <div class="flex gap-4 mt-4 md:hidden">
+              <div class="swiper brand--grid--hero--2">
+                <div class="swiper-wrapper items-end">
+                  <div class="swiper-slide">
+                    <img
+                      src="/assets/brands/bloomberg.svg"
+                      alt="Bloomberg logo" loading="lazy" />
+                  </div>
+                  <div class="swiper-slide">
+                    <img
+                      src="/assets/brands/forbes.svg"
+                      alt="Forbes logo" loading="lazy" />
+                  </div>
+                  <div class="swiper-slide">
+                    <img
+                      src="/assets/brands/new_york.svg"
+                      alt="The New York Times logo" loading="lazy" />
+                  </div>
+                  <div class="swiper-slide">
+                    <img
+                      src="/assets/brands/tech_crunch.svg"
+                      alt="TechCrunch logo" loading="lazy" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- <div class="featured-wrap swiper d-block d-md-none">
+            <p id="themselves">Trusted & Featured In</p>
+            <div class="swiper-wrapper featured-logos ">
+                <div class="swiper-slide">
+              <span>Bloomberg</span>
+              </div>
+              <div class="swiper-slide">
+              <span>Forbes</span>
+              </div>
+              <div class="swiper-slide">
+              <span>The New York Times</span>
+              </div>
+              <div class="swiper-slide">
+              <span>TechCrunch</span>
+              </div>
+            </div>
+          </div> -->
+        </div>
+      </section>
+
+      <!-- Comparison Table -->
+      <section class="comparison-section">
+        <div class="container text-left md:text-center">
+          <div
+            class="comparison-header mt-2"
+          >
+            <div class="section--title desktop">
+              <h2>Why patients choose <span class="highlight">Freeley</span></h2>
+            </div>
+
+            <div class="section--title mobile">
+              <h2>
+                Why patients choose <br /><span class="highlight">Freeley</span>
+              </h2>
+            </div>
+
+            <p>
+              See how we compare to traditional clinics and other telehealth
+              providers.
+            </p>
+          </div>
+          <div
+            class="comparison-table-wrap"
+          >
+            <table class="comparison-table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th class="highlighted">Freeley</th>
+                  <th>Traditional Clinics</th>
+                  <th>Retail Pharmacy</th>
+                  <th>Other Telehealth</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="light-row">
+                  <td>Board-certified physician oversight</td>
+                  <td>
+                    <span class="icon-check"
+                      ><img src="/assets/icons/table-check.svg" alt="Included" loading="lazy" /></span>
+                  </td>
+                  <td>
+                    <span class="icon-check"
+                      ><img src="/assets/icons/table-check.svg" alt="Included" loading="lazy" /></span>
+                  </td>
+                  <td>–</td>
+                  <td>Varies</td>
+                </tr>
+                <tr class="dark-row">
+                  <td>No in-person visit required</td>
+                  <td>
+                    <span class="icon-check"
+                      ><img src="/assets/icons/table-check.svg" alt="Included" loading="lazy" /></span>
+                  </td>
+                  <td>
+                    <span class="icon-cross"
+                      ><img src="/assets/icons/table-cross.svg" alt="Not included" loading="lazy" /></span>
+                  </td>
+                  <td>
+                    <span class="icon-cross"
+                      ><img src="/assets/icons/table-cross.svg" alt="Not included" loading="lazy" /></span>
+                  </td>
+                  <td>
+                    <span class="icon-check"
+                      ><img src="/assets/icons/table-check.svg" alt="Included" loading="lazy" /></span>
+                  </td>
+                </tr>
+                <tr class="light-row">
+                  <td>Compounded medication options</td>
+                  <td>
+                    <span class="icon-check"
+                      ><img src="/assets/icons/table-check.svg" alt="Included" loading="lazy" /></span>
+                  </td>
+                  <td>Rarely</td>
+                  <td>
+                    <span class="icon-cross"
+                      ><img src="/assets/icons/table-cross.svg" alt="Not included" loading="lazy" /></span>
+                  </td>
+                  <td>Some</td>
+                </tr>
+                <tr class="dark-row">
+                  <td>Monthly price (GLP-1 weight loss)</td>
+                  <td class="price-cell">$99/month</td>
+                  <td>$300-500+</td>
+                  <td>Varies</td>
+                  <td>$199-$399</td>
+                </tr>
+                <tr class="light-row">
+                  <td>Free shipping & discreet delivery</td>
+                  <td>
+                    <span class="icon-check"
+                      ><img src="/assets/icons/table-check.svg" alt="Included" loading="lazy" /></span>
+                  </td>
+                  <td>
+                    <span class="icon-cross"
+                      ><img src="/assets/icons/table-cross.svg" alt="Not included" loading="lazy" /></span>
+                  </td>
+                  <td>Varies</td>
+                  <td>
+                    <span class="icon-check"
+                      ><img src="/assets/icons/table-check.svg" alt="Included" loading="lazy" /></span>
+                  </td>
+                </tr>
+                <tr class="dark-row">
+                  <td>Compounded GLP-1 availability</td>
+                  <td>
+                    <span class="icon-check"
+                      ><img src="/assets/icons/table-check.svg" alt="Included" loading="lazy" /></span>
+                  </td>
+                  <td>
+                    <span class="icon-check"
+                      ><img src="/assets/icons/table-check.svg" alt="Included" loading="lazy" /></span>
+                  </td>
+                  <td>
+                    <span class="icon-check"
+                      ><img src="/assets/icons/table-check.svg" alt="Included" loading="lazy" /></span>
+                  </td>
+                  <td>Some</td>
+                </tr>
+                <tr class="light-row">
+                  <td>Insurance not required</td>
+                  <td>
+                    <span class="icon-check"
+                      ><img src="/assets/icons/table-check.svg" alt="Included" loading="lazy" /></span>
+                  </td>
+                  <td>
+                    <span class="icon-cross"
+                      ><img src="/assets/icons/table-cross.svg" alt="Not included" loading="lazy" /></span>
+                  </td>
+                  <td>Varies</td>
+                  <td>
+                    <span class="icon-check"
+                      ><img src="/assets/icons/table-check.svg" alt="Included" loading="lazy" /></span>
+                  </td>
+                </tr>
+                <tr class="dark-row">
+                  <td>FSA / HSA eligible</td>
+                  <td>
+                    <span class="icon-check"
+                      ><img src="/assets/icons/table-check.svg" alt="Included" loading="lazy" /></span>
+                  </td>
+                  <td>
+                    <span class="icon-check"
+                      ><img src="/assets/icons/table-check.svg" alt="Included" loading="lazy" /></span>
+                  </td>
+                  <td>
+                    <span class="icon-check"
+                      ><img src="/assets/icons/table-check.svg" alt="Included" loading="lazy" /></span>
+                  </td>
+                  <td>Some</td>
+                </tr>
+                <tr class="light-row">
+                  <td>No membership or hidden fees</td>
+                  <td>
+                    <span class="icon-check"
+                      ><img src="/assets/icons/table-check.svg" alt="Included" loading="lazy" /></span>
+                  </td>
+                  <td>
+                    <span class="icon-cross"
+                      ><img src="/assets/icons/table-cross.svg" alt="Not included" loading="lazy" /></span>
+                  </td>
+                  <td>
+                    <span class="icon-check"
+                      ><img src="/assets/icons/table-check.svg" alt="Included" loading="lazy" /></span>
+                  </td>
+                  <td>Varies</td>
+                </tr>
+                <tr class="dark-row">
+                  <td>Cancel anytime — no contracts</td>
+                  <td>
+                    <span class="icon-check"
+                      ><img src="/assets/icons/table-check.svg" alt="Included" loading="lazy" /></span>
+                  </td>
+                  <td>N/A</td>
+                  <td>N/A</td>
+                  <td>Varies</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <button
+            type="button"
+            id="start-assessment7"
+            class="global--qua--button mt-6 md:mt-0"
+            ><img
+              class="btn--icon"
+              src="/assets/icons/arrow-right.svg"
+              alt="" loading="lazy" />Start Your Assessment</button
+          >
+          <div class="steps-row">
+            <div class="step-item"><span>1</span>2 Minute Intake</div>
+            <div class="step-item"><span>2</span>Physician Reviewed</div>
+            <div class="step-item"><span>3</span>Delivered in 48hrs</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== RESTORED SECTION: Numbers that speak for themselves (rhemsleves-main) ========== -->
+      <section id="rhemsleves-main" class="">
+        <div class="container">
+          <div class="heading-wrap">
+            <div class="section--title">
+              <h2>
+                Numbers that speak<br /><span class="highlight"
+                  >for themselves</span
+                >
+              </h2>
+            </div>
+            <p class="transform-subtitle">
+              Results from real Freeley patients under physician supervision.
+            </p>
+            <p class="medicine-footer-note">*Based on internal program data.</p>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-x-6">
+            <div class="md:col-span-7">
+              <div class="numbers--item item--1">
+                <div class="text-content w-full md:w-1/2 lg:w-1/3">
+                  <div class="numbers--text">15%</div>
+                  <div class="green--text  mb-4">Avg. body weight lost</div>
+                  <div class="dark">
+                    Average body weight loss with physician-guided GLP-1
+                    treatment, not diet alone.
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="md:col-span-5">
+              <div class="numbers--item item--2 flex items-end">
+                <div class="text-content md:w-2/3">
+                  <div class="numbers--text">24hr</div>
+                  <div class="green--text  mb-4">Avg. physician response</div>
+                  <div class="dark">
+                    From intake to physician review and prescription — often same day.
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="md:col-span-5">
+              <div class="numbers--item item--3 flex justify-center items-end">
+                <div class="text-content w-full">
+                  <div class="numbers--text text-center">96%</div>
+                  <div class="green--text text-center mb-4">Patient satisfaction</div>
+                  <div class="dark text-center ">
+                    Intake to prescription — same day in most cases.
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="md:col-span-7 ">
+              <div class="numbers--item item--4 item--2 flex items-end">
+              <div class="text-content md:w-1/3">
+                <div class="numbers--text ">48hr</div>
+                  <div class="green--text  mb-4">Door-to-Door Delivery</div>
+                  <div class="dark">
+                      Medication delivered to your door within 2 business days.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- <div class="hidden md:block">
+            <img src="/assets/home/4-cards.png" class="w-full" />
+          </div> -->
+        </div>
+      </section>
+
+      <section id="rhemsleves-mobile" class="hidden">
+        <div class="container">
+          <div class="heading-wrap">
+            <div class="section--title">
+              <h2>
+                Numbers that speak<br /><span class="highlight"
+                  >for themselves</span
+                >
+              </h2>
+            </div>
+            <p class="transform-subtitle">
+              Results from real Freeley patients under physician supervision.
+            </p>
+          </div>
+          <div class="grid grid-cols-1">
+            <div class="w-full">
+              <img src="/assets/home/moible1.svg" class="w-full" alt="Average body weight lost statistic" loading="lazy" />
+            </div>
+            <div class="w-full">
+              <img src="/assets/home/moible2.svg" class="w-full" alt="Average physician response time statistic" loading="lazy" />
+            </div>
+            <div class="w-full">
+              <img src="/assets/home/moible3.svg" class="w-full" alt="Patient satisfaction statistic" loading="lazy" />
+            </div>
+            <div class="w-full">
+              <img src="/assets/home/moible4.svg" class="w-full" alt="Door-to-door delivery time statistic" loading="lazy" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== RESTORED SECTION: What to expect on GLP-1 therapy (glp-therapy-section) ========== -->
+      <section class="glp-therapy-section">
+        <div class="container py-12">
+          <div class="w-full gpl-desktop hidden md:flex flex-col justify-between">
+              <div class="overlay-gpl"></div>
+              <div class="grid grid-cols-1 md:grid-cols-2 relative z-1">
+              <div>
+            <div class="journey-badge mb-4">Your Journey</div>
+              <h2 class="glp-heading mb-12">
+                What to expect on<br /><em>GLP-1 therapy</em>
+              </h2>
+              </div>
+              <div class="flex justify-end items-start">
+                <button type="button" id="start-assessment8" class="global--qua--button mt-12 md:mt-0" style="visibility: visible; animation-name: fadeInUp;"><img class="btn--icon" src="/assets/icons/arrow-right.svg" alt="" loading="lazy">Start Your Assessment</button>
+                    </div>
+            </div>
+            <img src="/assets/home/graph-home.svg" alt="Expected results graph over the course of GLP-1 therapy" loading="lazy" />
+            </div>
+            <div class="block md:hidden glp-mobile-container flex flex-col justify-between">
+                <div class="relative z-1">
+                    <div class="journey-badge mb-4">Your Journey</div>
+                    <h1 class="glp-heading mb-12">
+                        What to expect on<br /><em>GLP-1 therapy</em>
+                    </h1>
+                    <div class="flex flex-col gap-6">
+                        <div class="flex items-start gap-4">
+                            <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
+                    <circle
+                      cx="15"
+                      cy="15"
+                      r="15"
+                      fill="url(#paint0_radial_149_4297)"
+                    />
+                    <circle cx="15" cy="15" r="7" fill="white" />
+                    <defs>
+                      <radialGradient
+                        id="paint0_radial_149_4297"
+                        cx="0"
+                        cy="0"
+                        r="1"
+                        gradientUnits="userSpaceOnUse"
+                        gradientTransform="translate(15 15) rotate(90) scale(15)"
+                      >
+                        <stop
+                          offset="0.561867"
+                          stop-color="white"
+                          stop-opacity="0"
+                        />
+                        <stop offset="1" stop-color="white" />
+                      </radialGradient>
+                    </defs>
+                  </svg>
+                            <div class="flex flex-col items-start gap-2">
+                                <span class="timeline-badge">Week 1-2</span
+                    ><span class="timeline-text"
+                      >Reduced appetite and cravings begin. Starter dose
+                      calibration.</span
+                    >
+                  </div>
+                </div>
+                <div class="flex items-start gap-4">
+                  <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
+                    <circle
+                      cx="15"
+                      cy="15"
+                      r="15"
+                      fill="url(#paint0_radial_149_4297)"
+                    />
+                    <circle cx="15" cy="15" r="7" fill="white" />
+                    <defs>
+                      <radialGradient
+                        id="paint0_radial_149_4297"
+                        cx="0"
+                        cy="0"
+                        r="1"
+                        gradientUnits="userSpaceOnUse"
+                        gradientTransform="translate(15 15) rotate(90) scale(15)"
+                      >
+                        <stop
+                          offset="0.561867"
+                          stop-color="white"
+                          stop-opacity="0"
+                        />
+                        <stop offset="1" stop-color="white" />
+                      </radialGradient>
+                    </defs>
+                  </svg>
+                  <div class="flex flex-col items-start gap-2">
+                    <span class="timeline-badge">Month 1</span
+                    ><span class="timeline-text"
+                      >Average 5–8 lbs lost. Energy improves. Dosage may be
+                      adjusted.</span
+                    >
+                  </div>
+                </div>
+                <div class="flex items-start gap-4">
+                  <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
+                    <circle
+                      cx="15"
+                      cy="15"
+                      r="15"
+                      fill="url(#paint0_radial_149_4297)"
+                    />
+                    <circle cx="15" cy="15" r="7" fill="white" />
+                    <defs>
+                      <radialGradient
+                        id="paint0_radial_149_4297"
+                        cx="0"
+                        cy="0"
+                        r="1"
+                        gradientUnits="userSpaceOnUse"
+                        gradientTransform="translate(15 15) rotate(90) scale(15)"
+                      >
+                        <stop
+                          offset="0.561867"
+                          stop-color="white"
+                          stop-opacity="0"
+                        />
+                        <stop offset="1" stop-color="white" />
+                      </radialGradient>
+                    </defs>
+                  </svg>
+                  <div class="flex flex-col items-start gap-2">
+                    <span class="timeline-badge">Month 3</span
+                    ><span class="timeline-text"
+                      >Significant weight reduction. Metabolic markers improve.
+                      Visible results.</span
+                    >
+                  </div>
+                </div>
+                <div class="flex items-start gap-4">
+                  <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
+                    <circle
+                      cx="15"
+                      cy="15"
+                      r="15"
+                      fill="url(#paint0_radial_149_4297)"
+                    />
+                    <circle cx="15" cy="15" r="7" fill="white" />
+                    <defs>
+                      <radialGradient
+                        id="paint0_radial_149_4297"
+                        cx="0"
+                        cy="0"
+                        r="1"
+                        gradientUnits="userSpaceOnUse"
+                        gradientTransform="translate(15 15) rotate(90) scale(15)"
+                      >
+                        <stop
+                          offset="0.561867"
+                          stop-color="white"
+                          stop-opacity="0"
+                        />
+                        <stop offset="1" stop-color="white" />
+                      </radialGradient>
+                    </defs>
+                  </svg>
+                  <div class="flex flex-col items-start gap-2">
+                    <span class="timeline-badge">Month 6</span
+                    ><span class="timeline-text"
+                      >15%+ body weight lost. Maintenance phase. Long-term
+                      metabolic health.</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="relative z-1 mt-12 pt-4">
+              <button type="button" id="start-assessment9" class="global--qua--button"
+                ><img
+                  class="btn--icon"
+                  src="/assets/icons/arrow-right.svg"
+                  alt="" loading="lazy" />See if you Qualify</button
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Process Section -->
+      <section class="process py-5">
+        <div class="container">
+          <div class="grid grid-cols-1 md:grid-cols-12 pt-12">
+            <div
+              class="md:col-span-6 py-12 process--col--left"
+            >
+              <div class="bordered--heading inline-block px-4 mb-4">
+                <span class="uppercase">The Process</span>
+                            </div>
+                            <div class="section--title">
+                                <h2>
+                                    From visit to doorstepin<br /><span class="highlight">under a week</span
+                  >
+                </h2>
+              </div>
+              <div class="w-full">
+                <p class="section--description">
+                  Everything happens on your schedule, from your phone.
+                </p>
+              </div>
+              <a href="/about" class="global--qua--button mt-6"
+                ><img
+                  class="btn--icon"
+                  src="/assets/icons/arrow-right.svg"
+                  alt="" loading="lazy" />About Us</a
+              >
+            </div>
+            <div
+              class="md:col-span-5 md:col-start-8 flex justify-center process--col--right"
+            >
+              <img src="/assets/frame-242.svg" alt="Illustration of the Freeley delivery process" loading="lazy" />
+            </div>
+          </div>
+        </div>
+        <div class="container py-6">
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-x-6 gap-y-4 process--items">
+            <div
+              class="flex flex-col gap-6 process--item"
+            >
+              <div class="process--icon">
+                <svg width="3" height="9" viewBox="0 0 3 9" fill="none">
+                  <path
+                    d="M0.000359401 1.54805V4.64916e-05H2.89236V8.74805H1.16436V1.54805H0.000359401Z"
+                    fill="#004C27"
+                  />
+                </svg>
+              </div>
+              <div class="process--title">Complete Intake</div>
+              <div class="process--desc">
+                A quick, secure health questionnaire. Takes 5 minutes from your
+                phone. No appointment needed.
+              </div>
+            </div>
+            <div
+              class="flex flex-col gap-6 process--item"
+            >
+              <div class="process--icon">
+                <svg width="6" height="9" viewBox="0 0 6 9" fill="none">
+                  <path
+                    d="M0.636656 7.04394C1.40466 6.40394 2.01666 5.87194 2.47266 5.44794C2.92866 5.01594 3.30866 4.56794 3.61266 4.10394C3.91666 3.63994 4.06866 3.18394 4.06866 2.73594C4.06866 2.32794 3.97266 2.00794 3.78066 1.77594C3.58866 1.54394 3.29266 1.42794 2.89266 1.42794C2.49266 1.42794 2.18466 1.56394 1.96866 1.83594C1.75266 2.09994 1.64066 2.46394 1.63266 2.92794H0.000656292C0.0326563 1.96794 0.316656 1.23994 0.852656 0.743941C1.39666 0.247941 2.08466 -5.93662e-05 2.91666 -5.93662e-05C3.82866 -5.93662e-05 4.52866 0.243941 5.01666 0.731941C5.50466 1.21194 5.74866 1.84794 5.74866 2.63994C5.74866 3.26394 5.58066 3.85994 5.24466 4.42794C4.90866 4.99594 4.52466 5.49194 4.09266 5.91594C3.66066 6.33194 3.09666 6.83594 2.40066 7.42794H5.94066V8.81994H0.0126563V7.57194L0.636656 7.04394Z"
+                    fill="#004C27"
+                  />
+                </svg>
+              </div>
+              <div class="process--title">Doctor Reviews</div>
+              <div class="process--desc">
+                A board-certified physician reviews your profile within 24 hours
+                and writes your personalized Rx.
+              </div>
+            </div>
+            <div
+              class="flex flex-col gap-6 process--item"
+            >
+              <div class="process--icon">
+                <svg width="6" height="10" viewBox="0 0 6 10" fill="none">
+                  <path
+                    d="M0.120938 2.50815C0.160938 1.70815 0.440938 1.09215 0.960938 0.660148C1.48894 0.220148 2.18094 0.00014782 3.03694 0.00014782C3.62094 0.00014782 4.12094 0.104148 4.53694 0.312148C4.95294 0.512148 5.26494 0.788148 5.47294 1.14015C5.68894 1.48415 5.79694 1.87615 5.79694 2.31615C5.79694 2.82015 5.66494 3.24815 5.40094 3.60015C5.14494 3.94415 4.83694 4.17615 4.47694 4.29615V4.34415C4.94094 4.48815 5.30094 4.74415 5.55694 5.11215C5.82094 5.48015 5.95294 5.95215 5.95294 6.52815C5.95294 7.00815 5.84094 7.43615 5.61694 7.81215C5.40094 8.18815 5.07694 8.48415 4.64494 8.70015C4.22094 8.90815 3.70894 9.01215 3.10894 9.01215C2.20494 9.01215 1.46894 8.78415 0.900938 8.32815C0.332938 7.87215 0.0329375 7.20015 0.000937521 6.31215H1.63294C1.64894 6.70415 1.78094 7.02015 2.02894 7.26015C2.28494 7.49215 2.63294 7.60815 3.07294 7.60815C3.48094 7.60815 3.79294 7.49615 4.00894 7.27215C4.23294 7.04015 4.34494 6.74415 4.34494 6.38415C4.34494 5.90415 4.19294 5.56015 3.88894 5.35215C3.58494 5.14415 3.11294 5.04015 2.47294 5.04015H2.12494V3.66015H2.47294C3.60894 3.66015 4.17694 3.28015 4.17694 2.52015C4.17694 2.17615 4.07294 1.90815 3.86494 1.71615C3.66494 1.52415 3.37294 1.42815 2.98894 1.42815C2.61294 1.42815 2.32094 1.53215 2.11294 1.74015C1.91294 1.94015 1.79694 2.19615 1.76494 2.50815H0.120938Z"
+                    fill="#004C27"
+                  />
+                </svg>
+              </div>
+              <div class="process--title">Pharmacy Compounds</div>
+              <div class="process--desc">
+                Your prescription is sent to a 503A-licensed compounding
+                pharmacy for precise formulation.
+              </div>
+            </div>
+            <div
+              class="flex flex-col gap-6 process--item"
+            >
+              <div class="process--icon">
+                <svg width="7" height="9" viewBox="0 0 7 9" fill="none">
+                  <path
+                    d="M-0.0004531 6.93614V5.61614L3.92355 0.000136375H5.87955V5.47214H6.93555V6.93614H5.87955V8.64014H4.19955V6.93614H-0.0004531ZM4.30755 1.80014L1.84755 5.47214H4.30755V1.80014Z"
+                    fill="#004C27"
+                  />
+                </svg>
+              </div>
+              <div class="process--title">Deliverd to you</div>
+              <div class="process--desc">
+                Discreet, climate-controlled packaging shipped directly to your
+                door. Refills are automatic.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="three--gorgeous py-0 md:py-12 desktop pixel-600">
+        <div class="container py-5">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 gorgeous--items">
+            <div>
+            <div class="gorgeous--item">
+              <h2 class="text-center">Real Doctors</h2>
+              </div>
+            </div>
+            <div>
+            <div class="gorgeous--item">
+            <h2 class="text-center">Real Providers</h2>
+              </div>
+            </div>
+            <div>
+            <div class="gorgeous--item">
+            <h2 class="text-center">Pharmacy Grade</h2>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="three--gorgeous py-0 md:py-12 mobile">
+        <div class="container py-5">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 gorgeous--items">
+            <div class="gorgeous--item">
+              <img
+                loading="lazy"
+                decoding="async"
+                src="/assets/home/gor-mob-1.svg"
+                alt="Real Doctors"
+              />
+            </div>
+            <div
+              class="gorgeous--item"
+            >
+              <img src="/assets/home/gor-mob-2.svg" alt="Real Providers" loading="lazy" />
+            </div>
+            <div
+              class="gorgeous--item"
+            >
+              <img src="/assets/home/gor-mob-3.svg" alt="Pharmacy Grade" loading="lazy" />
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- FAQS -->
+      <section class="faqs py-5">
+        <div class="container text-center py-5">
+          <div class="section--title mt-2">
+                            <h2 class="mb-6">
+                                Your safety,
+                                <span class="highlight"> Answered.</span>
+                            </h2>
+
+                            <p>
+                                Real questions from real patients. Direct, honest answers from our medical team.
+                            </p>
+                        </div>
+
+                        <div class="faq-container">
+                            <div class="faq-items">
+                                <!-- FAQ 1 -->
+                                <div class="faq-item open">
+                                    <div class="faq-question">
+                                        <span class="faq-question-text">Is GLP-1 medication safe?</span
+                  >
+                  <div class="faq-toggle-icon">
+                    <svg
+                      class="icon-plus"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z"
+                        fill="#C97F56"
+                      />
+                      <path d="M8 12H16" stroke="white" stroke-width="1.5" />
+                      <path d="M12 16V8" stroke="white" stroke-width="1.5" />
+                    </svg>
+
+                    <svg
+                      class="icon-minus"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="M11.9199 22C17.4199 22 21.9199 17.5 21.9199 12C21.9199 6.5 17.4199 2 11.9199 2C6.41992 2 1.91992 6.5 1.91992 12C1.91992 17.5 6.41992 22 11.9199 22Z"
+                        fill="#C97F561A"
+                        fill-opacity="0.1"
+                      />
+                      <path
+                        d="M7.91992 12H15.9199"
+                        stroke="#ffffff"
+                        stroke-width="1.5"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                <div class="faq-answer">
+                  GLP-1 medications have been studied and prescribed clinically
+                  for nearly 20 years. Every Freely patient is screened by a
+                  board-certified physician for medical history, current
+                  medications, and contraindications before any prescription is
+                  written. Your treatment is monitored continuously by your
+                  provider.
+                </div>
+              </div>
+
+              <!-- FAQ 2 -->
+              <div
+                class="faq-item"
+              >
+                <div class="faq-question">
+                  <span class="faq-question-text"
+                    >What side effects should I expect?</span
+                  >
+                  <div class="faq-toggle-icon">
+                    <svg
+                      class="icon-plus"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z"
+                        fill="#C97F56"
+                      />
+                      <path d="M8 12H16" stroke="white" stroke-width="1.5" />
+                      <path d="M12 16V8" stroke="white" stroke-width="1.5" />
+                    </svg>
+
+                    <svg
+                      class="icon-minus"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="M11.9199 22C17.4199 22 21.9199 17.5 21.9199 12C21.9199 6.5 17.4199 2 11.9199 2C6.41992 2 1.91992 6.5 1.91992 12C1.91992 17.5 6.41992 22 11.9199 22Z"
+                        fill="#C97F561A"
+                        fill-opacity="0.1"
+                      />
+                      <path
+                        d="M7.91992 12H15.9199"
+                        stroke="#ffffff"
+                        stroke-width="1.5"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                <div class="faq-answer">
+                  Most common side effects are mild gastrointestinal symptoms
+                  that typically improve over time. These may include nausea,
+                  vomiting, diarrhea, or constipation.
+                </div>
+              </div>
+
+              <!-- FAQ 3 -->
+              <div
+                class="faq-item"
+              >
+                <div class="faq-question">
+                  <span class="faq-question-text"
+                    >How quickly will I see results?</span
+                  >
+                  <div class="faq-toggle-icon">
+                    <svg
+                      class="icon-plus"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z"
+                        fill="#C97F56"
+                      />
+                      <path d="M8 12H16" stroke="white" stroke-width="1.5" />
+                      <path d="M12 16V8" stroke="white" stroke-width="1.5" />
+                    </svg>
+
+                    <svg
+                      class="icon-minus"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="M11.9199 22C17.4199 22 21.9199 17.5 21.9199 12C21.9199 6.5 17.4199 2 11.9199 2C6.41992 2 1.91992 6.5 1.91992 12C1.91992 17.5 6.41992 22 11.9199 22Z"
+                        fill="#C97F56"
+                        fill-opacity="0.1"
+                      />
+                      <path
+                        d="M7.91992 12H15.9199"
+                        stroke="#ffffff"
+                        stroke-width="1.5"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                <div class="faq-answer">
+                  Timelines vary from patient to patient based on starting
+                  dose, metabolism, and treatment plan. Many patients begin
+                  noticing changes within the first few weeks of treatment,
+                  with your physician adjusting your dose over time to fit
+                  your response.
+                </div>
+              </div>
+
+              <!-- FAQ 4 -->
+              <div
+                class="faq-item"
+              >
+                <div class="faq-question">
+                  <span class="faq-question-text"
+                    >What happens if I stop taking it?</span
+                  >
+                  <div class="faq-toggle-icon">
+                    <svg
+                      class="icon-plus"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z"
+                        fill="#C97F56"
+                      />
+                      <path d="M8 12H16" stroke="white" stroke-width="1.5" />
+                      <path d="M12 16V8" stroke="white" stroke-width="1.5" />
+                    </svg>
+
+                    <svg
+                      class="icon-minus"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="M11.9199 22C17.4199 22 21.9199 17.5 21.9199 12C21.9199 6.5 17.4199 2 11.9199 2C6.41992 2 1.91992 6.5 1.91992 12C1.91992 17.5 6.41992 22 11.9199 22Z"
+                        fill="#C97F56"
+                        fill-opacity="0.1"
+                      />
+                      <path
+                        d="M7.91992 12H15.9199"
+                        stroke="#ffffff"
+                        stroke-width="1.5"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                <div class="faq-answer">
+                  GLP-1 medications work while you're taking them. If you
+                  stop, appetite and weight trends can gradually return
+                  toward your baseline, which is why your physician works
+                  with you on a long-term plan rather than a fixed end date.
+                </div>
+              </div>
+
+              <!-- FAQ 5 -->
+              <div
+                class="faq-item"
+              >
+                <div class="faq-question">
+                  <span class="faq-question-text"
+                    >Will I need to take it forever?</span
+                  >
+                  <div class="faq-toggle-icon">
+                    <svg
+                      class="icon-plus"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z"
+                        fill="#C97F56"
+                      />
+                      <path d="M8 12H16" stroke="white" stroke-width="1.5" />
+                      <path d="M12 16V8" stroke="white" stroke-width="1.5" />
+                    </svg>
+
+                    <svg
+                      class="icon-minus"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="M11.9199 22C17.4199 22 21.9199 17.5 21.9199 12C21.9199 6.5 17.4199 2 11.9199 2C6.41992 2 1.91992 6.5 1.91992 12C1.91992 17.5 6.41992 22 11.9199 22Z"
+                        fill="#C97F56"
+                        fill-opacity="0.1"
+                      />
+                      <path
+                        d="M7.91992 12H15.9199"
+                        stroke="#ffffff"
+                        stroke-width="1.5"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                <div class="faq-answer">
+                  There's no one-size-fits-all timeline. Your physician
+                  reassesses your treatment regularly and discusses whether
+                  to continue, adjust, or eventually taper your plan based on
+                  how you're responding.
+                </div>
+              </div>
+
+              <!-- FAQ 6 -->
+              <div
+                class="faq-item"
+              >
+                <div class="faq-question">
+                  <span class="faq-question-text"
+                    >Who shouldn't take GLP-1 medication?</span
+                  >
+                  <div class="faq-toggle-icon">
+                    <svg
+                      class="icon-plus"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z"
+                        fill="#C97F56"
+                      />
+                      <path d="M8 12H16" stroke="white" stroke-width="1.5" />
+                      <path d="M12 16V8" stroke="white" stroke-width="1.5" />
+                    </svg>
+
+                    <svg
+                      class="icon-minus"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="M11.9199 22C17.4199 22 21.9199 17.5 21.9199 12C21.9199 6.5 17.4199 2 11.9199 2C6.41992 2 1.91992 6.5 1.91992 12C1.91992 17.5 6.41992 22 11.9199 22Z"
+                        fill="#C97F56"
+                        fill-opacity="0.1"
+                      />
+                      <path
+                        d="M7.91992 12H15.9199"
+                        stroke="#ffffff"
+                        stroke-width="1.5"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                <div class="faq-answer">
+                  GLP-1 medications aren't right for everyone. During your
+                  intake, a licensed physician reviews your medical history,
+                  current medications, and any conditions that could affect
+                  eligibility before approving treatment.
+                </div>
+              </div>
+
+              <!-- FAQ 7 -->
+              <div
+                class="faq-item"
+              >
+                <div class="faq-question">
+                  <span class="faq-question-text"
+                    >Is my consultation actually with a real doctor?</span
+                  >
+                  <div class="faq-toggle-icon">
+                    <svg
+                      class="icon-plus"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z"
+                        fill="#C97F56"
+                      />
+                      <path d="M8 12H16" stroke="white" stroke-width="1.5" />
+                      <path d="M12 16V8" stroke="white" stroke-width="1.5" />
+                    </svg>
+
+                    <svg
+                      class="icon-minus"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="M11.9199 22C17.4199 22 21.9199 17.5 21.9199 12C21.9199 6.5 17.4199 2 11.9199 2C6.41992 2 1.91992 6.5 1.91992 12C1.91992 17.5 6.41992 22 11.9199 22Z"
+                        fill="#C97F56"
+                        fill-opacity="0.1"
+                      />
+                      <path
+                        d="M7.91992 12H15.9199"
+                        stroke="#ffffff"
+                        stroke-width="1.5"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                <div class="faq-answer">
+                  Yes. Every consultation is conducted by an independently
+                  licensed physician through our clinical partners — never a
+                  chatbot or unlicensed reviewer. You'll have a real
+                  conversation about your health history before any
+                  prescription decision is made.
+                </div>
+              </div>
+
+              <!-- FAQ 8 -->
+              <div
+                class="faq-item"
+              >
+                <div class="faq-question">
+                  <span class="faq-question-text"
+                    >What if it doesn't work for me?</span
+                  >
+                  <div class="faq-toggle-icon">
+                    <svg
+                      class="icon-plus"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z"
+                        fill="#C97F56"
+                      />
+                      <path d="M8 12H16" stroke="white" stroke-width="1.5" />
+                      <path d="M12 16V8" stroke="white" stroke-width="1.5" />
+                    </svg>
+
+                    <svg
+                      class="icon-minus"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="M11.9199 22C17.4199 22 21.9199 17.5 21.9199 12C21.9199 6.5 17.4199 2 11.9199 2C6.41992 2 1.91992 6.5 1.91992 12C1.91992 17.5 6.41992 22 11.9199 22Z"
+                        fill="#C97F56"
+                        fill-opacity="0.1"
+                      />
+                      <path
+                        d="M7.91992 12H15.9199"
+                        stroke="#ffffff"
+                        stroke-width="1.5"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                <div class="faq-answer">
+                  Response varies by individual, and your treatment plan
+                  isn't static. If your current approach isn't producing the
+                  results you expected, your physician reassesses your dose,
+                  medication, or overall plan at your next check-in.
+                </div>
+              </div>
+
+              <div
+                class="assessment-link text-left"
+              >
+                <span>Have a different question? </span>
+                                        <button type="button">Talk to a physician →</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </section>
+                        <section class="cta--sec desktop">
+                            <div class="container py-5">
+                                <div class="md:w-1/2">
+                                    <div class="section--title">
+                                        <h2 class="text-light">The Future of Weight Loss Starts Here</h2>
+                                    </div>
+                                    <p class="text-light mb-12">
+                                        Start with a free medical visit. No commitment. No insurance required.
+                                    </p>
+                                    <div class="ctas flex gap-4">
+                                        <div class="ctas flex flex-col md:flex-row items-center md:items-start gap-4 w-full">
+                                            <button type="button" id="start-assessment5" class="global--qua--button"><img class="btn--icon" src="/assets/icons/arrow-right.svg" alt="" loading="lazy" />Start Your Assessment</button><a href="/pricing" class="global--qua--button secondory px-12">Or browse plan pricing</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <style>
+        .cta--sec-home-mobile {
+          min-height: 725px;
+          background-color: #81b3d8;
+          position: relative;
+        }
+        .cta--sec-home-mobile > .container {
+          position: relative;
+          z-index: 1;
+        }
+        .cta--sec-home-mobile:before {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-size: cover;
+          background-repeat: no-repeat;
+          background-image: url("/assets/frame_399.png");
+        }
+        .cta--sec-home-mobile:after {
+          content: "";
+          position: absolute;
+          left: 0;
+          bottom: 0;
+          width: 100%;
+          height: 70%;
+          background-size: cover;
+          background-position: bottom;
+          background-repeat: no-repeat;
+          background-image: url(/assets/home/cta-girl-mob.png);
+        }
+        .cta--sec-home-mobile .secondory {
+          justify-content: flex-end;
+        }
+        .cta--sec-home-mobile .container>.md\:w-1\/2 {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          min-height: 530px;
+        }
+      </style>
+
+      <section class="cta--sec-home-mobile py-5 mobile">
+        <div class="container py-5">
+            <div class="md:w-1/2">
+              <div class="section--title">
+                <h2 class="text-light">
+                  The Future of Weight Loss Starts Here
+                </h2>
+              </div>
+
+              <p class="text-light mb-12">
+                Start with a free medical visit. No commitment. No insurance
+                required.
+              </p>
+
+              <div class="flex flex-col md:flex-row gap-4">
+                <button type="button" id="start-assessment10" class="global--qua--button px-4 w-full">
+                  <img
+                    class="btn--icon"
+                    src="/assets/icons/arrow-right.svg"
+                    alt="" loading="lazy" />
+                  Start Your Assessment
+                </button>
+
+                                            <a href="/pricing" class="global--qua--button secondory px-4 w-full">
+                  Or browse plan pricing
+                </a>
+                                        </div>
+                                    </div>
+                                </div>
+                        </section>
+                        <!-- Footer -->
+                        <Footer />
+    </main>
+
+    <script src="/style/script.js" is:inline></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" is:inline></script>
+    <script is:inline>
+        const modal = document.getElementById("quiz--modal");
+        const loader = document.getElementById("loader");
+        const quizContainer = document.getElementById("quiz--container");
+        let quizIframe = null;
+        document
+            .querySelectorAll(
+                "#start-assessment1, #start-assessment2, #start-assessment3, #start-assessment4, #start-assessment5, #start-assessment7, #start-assessment8, #start-assessment9, #start-assessment10, #start-full-assessment, #start-assessment-header",
+            )
+            .forEach((button) => {
+                button.addEventListener("click", () => {
+                    // If iframe exists, remove it first
+                    if (quizIframe) {
+                        quizIframe.remove();
+                        quizIframe = null;
+                    }
+
+                    modal.style.display = "block";
+                    loader.style.display = "block";
+                    quizContainer.innerHTML = "";
+
+                    // Create new iframe
+                    quizIframe = document.createElement("iframe");
+                    quizIframe.style.width = "100%";
+                    quizIframe.style.height = "605px";
+                    quizIframe.style.border = "none";
+                    quizIframe.style.borderRadius = "0";
+                    quizIframe.style.display = "none";
+                    quizIframe.style.background = "#0000004D";
+
+                    // Load with cache-busting
+                    quizIframe.src = "/assessment-quiz?t=" + Date.now();
+
+                    quizIframe.onload = function() {
+                        loader.style.display = "none";
+                        quizIframe.style.display = "block";
+
+                        // Apply styles to iframe body (if you have access)
+                        try {
+                            const iframeDoc =
+                                quizIframe.contentDocument ||
+                                quizIframe.contentWindow.document;
+                            if (iframeDoc) {
+                                const style = iframeDoc.createElement("style");
+                                style.textContent = `
+                            body {
+                                background: #0000004D !important;
+                                border: 0 !important;
+                                border-radius: 0 !important;
+                                height: 100vh;
+                                margin: 0;
+                            }
+                        `;
+                                iframeDoc.head.appendChild(style);
+                            }
+                        } catch (e) {
+                            // Cross-origin restrictions may prevent this
+                            console.log("Cannot style iframe body due to CORS");
+                        }
+                    };
+
+                    quizIframe.onerror = function() {
+                        loader.style.display = "none";
+                        quizContainer.innerHTML = "<p>Unable to load quiz.</p>";
+                    };
+
+                    quizContainer.appendChild(quizIframe);
+                });
+            });
+
+        function closeQuiz() {
+            // Hide modal
+            modal.style.display = "none";
+
+            // Remove iframe completely
+            if (quizIframe) {
+                // Clear iframe content
+                try {
+                    quizIframe.src = "about:blank";
+                    quizIframe.contentWindow.document.write("");
+                    quizIframe.contentWindow.document.clear();
+                } catch (e) {}
+
+                // Remove from DOM
+                quizIframe.remove();
+                quizIframe = null;
+            }
+
+            // Clear container
+            quizContainer.innerHTML = "";
+            loader.style.display = "none";
+        }
+
+        document
+            .getElementById("close--quiz")
+            .addEventListener("click", closeQuiz);
+
+        // Close on Escape key
+        document.addEventListener("keydown", function(e) {
+            if (e.key === "Escape" && modal.style.display === "block") {
+                closeQuiz();
+            }
+        });
+
+        // Close when clicking outside
+        window.addEventListener("click", function(e) {
+            if (e.target === modal) {
+                closeQuiz();
+            }
+        });
+    </script>
+
+    <script is:inline>
+        new Swiper(".patient-results .swiper", {
+            slidesPerView: "auto",
+            autoplay: {
+                delay: 5000,
+                pauseOnMouseEnter: true,
+                disableOnInteraction: false,
+            },
+            direction: "horizontal",
+            rewind: true,
+            spaceBetween: 24,
+            freeMode: false,
+            grabCursor: true,
+        });
+        new Swiper(".transformation-slider.swiper", {
+            slidesPerView: "auto",
+            autoplay: {
+                delay: 5000,
+                pauseOnMouseEnter: true,
+                disableOnInteraction: false,
+            },
+            direction: "horizontal",
+            rewind: true,
+            spaceBetween: 24,
+            freeMode: false,
+            grabCursor: true,
+        });
+
+        new Swiper(".brand--grid--hero--2.swiper", {
+            slidesPerView: "auto",
+            autoplay: {
+                delay: 5000,
+                pauseOnMouseEnter: true,
+                disableOnInteraction: false,
+            },
+            rewind: true,
+            spaceBetween: 24,
+            freeMode: false,
+            grabCursor: true,
+        });
+    </script>
+
+    <!--Start of Tawk.to Script-->
+    <script type="text/javascript" is:inline>
+        var Tawk_API = Tawk_API || {},
+            Tawk_LoadStart = new Date();
+        (function() {
+            var s1 = document.createElement("script"),
+                s0 = document.getElementsByTagName("script")[0];
+            s1.async = true;
+            s1.src = "https://embed.tawk.to/6a454f1fb271bd1d477e9990/1jsfbq5mb";
+            s1.charset = "UTF-8";
+            s1.setAttribute("crossorigin", "*");
+            s0.parentNode.insertBefore(s1, s0);
+        })();
+    </script>
+    <!--End of Tawk.to Script-->
+
+</Layout>
