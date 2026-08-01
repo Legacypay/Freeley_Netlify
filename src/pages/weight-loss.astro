@@ -301,8 +301,11 @@ const faqs = [
       .wl-mech__body p { font-size: 13.5px; color: var(--muted); margin: 0; }
 
       /* ── Before / after ─────────────────────────────────────── */
-      .wl-ba__grid { display: grid; gap: 20px; grid-template-columns: 1fr; padding-top: 6px; padding-bottom: 16px; }
-      @media (min-width: 700px) { .wl-ba__grid { grid-template-columns: repeat(3, 1fr); } }
+      /* Always a row of 3, never stacked — scrolls horizontally instead
+         of wrapping on screens too narrow to fit all three. */
+      .wl-ba__grid { display: flex; gap: 20px; padding-top: 6px; padding-bottom: 16px; overflow-x: auto; }
+      .wl-ba__grid .wl-ba__card { flex: 0 0 320px; }
+      @media (min-width: 700px) { .wl-ba__grid .wl-ba__card { flex-basis: 400px; } }
       .wl-ba__card { background: var(--card); border-radius: 18px; padding: 16px; height: 100%; }
       .wl-ba__pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
       .wl-ba__box { position: relative; border-radius: 12px; overflow: hidden; background: #fff; }
