@@ -18,6 +18,27 @@ whop.setScope("biz_2i0xjR1QwIvijR");
 whop.track("page");
 `;
 
+// GA4 + Meta Pixel + Clarity (public/analytics.js) and first-touch attribution
+// capture (public/attribution.js) previously only got loaded by the
+// pre-Astro-migration legacy .html pages — zero live Astro page (including
+// this one, /prototype-turned-index.astro) ever loaded either script, so
+// GA4/Clarity sat fully configured but dark and attribution was never
+// captured for the Stripe-webhook CAPI path to use later. Same six-page
+// blind spot as the Whop pixel above, same fix: inject via head-inline
+// instead of Layout.astro. analytics.js self-gates HIPAA-sensitive paths
+// (quiz/checkout/hub) internally; attribution.js is designed to run
+// everywhere, including those, so neither needs a path check here.
+const LOAD_TRACKING_SCRIPTS = `
+(function (d) {
+  ['/analytics.js', '/attribution.js'].forEach(function (src) {
+    var s = d.createElement('script');
+    s.src = src;
+    s.defer = true;
+    d.head.appendChild(s);
+  });
+})(document);
+`;
+
 // https://astro.build/config
 export default defineConfig({
   integrations: [
@@ -25,6 +46,12 @@ export default defineConfig({
       name: 'whop-pixel',
       hooks: {
         'astro:config:setup': ({ injectScript }) => injectScript('head-inline', WHOP_PIXEL),
+      },
+    },
+    {
+      name: 'tracking-scripts',
+      hooks: {
+        'astro:config:setup': ({ injectScript }) => injectScript('head-inline', LOAD_TRACKING_SCRIPTS),
       },
     },
   ],

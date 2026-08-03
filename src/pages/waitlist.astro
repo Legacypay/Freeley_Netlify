@@ -279,6 +279,16 @@ const products = [
         try {
           await callRpc('join_waitlist', { p_email: email });
           document.body.setAttribute('data-joined', 'true');
+
+          // Ad-conversion event, fired once at the real success point.
+          // GA4's own recommended name for this action is 'sign_up'; Meta's
+          // standard equivalent is 'Lead'; Whop's pixel (docs.whop.com/
+          // developer/guides/pixel) tracks page/checkout/purchase
+          // automatically but needs an explicit whop.track('lead') call for
+          // a form-fill like this one — it can't see it server-side.
+          if (typeof window.gtag === 'function') window.gtag('event', 'sign_up', { method: 'waitlist' });
+          if (typeof window.fbq === 'function') window.fbq('track', 'Lead');
+          if (typeof window.whop !== 'undefined') window.whop.track('lead');
         } catch (err) {
           msg.className = 'msg error';
           msg.textContent = 'Something went wrong. Please try again.';
