@@ -18,7 +18,6 @@ import hipaaBadge from '../assets/badges/hipaa_badge.png';
 import usaBadge from '../assets/badges/usa_badge.png';
 // Image sources live in src/assets/ so the Image component can optimize them at
 // build time (static build → sharp runs on Netlify's builder, nothing at runtime).
-import heroCouple from '../assets/figma-v5/hero-couple-green.jpg';
 import vialWeightLoss from '../assets/figma-v5/vial-weight-loss.png';
 import vialSexualWellness from '../assets/figma-v5/vial-sexual-wellness.png';
 import vialHairLoss from '../assets/figma-v5/vial-hair-loss.png';
@@ -1006,13 +1005,13 @@ const press = [
 
     <!-- Hero -->
     <section class="hero">
-      <Image class="hero__img" src={heroCouple} alt="Freeley patients" widths={[900, 1400]} sizes="50vw" loading="eager" fetchpriority="high" />
+      <img class="hero__img" src="/assets/home/hero-image.png" alt="Freeley patients" loading="eager" fetchpriority="high" />
       <div class="wrap hero__inner">
         <div class="hero__col">
           <span class="eyebrow">Physician-Prescribed Care</span>
           <h1 class="serif">Care that never starts <em>in a waiting room.</em></h1>
           <p class="hero__sub">Weight, sexual wellness, hair, longevity — prescribed by licensed U.S. physicians, compounded by licensed pharmacies, delivered discreetly to your door.</p>
-          <Image class="hero__img-mob" src={heroCouple} alt="Freeley patients" widths={[600, 900]} sizes="100vw" loading="lazy" />
+          <img class="hero__img-mob" src="/assets/home/hero-image.png" alt="Freeley patients" loading="lazy" />
           <div class="hero__from">GLP-1 weight loss from <span class="price">$99</span>/month <span class="hero__qual">on the 12-month plan</span></div>
           <a href={ASSESSMENT} class="pill">Start Your Assessment <span class="arw">→</span></a>
 
