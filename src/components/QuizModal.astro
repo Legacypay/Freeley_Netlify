@@ -138,9 +138,13 @@
       if (window.initFreeleyQuiz) {
         window.initFreeleyQuiz();
       } else {
+        // No 'load' listener here: asw.js self-invokes initFreeleyQuiz() at its
+        // own bottom once document.readyState isn't 'loading' — which it never
+        // is by the time this dynamically-injected script runs. Calling it
+        // again here double-bound every .option--item's click listener, so a
+        // multi-select toggle click fired twice and canceled itself out.
         var script = document.createElement('script');
         script.src = '/quiz-scripts/asw.js';
-        script.addEventListener('load', function () { window.initFreeleyQuiz(); });
         document.body.appendChild(script);
       }
       loader.hidden = true;
