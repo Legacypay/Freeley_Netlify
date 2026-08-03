@@ -979,6 +979,11 @@ const press = [
         .hero__badges { display: none; }
         .hero__inner { padding-top: 104px; }
       }
+
+      /* Order confirmation banner */
+      .order-conf { background: var(--green); color: #fff; }
+      .order-conf__inner { padding: 14px 28px; display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 14px; }
+      .order-conf__inner strong { font-weight: 700; }
     </style>
   </head>
 
@@ -1002,6 +1007,16 @@ const press = [
         <a href={ASSESSMENT} class="pill">Start Assessment <span class="arw">→</span></a>
       </nav>
     </header>
+
+    <!-- Order confirmation banner (shown when redirected from checkout.astro's
+         fake payment flow with ?payment=success&pi=TXN-...; populated from
+         sessionStorage's `freeley_transaction`, written by processPayment()). -->
+    <div id="order-confirmation" class="order-conf" style="display:none" role="status">
+      <div class="wrap order-conf__inner">
+        <strong>Order confirmed.</strong>
+        <span>Thank you — transaction <span id="order-conf-id"></span>. Our team will reach out with next steps.</span>
+      </div>
+    </div>
 
     <!-- Hero -->
     <section class="hero">
@@ -1360,6 +1375,24 @@ const press = [
     </footer>
 
     <script is:inline>
+      /* Order confirmation banner: reads the ?payment=success&pi=TXN-... redirect
+         from checkout.astro's processPayment() and the matching sessionStorage
+         receipt it wrote, then reveals the banner. Does not touch the fake
+         payment mechanism itself, only reads what it already produced. */
+      (function () {
+        var params = new URLSearchParams(window.location.search);
+        if (params.get('payment') !== 'success' || !params.get('pi')) return;
+        var banner = document.getElementById('order-confirmation');
+        var idEl = document.getElementById('order-conf-id');
+        if (!banner || !idEl) return;
+        var raw = sessionStorage.getItem('freeley_transaction');
+        var data = null;
+        try { data = raw ? JSON.parse(raw) : null; } catch (e) {}
+        idEl.textContent = '#' + ((data && data.transactionId) || params.get('pi'));
+        banner.style.display = 'block';
+        banner.scrollIntoView({ block: 'start' });
+      })();
+
       (function () {
         var b = document.getElementById('navBurger');
         var m = document.getElementById('navMobile');
