@@ -11,6 +11,8 @@
      border-radius: 14px;
      overflow: hidden;
      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+     position: relative;
+     transition: height 0.35s cubic-bezier(0.22, 1, 0.36, 1);
  }
  
  .quiz-step {
@@ -647,6 +649,14 @@
  
  .quiz-step.slide-out {
      animation: slideOut 0.3s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
+     /* Out of flow while it fades: the incoming step is already .active (in
+        flow) during this 150ms-300ms overlap, so without this the outgoing
+        step's height still counts too and .quiz-card briefly grows to the
+        sum of both steps before snapping down once slide-out is removed. */
+     position: absolute;
+     top: 0;
+     left: 0;
+     width: 100%;
  }
  
  @keyframes slideIn {

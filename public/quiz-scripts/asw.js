@@ -530,6 +530,31 @@ function createProductCard(product, index, total) {
 // NAVIGATION FUNCTIONS
 // ============================================================
 
+// Animates .quiz-card's height to whatever `step` (already made .active, so
+// its real layout height is measurable) needs, instead of the box snapping
+// straight to it. Clears the explicit height once the transition ends so
+// later in-step content changes (e.g. an error message appearing) aren't
+// stuck at a stale fixed height.
+function animateQuizCardHeight(quizCard, step) {
+  if (!quizCard) return;
+  const clear = () => { quizCard.style.height = ''; };
+  requestAnimationFrame(() => {
+    quizCard.style.height = step.offsetHeight + 'px';
+  });
+  quizCard.addEventListener('transitionend', function handler(e) {
+    if (e.propertyName !== 'height') return;
+    quizCard.removeEventListener('transitionend', handler);
+    clear();
+  });
+  // Fallback: if the next step happens to measure the exact same height as
+  // the current one, the value never actually changes, so 'transitionend'
+  // never fires and the explicit px height above would stay locked forever
+  // — clipping anything that grows later (e.g. a validation error), since
+  // .quiz-card has overflow: hidden. The CSS transition is time-based
+  // (0.35s), so this always resolves after it's done either way.
+  setTimeout(clear, 500);
+}
+
 function goToStep(stepNumber) {
   if (isTransitioning) return;
 
@@ -540,6 +565,9 @@ function goToStep(stepNumber) {
   if (currentActive === targetStep) return;
 
   isTransitioning = true;
+
+  const quizCard = document.querySelector('.quiz-card');
+  if (quizCard) quizCard.style.height = quizCard.offsetHeight + 'px';
 
   if (currentActive) {
     currentActive.classList.add('slide-out');
@@ -554,10 +582,18 @@ function goToStep(stepNumber) {
     targetStep.offsetHeight;
     targetStep.style.animation = '';
 
+    // currentActive is already .slide-out (position: absolute, out of flow)
+    // by now, so targetStep's offsetHeight is .quiz-card's real next height.
+    animateQuizCardHeight(quizCard, targetStep);
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
     if (stepNumber === 12) {
       setTimeout(() => {
+        // Height must be locked BEFORE the forEach below, not after: once
+        // every step loses .active they're all display:none and .quiz-card
+        // has already collapsed to ~0, so "current" height would read wrong.
+        if (quizCard) quizCard.style.height = quizCard.offsetHeight + 'px';
         document.querySelectorAll('.quiz-step').forEach(step => {
           step.classList.remove('active', 'slide-out');
         });
@@ -567,6 +603,7 @@ function goToStep(stepNumber) {
           resultStep.style.animation = 'none';
           resultStep.offsetHeight;
           resultStep.style.animation = '';
+          animateQuizCardHeight(quizCard, resultStep);
           window.scrollTo({ top: 0, behavior: 'smooth' });
           renderSelectedProduct();
         }
