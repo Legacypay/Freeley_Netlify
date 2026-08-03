@@ -164,6 +164,33 @@
   to = "/assessment-quiz"
   status = 200
 
+# Redesigned routes, live behind the gate on request (2026-08-03): partner
+# pharmacies + the 4 legal pages, all now on the real .wl- design system.
+[[redirects]]
+  from = "/partner-pharmacies"
+  to = "/partner-pharmacies"
+  status = 200
+
+[[redirects]]
+  from = "/privacy"
+  to = "/privacy"
+  status = 200
+
+[[redirects]]
+  from = "/terms"
+  to = "/terms"
+  status = 200
+
+[[redirects]]
+  from = "/hipaa"
+  to = "/hipaa"
+  status = 200
+
+[[redirects]]
+  from = "/telehealth-consent"
+  to = "/telehealth-consent"
+  status = 200
+
 # Astro dev-server paths — only ever requested by Netlify Preview Servers,
 # which run `astro dev` instead of a production build. Vite serves modules
 # straight off the project root, so the browser asks for paths that simply do

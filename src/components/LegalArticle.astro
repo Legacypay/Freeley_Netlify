@@ -1,0 +1,111 @@
+---
+// Shared chrome for the 4 legal/compliance pages (privacy, terms, hipaa,
+// telehealth-consent) — converted 2026-08-03 from disconnected static HTML
+// (own Cormorant Garamond/Montserrat fonts, own shared.css) onto the site's
+// real .wl- design system (design.md), so they finally get the actual
+// Header/Footer/FinalCta instead of a hand-rolled lookalike.
+//
+// Only the chrome + typography live here. Each page passes its own hero
+// copy, verbatim legal body (default slot), and CTA copy (named slots) —
+// see src/pages/privacy.astro etc. for the pattern.
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import FinalCta from '../components/FinalCta.astro';
+
+interface Props {
+  metaTitle: string;
+  eyebrow: string;
+  heroPlain: string;
+  heroEm: string;
+  updated?: string;
+  ctaFeatures: string[];
+}
+const { metaTitle, eyebrow, heroPlain, heroEm, updated, ctaFeatures } = Astro.props;
+---
+<Layout title={metaTitle}>
+  <Header />
+  <main class="wl-page">
+    <section class="wl-sec legal-hero">
+      <div class="wl-wrap">
+        <span class="wl-eyebrow">{eyebrow}</span>
+        <h1 class="wl-serif legal-hero__h1">{heroPlain} <em>{heroEm}</em></h1>
+        {updated && <p class="legal-hero__updated">{updated}</p>}
+      </div>
+    </section>
+
+    <section class="wl-sec legal-body">
+      <div class="wl-wrap">
+        <div class="legal-body__col">
+          <slot />
+        </div>
+      </div>
+    </section>
+
+    <FinalCta features={ctaFeatures}>
+      <slot name="ctaHeading" />
+      <Fragment slot="subheading"><slot name="ctaSub" /></Fragment>
+      <a href="/assessment-quiz" class="wl-btn wl-btn--light" slot="cta">
+        Start Your Assessment <span class="wl-arw">→</span>
+      </a>
+    </FinalCta>
+  </main>
+  <Footer />
+
+  <style>
+    .wl-page { background: var(--cream); color: var(--ink); font-family: var(--font-sans); line-height: 1.55; overflow-x: clip; }
+    .wl-wrap { max-width: 1200px; margin: 0 auto; padding-left: 28px; padding-right: 28px; }
+    .wl-sec { padding-top: 64px; padding-bottom: 64px; }
+    .wl-serif { font-family: var(--font-serif); font-weight: 600; letter-spacing: -0.02em; text-wrap: balance; }
+    .wl-eyebrow { font-family: var(--font-condensed); font-size: 11.5px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--brand); }
+    .wl-btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; border: none; border-radius: 999px; font-family: var(--font-sans); font-size: 15px; font-weight: 600; padding: 14px 24px; cursor: pointer; text-decoration: none; transition: background .15s, opacity .15s; }
+    .wl-btn--light { background: #fff; color: var(--green-deep); }
+    .wl-btn--light:hover { opacity: .9; }
+    .wl-arw { display: inline-block; transition: translate .15s; }
+    .wl-btn:hover .wl-arw { translate: 3px 0; }
+
+    .legal-hero { padding-bottom: 20px; text-align: center; }
+    .legal-hero__h1 { font-size: clamp(2.2rem, 4.5vw, 3.4rem); margin: 14px 0 0; color: var(--green); overflow-wrap: anywhere; }
+    .legal-hero__h1 em { font-style: normal; color: var(--brand); }
+    .legal-hero__updated { font-family: var(--font-condensed); font-size: 13px; color: var(--muted); margin: 14px 0 0; }
+
+    .legal-body__col { max-width: 760px; margin: 0 auto; }
+    .legal-body__col :global(h1),
+    .legal-body__col :global(h2),
+    .legal-body__col :global(h3),
+    .legal-body__col :global(h4) {
+      font-family: var(--font-serif); font-weight: 600; letter-spacing: -0.01em;
+      color: var(--green); line-height: 1.25; margin: 44px 0 14px;
+      padding-top: 20px; border-top: 1px solid var(--line);
+    }
+    .legal-body__col :global(h2:first-child),
+    .legal-body__col :global(h3:first-child),
+    .legal-body__col :global(p:first-child) { margin-top: 0; padding-top: 0; border-top: none; }
+    .legal-body__col :global(h2) { font-size: 1.5rem; }
+    .legal-body__col :global(h3) { font-size: 1.25rem; }
+    .legal-body__col :global(h4) { font-size: 1.1rem; }
+    .legal-body__col :global(p) { color: var(--ink); font-size: 15px; line-height: 1.75; margin: 0 0 18px; }
+    .legal-body__col :global(ul) { margin: 0 0 18px; padding-left: 22px; }
+    .legal-body__col :global(li) { color: var(--ink); font-size: 15px; line-height: 1.75; margin-bottom: 8px; }
+    .legal-body__col :global(strong) { color: var(--green); font-weight: 600; }
+    .legal-body__col :global(.legal-callout),
+    .legal-body__col :global(.legal-notice-box) {
+      background: var(--card); border-radius: 14px; padding: 20px 22px;
+      color: var(--ink); font-size: 15px; line-height: 1.7; margin: 0 0 32px;
+    }
+    .legal-body__col :global(.legal-notice-box p),
+    .legal-body__col :global(.contact-box p) { margin-bottom: 6px; }
+    .legal-body__col :global(.contact-box) {
+      background: #fff; border: 1px solid var(--line); border-radius: 12px;
+      padding: 16px 20px; margin: 0 0 20px; font-size: 14.5px;
+    }
+    .legal-body__col :global(.contact-box a) { color: var(--brand); }
+
+    @supports (animation-timeline: view()) {
+      @media (prefers-reduced-motion: no-preference) {
+        .legal-hero, .legal-body__col { animation: wlRise linear both; animation-timeline: view(); animation-range: entry 6% cover 24%; }
+        @keyframes wlRise { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
+      }
+    }
+  </style>
+</Layout>

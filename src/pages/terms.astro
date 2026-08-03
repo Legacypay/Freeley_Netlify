@@ -1,103 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Terms of Service — Freeley</title>
-  <meta name="description" content="Terms of Service. Please read this Agreement carefully because it sets forth the important terms you will need to know about the Service. In this…">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link
-    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Montserrat:wght@400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap"
-    rel="stylesheet">
-  <link rel="stylesheet" href="shared.css">
-  <style>
-    .page-hero {
-      padding: 160px 0 100px;
-      background-image: url("assets/brand/freeley_pattern_dark.jpg"); background-size: cover; background-position: center; color: white;
-      color: #fff;
-    }
-
-    .page-hero h1 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(48px, 6vw, 72px);
-      font-weight: 300;
-      margin-bottom: 24px;
-      text-align: center;
-    }
-
-    .page-hero h1 em {
-      font-style: italic;
-      color: var(--green-light);
-    }
-
-    .legal-content {
-      padding: 100px 0;
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    .legal-content h2 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 32px;
-      font-weight: 400;
-      margin-top: 48px;
-      margin-bottom: 16px;
-      color: var(--text);
-    }
-
-    .legal-content p, .legal-content li {
-      font-size: 15px;
-      line-height: 1.8;
-      color: var(--text-muted);
-      margin-bottom: 24px;
-      font-weight: 300;
-    }
-
-    .legal-content ul {
-      margin-bottom: 24px;
-      padding-left: 20px;
-    }
-
-    .legal-content li {
-      margin-bottom: 8px;
-    }
-  </style>
-  <link rel="icon" type="image/png" href="favicon.png?v=2">
-  <link rel="canonical" href="https://freeley.com/terms">
-<!-- SEO_CRUMB_SCHEMA_AUTO -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position": 1,
-      "name": "Home",
-      "item": "https://freeley.com/"
-    },
-    {
-      "@type": "ListItem",
-      "position": 2,
-      "name": "Terms",
-      "item": "https://freeley.com/terms"
-    }
-  ]
-}
-</script>
-</head>
-
-<body>
-  <section class="page-hero">
-    <div class="container reveal">
-      <h1>Terms of <em>Service</em></h1>
-    </div>
-  </section>
-
-  <section class="legal-content">
-    <div class="container">
-<h1>Terms &amp; Conditions</h1>
+---
+import LegalArticle from '../components/LegalArticle.astro';
+---
+<LegalArticle
+  metaTitle="Terms of Service — Freeley"
+  eyebrow="Legal"
+  heroPlain="Terms of"
+  heroEm="Service"
+  ctaFeatures={["Board-certified physicians","Licensed U.S. pharmacies","Cancel anytime"]}
+>
+  <Fragment slot="ctaHeading">Ready to start<br /><em>your assessment?</em></Fragment>
+  <Fragment slot="ctaSub">Physician-guided care, backed by clear terms and licensed U.S. pharmacies.</Fragment>
 <p>Last updated: February 25, 2026</p>
 <p>Freeley Health LLC (DBA Freeley) and its affiliates, subsidiaries, and parents (collectively “Freeley Health LLC (DBA Freeley),” the “Company”, “we,” or “us”) owns and operates the websites located at www.Freeley.com and may have previously, now or in the future own and/or operate a mobile application (collectively, the “Platform”). Your access and use of the Platform, any part thereof, or anything associated therewith, including its content (“Content”), any products or services provided through the Platform or otherwise by Freeley Health LLC (DBA Freeley) and any affiliated website, software or application owned or operated by Freeley Health LLC (DBA Freeley) (collectively, including the Platform and the Content, the “Service”) are governed by these Terms and Conditions (“Terms and Conditions” or “Agreement”).</p>
 <p>Please read this Agreement carefully because it sets forth the important terms you will need to know about the Service. In this Agreement, the terms “you” and “yours” refer to the person using the Service.</p>
@@ -180,6 +92,7 @@
 <li>Limit one (1) promotional item per customer, per qualifying order.</li>
 <li>Promotion cannot be combined with other offers unless explicitly stated.</li>
 <li>Promotion is non-transferable and may not be resold.</li>
+</ul>
 <p>6. Returns &amp; Cancellations</p>
 <p>If the qualifying Freeley Recharge order is canceled, refunded, or returned for any reason, the customer will no longer be eligible for the promotional item. If a redemption code has already been issued, it may be voided.</p>
 <p>7. Availability &amp; Modification</p>
@@ -261,14 +174,4 @@
 <p>If you believe there is an issue with your Referral Link or Reward, please contact Freeley at Info@Freeley.com. Freeley Health LLC (DBA Freeley) may require you to submit additional information in order to make a determination regarding any Reward. All decisions by Freeley Health LLC (DBA Freeley) regarding Rewards are final and at Freeley Health LLC (DBA Freeley)&#x27;s sole discretion.</p>
 <h3>Contacting Us</h3>
 <p>If you have any questions or concerns about this Agreement, please contact us by email at Info@Freeley.com. We will attempt to respond to your questions or concerns promptly after we receive them.</p>
-</div>
-  </section>
-
-  <script src="shared.js"></script>
-  <script>
-    initPage('');
-  </script>
-  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
-</body>
-
-</html>
+</LegalArticle>
