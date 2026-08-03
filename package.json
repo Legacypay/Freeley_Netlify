@@ -8,7 +8,9 @@
     "build:mobile": "mkdir -p www && rsync -a --exclude='.git' --exclude='node_modules' --exclude='.venv' --exclude='www' --exclude='ios' --exclude='android' ./ www/ && npx cap sync",
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui"
   },
   "keywords": [],
   "author": "",
@@ -32,6 +34,7 @@
   },
   "devDependencies": {
     "@capacitor/assets": "^3.0.5",
-    "@capacitor/cli": "^8.3.0"
+    "@capacitor/cli": "^8.3.0",
+    "@playwright/test": "^1.62.1"
   }
 }

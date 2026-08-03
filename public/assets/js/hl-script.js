@@ -162,8 +162,8 @@ var Tawk_API = Tawk_API || {},
             title: "Cedar Hair Growth Tablet",
             description: "Biotin, Finasteride, and Minoxidil combined in one daily tablet — DHT-blocking and follicle-stimulating action together.",
             images: [
-                "/assets/hl/product1.png",
                 "/assets/hl/product2.png",
+                "/assets/hl/product1.png",
                 "/assets/hl/product3.png",
                 "/assets/hl/product4.png",
                 "/assets/hl/product5.png"
@@ -181,10 +181,14 @@ var Tawk_API = Tawk_API || {},
             name: "Ivy",
             title: "Ivy Hair Tablet (Women 45+)",
             description: "Minoxidil and Dutasteride with Biotin, formulated for women 45 and older.",
+            // ponytail: no bottle asset is labeled Dutasteride (product1=Spironolactone/
+            // Willow, product2=Finasteride/Cedar) — leads with the neutral pill photo
+            // (product3) instead of a wrong bottle, and so it no longer collides with
+            // Willow's identical product1-led order.
             images: [
+                "/assets/hl/product3.png",
                 "/assets/hl/product1.png",
                 "/assets/hl/product2.png",
-                "/assets/hl/product3.png",
                 "/assets/hl/product4.png",
                 "/assets/hl/product5.png"
             ],
@@ -208,6 +212,7 @@ var Tawk_API = Tawk_API || {},
                 "/assets/hl/product4.png",
                 "/assets/hl/product5.png"
             ],
+            // ponytail: willow already led with product1.png (correct — matches its formula); left unchanged
             features: [
                 "Minoxidil 1mg / Spironolactone 60mg with Biotin",
                 "One tablet by mouth, once daily",

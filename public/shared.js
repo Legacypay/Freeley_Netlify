@@ -80,7 +80,7 @@ const FOOTER_HTML = `
       <h4>Company</h4>
       <a href="/how-it-works">How It Works</a>
       <a href="/about">About Freeley</a>
-      <a href="/quality">Quality & Trust</a>
+      <a href="/quality-trust">Quality & Trust</a>
       <a href="/partner-pharmacies">Partner Pharmacies</a>
       <a href="/blog">Blog & Insights</a>
       <a href="/faq">FAQ</a>
