@@ -2406,7 +2406,7 @@ main:not(.homepage) .steps--container .step:not(:last-child)::after {
 }
 
 .homepage .glp-therapy-section {
-    background-image: url('../assets/home/your_journey_What_to_expect_on.png') !important;
+    background-image: url('../assets/home/your_journey_What_to_expect_on.jpg') !important;
     display: flex;
     justify-content: center;
     position: relative;
