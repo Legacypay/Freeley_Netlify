@@ -172,6 +172,29 @@
             quizTemplate.querySelectorAll('img[src^="/"]').forEach(function (img) {
               img.setAttribute('src', location.origin + img.getAttribute('src'));
             });
+
+            // asw.js's saveLeadToSupabase() reads window.supabase /
+            // window.__SUPABASE_URL__ / window.__SUPABASE_ANON_KEY__, set by
+            // two <script> tags in assessment-quiz.astro's own <head> — not
+            // part of .quiz-popup, so cloning only that div never carries
+            // them over. Without this, every quiz save silently no-ops
+            // (getSupabaseClient() returns null) on every page that opens
+            // the quiz through this modal instead of the standalone page.
+            // Copied from this same fetch response rather than hardcoding
+            // the values a second time.
+            if (!window.__SUPABASE_URL__) {
+              doc.querySelectorAll('script').forEach(function (tag) {
+                var src = tag.getAttribute('src') || '';
+                var isSdk = src.indexOf('supabase-js') !== -1;
+                var isConfig = tag.textContent.indexOf('__SUPABASE_URL__') !== -1;
+                if (!isSdk && !isConfig) return;
+                var clone = document.createElement('script');
+                if (isSdk) clone.src = src;
+                else clone.textContent = tag.textContent;
+                document.head.appendChild(clone);
+              });
+            }
+
             runQuiz();
           });
       }
