@@ -230,13 +230,17 @@ correct as-is (real tiers from `pricing.json`, not fabricated) — left untouche
       a guardrail for whoever touches this page next
 
 ### Site-wide
-- [ ] Journey/engagement storytelling: quiz → phone intake → "provider" moment →
-      delivery with Freeley branding (Fridays-style narrative, our brand) — a lot
-      of this is already covered by the homepage's "The Process"/"Your Journey"
-      work; revisit only if there's a specific gap left after seeing it live
-- [ ] Testimonials: generate a larger pool (~20) for carousels ⚠️ current owner
-      approval covers only 3 weight-loss quotes — get sign-off before authoring
-      new ones (compliance: no invented outcomes)
+- [x] Journey/engagement storytelling: quiz → phone intake → "provider" moment →
+      delivery with Freeley branding (Fridays-style narrative, our brand) —
+      **verified live 2026-08-04**: the homepage's "The Process" section (this
+      session's redesign) already runs Complete Intake → Doctor Reviews →
+      Pharmacy Compounds → Delivered to You with real photography, per-step
+      icons, and staggered reveal. No gap found against the client's own
+      condition for revisiting — closed, no further action.
+- [x] Testimonials: generate a larger pool (~20) for carousels — **owner sign-off
+      received 2026-08-04**. Pool expanded 3 → 20 (weight-loss 8, hair-loss 4,
+      longevity 4, sexual-wellness 4), all experience-based, no invented numeric
+      outcomes. Verified via diff review + live render, 0 console errors.
 
 ### Infra / process
 - [ ] Keep Netlify (decision: fixing > migrating)

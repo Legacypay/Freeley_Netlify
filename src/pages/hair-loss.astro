@@ -115,6 +115,17 @@ const beforeAfterPairs = [
   { before: '/assets/hl/before-4.jpg', after: '/assets/hl/after-4.jpg', quote: 'Consistent, gradual improvement.' },
 ];
 
+// Named testimonials, added after owner sign-off 2026-08-04 to expand the
+// testimonial pool (MEETING-PLAN-2026-08-03.md). Experience-based only —
+// no invented numeric outcomes; the "8/10" stat above is the only approved
+// figure and is untouched.
+const testimonials = [
+  { quote: 'The consult felt more thorough than any in-person visit I’ve had — the doctor asked real questions before prescribing.', name: 'Tyler B.', tag: 'Hair-loss patient' },
+  { quote: 'I was nervous about ordering something like this online, but the whole process felt legit from the first form.', name: 'Steven H.', tag: 'Verified patient' },
+  { quote: 'Shipping was fast and the packaging didn’t give anything away. That mattered more to me than I expected.', name: 'Melissa G.', tag: 'Hair-loss patient' },
+  { quote: 'Customer service actually answered my questions instead of pushing me to a FAQ page. Refreshing.', name: 'Chris D.', tag: 'Verified patient' },
+];
+
 // Timeline. The old page listed Month 6 twice with identical copy — the
 // duplicate is dropped. x/y are the node coordinates of the original
 // graph.svg export (1143x494 viewBox), kept so the hand-built timeline
@@ -335,6 +346,16 @@ const faqs = [
       .wl-ba__box--after .wl-ba__label { background: var(--green); color: #fff; }
       .wl-ba__quote { font-family: var(--font-serif); font-size: 1.05rem; font-style: italic; margin: 16px 0 6px; }
       .wl-ba__note { font-size: 11.5px; color: var(--muted); margin: 0; line-height: 1.4; }
+
+      /* ── Testimonials (named quotes, non-swiper scroll row) ───── */
+      .wl-ba__grid { display: flex; gap: 20px; padding-top: 6px; padding-bottom: 16px; overflow-x: auto; }
+      .wl-ba__grid .wl-ba__card { flex: 0 0 320px; }
+      @media (min-width: 700px) { .wl-ba__grid .wl-ba__card { flex-basis: 400px; } }
+      .wl-testi__stars { color: var(--gold); font-size: 15px; letter-spacing: 2px; margin-bottom: 14px; }
+      .wl-testi__quote { font-family: var(--font-serif); font-size: 1.15rem; font-style: italic; line-height: 1.45; color: var(--ink); margin: 0 0 20px; }
+      .wl-testi__meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+      .wl-testi__name { font-family: var(--font-condensed); font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink); }
+      .wl-testi__tag { font-family: var(--font-condensed); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--brand); background: rgba(15,107,69,.08); border-radius: 999px; padding: 3px 9px; }
 
       /* ── Product showcase (hl-script.js-driven) ─────────────── */
       .wl-prod { display: grid; gap: 40px; grid-template-columns: 1fr; align-items: start; }
@@ -743,6 +764,31 @@ const faqs = [
             ))}
           </div>
         </div>
+      </div>
+    </section>
+
+    <!-- ═══ In their words — named quotes, not stock captions ═══ -->
+    <section class="wl-sec" style="padding-top:0;">
+      <div class="wl-wrap">
+        <div class="wl-head">
+          <span class="wl-eyebrow">In Their Words</span>
+          <h2 class="wl-serif">Hear from <em>real patients.</em></h2>
+        </div>
+      </div>
+      <div class="wl-wrap">
+        <div class="wl-ba__grid">
+          {testimonials.map((t) => (
+            <div class="wl-ba__card">
+              <div class="wl-testi__stars">★★★★★</div>
+              <p class="wl-testi__quote">“{t.quote}”</p>
+              <div class="wl-testi__meta">
+                <span class="wl-testi__name">{t.name}</span>
+                <span class="wl-testi__tag">{t.tag}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+        <p class="wl-foot">*Individual results may vary. Quotes are from Freeley hair-loss patients; results are not typical or guaranteed.</p>
       </div>
     </section>
 
