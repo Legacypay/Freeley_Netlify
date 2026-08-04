@@ -45,17 +45,20 @@ const stats = [
 
 const values = [
   {
-    icon: '/assets/icons/radical.png',
+    img: '/assets/about/value-transparency.jpg',
+    tint: '#D2CBC2',
     title: 'Radical Transparency',
     desc: 'No hidden fees, no bait-and-switch pricing, no surprise charges. Every cost is disclosed upfront before you commit.',
   },
   {
-    icon: '/assets/icons/clanical.png',
+    img: '/assets/about/value-integrity.jpg',
+    tint: '#C6CCDA',
     title: 'Clinical Integrity',
     desc: "If a treatment isn't right for you, your physician will say so. We never push products over patient safety.",
   },
   {
-    icon: '/assets/icons/accessible.png',
+    img: '/assets/about/value-accessible.jpg',
+    tint: '#E4DDD4',
     title: 'Accessible Premium Care',
     desc: 'World-class compounded medications at accessible, transparent pricing, with the same clinical oversight and quality.',
   },
@@ -129,9 +132,15 @@ const differentCards = [
       .ab-process__img img { width: 100%; border-radius: 20px; display: block; }
       .ab-process__items { display: grid; grid-template-columns: 1fr; gap: 32px; }
       @media (min-width: 820px) { .ab-process__items { grid-template-columns: repeat(3, 1fr); } }
-      .ab-process__item img { width: 44px; height: 44px; margin-bottom: 12px; }
-      .ab-process__item h3 { font-family: var(--font-serif); font-weight: 600; font-size: 1.15rem; color: var(--ink); margin: 0 0 8px; }
-      .ab-process__item p { font-family: var(--font-sans); font-size: 13.5px; line-height: 1.6; color: var(--muted); margin: 0; }
+
+      /* Value cards — same recipe as .wl-mech__card/.wl-mech__img on
+         weight-loss.astro / hair-loss.astro (tinted box behind photo). */
+      .wl-mech__card { display: flex; flex-direction: column; height: 100%; border-radius: 18px; overflow: hidden; background: var(--card); }
+      .wl-mech__img { aspect-ratio: 4 / 3; overflow: hidden; }
+      .wl-mech__img img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+      .wl-mech__body { padding: 20px 22px 24px; }
+      .wl-mech__body h3 { font-family: var(--font-serif); font-size: 1.2rem; font-weight: 600; color: var(--ink); margin: 0 0 8px; line-height: 1.25; }
+      .wl-mech__body p { font-family: var(--font-sans); font-size: 13.5px; line-height: 1.6; color: var(--muted); margin: 0; }
 
       /* ── "Built to be different" cards (static 3-up row) ─────────── */
       .ab-cards-row { display: grid; grid-template-columns: 1fr; gap: 24px; }
@@ -203,10 +212,14 @@ const differentCards = [
       </div>
       <div class="wl-wrap ab-process__items">
         {values.map((v) => (
-          <div class="ab-process__item">
-            <img src={v.icon} alt="" />
-            <h3>{v.title}</h3>
-            <p>{v.desc}</p>
+          <div class="wl-mech__card">
+            <div class="wl-mech__img" style={`background:${v.tint}`}>
+              <img src={v.img} alt={v.title} loading="lazy" />
+            </div>
+            <div class="wl-mech__body">
+              <h3>{v.title}</h3>
+              <p>{v.desc}</p>
+            </div>
           </div>
         ))}
       </div>

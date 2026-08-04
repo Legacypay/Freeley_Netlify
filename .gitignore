@@ -15,3 +15,6 @@ assets/brand/_originals_pre_bgremove/
 .env
 .env.*
 .env.local
+
+# Internal-only — contains real drug costs/margins, never for public repo
+Freeley-Pricing-Sheet.pdf

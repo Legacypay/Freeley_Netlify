@@ -1,30 +1,30 @@
 {
   "weight-loss": {
-    "semaglutide": { "1": 299, "3": 259, "6": 229, "12": 199 },
-    "tirzepatide": { "1": 399, "3": 369, "6": 339, "12": 299 }
+    "semaglutide": { "1": 299, "3": 259, "6": 229, "12": 199, "24": 179 },
+    "tirzepatide": { "1": 399, "3": 369, "6": 339, "12": 299, "24": 269 }
   },
   "ed": {
-    "standard": { "1": 99, "3": 85, "6": 75, "12": 69 },
-    "premium": { "1": 139, "3": 119, "6": 105, "12": 95 },
-    "default": { "1": 99, "3": 85, "6": 75, "12": 69 }
+    "standard": { "1": 99, "3": 85, "6": 75, "12": 69, "24": 59 },
+    "premium": { "1": 139, "3": 119, "6": 105, "12": 95, "24": 85 },
+    "default": { "1": 99, "3": 85, "6": 75, "12": 69, "24": 59 }
   },
   "sexual-wellness": {
-    "standard": { "1": 99, "3": 85, "6": 75, "12": 69 },
-    "premium": { "1": 139, "3": 119, "6": 105, "12": 95 },
-    "default": { "1": 99, "3": 85, "6": 75, "12": 69 }
+    "standard": { "1": 99, "3": 85, "6": 75, "12": 69, "24": 59 },
+    "premium": { "1": 139, "3": 119, "6": 105, "12": 95, "24": 85 },
+    "default": { "1": 99, "3": 85, "6": 75, "12": 69, "24": 59 }
   },
   "longevity": {
-    "standard": { "1": 129, "3": 115, "6": 99, "12": 89 },
-    "premium": { "1": 189, "3": 169, "6": 149, "12": 139 },
-    "default": { "1": 129, "3": 115, "6": 99, "12": 89 }
+    "standard": { "1": 129, "3": 115, "6": 99, "12": 89, "24": 79 },
+    "premium": { "1": 189, "3": 169, "6": 149, "12": 139, "24": 129 },
+    "default": { "1": 129, "3": 115, "6": 99, "12": 89, "24": 79 }
   },
   "hair-loss": {
-    "default": { "1": 89, "3": 75, "6": 65, "12": 59 }
+    "default": { "1": 89, "3": 75, "6": 65, "12": 59, "24": 49 }
   },
   "_meta": {
     "currency": "USD",
-    "updated": "2026-07-30",
-    "note": "Single source of truth. Server function imports this directly. Checkout.html displays but server is authoritative."
+    "updated": "2026-08-03",
+    "note": "Single source of truth. Server function imports this directly. Checkout.html displays but server is authoritative. 24-month tier prices are placeholders continuing the existing per-tier discount curve — flagged for client review, not real negotiated pricing."
   },
   "treatment_names": {
     "weight-loss": "GLP-1 Weight Loss Program",

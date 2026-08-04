@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import QuizModal from '../components/QuizModal.astro';
 ---
 
 <Layout title="Blogs">
@@ -14,17 +15,6 @@ import Footer from '../components/Footer.astro';
 
         <!-- Header -->
         <Header />
-
-        <section>
-            <div id="quiz--modal" class="modal">
-                <div class="modal-content">
-                    <span class="close" id="close--quiz"><img src="/assets/icons/close.png" /></span>
-                    <div class="processing-loader" id="loader"></div>
-                    <div id="quiz--container"></div>
-                </div>
-            </div>
-        </section>
-
 
         <!-- ARTICLES HUB SECTION -->
         <section class="hub-section py-5">
@@ -70,7 +60,7 @@ import Footer from '../components/Footer.astro';
 
                     <div class="md:col-span-6 flex flex-col items-start md:items-end gap-6">
                         <div>
-                            <a href="javascript:void(0)" id="start-assessment" class="global--qua--button bg-white px-4 pr-2 w-full">
+                            <a href="/assessment-quiz" id="start-assessment" class="global--qua--button bg-white px-4 pr-2 w-full">
                                 <img class="btn--icon" src="/assets/home/icons/icon-right-green.svg" /> Start Your Assessment
                             </a>
                         </div>
@@ -128,6 +118,7 @@ import Footer from '../components/Footer.astro';
 
 <Footer />
     </main>
+    <QuizModal />
     <!-- Footer Links -->
     <script src="/style/script.js" is:inline></script>
     <script is:inline>
@@ -268,113 +259,6 @@ import Footer from '../components/Footer.astro';
 
         // Initial render (show all articles)
         renderArticles('all');
-
-        const modal = document.getElementById('quiz--modal');
-        const loader = document.getElementById('loader');
-        const quizContainer = document.getElementById('quiz--container');
-        let quizIframe = null;
-
-        document.querySelectorAll(
-            '#start-assessment, #start-full-assessment, #start-assessment-header'
-        ).forEach(button => {
-            button.addEventListener('click', () => {
-                // If iframe exists, remove it first
-                if (quizIframe) {
-                    quizIframe.remove();
-                    quizIframe = null;
-                }
-
-                modal.style.display = 'block';
-                loader.style.display = 'block';
-                quizContainer.innerHTML = '';
-
-                // Create new iframe
-                quizIframe = document.createElement('iframe');
-                quizIframe.style.width = '100%';
-                quizIframe.style.height = '605px';
-                quizIframe.style.border = 'none';
-                quizIframe.style.borderRadius = '0';
-                quizIframe.style.display = 'none';
-                quizIframe.style.background = '#0000004D';
-
-                // Load with cache-busting
-                quizIframe.src = '/assessment-quiz?t=' + Date.now();
-
-                quizIframe.onload = function() {
-                    loader.style.display = 'none';
-                    quizIframe.style.display = 'block';
-
-                    // Apply styles to iframe body (if you have access)
-                    try {
-                        const iframeDoc = quizIframe.contentDocument || quizIframe.contentWindow.document;
-                        if (iframeDoc) {
-                            const style = iframeDoc.createElement('style');
-                            style.textContent = `
-                            body {
-                                background: #0000004D !important;
-                                border: 0 !important;
-                                border-radius: 0 !important;
-                                height: 100vh;
-                                margin: 0;
-                            }
-                        `;
-                            iframeDoc.head.appendChild(style);
-                        }
-                    } catch (e) {
-                        // Cross-origin restrictions may prevent this
-                        console.log('Cannot style iframe body due to CORS');
-                    }
-                };
-
-                quizIframe.onerror = function() {
-                    loader.style.display = 'none';
-                    quizContainer.innerHTML = '<p>Unable to load quiz.</p>';
-                };
-
-                quizContainer.appendChild(quizIframe);
-            });
-        });
-
-        function closeQuiz() {
-            // Hide modal
-            modal.style.display = 'none';
-
-            // Remove iframe completely
-            if (quizIframe) {
-                // Clear iframe content
-                try {
-                    quizIframe.src = 'about:blank';
-                    quizIframe.contentWindow.document.write('');
-                    quizIframe.contentWindow.document.clear();
-                } catch (e) {}
-
-                // Remove from DOM
-                quizIframe.remove();
-                quizIframe = null;
-            }
-
-            // Clear container
-            quizContainer.innerHTML = '';
-            loader.style.display = 'none';
-        }
-
-        document
-            .getElementById('close--quiz')
-            .addEventListener('click', closeQuiz);
-
-        // Close on Escape key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && modal.style.display === 'block') {
-                closeQuiz();
-            }
-        });
-
-        // Close when clicking outside
-        window.addEventListener('click', function(e) {
-            if (e.target === modal) {
-                closeQuiz();
-            }
-        });
     </script>
     <!--Start of Tawk.to Script-->
     <script type="text/javascript" is:inline>

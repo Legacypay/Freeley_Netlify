@@ -49,6 +49,18 @@ const trustPoints = [
   'Cancel Anytime',
 ];
 
+// Pricing ladder — sourced from pricing.json sexual-wellness.standard, the
+// tier that matches Tadalafil (the default/most-popular toggle option below).
+// Olympus is priced separately, same as /weight-loss keeps tirzepatide out
+// of its semaglutide-based ladder.
+const plans = [
+  { months: '1 month', price: '$99', term: '1', save: null },
+  { months: '3 months', price: '$85', term: '3', save: 'Save 14%' },
+  { months: '6 months', price: '$75', term: '6', save: 'Save 24%' },
+  { months: '12 months', price: '$69', term: '12', save: 'Save 30%' },
+  { months: '24 months', price: '$59', term: '24', save: 'Save 40%', best: true },
+];
+
 // Patient-reported stats from the old page's counter section.
 const stats = [
   { value: '87%', label: 'See results in 30 days' },
@@ -80,6 +92,29 @@ const mechanisms = [
     img: '/assets/sw/Control_&_Confidence.png',
     tint: '#E4DDD4',
   },
+];
+
+// "What's Included" checklist — copy transcribed verbatim from
+// assets/brand/slide_sw_whats_included.png. That slide's content was
+// ALSO trapped as an unreadable image (public/assets/sw/product3.png)
+// inside sw-script.js's product-gallery images[] array; removed there,
+// pulled out here as real HTML — same fix weight-loss.astro and
+// hair-loss.astro already got for their own trapped slides.
+const included = [
+  { title: 'Tadalafil Troches', desc: 'Fast-dissolving sublingual tablets.' },
+  { title: 'Licensed Provider Review', desc: 'Discreet physician consultation.' },
+  { title: 'Monthly Supply Delivered', desc: 'Convenient home delivery.' },
+  { title: 'Dosage Optimization', desc: 'Personalized to your needs.' },
+];
+
+// "Key Benefits" checklist — copy transcribed verbatim from
+// assets/brand/slide_sw_benefits.png, same trapped-image bug
+// (public/assets/sw/product4.png), same fix.
+const benefits = [
+  { title: 'Faster Absorption', desc: 'Sublingual delivery for quick onset.' },
+  { title: 'Long-Lasting Effect', desc: 'Up to 36 hours of readiness.' },
+  { title: 'Discreet & Convenient', desc: 'No water needed, dissolves quickly.' },
+  { title: 'Clinically Proven', desc: 'FDA-approved active ingredient.' },
 ];
 
 const press = [
@@ -209,6 +244,20 @@ const faqs = [
       .wl-hero__from .wl-price { font-size: 1.7rem; }
       .wl-hero__qual { font-family: var(--font-condensed); font-size: 12.5px; color: var(--muted); display: block; margin-top: 2px; }
 
+      /* ── Plan ladder — same shape as /weight-loss's ladder ─────
+         Cards are real <button>s (clickable/selectable), not divs, so the
+         reset below undoes the browser's default button chrome. */
+      .wl-plans { display: grid; gap: 10px; grid-template-columns: repeat(2, 1fr); margin: 0 0 4px; }
+      @media (min-width: 700px) { .wl-plans { grid-template-columns: repeat(5, 1fr); } }
+      .wl-plan { display: block; width: 100%; font: inherit; text-align: left; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; cursor: pointer; transition: border-color .15s, box-shadow .15s; }
+      .wl-plan--best { border-color: var(--brand); box-shadow: 0 6px 20px rgba(15,107,69,.10); }
+      .wl-plan.is-selected { border-color: var(--brand); box-shadow: 0 0 0 2px var(--brand) inset; }
+      .wl-plan__price { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 600; color: var(--ink); line-height: 1.1; }
+      .wl-plan--best .wl-plan__price { color: var(--gold); }
+      .wl-plan__mo { font-size: 12px; color: var(--muted); }
+      .wl-plan__term { font-size: 13px; font-weight: 600; margin-top: 6px; color: var(--ink); }
+      .wl-plan__save { display: inline-block; font-family: var(--font-condensed); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--brand); background: rgba(15,107,69,.08); border-radius: 999px; padding: 3px 9px; margin-top: 8px; }
+
       /* ── Trust bar ──────────────────────────────────────────── */
       .wl-trustbar { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
       .wl-trustbar ul { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 24px; list-style: none; margin: 0; padding-top: 20px; padding-bottom: 20px; }
@@ -273,8 +322,17 @@ const faqs = [
       .product-title { font-family: var(--font-serif); font-size: clamp(1.7rem, 3vw, 2.2rem); font-weight: 600; margin: 0 0 8px; line-height: 1.15; }
       .wl-prod__lede { font-size: 14.5px; color: var(--muted); margin: 0 0 20px; }
 
+      /* Medication toggle — was missing entirely on this page (present on
+         weight-loss/hair-loss/longevity), so the Tadalafil/Olympus buttons
+         fell back to unstyled browser-default <button> chrome instead of the
+         pill-shaped toggle used everywhere else. */
+      .medication-toggle { display: inline-flex; flex-wrap: wrap; gap: 6px; padding: 5px; background: var(--card); border-radius: 999px; margin-bottom: 24px; }
+      .medication-toggle .btn { border: none; background: transparent; border-radius: 999px; padding: 11px 22px; font-family: var(--font-sans); font-size: 14px; font-weight: 600; color: var(--muted); cursor: pointer; transition: background .15s, color .15s; }
+      .medication-toggle .btn.active-medication { background: var(--green); color: #fff; }
+
       .wl-pricerow { display: flex; align-items: baseline; flex-wrap: wrap; gap: 12px; margin-bottom: 4px; }
       .product-current-price { font-family: var(--font-serif); font-size: 2.6rem; font-weight: 600; color: var(--gold); line-height: 1; }
+      .text-decoration-line-through { text-decoration: line-through; color: var(--muted); font-size: 16px; opacity: .75; }
       .wl-prod__per { font-family: var(--font-condensed); font-size: 13px; color: var(--muted); margin: 0 0 24px; }
 
       #featuresListSW { margin-bottom: 24px; }
@@ -283,6 +341,26 @@ const faqs = [
       .wl-note { display: flex; align-items: flex-start; gap: 10px; background: #fbf5e6; border: 1px solid #ecd9a8; border-radius: 12px; padding: 13px 15px; margin-bottom: 24px; }
       .wl-note p { font-size: 13px; color: #6b5522; margin: 0; }
       .wl-note svg { flex: none; margin-top: 1px; }
+
+      /* ── What's Included / Key Benefits ────────────────────────
+         Pulled out of the product carousel — same fix as weight-loss.astro
+         and hair-loss.astro's "What's Included": was an unreadable-as-text
+         infographic image slide shared across both products, now real
+         HTML text. */
+      .wl-included { display: grid; gap: 16px; grid-template-columns: 1fr; }
+      @media (min-width: 700px) { .wl-included { grid-template-columns: repeat(2, 1fr); gap: 16px; } }
+      .wl-included__item { display: flex; align-items: flex-start; gap: 14px; background: var(--card); border-radius: 16px; padding: 20px 22px; }
+      .wl-included__item h3 { font-size: 1rem; font-weight: 600; margin: 0 0 4px; }
+      .wl-included__item p { font-size: 13.5px; color: var(--muted); margin: 0; }
+
+      @media (prefers-reduced-motion: no-preference) {
+        .wl-included__item { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s cubic-bezier(.22,.61,.36,1); }
+        .wl-included__item.is-visible { opacity: 1; transform: none; }
+        .wl-included__item:nth-child(1) { transition-delay: 0s; }
+        .wl-included__item:nth-child(2) { transition-delay: .1s; }
+        .wl-included__item:nth-child(3) { transition-delay: .2s; }
+        .wl-included__item:nth-child(4) { transition-delay: .3s; }
+      }
 
       /* ── Journey ────────────────────────────────────────────── */
       .wl-journey { position: relative; overflow: hidden; border-radius: 22px; background: var(--green); }
@@ -409,7 +487,7 @@ const faqs = [
       .wl-tick { flex: none; width: 22px; height: 22px; border-radius: 999px; background: var(--brand); display: grid; place-items: center; }
 
       /* ── Press ──────────────────────────────────────────────── */
-      .wl-press { display: flex; flex-wrap: wrap; align-items: center; gap: 34px; padding-top: 8px; padding-bottom: 56px; }
+      .wl-press { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 34px; padding-top: 8px; padding-bottom: 56px; }
       .wl-press > span { font-family: var(--font-condensed); font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
       .wl-press img { height: 22px; width: auto; opacity: .62; filter: grayscale(1); }
 
@@ -518,6 +596,27 @@ const faqs = [
       <img src="/assets/usa_badge.png" alt="Made in USA" loading="lazy" />
     </div>
 
+    <!-- ═══ Plan ladder ═══ -->
+    <section class="wl-sec" style="padding-bottom:0;">
+      <div class="wl-wrap">
+        <div class="wl-head">
+          <span class="wl-eyebrow">Transparent Pricing</span>
+          <h2 class="wl-serif">One price. <em>No membership.</em></h2>
+          <p>The longer your plan, the lower your monthly rate. Every plan includes physician review and shipping.</p>
+        </div>
+        <div class="wl-plans">
+          {plans.map((p) => (
+            <button type="button" class={p.best ? 'wl-plan wl-plan--best' : 'wl-plan'} data-term={p.term}>
+              <div class="wl-plan__price">{p.price}<span class="wl-plan__mo">/mo</span></div>
+              <div class="wl-plan__term">{p.months}</div>
+              {p.save && <span class="wl-plan__save">{p.save}</span>}
+            </button>
+          ))}
+        </div>
+        <p class="wl-foot">Monthly rate billed for the full plan length. Olympus is priced separately; see the plan selector below.</p>
+      </div>
+    </section>
+
     <!-- ═══ Inline CTA band ═══ -->
     <section class="wl-sec" style="padding-bottom:0;">
       <div class="wl-wrap">
@@ -594,6 +693,7 @@ const faqs = [
             </button>
           </div>
           <div id="thumbnailsContainerSW"></div>
+          <p class="wl-foot" style="margin-top:14px;">Packaging and troche design shown are representative and may change. Your actual medication's appearance and labeling may differ.</p>
         </div>
 
         <div>
@@ -610,9 +710,11 @@ const faqs = [
           </div>
 
           <div class="wl-pricerow">
-            <span class="product-current-price">$99.00</span>
+            <span class="product-current-price">$59.00</span>
+            <span class="text-decoration-line-through">$99.00</span>
+            <span class="wl-plan__save" style="margin-left:8px;">Save 40%</span>
           </div>
-          <p class="wl-prod__per">per month on the 12-month plan</p>
+          <p class="wl-prod__per">per month, billed for the 24-month plan</p>
 
           <div id="featuresListSW"></div>
 
@@ -629,6 +731,48 @@ const faqs = [
             Start Your Assessment <span class="wl-arw">→</span>
           </a>
           <p class="wl-foot">Compounded medications are not FDA-approved and are not equivalent to the brand-name drug.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ What's Included ═══ -->
+    <section class="wl-sec" style="padding-top:0;">
+      <div class="wl-wrap">
+        <div class="wl-head">
+          <span class="wl-eyebrow">What's Included</span>
+          <h2 class="wl-serif">Everything your <em>plan covers</em></h2>
+        </div>
+        <div class="wl-included">
+          {included.map((item) => (
+            <div class="wl-included__item">
+              <span class="wl-tick"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg></span>
+              <div>
+                <h3>{item.title}</h3>
+                <p>{item.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ Key Benefits ═══ -->
+    <section class="wl-sec" style="padding-top:0;">
+      <div class="wl-wrap">
+        <div class="wl-head">
+          <span class="wl-eyebrow">Why Tadalafil Troches</span>
+          <h2 class="wl-serif">Key <em>benefits</em></h2>
+        </div>
+        <div class="wl-included">
+          {benefits.map((item) => (
+            <div class="wl-included__item">
+              <span class="wl-tick"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg></span>
+              <div>
+                <h3>{item.title}</h3>
+                <p>{item.desc}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>
@@ -799,6 +943,23 @@ const faqs = [
         if (seen) t.classList.add('is-live');
         t.classList.toggle('is-idle', !seen);
       }, { threshold: 0.25 }).observe(t);
+    })();
+
+    /* What's Included / Key Benefits cards: staggered reveal-on-scroll,
+       once per card. Same mechanism as /weight-loss and /hair-loss —
+       IntersectionObserver, not `animation-timeline: view()` (the
+       Safari/macOS gap that already caused a bug on this site). */
+    (function () {
+      var items = document.querySelectorAll('.wl-included__item');
+      if (!items.length || !matchMedia('(prefers-reduced-motion: no-preference)').matches) return;
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('is-visible');
+          io.unobserve(entry.target);
+        });
+      }, { threshold: 0.25 });
+      items.forEach(function (el) { io.observe(el); });
     })();
   </script>
 </Layout>

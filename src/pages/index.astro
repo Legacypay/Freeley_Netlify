@@ -26,7 +26,7 @@ import pressForbes from '../assets/figma-v5/press-forbes.png';
 import pressBloomberg from '../assets/figma-v5/press-bloomberg.png';
 import pressNyt from '../assets/figma-v5/press-nyt.png';
 import pressTechCrunch from '../assets/figma-v5/press-techcrunch.png';
-
+// Before/after — only 2 real patient pairs exist (src/assets/before-after/).
 // Every link points at a route that really exists — `href="#"` is a dead link
 // for keyboard and screen-reader users, and the site pages are already built.
 const ASSESSMENT = '/assessment-quiz';
@@ -60,11 +60,13 @@ const steps = [
 // trust-card photos below are pre-existing public/ assets, referenced
 // directly rather than through astro:assets since Image only optimizes
 // files under src/ — these already ship unoptimized on the live homepage.
+// Card images reuse /how-it-works' own existing assets (same steps, same
+// files) instead of generating new ones — no AI image call needed here.
 const processSteps = [
-  { n: '1', title: 'Complete Intake', desc: 'A quick, secure health questionnaire. Takes 5 minutes from your phone. No appointment needed.' },
-  { n: '2', title: 'Doctor Reviews', desc: 'A board-certified physician reviews your profile within 24 hours and writes your personalized Rx.' },
-  { n: '3', title: 'Pharmacy Compounds', desc: 'Your prescription is sent to a 503A-licensed compounding pharmacy for precise formulation.' },
-  { n: '4', title: 'Delivered to You', desc: 'Discreet, climate-controlled packaging shipped directly to your door. Refills are automatic.' },
+  { n: '1', title: 'Complete Intake', desc: 'A quick, secure health questionnaire. Takes 5 minutes from your phone. No appointment needed.', img: '/assets/howItsWork/Complete_Your_Health_Intake.png' },
+  { n: '2', title: 'Doctor Reviews', desc: 'A board-certified physician reviews your profile within 24 hours and writes your personalized Rx.', img: '/assets/howItsWork/Physician_Reviews_Your_Profile.png' },
+  { n: '3', title: 'Pharmacy Compounds', desc: 'Your prescription is sent to a 503A-licensed compounding pharmacy for precise formulation.', img: '/assets/howItsWork/Pharmacy%20Compounds%20Your%20Medication.png' },
+  { n: '4', title: 'Delivered to You', desc: 'Discreet, climate-controlled packaging shipped directly to your door. Refills are automatic.', img: '/assets/howItsWork/Delivered_to_Your_Door.png' },
 ];
 
 // "Real Doctors / Real Providers / Pharmacy Grade" — restored trust section.
@@ -129,9 +131,9 @@ const podSlices = Array.from({ length: POD_SLICES }, (_, i) => {
 // placements instead of its own drifting copy.
 
 const products = [
-  { name: 'GLP-1 Weight Loss', img: vialWeightLoss, href: '/weight-loss', desc: 'Semaglutide or Tirzepatide compounded for effective, clinician-supervised weight loss.', price: '$99' },
+  { name: 'GLP-1 Weight Loss', img: vialWeightLoss, href: '/weight-loss', desc: 'Semaglutide or Tirzepatide compounded for effective, clinician-supervised weight loss.', price: '$199' },
   { name: 'Sexual Wellness', img: vialSexualWellness, href: '/sexual-wellness', desc: 'Physician-prescribed treatments for performance, libido, and confidence.', price: '$59' },
-  { name: 'Hair Loss', img: vialHairLoss, href: '/hair-loss', desc: 'Clinically proven solutions to stop hair loss and support regrowth.', price: '$29' },
+  { name: 'Hair Loss', img: vialHairLoss, href: '/hair-loss', desc: 'Clinically proven solutions to stop hair loss and support regrowth.', price: '$49' },
   { name: 'Longevity & Peptides', img: vialLongevity, href: '/longevity', desc: 'Peptides and therapies to optimize energy, recovery, and long-term health.', price: '$129' },
 ];
 
@@ -156,13 +158,14 @@ const press = [
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex, nofollow" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <Font cssVariable="--font-display" preload />
     <Font cssVariable="--font-text" preload />
     <Font cssVariable="--font-condensed" />
-    <title>Freeley — Prototype</title>
+    <title>Freeley — Physician-Prescribed Care, Delivered</title>
     <meta
       name="description"
-      content="Physician-prescribed GLP-1 weight loss, sexual wellness, hair and longevity care — compounded by licensed U.S. pharmacies and delivered to your door from $99/month."
+      content="Physician-prescribed GLP-1 weight loss, sexual wellness, hair and longevity care — compounded by licensed U.S. pharmacies and delivered to your door from $199/month."
     />
     <style is:inline>
       /* Hallmark · audit-fix pass · 2026-07-21
@@ -268,7 +271,7 @@ const press = [
       /* padding longhands wherever a class shares its element with .wrap — a
          `padding` shorthand would zero out .wrap's `padding: 0 28px`. */
       .nav { display: flex; align-items: center; justify-content: space-between; padding-top: 22px; padding-bottom: 22px; gap: 24px; }
-      .nav__logo img { height: 30px; width: auto; }
+      .nav__logo img { height: 45px; width: auto; }
       .nav__links { display: none; gap: 22px; font-size: 14px; font-weight: 500; color: var(--ink); }
       .nav__links a { color: inherit; text-decoration: none; white-space: nowrap; }
       .nav__links a:hover { color: var(--brand); }
@@ -394,8 +397,17 @@ const press = [
          and the step row below runs the full width under both. */
       .process__top { display: grid; gap: 34px; grid-template-columns: 1fr; align-items: center; }
       @media (min-width: 900px) { .process__top { grid-template-columns: 1fr 1fr; } }
-      .process__img { display: flex; justify-content: center; }
-      .process__img img { max-width: 100%; height: auto; }
+      /* The photo used to be capped at an inline max-width:340px regardless
+         of how wide its grid column actually was — on a real desktop
+         viewport that left it floating small in a sea of whitespace next to
+         the (now correctly-sized) intro text. Letting it fill the column
+         and giving it real shadow + a floating stat chip (the same white
+         pill-with-shadow device the hero already uses for its badges) gives
+         this half of the section the same weight the text half now has. */
+      .process__img { display: flex; justify-content: center; position: relative; }
+      .process__img img { max-width: 100%; height: auto; border-radius: 20px; box-shadow: 0 24px 60px -12px rgba(18,60,44,.35); }
+      .process__badge { position: absolute; left: 24px; bottom: 24px; background: #fff; border-radius: 12px; padding: 10px 16px; box-shadow: 0 8px 24px rgba(0,0,0,.16); font-family: var(--font-serif); font-weight: 600; font-size: 1.15rem; color: var(--brand); line-height: 1.1; }
+      .process__badge small { display: block; font-family: var(--font-condensed); font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
       /* The hand rises into frame on scroll — a bigger, slower rise than the
          stat/prod cards elsewhere, since this is the section's one signature
          moment, not a repeated list-item reveal. */
@@ -408,161 +420,50 @@ const press = [
       .process__steps { display: grid; gap: 28px; grid-template-columns: repeat(2, 1fr); margin-top: 56px; }
       @media (min-width: 700px) { .process__steps { grid-template-columns: repeat(4, 1fr); } }
       .process__step { border-top: 2px solid var(--line); padding-top: 18px; }
+      .process__step img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 14px; margin-bottom: 16px; }
       .process__step .step__n { font-family: var(--font-display); font-size: 1.3rem; color: var(--gold); display: block; margin-bottom: 10px; }
       .process__step h3 { font-size: 1rem; margin: 0 0 6px; font-weight: 600; }
       .process__step p { font-size: 13px; color: var(--muted); margin: 0; }
 
-      /* "Your Journey" — restored full-bleed photo section (index.astro's
-         your_journey_What_to_expect_on.jpg). The timeline that sits on top of it
-         is built below; its nodes are hand-positioned against this exact photo,
-         so the two sizes have to stay locked together. */
-      .journey { position: relative; overflow: hidden; border-radius: 22px; margin: 0 0 46px; background: var(--green); }
-      .journey__bg { position: absolute; inset: 0; background-image: url('/assets/home/your_journey_What_to_expect_on.jpg'); background-size: cover; background-position: center; }
-      .journey__watermark { position: absolute; inset: 0; background-image: url('/assets/home/Frame_399.png'); background-size: cover; opacity: .5; mix-blend-mode: overlay; }
-      /* The photo is a model against a bright sky, and every word in this section
-         is white on top of it. Without a scrim the copy fell onto her skin and
-         her light grey joggers and stopped being readable — worst on mobile,
-         where the text spans the full width. Angled so the left, where all the
-         type lives, carries the most cover and the photo still reads on the
-         right. */
-      .journey__scrim {
-        position: absolute; inset: 0;
-        background:
-          linear-gradient(102deg, rgba(18, 60, 44, .88) 0%, rgba(18, 60, 44, .66) 46%, rgba(18, 60, 44, .28) 100%),
-          linear-gradient(to bottom, rgba(13, 49, 34, .34) 0%, rgba(13, 49, 34, .06) 38%, rgba(13, 49, 34, .40) 100%);
-      }
-      .journey__inner { position: relative; z-index: 1; padding: 56px 40px 0; min-height: 620px; display: flex; flex-direction: column; justify-content: space-between; }
-      .journey__head { max-width: 420px; }
-      .journey__head h2 { color: #fff; font-size: clamp(2rem, 3.6vw, 2.7rem); margin: 14px 0 22px; line-height: 1.1; }
-      /* The page emphasises with brand green italics, which works on cream and
-         disappears here — dark green on sky blue, then dark green on the green
-         scrim. Light gold keeps the emphasis reading as emphasis, and it is
-         already the page's second accent (prices, step numerals). */
-      .journey em { color: #e6cd97; }
-      .journey__head .eyebrow { color: #fff; opacity: .85; }
-      /* Timeline, hand-built. Replaces the flattened graph-home.svg export
-         (231 KB, every label baked into outlines) with one inline path plus real
-         DOM text: the line can now draw itself as you scroll, and the copy stays
-         selectable, translatable and screen-reader readable. All coordinates are
-         the export's own, expressed as % of its 1125x464 viewBox, so every node
-         still lands on the photo exactly where it used to. */
-      .journey__timeline { position: relative; width: 100%; aspect-ratio: 1125 / 464; margin-top: 28px; }
-      .journey__svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-      .jline { fill: none; stroke: #fff; stroke-width: 1; vector-effect: non-scaling-stroke; }
-      .jstop { position: absolute; top: 0; bottom: 0; color: #fff; }
-      .jstop--1 { left: 0;     width: 26%; }
-      .jstop--2 { left: 26.9%; width: 25%; }
-      .jstop--3 { left: 52.8%; width: 21%; }
-      .jstop--4 { left: 74.5%; width: 25%; }
-      .jstop__badge {
-        position: absolute; left: 0; padding: 6px 15px; border-radius: 999px;
-        background: rgba(255, 255, 255, .2); white-space: nowrap;
-        font-family: var(--font-condensed); font-size: 13px; font-weight: 600;
-      }
-      .jstop__text { position: absolute; left: 0; right: 16px; margin: 0; padding-left: 17px; font-size: 13px; line-height: 1.45; }
-      .jstop__text::before { content: ''; position: absolute; left: 0; top: .52em; width: 6px; height: 6px; border-radius: 50%; background: #004c27; }
-      .jstop--1 .jstop__badge { top: 60.1%; }
-      .jstop--2 .jstop__badge { top: 28.7%; }
-      .jstop--3 .jstop__badge { top: 28.7%; }
-      .jstop--4 .jstop__badge { top: 0; }
-      .jstop--1 .jstop__text { top: 83.2%; }
-      .jstop--2 .jstop__text { top: 53.7%; }
-      .jstop--3 .jstop__text { top: 54.5%; }
-      .jstop--4 .jstop__text { top: 25%; }
-
-      /* Under 900px the four columns are ~90px wide — unreadable. Same markup,
-         restacked as a vertical rail. */
-      @media (max-width: 899.98px) {
-        .journey__timeline { aspect-ratio: auto; margin-top: 34px; padding: 4px 0 4px 30px; }
-        .journey__svg { display: none; }
-        .journey__timeline::before { content: ''; position: absolute; left: 9px; top: 12px; bottom: 12px; width: 1px; background: rgba(255, 255, 255, .5); transform-origin: top; }
-        .jstop, .jstop__badge, .jstop__text { position: static; width: auto; }
-        /* left: 0 is load-bearing. .jstop--N carries the desktop staircase
-           (left: 26.9% and friends) and `position: relative` below re-activates
-           it, which pushed the last three stops up to 65px past the right edge
-           and clipped their copy on every phone. */
-        .jstop { position: relative; left: 0; padding-bottom: 24px; }
-        .jstop:last-child { padding-bottom: 0; }
-        .jstop__badge { display: inline-block; margin-bottom: 9px; }
-        .jstop__text { padding-left: 0; }
-        .jstop__text::before { display: none; }
-        .jstop::after {
-          content: ''; position: absolute; left: -29px; top: 1px; width: 19px; height: 19px; border-radius: 50%;
-          background: radial-gradient(circle, #fff 0 4.5px, rgba(255, 255, 255, 0) 4.5px 56%, rgba(255, 255, 255, .9) 100%);
-        }
-      }
-      @media (max-width: 767.98px) {
-        .journey__inner { padding: 40px 24px 0; min-height: 480px; }
-      }
-
-      /* A 20-second loop: the line draws left to right over the first 1.8s, each
-         stop lights as the line reaches it, the finished timeline holds long
-         enough to actually be read, then it clears and rebuilds.
-
-         Every element shares the same 20s period, and the per-stop offsets live
-         in the KEYFRAME PERCENTAGES rather than in animation-delay. That is not a
-         style choice: animation-delay applies only to the first iteration, so on
-         an infinite animation the stops would drift out of sync with the line
-         from the second loop onward. The percentages are the node positions along
-         the path (0 / 28.8 / 54.4 / 78.8% of its length) mapped onto the draw
-         window — 0 / 2.6 / 4.9 / 7.1% of the cycle — which is also why the draw
-         stays `linear`: ease it and the stops no longer meet the line.
-
-         is-armed / is-live / is-idle are set by the script at the bottom.
-         ponytail: the base rules above already ARE the finished timeline, so with
-         JS off or reduced motion on it just renders complete. Nothing to fall
-         back to, nothing that can get stuck invisible. */
+      /* Staggered reveal-on-scroll, same mechanism as .jcard above (and same
+         reason: IntersectionObserver, not `animation-timeline: view()` —
+         that's the Safari/macOS gap that already caused a bug on this site).
+         No JS / reduced-motion / unsupported-browser all fall back to the
+         cards simply being visible, never stuck hidden. */
       @media (prefers-reduced-motion: no-preference) {
-        .is-armed .jline { stroke-dasharray: 100; stroke-dashoffset: 100; }
-        .is-armed .jnode, .is-armed .jstop { opacity: 0; }
-        .is-armed::before { scale: 1 0; }
+        .process__step { opacity: 0; transform: translateY(28px); transition: opacity .6s ease, transform .6s cubic-bezier(.22,.61,.36,1); }
+        .process__step.is-visible { opacity: 1; transform: none; }
+        .process__step:nth-child(1) { transition-delay: 0s; }
+        .process__step:nth-child(2) { transition-delay: .1s; }
+        .process__step:nth-child(3) { transition-delay: .2s; }
+        .process__step:nth-child(4) { transition-delay: .3s; }
+      }
 
-        .is-live .jline,
-        .is-live::before,
-        .is-live .jnode,
-        .is-live .jstop { animation-duration: 20s; animation-timing-function: linear; animation-iteration-count: infinite; animation-fill-mode: both; }
-        .is-live .jline { animation-name: jDrawLine; }
-        .is-live::before { animation-name: jDrawRail; }
-        .is-live .jnode--1, .is-live .jstop--1 { animation-name: jStop1; }
-        .is-live .jnode--2, .is-live .jstop--2 { animation-name: jStop2; }
-        .is-live .jnode--3, .is-live .jstop--3 { animation-name: jStop3; }
-        .is-live .jnode--4, .is-live .jstop--4 { animation-name: jStop4; }
-        /* Nothing runs while the section is off screen. */
-        .is-idle .jline, .is-idle::before, .is-idle .jnode, .is-idle .jstop { animation-play-state: paused; }
+      /* "Your Journey" — rebuilt as 4 card panels (was a full-bleed photo +
+         hand-drawn SVG timeline). Reuses .prod's card visual language
+         (background: var(--card), border-radius: 18px card, staggered
+         reveal-on-scroll) so it reads consistently with the Products section
+         instead of introducing a third card style. The reveal below uses
+         IntersectionObserver, not `animation-timeline: view()` — the
+         Safari/macOS support gaps for scroll-timelines already caused a
+         separate bug on this site (see the pod/bento @supports fallbacks). */
+      .jcards { display: grid; gap: 16px; grid-template-columns: repeat(1, minmax(0, 1fr)); }
+      @media (min-width: 640px) { .jcards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+      @media (min-width: 1100px) { .jcards { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+      .jcard { background: var(--card); border-radius: 18px; padding: 26px 22px; }
+      .jcard__n { font-family: var(--font-display); font-size: 1.8rem; font-weight: 600; color: var(--brand); margin-bottom: 12px; }
+      .jcard h3 { font-family: var(--font-display); font-size: 1.15rem; font-weight: 600; margin: 0 0 8px; }
+      .jcard p { font-size: 13.5px; color: var(--muted); margin: 0; }
 
-        @keyframes jDrawLine {
-          0% { stroke-dashoffset: 100; }
-          9%, 88% { stroke-dashoffset: 0; }
-          97%, 100% { stroke-dashoffset: 100; }
-        }
-        @keyframes jDrawRail {
-          0% { scale: 1 0; }
-          9%, 88% { scale: 1 1; }
-          97%, 100% { scale: 1 0; }
-        }
-        /* Same shape four times, offset by each node's arrival. The easing is
-           declared inside the keyframe so the short fade keeps its curve instead
-           of inheriting the linear timing the 20s cycle needs. */
-        @keyframes jStop1 {
-          0% { opacity: 0; translate: 0 12px; animation-timing-function: cubic-bezier(.22, .61, .36, 1); }
-          2.75%, 88% { opacity: 1; translate: 0 0; }
-          95%, 100% { opacity: 0; translate: 0 12px; }
-        }
-        @keyframes jStop2 {
-          0%, 2.6% { opacity: 0; translate: 0 12px; animation-timing-function: cubic-bezier(.22, .61, .36, 1); }
-          5.35%, 88% { opacity: 1; translate: 0 0; }
-          95%, 100% { opacity: 0; translate: 0 12px; }
-        }
-        @keyframes jStop3 {
-          0%, 4.9% { opacity: 0; translate: 0 12px; animation-timing-function: cubic-bezier(.22, .61, .36, 1); }
-          7.65%, 88% { opacity: 1; translate: 0 0; }
-          95%, 100% { opacity: 0; translate: 0 12px; }
-        }
-        @keyframes jStop4 {
-          0%, 7.1% { opacity: 0; translate: 0 12px; animation-timing-function: cubic-bezier(.22, .61, .36, 1); }
-          9.85%, 88% { opacity: 1; translate: 0 0; }
-          95%, 100% { opacity: 0; translate: 0 12px; }
-        }
+      /* Staggered reveal-on-scroll, played once per card (JS at the bottom
+         adds .is-visible via IntersectionObserver — see the note above). */
+      @media (prefers-reduced-motion: no-preference) {
+        .jcard { opacity: 0; transform: translateY(28px); transition: opacity .6s ease, transform .6s cubic-bezier(.22,.61,.36,1); }
+        .jcard.is-visible { opacity: 1; transform: none; }
+        .jcard:nth-child(1) { transition-delay: 0s; }
+        .jcard:nth-child(2) { transition-delay: .1s; }
+        .jcard:nth-child(3) { transition-delay: .2s; }
+        .jcard:nth-child(4) { transition-delay: .3s; }
       }
 
       /* Product cards */
@@ -939,9 +840,14 @@ const press = [
       }
 
       /* Testimonials — quote-led (no duplicated imagery) */
-      .tcards { display: grid; gap: 16px; grid-template-columns: 1fr; }
-      @media (min-width: 780px) { .tcards { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-      .tcard { background: var(--card); border-radius: 16px; padding: 24px; }
+      /* Testimonials — swiper@11, the same CDN + init mechanics already
+         used for the mechanism-cards/press-logo carousels on the product
+         pages (wl-script.js's okSwiper/brandSwiper), so the site has one
+         carousel approach instead of two. Init script is at the bottom. */
+      .testi.swiper { overflow: hidden; padding-top: 6px; padding-bottom: 16px; }
+      .testi .swiper-slide { width: 320px; height: auto; }
+      @media (min-width: 700px) { .testi .swiper-slide { width: 400px; } }
+      .tcard { background: var(--card); border-radius: 16px; padding: 24px; height: 100%; }
       .tcard__stars { color: #00b67a; letter-spacing: 2px; font-size: 14px; margin-bottom: 14px; }
       .tcard__quote { font-family: var(--font-display); font-size: 1.28rem; line-height: 1.42; color: var(--ink); margin: 0 0 16px; }
       .tcard__meta { font-size: 13px; }
@@ -1027,7 +933,7 @@ const press = [
           <h1 class="serif">Care that never starts <em>in a waiting room.</em></h1>
           <p class="hero__sub">Weight, sexual wellness, hair, longevity — prescribed by licensed U.S. physicians, compounded by licensed pharmacies, delivered discreetly to your door.</p>
           <img class="hero__img-mob" src="/assets/home/hero-image.png" alt="Freeley patients" loading="lazy" />
-          <div class="hero__from">GLP-1 weight loss from <span class="price">$99</span>/month <span class="hero__qual">on the 12-month plan</span></div>
+          <div class="hero__from">GLP-1 weight loss from <span class="price">$199</span>/month <span class="hero__qual">on the 12-month plan</span></div>
           <a href={ASSESSMENT} class="pill">Start Your Assessment <span class="arw">→</span></a>
 
           <div class="hero__proof">
@@ -1123,59 +1029,42 @@ const press = [
           <h2 class="serif">Real results. <em>Real people.</em></h2>
           <p>See how Freeley is helping patients look, feel, and live better.</p>
         </div>
-        <div class="tcards">
-          {testimonials.map((t) => (
-            <div class="tcard">
-              <div class="tcard__stars">★★★★★</div>
-              <p class="tcard__quote">“{t.quote}”</p>
-              <div class="tcard__meta"><span class="tcard__name">{t.name}</span> · <span class="tcard__tag">{t.tag}</span></div>
-            </div>
-          ))}
+        <div class="testi swiper">
+          <div class="swiper-wrapper">
+            {testimonials.map((t) => (
+              <div class="swiper-slide">
+                <div class="tcard">
+                  <div class="tcard__stars">★★★★★</div>
+                  <p class="tcard__quote">“{t.quote}”</p>
+                  <div class="tcard__meta"><span class="tcard__name">{t.name}</span> · <span class="tcard__tag">{t.tag}</span></div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
         <p class="footnote" style="text-align:center;">*Individual results may vary. Quotes are from Freeley weight-loss patients; results are not typical or guaranteed.</p>
         <div class="center-cta"><a href="/about" class="ghost">Read more stories <span class="arw">→</span></a></div>
       </div>
     </section>
 
-    <!-- Your Journey (restored from index.astro — the photo + timeline graph
-         are index.astro's original pre-aligned pair, reused as-is) -->
-    <section>
+    <!-- Your Journey — 4 card panels (was a full-bleed photo + hand-drawn
+         SVG timeline; see the .jcards CSS note above). Content unchanged. -->
+    <section class="fullsec" style="padding-top:0;">
       <div class="wrap">
-        <div class="journey">
-          <div class="journey__bg"></div>
-          <div class="journey__watermark"></div>
-          <div class="journey__scrim"></div>
-          <div class="journey__inner">
-            <div class="journey__head">
-              <span class="eyebrow">Your Journey</span>
-              <h2 class="serif">What to expect on <em>GLP-1 therapy</em></h2>
-              <a href={ASSESSMENT} class="pill pill--light">Start Your Assessment <span class="arw">→</span></a>
-            </div>
-            <div class="journey__timeline">
-              <svg class="journey__svg" viewBox="0 0 1125 464" fill="none" aria-hidden="true">
-                <defs>
-                  <radialGradient id="jGlow">
-                    <stop offset="0.56" stop-color="#fff" stop-opacity="0" />
-                    <stop offset="1" stop-color="#fff" />
-                  </radialGradient>
-                </defs>
-                <path class="jline" pathLength="100" d="M45 345L341.413 199.219H634.891L881.279 66H1125" />
-                {journeyStops.map((s, i) => (
-                  <g class={`jnode jnode--${i + 1}`}>
-                    <circle cx={s.x} cy={s.y} r="15" fill="url(#jGlow)" />
-                    <circle cx={s.x} cy={s.y} r="7" fill="#fff" />
-                  </g>
-                ))}
-              </svg>
-              {journeyStops.map((s, i) => (
-                <div class={`jstop jstop--${i + 1}`}>
-                  <span class="jstop__badge">{s.label}</span>
-                  <p class="jstop__text">{s.copy}</p>
-                </div>
-              ))}
-            </div>
-          </div>
+        <div class="center-head">
+          <span class="eyebrow">Your Journey</span>
+          <h2 class="serif">What to expect on <em>GLP-1 therapy</em></h2>
         </div>
+        <div class="jcards">
+          {journeyStops.map((s, i) => (
+            <div class="jcard">
+              <div class="jcard__n serif">{i + 1}</div>
+              <h3>{s.label}</h3>
+              <p>{s.copy}</p>
+            </div>
+          ))}
+        </div>
+        <div class="center-cta"><a href={ASSESSMENT} class="pill">Start Your Assessment <span class="arw">→</span></a></div>
       </div>
     </section>
 
@@ -1290,19 +1179,21 @@ const press = [
     <section class="split">
       <div class="wrap">
         <div class="process__top">
-          <div>
+          <div class="intro">
             <span class="eyebrow">The Process</span>
             <h2 class="serif" style="margin:12px 0 16px;">From visit to doorstep<br /><em>in under a week</em></h2>
             <p style="color:var(--muted); font-size:15px; margin:0 0 22px; max-width:38ch;">Everything happens on your schedule, from your phone.</p>
             <a href="/about" class="ghost">About Us <span class="arw">→</span></a>
           </div>
           <div class="process__img">
-            <img src="/assets/process-lifestyle.jpg" alt="Freeley patient managing their care from their phone at home" loading="lazy" width="362" height="366" style="height:auto; max-width:340px; border-radius:20px;" />
+            <img src="/assets/process-lifestyle.jpg" alt="Freeley patient managing their care from their phone at home" loading="lazy" width="362" height="366" />
+            <span class="process__badge">48hr<small>Door-to-Door</small></span>
           </div>
         </div>
         <div class="process__steps">
           {processSteps.map((s) => (
             <div class="process__step">
+              <img src={s.img} alt={s.title} loading="lazy" />
               <span class="step__n serif">{s.n}</span>
               <h3>{s.title}</h3>
               <p>{s.desc}</p>
@@ -1403,36 +1294,40 @@ const press = [
         });
       })();
 
-      /* Your Journey timeline: a 20s loop that starts the first time the section
-         reaches the viewport and pauses whenever it leaves, so nothing animates
-         off screen. The observer is deliberately NOT disconnected — it is what
-         drives that pause. is-armed (the empty starting state) is added from JS
-         on purpose: a visitor without JS keeps the finished timeline instead of
-         staring at a blank box. */
+      /* Your Journey cards + The Process steps: staggered reveal-on-scroll,
+         once per card, sharing one observer. IntersectionObserver rather
+         than `animation-timeline: view()` — see the .jcards CSS note above
+         for why. Each card unobserves itself once revealed, so it never
+         re-plays. */
       (function () {
-        var t = document.querySelector('.journey__timeline');
-        if (!t || !matchMedia('(prefers-reduced-motion: no-preference)').matches) return;
-        t.classList.add('is-armed');
-        new IntersectionObserver(function (entries) {
-          var seen = entries[0].isIntersecting;
-          if (seen) t.classList.add('is-live');
-          t.classList.toggle('is-idle', !seen);
-        }, { threshold: 0.25 }).observe(t);
+        var cards = document.querySelectorAll('.jcard, .process__step');
+        if (!cards.length || !matchMedia('(prefers-reduced-motion: no-preference)').matches) return;
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add('is-visible');
+            io.unobserve(entry.target);
+          });
+        }, { threshold: 0.25 });
+        cards.forEach(function (c) { io.observe(c); });
       })();
     </script>
 
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" is:inline></script>
     <script is:inline>
-      if (window.location.pathname.startsWith('/preview')) {
-        document.addEventListener('click', function (e) {
-          var a = e.target.closest('a');
-          if (!a) return;
-          var href = a.getAttribute('href');
-          if (href && href.startsWith('/') && !href.startsWith('//') && !href.startsWith('/preview') && !href.startsWith('mailto:') && !href.startsWith('tel:')) {
-            e.preventDefault();
-            window.location.href = '/preview' + (href === '/' ? '' : href);
-          }
+      (function () {
+        var el = document.querySelector('.testi.swiper');
+        if (!el || typeof Swiper === 'undefined') return;
+        new Swiper(el, {
+          slidesPerView: 'auto',
+          spaceBetween: 20,
+          autoplay: { delay: 5000 },
+          direction: 'horizontal',
+          loop: true,
+          grabCursor: true,
+          centeredSlides: false,
         });
-      }
+      })();
     </script>
 
     <QuizModal />

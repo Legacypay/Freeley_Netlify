@@ -15,60 +15,66 @@
             name: "Sermorelin",
             title: "Build Your Peptide Protocol",
             description: "Sermorelin stimulates natural growth hormone release for anti-aging benefits.",
+            // OWN labeled bottle only — nad+.png/glutathione.png are the other
+            // two products' bottles (wrong ingredients to show a Sermorelin
+            // shopper), same bug/fix as hl-script.js's Cedar/Ivy/Willow toggle.
+            // wl.png/kb.png (What's Included / Key Benefits infographic
+            // slides) now live as real HTML sections below the gallery
+            // instead — see longevity.astro.
             images: [
-                "/assets/l/sermorelin.jpeg",
-                "/assets/l/nad+.png",
-                "/assets/l/glutathione.jpeg",
-                "/assets/l/wl.png",
-                "/assets/l/kb.png"
+                "/assets/l/sermorelin.png"
             ],
             features: [
                 "Sourced from 503A US pharmacies",
                 "Customized stack tailored to you",
                 "Physician review & expedited cold-shipping"
             ],
-            price: "$129",
-            originalPrice: null,
+            // Default to the 24-month plan rate (matches the plan ladder's
+            // pre-selected "best" card) with the 1-month rate struck through,
+            // both real tiers from pricing.json's longevity.standard —
+            // same convention as hl-script.js's Cedar/Ivy/Willow toggle.
+            price: "$79",
+            originalPrice: "$129",
+            save: "Save 39%",
             badge: "Most Popular"
         },
         nad: {
             name: "NAD+",
             title: "NAD+ Peptide Therapy",
             description: "NAD+ boosts cellular energy and supports healthy aging at the molecular level.",
+            // OWN labeled bottle only — see sermorelin's comment above.
             images: [
-                "/assets/l/nad+.png",
-                "/assets/l/sermorelin.jpeg",
-                "/assets/l/glutathione.jpeg",
-                "/assets/l/wl.png",
-                "/assets/l/kb.png"
+                "/assets/l/nad+.png"
             ],
             features: [
                 "Sourced from 503A US pharmacies",
                 "Customized stack tailored to you",
                 "Physician review & expedited cold-shipping"
             ],
-            price: "$189",
-            originalPrice: null,
+            // Real tiers from pricing.json's longevity.premium (NAD+'s own
+            // tier, distinct from Sermorelin/Glutathione's standard tier).
+            price: "$129",
+            originalPrice: "$189",
+            save: "Save 32%",
             badge: "Premium Choice"
         },
         glutathione: {
             name: "Glutathione",
             title: "Glutathione Peptide Therapy",
             description: "Glutathione is a powerful antioxidant that supports detoxification and immune health.",
+            // OWN labeled bottle only — see sermorelin's comment above.
             images: [
-                "/assets/l/glutathione.jpeg",
-                "/assets/l/sermorelin.jpeg",
-                "/assets/l/nad+.png",
-                "/assets/l/wl.png",
-                "/assets/l/kb.png"
+                "/assets/l/glutathione.png"
             ],
             features: [
                 "Sourced from 503A US pharmacies",
                 "Customized stack tailored to you",
                 "Physician review & expedited cold-shipping"
             ],
-            price: "$129",
-            originalPrice: null,
+            // Same standard tier as Sermorelin — see that entry's comment.
+            price: "$79",
+            originalPrice: "$129",
+            save: "Save 39%",
             badge: "Essential Support"
         }
     };
@@ -159,6 +165,15 @@
 
         const currentPrice = document.querySelector('.product-current-price');
         if (currentPrice) currentPrice.textContent = data.price;
+
+        const originalPrice = document.querySelector('.text-decoration-line-through');
+        if (originalPrice) originalPrice.textContent = data.originalPrice || '';
+
+        // Scoped to .wl-pricerow: the plan ladder above also has .wl-plan__save
+        // badges (per-tier, not per-product), which a plain document-wide
+        // querySelector would hit first instead of the purchase panel's own.
+        const saveBadge = document.querySelector('.wl-pricerow .wl-plan__save');
+        if (saveBadge) saveBadge.textContent = data.save || '';
 
         const badge = document.querySelector('.popular-badge');
         if (badge) badge.textContent = data.badge;
@@ -298,6 +313,20 @@
 
     init();
 
+})();
+
+// =============================================
+// PLAN LADDER SELECT — single-select radio group, same active/inactive
+// class-swap pattern as the medication-toggle buttons above.
+// =============================================
+(function () {
+    const planButtons = document.querySelectorAll('.wl-plans .wl-plans__item');
+    planButtons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            planButtons.forEach(function (b) { b.classList.remove('is-selected'); });
+            btn.classList.add('is-selected');
+        });
+    });
 })();
 
 // =============================================

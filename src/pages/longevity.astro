@@ -33,12 +33,16 @@ const goals = [
   { id: 'start-assessment3', label: 'Anti-aging' },
 ];
 
-// The old page's three plan cards all showed the same $99 price — kept as-is,
-// it's the platform's real placeholder pricing, not a copy bug to silently fix.
+// The old page's three plan cards all showed the same flat $99 — that was a
+// placeholder, not real per-tier pricing. pricing.json is now the source of
+// truth for every tier (longevity.default), including the new 24-month rate,
+// so the ladder is rebuilt from those real numbers instead.
 const plans = [
-  { term: '1-month', price: '$99', save: 'Save 15%' },
-  { term: '3-month', price: '$99', save: 'Save 15%' },
-  { term: '6-month', price: '$99', save: 'Save 15%' },
+  { term: '1-month', price: '$129', save: null },
+  { term: '3-month', price: '$115', save: 'Save 11%' },
+  { term: '6-month', price: '$99', save: 'Save 23%' },
+  { term: '12-month', price: '$89', save: 'Save 31%' },
+  { term: '24-month', price: '$79', save: 'Save 39%', best: true },
 ];
 
 const trustPoints = [
@@ -81,6 +85,27 @@ const proofCards = [
   { title: 'Sermorelin (Youthful markers)', img: '/assets/l/Sermorelin_(Youthful_markers).png', tint: '#E4DDD4' },
   { title: 'NAD+ (Cellular engine repair)', img: '/assets/l/NAD+_(Cellular_engine_repair).png', tint: '#D1D9DC' },
   { title: 'Glutathione (Immunity & Detox)', img: '/assets/l/Glutathione_(Immunity_&_Detox).png', tint: '#F6EEE0' },
+];
+
+// "What's Included" / "Key Benefits" — copy transcribed verbatim from
+// public/assets/l/wl.png and kb.png (byte-identical to
+// public/assets/brand/slide_lg_whats_included.png and slide_lg_benefits.png),
+// the same "unreadable infographic slide baked into the image carousel" bug
+// already fixed on weight-loss.astro and hair-loss.astro. Pulled out into
+// real HTML below the product gallery instead of re-embedding the image.
+const included = [
+  { title: 'Sermorelin, NAD+ or Glutathione', desc: 'Premium peptide therapies' },
+  { title: 'Licensed Provider Consultation', desc: 'Personalized protocol design' },
+  { title: 'Monthly Supply Shipped', desc: 'Pharmaceutical-grade compounds' },
+  { title: 'Ongoing Optimization', desc: 'Dosage refinement & monitoring' },
+];
+
+const keyBenefits = [
+  { title: 'Enhanced Recovery', desc: 'Faster muscle & tissue repair' },
+  { title: 'Improved Sleep Quality', desc: 'Deeper, more restorative rest' },
+  { title: 'Increased Energy', desc: 'Natural vitality boost' },
+  { title: 'Cellular Health', desc: 'Anti-aging at the molecular level' },
+  { title: 'Immune Support', desc: 'Strengthened natural defenses' },
 ];
 
 const press = [
@@ -208,9 +233,15 @@ const faqs = [
       .wl-hero__from .wl-price { font-size: 1.7rem; }
       .wl-hero__qual { font-family: var(--font-condensed); font-size: 12.5px; color: var(--muted); display: block; margin-top: 2px; }
 
-      /* Plan strip — the old page's 1/3/6-month cards, restyled */
+      /* Plan strip — the old page's 1/3/6-month cards, restyled. Now 5 tiers
+         (added 12/24-month); the 3-column grid wraps the extra two onto a
+         second row rather than needing a layout change. Cards are real
+         <button>s (clickable/selectable), so the reset below undoes the
+         browser's default button chrome. */
       .wl-plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 4px 0 26px; }
-      .wl-plans__item { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 12px 10px; text-align: center; }
+      .wl-plans__item { display: block; width: 100%; font: inherit; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 12px 10px; text-align: center; cursor: pointer; transition: border-color .15s, box-shadow .15s; }
+      .wl-plans__item--best { border-color: var(--brand); box-shadow: 0 6px 20px rgba(15,107,69,.10); }
+      .wl-plans__item.is-selected { border-color: var(--brand); box-shadow: 0 0 0 2px var(--brand) inset; }
       .wl-plans__price { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 600; color: var(--gold); }
       .wl-plans__price span { font-size: .68rem; color: var(--muted); font-family: var(--font-sans); }
       .wl-plans__meta { display: flex; flex-direction: column; gap: 2px; margin-top: 4px; }
@@ -285,6 +316,8 @@ const faqs = [
 
       .wl-pricerow { display: flex; align-items: baseline; flex-wrap: wrap; gap: 12px; margin-bottom: 4px; }
       .product-current-price { font-family: var(--font-serif); font-size: 2.6rem; font-weight: 600; color: var(--gold); line-height: 1; }
+      .text-decoration-line-through { text-decoration: line-through; color: var(--muted); font-size: 16px; opacity: .75; }
+      .wl-plan__save { display: inline-block; font-family: var(--font-condensed); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--brand); background: rgba(15,107,69,.08); border-radius: 999px; padding: 3px 9px; margin-top: 8px; }
       .wl-prod__per { font-family: var(--font-condensed); font-size: 13px; color: var(--muted); margin: 0 0 24px; }
 
       #featuresListL { margin-bottom: 24px; }
@@ -293,6 +326,28 @@ const faqs = [
       .wl-note { display: flex; align-items: flex-start; gap: 10px; background: #fbf5e6; border: 1px solid #ecd9a8; border-radius: 12px; padding: 13px 15px; margin-bottom: 24px; }
       .wl-note p { font-size: 13px; color: #6b5522; margin: 0; }
       .wl-note svg { flex: none; margin-top: 1px; }
+
+      /* ── What's Included / Key Benefits (pulled out of the gallery
+         carousel) — same pattern as weight-loss.astro/hair-loss.astro ── */
+      .wl-included { display: grid; gap: 16px; grid-template-columns: 1fr; }
+      @media (min-width: 700px) { .wl-included { grid-template-columns: repeat(2, 1fr); gap: 16px; } }
+      .wl-included__item { display: flex; align-items: flex-start; gap: 14px; background: var(--card); border-radius: 16px; padding: 20px 22px; }
+      .wl-included__item h3 { font-size: 1rem; font-weight: 600; margin: 0 0 4px; }
+      .wl-included__item p { font-size: 13.5px; color: var(--muted); margin: 0; }
+
+      /* Same staggered reveal-on-scroll as the homepage's Process cards —
+         IntersectionObserver, not `animation-timeline: view()` (the
+         Safari/macOS gap that already caused a bug on this site). No JS /
+         reduced motion / unsupported browser: cards just stay visible. */
+      @media (prefers-reduced-motion: no-preference) {
+        .wl-included__item { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s cubic-bezier(.22,.61,.36,1); }
+        .wl-included__item.is-visible { opacity: 1; transform: none; }
+        .wl-included__item:nth-child(1) { transition-delay: 0s; }
+        .wl-included__item:nth-child(2) { transition-delay: .1s; }
+        .wl-included__item:nth-child(3) { transition-delay: .2s; }
+        .wl-included__item:nth-child(4) { transition-delay: .3s; }
+        .wl-included__item:nth-child(5) { transition-delay: .4s; }
+      }
 
       /* ── Journey ────────────────────────────────────────────── */
       .wl-journey { position: relative; overflow: hidden; border-radius: 22px; background: var(--green); }
@@ -403,7 +458,7 @@ const faqs = [
       .wl-tick { flex: none; width: 22px; height: 22px; border-radius: 999px; background: var(--brand); display: grid; place-items: center; }
 
       /* ── Press ──────────────────────────────────────────────── */
-      .wl-press { display: flex; flex-wrap: wrap; align-items: center; gap: 34px; padding-top: 8px; padding-bottom: 56px; }
+      .wl-press { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 34px; padding-top: 8px; padding-bottom: 56px; }
       .wl-press > span { font-family: var(--font-condensed); font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
       .wl-press img { height: 22px; width: auto; opacity: .62; filter: grayscale(1); }
 
@@ -493,13 +548,13 @@ const faqs = [
 
           <div class="wl-plans">
             {plans.map((p) => (
-              <div class="wl-plans__item">
+              <button type="button" class={p.best ? 'wl-plans__item wl-plans__item--best' : 'wl-plans__item'} data-term={p.term}>
                 <div class="wl-plans__price">{p.price}<span>*</span></div>
                 <div class="wl-plans__meta">
                   <span>{p.term}</span>
-                  <b>{p.save}</b>
+                  {p.save && <b>{p.save}</b>}
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </div>
@@ -607,7 +662,7 @@ const faqs = [
           <div class="wl-prod__frame">
             <!-- src seeded with sermorelin's first image — the exact value
                  longevity.js's init() assigns anyway. -->
-            <img id="mainProductImageL" src="/assets/l/sermorelin.jpeg" alt="Peptide protocol" />
+            <img id="mainProductImageL" src="/assets/l/sermorelin.png" alt="Peptide protocol" />
           </div>
           <div class="wl-prod__nav">
             <button class="wl-navbtn" id="prevBtnL" type="button" aria-label="Previous image">
@@ -619,6 +674,7 @@ const faqs = [
             </button>
           </div>
           <div id="thumbnailsContainerL"></div>
+          <p class="wl-foot" style="margin-top:14px;">Packaging and vial design shown are representative and may change. Your actual medication's appearance and labeling may differ.</p>
         </div>
 
         <div>
@@ -636,9 +692,11 @@ const faqs = [
           </div>
 
           <div class="wl-pricerow">
-            <span class="product-current-price">$129</span>
+            <span class="product-current-price">$79</span>
+            <span class="text-decoration-line-through">$129</span>
+            <span class="wl-plan__save" style="margin-left:8px;">Save 39%</span>
           </div>
-          <p class="wl-prod__per">per month</p>
+          <p class="wl-prod__per">per month, billed for the 24-month plan</p>
 
           <div id="featuresListL"></div>
 
@@ -655,6 +713,48 @@ const faqs = [
             <span>Start Your Assessment</span> <span class="wl-arw">→</span>
           </a>
           <p class="wl-foot">Compounded medications are not FDA-approved and are not equivalent to the brand-name drug.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ What's Included — moved out of the product gallery carousel ═══ -->
+    <section class="wl-sec" style="padding-top:0;">
+      <div class="wl-wrap">
+        <div class="wl-head">
+          <span class="wl-eyebrow">What's Included</span>
+          <h2 class="wl-serif">Your <em>longevity program.</em></h2>
+        </div>
+        <div class="wl-included">
+          {included.map((item) => (
+            <div class="wl-included__item">
+              <span class="wl-tick"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg></span>
+              <div>
+                <h3>{item.title}</h3>
+                <p>{item.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ Key Benefits — moved out of the product gallery carousel ═══ -->
+    <section class="wl-sec" style="padding-top:0;">
+      <div class="wl-wrap">
+        <div class="wl-head">
+          <span class="wl-eyebrow">Peptide Therapy Advantages</span>
+          <h2 class="wl-serif">Key <em>benefits.</em></h2>
+        </div>
+        <div class="wl-included">
+          {keyBenefits.map((item) => (
+            <div class="wl-included__item">
+              <span class="wl-tick"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg></span>
+              <div>
+                <h3>{item.title}</h3>
+                <p>{item.desc}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>
@@ -824,6 +924,22 @@ const faqs = [
         if (seen) t.classList.add('is-live');
         t.classList.toggle('is-idle', !seen);
       }, { threshold: 0.25 }).observe(t);
+    })();
+
+    /* What's Included / Key Benefits cards: staggered reveal-on-scroll,
+       once per card. Same mechanism as the homepage's Process/Journey
+       cards and weight-loss.astro/hair-loss.astro's own copy of this. */
+    (function () {
+      var items = document.querySelectorAll('.wl-included__item');
+      if (!items.length || !matchMedia('(prefers-reduced-motion: no-preference)').matches) return;
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('is-visible');
+          io.unobserve(entry.target);
+        });
+      }, { threshold: 0.25 });
+      items.forEach(function (el) { io.observe(el); });
     })();
   </script>
 </Layout>

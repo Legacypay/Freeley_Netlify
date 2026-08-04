@@ -38,9 +38,9 @@ const plans = [
     features: [
       'Compounded GLP-1 receptor agonist',
       'Average 15% body weight loss',
-      'Starts as low as $99.29 for month one',
+      'Starts as low as $179 on the 24-month plan',
     ],
-    price: '$99*',
+    price: '$179*',
   },
   {
     img: '/products-imgs/image-19.png',
@@ -60,7 +60,7 @@ const plans = [
       'Choose between Oral Pill or Topical Spray',
       'Precision-dosed by licensed physicians',
     ],
-    price: '$29',
+    price: '$49',
   },
   {
     img: '/products-imgs/image-21.png',
@@ -70,7 +70,7 @@ const plans = [
       'Customized stack tailored to you',
       'Physician review & expedited cold-shipping',
     ],
-    price: '$99',
+    price: '$79',
   },
 ];
 
@@ -79,7 +79,7 @@ const compareRows = [
   { label: 'Board-certified physician oversight', freeley: true, clinics: true, pharmacy: '–', telehealth: 'Varies' },
   { label: 'No in-person visit required', freeley: true, clinics: false, pharmacy: false, telehealth: true },
   { label: 'Compounded medication options', freeley: true, clinics: 'Rarely', pharmacy: false, telehealth: 'Some' },
-  { label: 'Monthly price (GLP-1 weight loss)', priceRow: true, freeley: '$99/month', clinics: '$300-500+', pharmacy: 'Varies', telehealth: '$199-$399' },
+  { label: 'Monthly price (GLP-1 weight loss)', priceRow: true, freeley: '$179/month', clinics: '$300-500+', pharmacy: 'Varies', telehealth: '$199-$399' },
   { label: 'Free shipping & discreet delivery', freeley: true, clinics: false, pharmacy: 'Varies', telehealth: true },
   { label: 'Compounded GLP-1 availability', freeley: true, clinics: true, pharmacy: true, telehealth: 'Some' },
   { label: 'Insurance not required', freeley: true, clinics: false, pharmacy: 'Varies', telehealth: true },
@@ -89,7 +89,7 @@ const compareRows = [
 ];
 
 const promiseCards = [
-  { title: 'Licensed Pharmacy', desc: 'All medications compounded at PCAB-accredited, 503A-licensed U.S. pharmacies.', img: '/assets/pricing/Licensed_Pharmacy.png' },
+  { title: 'Licensed Pharmacy', desc: 'All medications compounded by Strive Pharmacy, a PCAB-accredited, 503A-licensed U.S. pharmacy partner.', img: '/assets/strive.png' },
   { title: 'Physician Prescribed', desc: 'Every treatment is reviewed and prescribed by a board-certified, state-licensed physician.', img: '/assets/pricing/Physician-Prescribed.png' },
   { title: 'Third-Party Tested', desc: 'Every batch tested for potency, sterility, and purity by independent labs before shipping.', img: '/assets/pricing/Third-Party_Tested.png' },
 ];
@@ -391,10 +391,10 @@ const faqs = [
                 <div class="field">
                   <label for="treatmentSelect">Treatment</label>
                   <select class="wl-calc-select" id="treatmentSelect">
-                    <option value="99" data-freeley="99">GLP-1 Weight Loss</option>
+                    <option value="179" data-freeley="179">GLP-1 Weight Loss</option>
                     <option value="59" data-freeley="59">Sexual Wellness</option>
-                    <option value="29" data-freeley="29">Hair Loss</option>
-                    <option value="99" data-freeley="99">Longevity & Peptides</option>
+                    <option value="49" data-freeley="49">Hair Loss</option>
+                    <option value="79" data-freeley="79">Longevity & Peptides</option>
                   </select>
                 </div>
                 <div class="field">
@@ -445,7 +445,7 @@ const faqs = [
               <p>If you are not approved for treatment by our physicians, your consultation and any prepaid amounts are 100% refunded immediately.</p>
             </div>
             <div class="wl-legit">
-              <img src="/49921676-png@2x.png" alt="LegitScript certified" />
+              <img src="/assets/49921676.png" alt="LegitScript certified" />
               <span>LegitScript Certified</span>
             </div>
           </div>

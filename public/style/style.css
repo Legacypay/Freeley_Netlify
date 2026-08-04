@@ -74,7 +74,7 @@ header .container {
 }
 
 .navbar-brand-custom img {
-    height: 30px;
+    height: 45px;
     width: auto;
 }
 
@@ -602,7 +602,7 @@ header .container {
 }
 
 .bordered--heading span {
-    font-family: Inter;
+    font-family: var(--font-condensed);
     font-weight: 400;
     font-style: Regular;
     font-size: 12px;
@@ -614,7 +614,7 @@ header .container {
 }
 
 .hero--container .lead {
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 400;
     font-style: Regular;
     font-size: 16px;
@@ -625,7 +625,7 @@ header .container {
 }
 
 .weight-item {
-    font-family: Inter;
+    font-family: var(--font-sans);
     border-radius: 40px;
     border-width: 1px;
     padding-top: 10px;
@@ -649,7 +649,7 @@ header .container {
 }
 
 .weight-range {
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 500;
     font-style: Medium;
     font-size: 16px;
@@ -666,7 +666,7 @@ header .container {
 }
 
 .assessment-link span {
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 400;
     font-style: Regular;
     font-size: 14px;
@@ -678,7 +678,7 @@ header .container {
 
 .assessment-link a,
 .assessment-link button {
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 500;
     font-style: Medium;
     font-size: 14px;
@@ -728,7 +728,7 @@ main:not(.homepage) .steps--container .step:not(:last-child)::after {
 }
 
 .step--number {
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 600;
     font-style: Semi Bold;
     font-size: 12px;
@@ -758,7 +758,7 @@ main:not(.homepage) .steps--container .step:not(:last-child)::after {
 }
 
 .step-title {
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 400;
     font-size: 18px;
     line-height: 140%;
@@ -778,7 +778,7 @@ main:not(.homepage) .steps--container .step:not(:last-child)::after {
 }
 
 .hero--testimonial strong {
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-style: Regular;
     font-size: 12px;
     line-height: 140%;
@@ -787,7 +787,7 @@ main:not(.homepage) .steps--container .step:not(:last-child)::after {
 }
 
 .hero--testimonial span {
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 400;
     font-style: Italic;
     font-size: 12px;
@@ -798,7 +798,7 @@ main:not(.homepage) .steps--container .step:not(:last-child)::after {
 }
 
 .hero--brands strong {
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 500;
     font-style: Medium;
     font-size: 12px;
@@ -848,7 +848,7 @@ main:not(.homepage) .steps--container .step:not(:last-child)::after {
 }
 
 .feature-text {
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 400;
     font-style: Regular;
     font-size: 12px;
@@ -859,7 +859,7 @@ main:not(.homepage) .steps--container .step:not(:last-child)::after {
 }
 
 .step--subtitle {
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 400;
     font-style: Regular;
     font-size: 16px;
@@ -897,7 +897,7 @@ main:not(.homepage) .steps--container .step:not(:last-child)::after {
 }
 
 .protocol--text .verified--text {
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 500;
     font-style: Medium;
     font-size: 12px;
@@ -910,7 +910,7 @@ main:not(.homepage) .steps--container .step:not(:last-child)::after {
 }
 
 .protocol--text .percentage {
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 500;
     font-style: Medium;
     font-size: 24px;
@@ -921,7 +921,7 @@ main:not(.homepage) .steps--container .step:not(:last-child)::after {
 }
 
 .protocol--text p {
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 400;
     font-style: Regular;
     font-size: 16px;
@@ -932,7 +932,7 @@ main:not(.homepage) .steps--container .step:not(:last-child)::after {
 }
 
 .protocol--imgs span {
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 500;
     font-style: Medium;
     font-size: 12px;
@@ -981,7 +981,7 @@ main:not(.homepage) .steps--container .step:not(:last-child)::after {
 }
 
 .container.blur--bg strong {
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 500;
     font-style: Medium;
     font-size: 16px;
@@ -992,7 +992,7 @@ main:not(.homepage) .steps--container .step:not(:last-child)::after {
 }
 
 .container.blur--bg .from--to {
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 400;
     font-style: Regular;
     font-size: 16px;
@@ -1003,7 +1003,7 @@ main:not(.homepage) .steps--container .step:not(:last-child)::after {
 }
 
 .container.blur--bg .from--to span {
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 500;
     font-style: Medium;
     font-size: 20px;
@@ -1075,7 +1075,7 @@ main:not(.homepage) .steps--container .step:not(:last-child)::after {
 }
 
 .benefits h3 {
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 400;
     font-style: Regular;
     font-size: 20px;
@@ -1206,7 +1206,7 @@ main:not(.homepage) .steps--container .step:not(:last-child)::after {
     color: #1c1c1c;
     margin-bottom: 14px;
     line-height: 1.4;
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 400;
     font-style: Regular;
     font-size: 14px;
@@ -1294,7 +1294,7 @@ main:not(.homepage) .steps--container .step:not(:last-child)::after {
 .cancel-text {
     text-align: center;
     margin-top: 12px;
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 400;
     font-style: Regular;
     font-size: 14px;
@@ -1306,7 +1306,7 @@ main:not(.homepage) .steps--container .step:not(:last-child)::after {
 }
 
 .medicine-footer-note {
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 400;
     font-style: Regular;
     font-size: 14px;
@@ -1388,7 +1388,7 @@ main:not(.homepage) .steps--container .step:not(:last-child)::after {
 }
 
 .weight-loss {
-    font-family: 'Inter';
+    font-family: var(--font-sans);
     font-size: 30px;
     color: #c69552;
     font-style: italic;
@@ -1398,14 +1398,14 @@ main:not(.homepage) .steps--container .step:not(:last-child)::after {
 }
 
 .duration {
-    font-family: 'Inter';
+    font-family: var(--font-sans);
     font-size: 14px;
     color: #17222A;
     margin-bottom: 32px;
 }
 
 .review {
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 400;
     font-style: Regular;
     font-size: 14px;
@@ -1425,7 +1425,7 @@ main:not(.homepage) .steps--container .step:not(:last-child)::after {
 }
 
 .treatment {
-    font-family: 'Inter';
+    font-family: var(--font-sans);
     color: #999999;
     font-size: 14px;
     line-height: 140%;
@@ -1561,7 +1561,7 @@ main:not(.homepage) .steps--container .step:not(:last-child)::after {
 }
 
 .compare-label {
-    font-family: 'Inter';
+    font-family: var(--font-sans);
     position: absolute;
     top: 15px;
     left: 15px;
@@ -1595,7 +1595,7 @@ main:not(.homepage) .steps--container .step:not(:last-child)::after {
 
 .transform-author {
     padding: 0 15px 18px 15px;
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 400;
     font-style: Regular;
     font-size: 16px;
@@ -1733,7 +1733,7 @@ main:not(.homepage) .steps--container .step:not(:last-child)::after {
 }
 
 #themselves {
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 500;
     font-style: Medium;
     font-size: 14px;
@@ -1821,7 +1821,7 @@ main:not(.homepage) .steps--container .step:not(:last-child)::after {
 /* TABLE STYLES */
 
 .comparison-table {
-    font-family: Inter;
+    font-family: var(--font-sans);
     width: 100%;
     border-collapse: collapse;
     overflow: hidden;
@@ -1830,7 +1830,7 @@ main:not(.homepage) .steps--container .step:not(:last-child)::after {
 
 .comparison-table th {
     padding: 16px 12px;
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 400;
     font-style: Regular;
     font-size: 12px;
@@ -1995,7 +1995,7 @@ main:not(.homepage) .steps--container .step:not(:last-child)::after {
     display: flex;
     align-items: start;
     gap: 10px;
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 400;
     font-style: Italic;
     font-size: 16px;
@@ -2535,7 +2535,7 @@ main:not(.homepage) .steps--container .step:not(:last-child)::after {
 /* Timeline Styling */
 
 .timeline-badge {
-    font-family: Inter;
+    font-family: var(--font-sans);
     background: rgba(255, 255, 255, 0.25);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
@@ -2548,7 +2548,7 @@ main:not(.homepage) .steps--container .step:not(:last-child)::after {
 }
 
 .journey-badge {
-    font-family: 'Inter';
+    font-family: var(--font-sans);
     font-weight: 400;
     font-style: Regular;
     font-size: 12px;
@@ -2582,7 +2582,7 @@ main:not(.homepage) .steps--container .step:not(:last-child)::after {
 /* Timeline Styling */
 
 .timeline-badge {
-    font-family: Inter;
+    font-family: var(--font-sans);
     background: rgba(255, 255, 255, 0.25);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
@@ -2618,7 +2618,7 @@ main:not(.homepage) .steps--container .step:not(:last-child)::after {
 }
 
 .timeline-text {
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 400;
     font-style: Regular;
     font-size: 16px;
@@ -2929,7 +2929,7 @@ body:not(.homepage) .faq-items .faq-item.open .faq-toggle-icon {
     padding-top: 12px;
     text-align: left;
     padding: 14px 20px;
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 400;
     font-style: Regular;
     font-size: 14px;
@@ -3178,7 +3178,7 @@ section.cta--inner__pages::after {
 }
 
 .footer-header-text {
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 400;
     font-style: Regular;
     font-size: 14px;
@@ -3195,7 +3195,7 @@ section.cta--inner__pages::after {
 }
 
 .footer-company-info p {
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 400;
     font-style: Regular;
     font-size: 14px;
@@ -3233,7 +3233,7 @@ section.cta--inner__pages::after {
 }
 
 .footer-column-title {
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 400;
     font-style: Regular;
     font-size: 14px;
@@ -3253,7 +3253,7 @@ section.cta--inner__pages::after {
 }
 
 .footer-link {
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 400;
     font-style: Regular;
     font-size: 14px;
@@ -3275,7 +3275,7 @@ section.cta--inner__pages::after {
 }
 
 .footer-verified-title {
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 400;
     font-style: Regular;
     font-size: 14px;
@@ -3324,7 +3324,7 @@ section.cta--inner__pages::after {
 
 .footer-disclaimer-text,
 .footer-disclaimer {
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 400;
     font-style: Regular;
     font-size: 12px;
@@ -3341,7 +3341,7 @@ section.cta--inner__pages::after {
 }
 
 .footer-legal-link {
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-size: 11px;
     font-weight: 400;
     letter-spacing: 0%;
@@ -3482,7 +3482,7 @@ section.cta--inner__pages::after {
 /* Top Left Badge */
 
 .popular-badge {
-    font-family: Inter;
+    font-family: var(--font-sans);
     background-color: #0082621A;
     color: #008262;
     font-size: 12px;
@@ -3622,7 +3622,7 @@ section.cta--inner__pages::after {
 }
 
 .product-showcase-section .btn-pill {
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 500;
     font-style: Medium;
     font-size: 14px;
@@ -3636,7 +3636,7 @@ section.cta--inner__pages::after {
 .product-showcase-section .btn-pill.active {
     background-color: #034630 !important;
     color: #ffffff !important;
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 400;
     font-style: Regular;
     font-size: 20px;
@@ -3649,7 +3649,7 @@ section.cta--inner__pages::after {
 }
 
 .medication-toggle .btn {
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 500;
     font-style: Medium;
     font-size: 14px;
@@ -3677,7 +3677,7 @@ section.cta--inner__pages::after {
 }
 
 .product-showcase-section .product-current-price {
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 400;
     font-style: Regular;
     font-size: 44px;
@@ -3715,7 +3715,7 @@ section.cta--inner__pages::after {
  * *----------------*/
 
 .counter--section h4 {
-    font-family: Inter;
+    font-family: var(--font-sans);
     font-weight: 400;
     font-style: Regular;
     font-size: 30px;

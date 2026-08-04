@@ -50,13 +50,24 @@ const trustPoints = [
   'Cancel Anytime',
 ];
 
+// Pricing ladder — sourced from pricing.json hair-loss.default. Cedar/Ivy/Willow
+// are all priced identically per hl-script.js, so one ladder covers all three.
+// Same shape and "longer term = lower rate" framing as /weight-loss's ladder.
+const plans = [
+  { months: '1 month', price: '$89', term: '1', save: null },
+  { months: '3 months', price: '$75', term: '3', save: 'Save 16%' },
+  { months: '6 months', price: '$65', term: '6', save: 'Save 27%' },
+  { months: '12 months', price: '$59', term: '12', save: 'Save 34%' },
+  { months: '24 months', price: '$49', term: '24', save: 'Save 45%', best: true },
+];
+
 // "What's inside" cards — copy from the old page's desktop cards, art is the
 // page's own card PNGs (previously desktop-only CSS backgrounds).
 const mechanisms = [
   {
     title: 'Stops shedding in its tracks',
     desc: 'Blocks DHT at the source, halting the primary cause of male pattern baldness before you lose more.',
-    img: '/assets/hl/Stops_Shedding_In_Its_Tracks.png',
+    img: '/assets/hl/Stops_Shedding_In_Its_Tracks_v2.jpg',
     tint: '#D2CBC2',
   },
   {
@@ -75,9 +86,13 @@ const mechanisms = [
 
 // "94% of men keep the hair they have" — the old page's second card row.
 const proofCards = [
-  { title: 'Physician-prescribed ingredients', img: '/assets/hl/Physician-prescribed_ingredients.png', tint: '#E4DDD4' },
-  { title: '8 out of 10 see visible regrowth', img: '/assets/hl/8_out_of_10_see_visible_regrowth.png', tint: '#D1D9DC' },
-  { title: 'Works seamlessly into your routine', img: '/assets/hl/Works_seamlessly_into_your_routine.png', tint: '#F6EEE0' },
+  { title: 'Physician-prescribed ingredients', img: '/assets/hl/Physician-prescribed_ingredients.jpg', tint: '#E4DDD4' },
+  // The "8 out of 10" figure is approved copy (see PRODUCT.md) — kept as a
+  // badge overlaid on the photo (same recipe as index.astro's
+  // .process__badge "48hr Door-to-Door" chip) instead of the old bare-stat
+  // card, now that this card has a real photo again.
+  { title: 'See visible regrowth', img: '/assets/hl/Visible_Regrowth.jpg', badge: '8', badgeSuffix: '/10', tint: '#D1D9DC' },
+  { title: 'Works seamlessly into your routine', img: '/assets/hl/Works_seamlessly_into_your_routine_v2.jpg', tint: '#F6EEE0' },
 ];
 
 const press = [
@@ -85,6 +100,19 @@ const press = [
   { src: '/assets/brands/forbes.svg', name: 'Forbes' },
   { src: '/assets/brands/new_york.svg', name: 'The New York Times' },
   { src: '/assets/brands/tech_crunch.svg', name: 'TechCrunch' },
+];
+
+// Before/after pairs. before.png/after.png is the one real patient pair;
+// before-2..4/after-2..4 are staged reference photos matching that same
+// no-face photographic style (plain background, crown/temple/hairline crop
+// only), covering the angles and genders requested for the redesign.
+// Captions stay neutral/non-numeric except the first, which reuses the same
+// 94% figure already used elsewhere on this page (proofCards/wl-foot).
+const beforeAfterPairs = [
+  { before: '/assets/hl/before.png', after: '/assets/hl/after.png', quote: '94% of patients see results.' },
+  { before: '/assets/hl/before-2.jpg', after: '/assets/hl/after-2.jpg', quote: 'Real patient progress.' },
+  { before: '/assets/hl/before-3.jpg', after: '/assets/hl/after-3.jpg', quote: 'Visible results over time.' },
+  { before: '/assets/hl/before-4.jpg', after: '/assets/hl/after-4.jpg', quote: 'Consistent, gradual improvement.' },
 ];
 
 // Timeline. The old page listed Month 6 twice with identical copy — the
@@ -122,6 +150,36 @@ const timeline = [
 // weight-loss GI-side-effects paragraph — wrong drug, wrong page. Rewritten
 // from platform facts only (physician review, compounding, telehealth flow);
 // no medical claim here is invented. Flagged for owner review.
+// Pulled out of the product-image carousel (was product4.png/product5.png,
+// unreadable-as-text "What's Included"/"Expected Results" infographic
+// slides) — same fix already applied to weight-loss.astro. Copy transcribed
+// verbatim from those slides, not invented.
+const included = [
+  { title: 'Finasteride or Dutasteride', desc: 'Clinically proven DHT blockers, matched to your prescribed formula.' },
+  { title: 'Licensed provider review', desc: 'A board-certified physician reviews your intake and confirms your plan.' },
+  { title: 'Monthly supply delivered', desc: 'Consistent treatment shipped to your door every month.' },
+  { title: 'Progress monitoring', desc: 'Regular check-ins and dose adjustments as you go.' },
+  { title: 'Treatment guide', desc: 'Guidance to help you get the most out of your results.' },
+];
+
+const expectedResults = [
+  { range: 'Month 1–2', title: 'Reduced shedding', desc: 'Hair loss begins to slow.' },
+  { range: 'Month 3–4', title: 'Stabilization', desc: 'Noticeable decrease in thinning.' },
+  { range: 'Month 6+', title: 'New growth', desc: 'Visible regrowth in many patients.' },
+  { range: 'Ongoing', title: 'Maintenance', desc: 'Continue for lasting results.' },
+];
+
+// Copy transcribed verbatim from assets/brand/slide_discreet_shipping.png —
+// generic across every vertical, not hair-loss-specific. Shown as a compact
+// strip (not a third full checklist section) so it reads as reassurance
+// alongside the plan, not a third repeat of What's Included/Expected Results.
+const shipping = [
+  { title: 'Plain, unmarked packaging', desc: 'No visible medication labels.' },
+  { title: 'Temperature-controlled', desc: 'Cold-chain integrity maintained.' },
+  { title: 'Free standard shipping', desc: 'Included with every order.' },
+  { title: 'Tracking provided', desc: "Know exactly when it's arriving." },
+];
+
 const faqs = [
   {
     q: 'What side effects should I expect?',
@@ -210,6 +268,20 @@ const faqs = [
       .wl-hero__from .wl-price { font-size: 1.7rem; }
       .wl-hero__qual { font-family: var(--font-condensed); font-size: 12.5px; color: var(--muted); display: block; margin-top: 2px; }
 
+      /* ── Plan ladder — same shape as /weight-loss's ladder ─────
+         Cards are real <button>s (clickable/selectable), not divs, so the
+         reset below undoes the browser's default button chrome. */
+      .wl-plans { display: grid; gap: 10px; grid-template-columns: repeat(2, 1fr); margin: 0 0 4px; }
+      @media (min-width: 700px) { .wl-plans { grid-template-columns: repeat(5, 1fr); } }
+      .wl-plan { display: block; width: 100%; font: inherit; text-align: left; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; cursor: pointer; transition: border-color .15s, box-shadow .15s; }
+      .wl-plan--best { border-color: var(--brand); box-shadow: 0 6px 20px rgba(15,107,69,.10); }
+      .wl-plan.is-selected { border-color: var(--brand); box-shadow: 0 0 0 2px var(--brand) inset; }
+      .wl-plan__price { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 600; color: var(--ink); line-height: 1.1; }
+      .wl-plan--best .wl-plan__price { color: var(--gold); }
+      .wl-plan__mo { font-size: 12px; color: var(--muted); }
+      .wl-plan__term { font-size: 13px; font-weight: 600; margin-top: 6px; color: var(--ink); }
+      .wl-plan__save { display: inline-block; font-family: var(--font-condensed); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--brand); background: rgba(15,107,69,.08); border-radius: 999px; padding: 3px 9px; margin-top: 8px; }
+
       /* ── Trust bar ──────────────────────────────────────────── */
       .wl-trustbar { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
       .wl-trustbar ul { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 24px; list-style: none; margin: 0; padding-top: 20px; padding-bottom: 20px; }
@@ -237,8 +309,16 @@ const faqs = [
       .wl-mech { display: grid; gap: 16px; grid-template-columns: 1fr; }
       @media (min-width: 780px) { .wl-mech { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
       .wl-mech__card { display: flex; flex-direction: column; height: 100%; border-radius: 18px; overflow: hidden; background: var(--card); }
-      .wl-mech__img { aspect-ratio: 4 / 3; overflow: hidden; }
+      .wl-mech__img { position: relative; aspect-ratio: 4 / 3; overflow: hidden; }
       .wl-mech__img img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+      .wl-mech__stat { display: flex; align-items: flex-end; justify-content: center; gap: 4px; width: 100%; height: 100%; }
+      .wl-mech__stat span { font-size: clamp(3rem, 7vw, 4.6rem); font-weight: 600; line-height: 1; color: var(--ink); }
+      .wl-mech__stat em { font-style: normal; font-family: var(--font-serif); font-size: 1.4rem; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
+      /* Floating stat chip over the "See visible regrowth" photo — same
+         white-pill-with-shadow recipe as index.astro's .process__badge
+         ("48hr Door-to-Door"), scoped here under the wl- namespace. */
+      .wl-mech__badge { position: absolute; left: 14px; bottom: 14px; background: #fff; border-radius: 12px; padding: 8px 14px; box-shadow: 0 8px 24px rgba(0,0,0,.16); font-family: var(--font-serif); font-weight: 600; font-size: 1.05rem; color: var(--brand); line-height: 1.1; }
+      .wl-mech__badge small { display: block; font-family: var(--font-condensed); font-size: 9px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
       .wl-mech__body { padding: 20px 22px 24px; }
       .wl-mech__body h3 { font-family: var(--font-serif); font-size: 1.2rem; font-weight: 600; margin: 0 0 8px; line-height: 1.25; }
       .wl-mech__body p { font-size: 13.5px; color: var(--muted); margin: 0; }
@@ -255,9 +335,6 @@ const faqs = [
       .wl-ba__box--after .wl-ba__label { background: var(--green); color: #fff; }
       .wl-ba__quote { font-family: var(--font-serif); font-size: 1.05rem; font-style: italic; margin: 16px 0 6px; }
       .wl-ba__note { font-size: 11.5px; color: var(--muted); margin: 0; line-height: 1.4; }
-      .wl-ba__grid { display: flex; gap: 20px; padding-top: 6px; padding-bottom: 16px; }
-      .wl-ba__grid .wl-ba__card { flex: 0 0 320px; }
-      @media (min-width: 700px) { .wl-ba__grid .wl-ba__card { flex-basis: 400px; } }
 
       /* ── Product showcase (hl-script.js-driven) ─────────────── */
       .wl-prod { display: grid; gap: 40px; grid-template-columns: 1fr; align-items: start; }
@@ -424,8 +501,40 @@ const faqs = [
       .wl-why__pt p { font-size: 14px; color: var(--muted); margin: 0; max-width: 52ch; }
       .wl-tick { flex: none; width: 22px; height: 22px; border-radius: 999px; background: var(--brand); display: grid; place-items: center; }
 
+      /* ── What's Included / Expected Results ───────────────────
+         Pulled out of the product carousel — same fix as weight-loss.astro's
+         "What's Included": was two unreadable-as-text infographic image
+         slides shared across all three products, now real HTML text. */
+      .wl-included { display: grid; gap: 16px; grid-template-columns: 1fr; }
+      @media (min-width: 700px) { .wl-included { grid-template-columns: repeat(2, 1fr); gap: 16px; } }
+      .wl-included__item { display: flex; align-items: flex-start; gap: 14px; background: var(--card); border-radius: 16px; padding: 20px 22px; }
+      .wl-included__item h3 { font-size: 1rem; font-weight: 600; margin: 0 0 4px; }
+      .wl-included__item p { font-size: 13.5px; color: var(--muted); margin: 0; }
+      .wl-results__range { flex: none; font-family: var(--font-condensed); font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #fff; background: var(--brand); border-radius: 999px; padding: 5px 11px; white-space: nowrap; }
+
+      @media (prefers-reduced-motion: no-preference) {
+        .wl-included__item { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s cubic-bezier(.22,.61,.36,1); }
+        .wl-included__item.is-visible { opacity: 1; transform: none; }
+        .wl-included__item:nth-child(1) { transition-delay: 0s; }
+        .wl-included__item:nth-child(2) { transition-delay: .1s; }
+        .wl-included__item:nth-child(3) { transition-delay: .2s; }
+        .wl-included__item:nth-child(4) { transition-delay: .3s; }
+        .wl-included__item:nth-child(5) { transition-delay: .4s; }
+      }
+
+      /* Discreet Shipping — a compact dark-green strip (reuses .wl-journey's
+         --green band, already this page's own device) rather than a third
+         cream checklist section, so it reads as reassurance next to the
+         plan rather than more of the same list. */
+      .wl-shipstrip { display: grid; gap: 22px; grid-template-columns: repeat(2, 1fr); background: var(--green); border-radius: 18px; padding: 28px 26px; }
+      @media (min-width: 700px) { .wl-shipstrip { grid-template-columns: repeat(4, 1fr); } }
+      .wl-shipstrip__item { display: flex; align-items: flex-start; gap: 10px; }
+      .wl-shipstrip__tick { flex: none; width: 20px; height: 20px; border-radius: 999px; background: rgba(255,255,255,.16); display: grid; place-items: center; margin-top: 1px; }
+      .wl-shipstrip__item h3 { font-size: 13px; font-weight: 600; color: #fff; margin: 0 0 2px; }
+      .wl-shipstrip__item p { font-size: 12px; color: rgba(255,255,255,.7); margin: 0; }
+
       /* ── Press ──────────────────────────────────────────────── */
-      .wl-press { display: flex; flex-wrap: wrap; align-items: center; gap: 34px; padding-top: 8px; padding-bottom: 56px; }
+      .wl-press { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 34px; padding-top: 8px; padding-bottom: 56px; }
       .wl-press > span { font-family: var(--font-condensed); font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
       .wl-press img { height: 22px; width: auto; opacity: .62; filter: grayscale(1); }
 
@@ -479,7 +588,7 @@ const faqs = [
 
     <!-- ═══ Hero ═══ -->
     <section class="wl-hero">
-      <img class="wl-hero__img" src="/assets/hl/hero.png" alt="A Freeley hair-loss patient" fetchpriority="high" />
+      <img class="wl-hero__img" src="/assets/hl/hero-v2.png" alt="A Freeley hair-loss patient" fetchpriority="high" />
       <div class="wl-wrap wl-hero__inner">
         <div class="wl-hero__col">
           <div class="wl-badgeline">
@@ -493,7 +602,7 @@ const faqs = [
             delivered discreetly to your door. Keep your hair, and your confidence.
           </p>
 
-          <img class="wl-hero__img-mob" src="/assets/hl/hero-mob.png" alt="A Freeley hair-loss patient" />
+          <img class="wl-hero__img-mob" src="/assets/hl/hero-mob-v2.png" alt="A Freeley hair-loss patient" />
 
           <div class="wl-hero__from">
             From <span class="wl-price">$59</span>/month
@@ -536,6 +645,27 @@ const faqs = [
       <img src="/assets/49921676.png" alt="LegitScript Certified" loading="lazy" />
       <img src="/assets/usa_badge.png" alt="Made in USA" loading="lazy" />
     </div>
+
+    <!-- ═══ Plan ladder ═══ -->
+    <section class="wl-sec" style="padding-bottom:0;">
+      <div class="wl-wrap">
+        <div class="wl-head">
+          <span class="wl-eyebrow">Transparent Pricing</span>
+          <h2 class="wl-serif">One price. <em>No membership.</em></h2>
+          <p>The longer your plan, the lower your monthly rate. Every plan includes physician review and shipping.</p>
+        </div>
+        <div class="wl-plans">
+          {plans.map((p) => (
+            <button type="button" class={p.best ? 'wl-plan wl-plan--best is-selected' : 'wl-plan'} data-term={p.term} aria-pressed={p.best ? 'true' : 'false'}>
+              <div class="wl-plan__price">{p.price}<span class="wl-plan__mo">/mo</span></div>
+              <div class="wl-plan__term">{p.months}</div>
+              {p.save && <span class="wl-plan__save">{p.save}</span>}
+            </button>
+          ))}
+        </div>
+        <p class="wl-foot">Monthly rate billed for the full plan length.</p>
+      </div>
+    </section>
 
     <!-- ═══ Inline CTA band ═══ -->
     <section class="wl-sec" style="padding-bottom:0;">
@@ -586,25 +716,31 @@ const faqs = [
           <h2 class="wl-serif">Six months, <em>side by side.</em></h2>
         </div>
       </div>
-      <div class="wl-wrap">
-        <!-- Static single card: only one real before/after pair exists.
-             Do not loop this to fake variety — before/after photos are
-             presented as real patient results, so a fabricated or repeated
-             set is a deceptive-advertising risk, not a design choice. -->
-        <div class="wl-ba__grid">
-          <div class="wl-ba__card">
-            <div class="wl-ba__pair">
-              <div class="wl-ba__box">
-                <span class="wl-ba__label">Before</span>
-                <img src="/assets/hl/before.png" alt="Patient before treatment" loading="lazy" />
+      <div class="wl-wrap patient-results">
+        <!-- beforeAfterPairs holds staged reference photos matching the one
+             real patient pair's no-face photographic style — not a fabricated
+             loop over a single real pair. Real carousel, not a scroll strip:
+             ".patient-results .swiper" was already initialised in
+             hl-script.js but had no matching markup anywhere on the page
+             until now — reused as-is rather than writing a new Swiper init. -->
+        <div class="swiper wl-ba">
+          <div class="swiper-wrapper">
+            {beforeAfterPairs.map((pair) => (
+              <div class="swiper-slide wl-ba__card">
+                <div class="wl-ba__pair">
+                  <div class="wl-ba__box">
+                    <span class="wl-ba__label">Before</span>
+                    <img src={pair.before} alt="Patient before treatment" loading="lazy" />
+                  </div>
+                  <div class="wl-ba__box wl-ba__box--after">
+                    <span class="wl-ba__label">After</span>
+                    <img src={pair.after} alt="Patient after treatment" loading="lazy" />
+                  </div>
+                </div>
+                <p class="wl-ba__quote">{pair.quote}</p>
+                <p class="wl-ba__note">Individual results vary. Photos representative of typical outcomes.</p>
               </div>
-              <div class="wl-ba__box wl-ba__box--after">
-                <span class="wl-ba__label">After</span>
-                <img src="/assets/hl/after.png" alt="Patient after treatment" loading="lazy" />
-              </div>
-            </div>
-            <p class="wl-ba__quote">94% of patients see results.</p>
-            <p class="wl-ba__note">Individual results vary. Photos representative of typical outcomes.</p>
+            ))}
           </div>
         </div>
       </div>
@@ -621,6 +757,9 @@ const faqs = [
             <div class="wl-mech__card">
               <div class="wl-mech__img" style={`background:${c.tint}`}>
                 <img src={c.img} alt={c.title} loading="lazy" />
+                {c.badge && (
+                  <span class="wl-mech__badge">{c.badge}<small>{c.badgeSuffix}</small></span>
+                )}
               </div>
               <div class="wl-mech__body">
                 <h3>{c.title}</h3>
@@ -640,7 +779,7 @@ const faqs = [
           <div class="wl-prod__frame">
             <!-- src seeded with cedar's first image — the exact value
                  hl-script.js's initHair() assigns anyway. -->
-            <img id="mainProductImageHair" src="/assets/hl/product2.png" alt="Compounded hair-loss medication" />
+            <img id="mainProductImageHair" src="/assets/hl/product-cedar-straight.png" alt="Compounded hair-loss medication" />
           </div>
           <div class="wl-prod__nav">
             <button class="wl-navbtn" id="prevBtnHair" type="button" aria-label="Previous image">
@@ -652,6 +791,7 @@ const faqs = [
             </button>
           </div>
           <div id="thumbnailsContainerHair"></div>
+          <p class="wl-foot" style="margin-top:14px;">Packaging and bottle design shown are representative and may change. Your actual medication's appearance and labeling may differ.</p>
         </div>
 
         <div>
@@ -669,10 +809,11 @@ const faqs = [
           </div>
 
           <div class="wl-pricerow">
-            <span class="product-current-price">$89.00</span>
-            <span class="text-decoration-line-through"></span>
+            <span class="product-current-price">$49.00</span>
+            <span class="text-decoration-line-through">$89.00</span>
+            <span class="wl-plan__save" style="margin-left:8px;">Save 45%</span>
           </div>
-          <p class="wl-prod__per">per month</p>
+          <p class="wl-prod__per">per month, billed for the 24-month plan</p>
 
           <div id="featuresListHair"></div>
 
@@ -689,6 +830,66 @@ const faqs = [
             Start Your Assessment <span class="wl-arw">→</span>
           </a>
           <p class="wl-foot">Compounded medications are not FDA-approved and are not equivalent to the brand-name drug.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ What's Included ═══ -->
+    <section class="wl-sec" style="padding-top:0;">
+      <div class="wl-wrap">
+        <div class="wl-head">
+          <span class="wl-eyebrow">What's Included</span>
+          <h2 class="wl-serif">Everything your <em>plan covers</em></h2>
+        </div>
+        <div class="wl-included">
+          {included.map((item) => (
+            <div class="wl-included__item">
+              <span class="wl-tick"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg></span>
+              <div>
+                <h3>{item.title}</h3>
+                <p>{item.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ Expected Results ═══ -->
+    <section class="wl-sec" style="padding-top:0;">
+      <div class="wl-wrap">
+        <div class="wl-head">
+          <span class="wl-eyebrow">Clinical Timeline</span>
+          <h2 class="wl-serif">Expected <em>results</em></h2>
+        </div>
+        <div class="wl-included">
+          {expectedResults.map((r) => (
+            <div class="wl-included__item">
+              <span class="wl-results__range">{r.range}</span>
+              <div>
+                <h3>{r.title}</h3>
+                <p>{r.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <p class="wl-foot">*Individual results vary. Based on clinical studies of the active ingredients.</p>
+      </div>
+    </section>
+
+    <!-- ═══ Discreet Shipping ═══ -->
+    <section class="wl-sec" style="padding-top:0;">
+      <div class="wl-wrap">
+        <div class="wl-shipstrip">
+          {shipping.map((s) => (
+            <div class="wl-shipstrip__item">
+              <span class="wl-shipstrip__tick"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg></span>
+              <div>
+                <h3>{s.title}</h3>
+                <p>{s.desc}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>
@@ -858,6 +1059,39 @@ const faqs = [
         if (seen) t.classList.add('is-live');
         t.classList.toggle('is-idle', !seen);
       }, { threshold: 0.25 }).observe(t);
+    })();
+
+    /* What's Included / Expected Results cards: staggered reveal-on-scroll,
+       once per card. Same mechanism as the homepage's Process/Journey cards
+       — IntersectionObserver, not `animation-timeline: view()` (the
+       Safari/macOS gap that already caused a bug on this site). */
+    (function () {
+      var items = document.querySelectorAll('.wl-included__item');
+      if (!items.length || !matchMedia('(prefers-reduced-motion: no-preference)').matches) return;
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('is-visible');
+          io.unobserve(entry.target);
+        });
+      }, { threshold: 0.25 });
+      items.forEach(function (el) { io.observe(el); });
+    })();
+
+    /* Plan ladder: clicking a card selects it (single-select, like a radio
+       group) — purely visual, same as weight-loss.astro's plan ladder. */
+    (function () {
+      var plans = document.querySelectorAll('.wl-plan');
+      plans.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          plans.forEach(function (p) {
+            p.classList.remove('is-selected');
+            p.setAttribute('aria-pressed', 'false');
+          });
+          btn.classList.add('is-selected');
+          btn.setAttribute('aria-pressed', 'true');
+        });
+      });
     })();
   </script>
 </Layout>

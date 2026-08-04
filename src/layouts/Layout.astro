@@ -67,7 +67,14 @@ const { title, bodyClass } = Astro.props;
           var a = e.target.closest('a');
           if (!a) return;
           var href = a.getAttribute('href');
-          if (href && href.startsWith('/') && !href.startsWith('//') && !href.startsWith('/preview') && !href.startsWith('mailto:') && !href.startsWith('tel:')) {
+          // /assessment-quiz is excluded: QuizModal.astro attaches its own
+          // click handler directly to these anchors (preventDefault + open
+          // the modal). That listener runs first, but this document-level
+          // listener is a SEPARATE listener and still fired afterward,
+          // navigating to /preview/assessment-quiz out from under the
+          // modal it had just opened. QuizModal fetches /assessment-quiz
+          // directly for its content and never needs the /preview prefix.
+          if (href && href.startsWith('/') && !href.startsWith('//') && !href.startsWith('/preview') && !href.startsWith('/assessment-quiz') && !href.startsWith('mailto:') && !href.startsWith('tel:')) {
             e.preventDefault();
             window.location.href = '/preview' + (href === '/' ? '' : href);
           }

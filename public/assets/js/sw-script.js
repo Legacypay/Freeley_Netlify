@@ -10,6 +10,13 @@
     // =============================================
     // DATA CONFIGURATION - Edit this section only
     // =============================================
+    // images[] used to include product3/4/5.png — those are NOT product
+    // photos, they're the "What's Included" / "Key Benefits" / "Discreet
+    // Shipping" infographic slides (48/47/46KB, same content as
+    // assets/brand/slide_sw_*.png), stuffed into the carousel by mistake.
+    // Only product1.png (real troche photo) and product2.svg (real
+    // packaging art) belong here. The slide copy now lives as real HTML in
+    // sexual-wellness.astro's What's Included / Key Benefits sections.
     const swProductData = {
         tadalafil: {
             name: "Tadalafil",
@@ -17,18 +24,20 @@
             description: "Tadalafil supports sustained blood flow for up to 36 hours — available as a daily 5mg dose or an as-needed 20mg dose.",
             images: [
                 "/assets/sw/product1.png",
-                "/assets/sw/product2.svg",
-                "/assets/sw/product3.png",
-                "/assets/sw/product4.png",
-                "/assets/sw/product5.png"
+                "/assets/sw/product2.svg"
             ],
             features: [
                 "5mg daily or 20mg as-needed dosing",
                 "Dissolves under the tongue (sublingual)",
                 "Physician consultation & fast shipping included"
             ],
-            price: "$99.00",
-            originalPrice: null,
+            // Default to the 24-month plan rate (matches the plan ladder's
+            // pre-selected "best" card) with the 1-month rate struck through,
+            // both real tiers from pricing.json's sexual-wellness.standard —
+            // same convention as hl-script.js's Cedar/Ivy/Willow toggle.
+            price: "$59.00",
+            originalPrice: "$99.00",
+            save: "Save 40%",
             badge: "Most Popular"
         },
         olympus: {
@@ -36,19 +45,19 @@
             title: "Olympus",
             description: "Oxytocin and Bremelanotide combined with Tadalafil for enhanced arousal and sustained blood flow.",
             images: [
-                "/assets/sw/product5.png",
                 "/assets/sw/product1.png",
-                "/assets/sw/product2.svg",
-                "/assets/sw/product3.png",
-                "/assets/sw/product4.png"
+                "/assets/sw/product2.svg"
             ],
             features: [
                 "Oxytocin / Bremelanotide with or without Tadalafil",
                 "Dissolves under the tongue (sublingual)",
                 "Physician consultation & fast shipping included"
             ],
-            price: "$139.00",
-            originalPrice: null,
+            // Real tiers from pricing.json's sexual-wellness.premium
+            // (Olympus's own tier, distinct from Tadalafil's standard tier).
+            price: "$85.00",
+            originalPrice: "$139.00",
+            save: "Save 39%",
             badge: "Premium"
         }
     };
@@ -138,6 +147,12 @@
 
         const originalPrice = document.querySelector('.text-decoration-line-through');
         if (originalPrice) originalPrice.textContent = data.originalPrice || '';
+
+        // Scoped to .wl-pricerow: the plan ladder above also has .wl-plan__save
+        // badges (per-tier, not per-product), which a plain document-wide
+        // querySelector would hit first instead of the purchase panel's own.
+        const saveBadge = document.querySelector('.wl-pricerow .wl-plan__save');
+        if (saveBadge) saveBadge.textContent = data.save || '';
 
         const badge = document.querySelector('.popular-badge');
         if (badge) badge.textContent = data.badge;
@@ -275,6 +290,20 @@
 
     initSW();
 
+})();
+
+// =============================================
+// PLAN LADDER SELECT — single-select radio group, same active/inactive
+// class-swap pattern as the medication-toggle buttons above.
+// =============================================
+(function () {
+    const planButtons = document.querySelectorAll('.wl-plans .wl-plan');
+    planButtons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            planButtons.forEach(function (b) { b.classList.remove('is-selected'); });
+            btn.classList.add('is-selected');
+        });
+    });
 })();
 
 // =============================================

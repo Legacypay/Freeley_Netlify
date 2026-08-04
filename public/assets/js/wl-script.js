@@ -14,17 +14,21 @@
             name: "Semaglutide",
             title: "Compounded Semaglutide",
             description: "Semaglutide is a GLP-1 receptor agonist that helps regulate appetite and blood sugar levels.",
+            // product3.png ("What's Included"), product4.png (Telehealth
+            // Platform), and product5.png (Discreet Shipping) all moved out
+            // of the gallery into their own sections on weight-loss.astro —
+            // gallery now holds only real product photography: the new
+            // straight-on bottle shot, the lifestyle/unboxing shot, and the
+            // existing tilted bottle shot.
             images: [
-                "/assets/wl/semag.png",
+                "/assets/wl/semag-straight.png",
                 "/assets/wl/product2.png",
-                "/assets/wl/product3.png",
-                "/assets/wl/product4.png",
-                "/assets/wl/product5.png"
+                "/assets/wl/semag.png"
             ],
             features: [
                 "Compounded GLP-1 receptor agonist",
                 "Average 15% body weight loss",
-                "Starts as low as $99.29 for month one",
+                "Starts as low as $179 on the 24-month plan",
             ],
             price: "$199*",
             originalPrice: "$299.00",
@@ -35,16 +39,14 @@
             title: "Compounded Tirzepatide",
             description: "Tirzepatide is a dual GIP/GLP-1 receptor agonist for enhanced weight loss results.",
             images: [
-                "/assets/wl/tirzz.png",
+                "/assets/wl/tirzz-straight.png",
                 "/assets/wl/product2.png",
-                "/assets/wl/product3.png",
-                "/assets/wl/product4.png",
-                "/assets/wl/product5.png"
+                "/assets/wl/tirzz.png"
             ],
             features: [
                 "Compounded GLP-1 receptor agonist",
                 "Average 15% body weight loss",
-                "Starts as low as $99.29 for month one",
+                "Starts as low as $269 on the 24-month plan",
             ],
             price: "$299*",
             originalPrice: "$399.00",
@@ -248,6 +250,22 @@
             if (medication === 'semaglutide' || medication === 'tirzepatide') {
                 switchMedication(medication);
             }
+        });
+    });
+
+    // =============================================
+    // PLAN CARD SELECTION (single-select, radio-group style —
+    // same toggle pattern as the medication-toggle buttons above)
+    // =============================================
+    const planCards = document.querySelectorAll('.wl-plan');
+    planCards.forEach(function(card) {
+        card.addEventListener('click', function() {
+            planCards.forEach(function(c) {
+                c.classList.remove('wl-plan--selected');
+                c.setAttribute('aria-pressed', 'false');
+            });
+            this.classList.add('wl-plan--selected');
+            this.setAttribute('aria-pressed', 'true');
         });
     });
 

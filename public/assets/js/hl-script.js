@@ -161,65 +161,92 @@ var Tawk_API = Tawk_API || {},
             name: "Cedar",
             title: "Cedar Hair Growth Tablet",
             description: "Biotin, Finasteride, and Minoxidil combined in one daily tablet — DHT-blocking and follicle-stimulating action together.",
+            // Straight bottle -> pills -> tilted bottle. product2.png turned
+            // out to already be at a slight tilt (not truly straight-on),
+            // which paired with the new tilted shot left Cedar with two
+            // tilted-looking bottles — generated product-cedar-straight.png
+            // as a genuinely straight replacement instead (2026-08-04).
+            // product1.png (Willow's OWN labeled bottle — wrong ingredients
+            // to show a Cedar shopper) is no longer used here.
+            // product4/product5 (old "What's Included"/"Expected Results"
+            // infographic slides) live as real HTML sections below the
+            // gallery instead — see hair-loss.astro.
             images: [
-                "/assets/hl/product2.png",
-                "/assets/hl/product1.png",
+                "/assets/hl/product-cedar-straight.png",
                 "/assets/hl/product3.png",
-                "/assets/hl/product4.png",
-                "/assets/hl/product5.png"
+                "/assets/hl/product-cedar-tilted.png"
             ],
             features: [
                 "Biotin 5mg / Finasteride 1mg / Minoxidil 2.5mg",
                 "One tablet by mouth, once daily",
                 "Precision-dosed by licensed physicians"
             ],
-            price: "$89.00",
-            originalPrice: null,
+            // Default to the 24-month plan rate (matches the plan ladder's
+            // pre-selected "best" card) with the 1-month rate struck through,
+            // instead of a fake "was" price — both numbers are real tiers
+            // from the same `plans` ladder, not invented for the discount look.
+            price: "$49.00",
+            originalPrice: "$89.00",
             badge: "Most Popular"
         },
         ivy: {
             name: "Ivy",
             title: "Ivy Hair Tablet (Women 45+)",
             description: "Minoxidil and Dutasteride with Biotin, formulated for women 45 and older.",
-            // ponytail: no bottle asset is labeled Dutasteride (product1=Spironolactone/
-            // Willow, product2=Finasteride/Cedar) — leads with the neutral pill photo
-            // (product3) instead of a wrong bottle, and so it no longer collides with
-            // Willow's identical product1-led order.
+            // product-ivy.png generated 2026-08-04 (Gemini 3.1 Flash Image), matching
+            // Cedar/Willow's bottle style with the correct "Dutasteride, Minoxidil,
+            // Biotin" label — replaces the old workaround that had to avoid showing
+            // any bottle at all because product1/product2 are Willow's and Cedar's
+            // OWN labeled bottles (wrong ingredients for an Ivy shopper to see).
+            // Straight bottle -> pills -> tilted bottle, same sequence as
+            // Cedar/Willow. product4/product5 (old "What's Included"/
+            // "Expected Results" infographic slides) live as real HTML
+            // sections below the gallery instead — see hair-loss.astro.
             images: [
+                "/assets/hl/product-ivy.png",
                 "/assets/hl/product3.png",
-                "/assets/hl/product1.png",
-                "/assets/hl/product2.png",
-                "/assets/hl/product4.png",
-                "/assets/hl/product5.png"
+                "/assets/hl/product-ivy-tilted.png"
             ],
             features: [
                 "Minoxidil 1mg / Dutasteride 0.4mg with Biotin",
                 "One tablet by mouth, once daily",
                 "Precision-dosed by licensed physicians"
             ],
-            price: "$89.00",
-            originalPrice: null,
+            // Default to the 24-month plan rate (matches the plan ladder's
+            // pre-selected "best" card) with the 1-month rate struck through,
+            // instead of a fake "was" price — both numbers are real tiers
+            // from the same `plans` ladder, not invented for the discount look.
+            price: "$49.00",
+            originalPrice: "$89.00",
             badge: "For Women 45+"
         },
         willow: {
             name: "Willow",
             title: "Willow Hair Tablet (Women Under 45)",
             description: "Minoxidil and Spironolactone with Biotin, formulated for women under 45.",
+            // Straight bottle -> pills -> tilted bottle. product2.png (was
+            // here as image 2) is Cedar's OWN labeled bottle — wrong
+            // ingredients to show a Willow shopper — swapped for Willow's
+            // own tilted shot (generated 2026-08-04, matches product1.png's
+            // label). product4/product5 (old "What's Included"/"Expected
+            // Results" infographic slides) live as real HTML sections below
+            // the gallery instead — see hair-loss.astro.
             images: [
                 "/assets/hl/product1.png",
-                "/assets/hl/product2.png",
                 "/assets/hl/product3.png",
-                "/assets/hl/product4.png",
-                "/assets/hl/product5.png"
+                "/assets/hl/product-willow-tilted.png"
             ],
-            // ponytail: willow already led with product1.png (correct — matches its formula); left unchanged
             features: [
                 "Minoxidil 1mg / Spironolactone 60mg with Biotin",
                 "One tablet by mouth, once daily",
                 "Precision-dosed by licensed physicians"
             ],
-            price: "$89.00",
-            originalPrice: null,
+            // Default to the 24-month plan rate (matches the plan ladder's
+            // pre-selected "best" card) with the 1-month rate struck through,
+            // instead of a fake "was" price — both numbers are real tiers
+            // from the same `plans` ladder, not invented for the discount look.
+            price: "$49.00",
+            originalPrice: "$89.00",
             badge: "For Women Under 45"
         }
     };
@@ -438,4 +465,18 @@ var Tawk_API = Tawk_API || {},
 
     initHair();
 
+})();
+
+// =============================================
+// PLAN LADDER SELECT — single-select radio group, same active/inactive
+// class-swap pattern as the medication-toggle buttons above.
+// =============================================
+(function () {
+    const planButtons = document.querySelectorAll('.wl-plans .wl-plan');
+    planButtons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            planButtons.forEach(function (b) { b.classList.remove('is-selected'); });
+            btn.classList.add('is-selected');
+        });
+    });
 })();
