@@ -97,9 +97,10 @@ const mechanisms = [
 // "What's Included" checklist — copy transcribed verbatim from
 // assets/brand/slide_sw_whats_included.png. That slide's content was
 // ALSO trapped as an unreadable image (public/assets/sw/product3.png)
-// inside sw-script.js's product-gallery images[] array; removed there,
-// pulled out here as real HTML — same fix weight-loss.astro and
-// hair-loss.astro already got for their own trapped slides.
+// inside sw-script.js's product-gallery images[] array; removed there.
+// Rendered as real HTML now, as a slide INSIDE the same product-image
+// carousel (see wl-prod__info in the showcase markup below) instead of a
+// stacked section — same fix weight-loss.astro's commit already got.
 const included = [
   { title: 'Tadalafil Troches', desc: 'Fast-dissolving sublingual tablets.' },
   { title: 'Licensed Provider Review', desc: 'Discreet physician consultation.' },
@@ -109,7 +110,9 @@ const included = [
 
 // "Key Benefits" checklist — copy transcribed verbatim from
 // assets/brand/slide_sw_benefits.png, same trapped-image bug
-// (public/assets/sw/product4.png), same fix.
+// (public/assets/sw/product4.png). Same treatment as `included` above:
+// a real HTML slide inside the product carousel instead of a stacked
+// section.
 const benefits = [
   { title: 'Faster Absorption', desc: 'Sublingual delivery for quick onset.' },
   { title: 'Long-Lasting Effect', desc: 'Up to 36 hours of readiness.' },
@@ -322,7 +325,7 @@ const faqs = [
       @media (min-width: 900px) { .wl-prod { grid-template-columns: 1fr 1fr; gap: 56px; } }
       .wl-prod__stage { background: var(--card); border-radius: 22px; padding: 22px; }
       .popular-badge { display: inline-block; font-family: var(--font-condensed); font-size: 11px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; background: var(--gold); color: #fff; border-radius: 999px; padding: 5px 12px; }
-      .wl-prod__frame { display: grid; place-items: center; padding: 26px 0 18px; min-height: 280px; }
+      .wl-prod__frame { display: grid; place-items: center; padding: 26px 0 18px; min-height: 280px; position: relative; }
       .wl-prod__frame img { max-height: 260px; width: auto; transition: opacity .2s ease; }
       .wl-prod__frame img.fade-out { opacity: 0; }
       .wl-prod__frame img.fade-in { opacity: 1; }
@@ -335,6 +338,26 @@ const faqs = [
       #thumbnailsContainerSW { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
       #thumbnailsContainerSW .thumb-box { border: 1px solid var(--line); border-radius: 12px; padding: 5px; cursor: pointer; background: #fff; transition: border-color .15s; }
       #thumbnailsContainerSW .thumb-box.active { border-color: var(--brand); }
+      /* Label-style thumb for the 2 info slides below — same box, text
+         instead of a photo since there's no product shot to preview. */
+      #thumbnailsContainerSW .thumb-box--label { padding: 5px 12px; display: grid; place-items: center; font-family: var(--font-condensed); font-size: 10.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+      #thumbnailsContainerSW .thumb-box--label.active { color: var(--brand); }
+
+      /* ── Info slides — What's Included / Key Benefits, now real HTML
+         slides INSIDE the gallery (same dots/prev/next as the product
+         photos) instead of 2 extra sections stacked below the showcase.
+         Only one of {img, .wl-prod__info} is visible at a time — see
+         sw-script.js's goToSW(). ── */
+      .wl-prod__info { display: none; width: 100%; padding: 0 6px; text-align: left; transition: opacity .2s ease; }
+      .wl-prod__info.is-active { display: block; }
+      .wl-prod__info.fade-out { opacity: 0; }
+      .wl-prod__info.fade-in { opacity: 1; }
+      .wl-prod__info-eyebrow { display: block; font-family: var(--font-condensed); font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--brand); margin-bottom: 14px; }
+      .wl-prod__info-list { display: flex; flex-direction: column; gap: 14px; }
+      .wl-prod__info-item { display: flex; align-items: flex-start; gap: 12px; }
+      .wl-prod__info-item .wl-tick { margin-top: 1px; }
+      .wl-prod__info-item h4 { font-size: 13.5px; font-weight: 600; margin: 0 0 3px; }
+      .wl-prod__info-item p { font-size: 12.5px; color: var(--muted); margin: 0; line-height: 1.4; }
 
       .wl-trustpilot { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
       .wl-trustpilot span { font-family: var(--font-condensed); font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
@@ -361,26 +384,6 @@ const faqs = [
       .wl-note { display: flex; align-items: flex-start; gap: 10px; background: #fbf5e6; border: 1px solid #ecd9a8; border-radius: 12px; padding: 13px 15px; margin-bottom: 24px; }
       .wl-note p { font-size: 13px; color: #6b5522; margin: 0; }
       .wl-note svg { flex: none; margin-top: 1px; }
-
-      /* ── What's Included / Key Benefits ────────────────────────
-         Pulled out of the product carousel — same fix as weight-loss.astro
-         and hair-loss.astro's "What's Included": was an unreadable-as-text
-         infographic image slide shared across both products, now real
-         HTML text. */
-      .wl-included { display: grid; gap: 16px; grid-template-columns: 1fr; }
-      @media (min-width: 700px) { .wl-included { grid-template-columns: repeat(2, 1fr); gap: 16px; } }
-      .wl-included__item { display: flex; align-items: flex-start; gap: 14px; background: var(--card); border-radius: 16px; padding: 20px 22px; }
-      .wl-included__item h3 { font-size: 1rem; font-weight: 600; margin: 0 0 4px; }
-      .wl-included__item p { font-size: 13.5px; color: var(--muted); margin: 0; }
-
-      @media (prefers-reduced-motion: no-preference) {
-        .wl-included__item { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s cubic-bezier(.22,.61,.36,1); }
-        .wl-included__item.is-visible { opacity: 1; transform: none; }
-        .wl-included__item:nth-child(1) { transition-delay: 0s; }
-        .wl-included__item:nth-child(2) { transition-delay: .1s; }
-        .wl-included__item:nth-child(3) { transition-delay: .2s; }
-        .wl-included__item:nth-child(4) { transition-delay: .3s; }
-      }
 
       /* ── Journey ────────────────────────────────────────────── */
       .wl-journey { position: relative; overflow: hidden; border-radius: 22px; background: var(--green); }
@@ -702,6 +705,41 @@ const faqs = [
             <!-- src seeded with tadalafil's first image — the exact value
                  sw-script.js's initSW() assigns anyway. -->
             <img id="mainProductImageSW" src="/assets/sw/product1.png" alt="Compounded sexual wellness medication" />
+
+            <!-- Info slides — same 2 gallery-carousel stops the old
+                 product3/4.png infographic images used to occupy, now real
+                 HTML instead of unreadable-as-text pictures. sw-script.js
+                 appends these after the photo slides (same dots/prev/next)
+                 so the checklist copy lives inside the showcase instead of
+                 two extra full-width sections stacking below it. -->
+            <div class="wl-prod__info" data-info-slide="included">
+              <span class="wl-prod__info-eyebrow">What's Included</span>
+              <div class="wl-prod__info-list">
+                {included.map((item) => (
+                  <div class="wl-prod__info-item">
+                    <span class="wl-tick"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg></span>
+                    <div>
+                      <h4>{item.title}</h4>
+                      <p>{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div class="wl-prod__info" data-info-slide="benefits">
+              <span class="wl-prod__info-eyebrow">Why Tadalafil Troches</span>
+              <div class="wl-prod__info-list">
+                {benefits.map((item) => (
+                  <div class="wl-prod__info-item">
+                    <span class="wl-tick"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg></span>
+                    <div>
+                      <h4>{item.title}</h4>
+                      <p>{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
           <div class="wl-prod__nav">
             <button class="wl-navbtn" id="prevBtnSW" type="button" aria-label="Previous image">
@@ -751,48 +789,6 @@ const faqs = [
             Start Your Assessment <span class="wl-arw">→</span>
           </a>
           <p class="wl-foot">Compounded medications are not FDA-approved and are not equivalent to the brand-name drug.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ═══ What's Included ═══ -->
-    <section class="wl-sec" style="padding-top:0;">
-      <div class="wl-wrap">
-        <div class="wl-head">
-          <span class="wl-eyebrow">What's Included</span>
-          <h2 class="wl-serif">Everything your <em>plan covers</em></h2>
-        </div>
-        <div class="wl-included">
-          {included.map((item) => (
-            <div class="wl-included__item">
-              <span class="wl-tick"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg></span>
-              <div>
-                <h3>{item.title}</h3>
-                <p>{item.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-
-    <!-- ═══ Key Benefits ═══ -->
-    <section class="wl-sec" style="padding-top:0;">
-      <div class="wl-wrap">
-        <div class="wl-head">
-          <span class="wl-eyebrow">Why Tadalafil Troches</span>
-          <h2 class="wl-serif">Key <em>benefits</em></h2>
-        </div>
-        <div class="wl-included">
-          {benefits.map((item) => (
-            <div class="wl-included__item">
-              <span class="wl-tick"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg></span>
-              <div>
-                <h3>{item.title}</h3>
-                <p>{item.desc}</p>
-              </div>
-            </div>
-          ))}
         </div>
       </div>
     </section>
@@ -988,23 +984,6 @@ const faqs = [
         if (seen) t.classList.add('is-live');
         t.classList.toggle('is-idle', !seen);
       }, { threshold: 0.25 }).observe(t);
-    })();
-
-    /* What's Included / Key Benefits cards: staggered reveal-on-scroll,
-       once per card. Same mechanism as /weight-loss and /hair-loss —
-       IntersectionObserver, not `animation-timeline: view()` (the
-       Safari/macOS gap that already caused a bug on this site). */
-    (function () {
-      var items = document.querySelectorAll('.wl-included__item');
-      if (!items.length || !matchMedia('(prefers-reduced-motion: no-preference)').matches) return;
-      var io = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (!entry.isIntersecting) return;
-          entry.target.classList.add('is-visible');
-          io.unobserve(entry.target);
-        });
-      }, { threshold: 0.25 });
-      items.forEach(function (el) { io.observe(el); });
     })();
   </script>
 </Layout>
