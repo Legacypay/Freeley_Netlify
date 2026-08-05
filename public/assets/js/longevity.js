@@ -80,6 +80,17 @@
     };
 
     // =============================================
+    // INFO SLIDES — What's Included / Peptide Therapy Advantages. Same
+    // content on every medication (not per-SKU), appended after the photo
+    // slide so they share the gallery's dots/prev/next instead of living
+    // in 2 separate sections below the showcase.
+    // =============================================
+    const INFO_SLIDES = [
+        { key: 'included', label: 'Included' },
+        { key: 'keyBenefits', label: 'Benefits' }
+    ];
+
+    // =============================================
     // GALLERY STATE
     // =============================================
     let currentMedication = 'sermorelin';
@@ -95,6 +106,7 @@
     const thumbContainer = document.getElementById("thumbnailsContainerL");
     const featuresContainer = document.getElementById("featuresListL");
     const medicationButtons = document.querySelectorAll('.medication-toggle .btn');
+    const infoSlideEls = document.querySelectorAll('.wl-prod__info');
 
     // =============================================
     // HELPER FUNCTIONS
@@ -107,8 +119,13 @@
         return getCurrentData().images;
     }
 
+    // Total slide count = product photos + the 2 fixed info slides.
+    function getSlideCount() {
+        return getImagePaths().length + INFO_SLIDES.length;
+    }
+
     // =============================================
-    // GENERATE THUMBNAILS FROM MAIN IMAGES
+    // GENERATE THUMBNAILS FROM MAIN IMAGES + INFO SLIDES
     // =============================================
     function generateThumbnails(images) {
         if (!thumbContainer) return;
@@ -134,6 +151,21 @@
             thumbDiv.addEventListener('click', function() {
                 const idx = parseInt(this.getAttribute('data-index'), 10);
                 goTo(idx);
+            });
+        });
+
+        // No product photo to preview for these — a text label chip
+        // instead of an image thumb.
+        INFO_SLIDES.forEach((slide, i) => {
+            const index = images.length + i;
+            const thumbDiv = document.createElement('div');
+            thumbDiv.className = 'thumb-box thumb-box--label';
+            thumbDiv.setAttribute('data-index', index);
+            thumbDiv.textContent = slide.label;
+            thumbContainer.appendChild(thumbDiv);
+
+            thumbDiv.addEventListener('click', function() {
+                goTo(index);
             });
         });
     }
@@ -201,15 +233,42 @@
     // =============================================
     function goTo(index) {
         const images = getImagePaths();
-        if (index < 0) index = images.length - 1;
-        if (index >= images.length) index = 0;
+        const total = getSlideCount();
+        if (index < 0) index = total - 1;
+        if (index >= total) index = 0;
 
         if (mainImg) {
-            mainImg.classList.add("fade-out");
+            // Whichever element (the photo, or the currently-shown info slide)
+            // is on screen right now is what fades out — not always mainImg.
+            const outgoing = currentIndex < images.length
+                ? mainImg
+                : infoSlideEls[currentIndex - images.length];
+            if (outgoing) outgoing.classList.add("fade-out");
 
             setTimeout(function() {
                 currentIndex = index;
-                mainImg.src = images[currentIndex];
+                const showingImage = currentIndex < images.length;
+
+                // Clear stale fade classes off EVERY slide element first — a
+                // slide hidden via display:none while mid-fade (e.g. an image
+                // slide swapped away from while an info slide was showing)
+                // would otherwise keep its "fade-out" class forever and render
+                // invisible the next time it's shown (e.g. after a medication
+                // switch resets back to slide 0).
+                mainImg.classList.remove("fade-out", "fade-in");
+                infoSlideEls.forEach(function(el) { el.classList.remove("fade-out", "fade-in"); });
+
+                if (showingImage) {
+                    mainImg.src = images[currentIndex];
+                    mainImg.style.display = "";
+                    infoSlideEls.forEach(function(el) { el.classList.remove("is-active"); });
+                } else {
+                    mainImg.style.display = "none";
+                    const infoIndex = currentIndex - images.length;
+                    infoSlideEls.forEach(function(el, i) {
+                        el.classList.toggle("is-active", i === infoIndex);
+                    });
+                }
 
                 const dots = document.querySelectorAll("#dotContainerL .dot-indicator");
                 dots.forEach(function(d, i) {
@@ -221,12 +280,14 @@
                     tb.classList.toggle("active", i === currentIndex);
                 });
 
-                mainImg.classList.remove("fade-out");
-                mainImg.classList.add("fade-in");
-
-                setTimeout(function() {
-                    mainImg.classList.remove("fade-in");
-                }, 400);
+                const incoming = showingImage ? mainImg : infoSlideEls[currentIndex - images.length];
+                if (incoming) {
+                    incoming.classList.remove("fade-out");
+                    incoming.classList.add("fade-in");
+                    setTimeout(function() {
+                        incoming.classList.remove("fade-in");
+                    }, 400);
+                }
             }, 200);
         }
     }
@@ -242,9 +303,12 @@
 
         if (mainImg) {
             mainImg.src = images[0];
+            mainImg.style.display = "";
+            mainImg.classList.remove("fade-out", "fade-in");
         }
+        infoSlideEls.forEach(function(el) { el.classList.remove("is-active", "fade-out", "fade-in"); });
         generateThumbnails(images);
-        generateDots(images.length);
+        generateDots(getSlideCount());
         updateDetails();
 
         const thumbs = document.querySelectorAll("#thumbnailsContainerL .thumb-box");
@@ -305,9 +369,12 @@
 
         if (mainImg) {
             mainImg.src = images[0];
+            mainImg.style.display = "";
+            mainImg.classList.remove("fade-out", "fade-in");
         }
+        infoSlideEls.forEach(function(el) { el.classList.remove("is-active", "fade-out", "fade-in"); });
         generateThumbnails(images);
-        generateDots(images.length);
+        generateDots(getSlideCount());
         updateDetails();
     }
 
