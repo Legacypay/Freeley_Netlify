@@ -23,11 +23,11 @@ const nav = [
 
 <header>
   <div class="container navbar-custom">
-    <a href="/" class="navbar-brand-custom">
+    <a href="/" class="navbar-brand-custom" data-preview-aware>
       <Image src={logo} alt="Freeley" loading="eager" />
     </a>
     <nav class="navbar-nav-custom">
-      {nav.map((item) => <a href={item.href} class="navbar-link">{item.label}</a>)}
+      {nav.map((item) => <a href={item.href} class="navbar-link" data-preview-aware>{item.label}</a>)}
     </nav>
     <div class="navbar-actions">
       <button type="button" class="btn-check-eligibility" id="start-assessment-header">
@@ -39,14 +39,28 @@ const nav = [
     </div>
   </div>
   <nav class="navbar-mobile" id="siteNavMobile">
-    {nav.map((item) => <a href={item.href} class="navbar-link">{item.label}</a>)}
+    {nav.map((item) => <a href={item.href} class="navbar-link" data-preview-aware>{item.label}</a>)}
     {/* An <a>, not the modal trigger: on phones the quiz page beats a
         modal-in-iframe, and the id must stay unique to the desktop CTA. */}
-    <a href="/assessment-quiz" class="navbar-mobile-cta">Start Assessment <span class="navbar-cta-arw">→</span></a>
+    <a href="/assessment-quiz" class="navbar-mobile-cta" data-preview-aware>Start Assessment <span class="navbar-cta-arw">→</span></a>
   </nav>
 
   <script is:inline>
     (function () {
+      /* Navbar links are absolute (/hair-loss, /about, ...), so a click from
+         /preview/* used to jump straight to the real path — which isn't on
+         the waitlist gate's allow-list and lands on /waitlist. Same fix the
+         CTA button already had below: keep navigation under /preview/* while
+         browsing the mockup. */
+      if (window.location.pathname.startsWith('/preview')) {
+        document.querySelectorAll('a[data-preview-aware]').forEach(function (a) {
+          var href = a.getAttribute('href');
+          if (href && href.charAt(0) === '/' && !href.startsWith('/preview')) {
+            a.setAttribute('href', '/preview' + href);
+          }
+        });
+      }
+
       var b = document.getElementById('siteNavBurger');
       var m = document.getElementById('siteNavMobile');
       if (b && m) {
