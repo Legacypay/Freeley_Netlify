@@ -897,20 +897,20 @@ const press = [
     <!-- Header -->
     <header>
       <div class="wrap nav">
-        <a href="/" class="nav__logo"><Image src={logo} alt="Freeley" /></a>
+        <a href="/" class="nav__logo" data-preview-aware><Image src={logo} alt="Freeley" /></a>
         <nav class="nav__links">
-          {nav.map((item) => <a href={item.href}>{item.label}</a>)}
+          {nav.map((item) => <a href={item.href} data-preview-aware>{item.label}</a>)}
         </nav>
         <div class="nav__right">
-          <a href={ASSESSMENT} class="pill nav__cta">Start Assessment <span class="arw">→</span></a>
+          <a href={ASSESSMENT} class="pill nav__cta" data-preview-aware>Start Assessment <span class="arw">→</span></a>
           <button class="nav__burger" id="navBurger" aria-label="Open menu" aria-expanded="false" aria-controls="navMobile">
             <span></span><span></span><span></span>
           </button>
         </div>
       </div>
       <nav class="nav__mobile" id="navMobile">
-        {nav.map((item) => <a href={item.href}>{item.label}</a>)}
-        <a href={ASSESSMENT} class="pill">Start Assessment <span class="arw">→</span></a>
+        {nav.map((item) => <a href={item.href} data-preview-aware>{item.label}</a>)}
+        <a href={ASSESSMENT} class="pill" data-preview-aware>Start Assessment <span class="arw">→</span></a>
       </nav>
     </header>
 
@@ -1291,6 +1291,22 @@ const press = [
         b.addEventListener('click', function () {
           var open = m.classList.toggle('open');
           b.setAttribute('aria-expanded', String(open));
+        });
+      })();
+
+      /* This page IS /preview (it's also the live homepage at /). Its navbar
+         hrefs are absolute (/weight-loss, /about, ...), none of which are on
+         the waitlist gate's allow-list — clicking one from /preview jumped
+         straight to the real path and fell through to the forced /waitlist
+         rewrite. Keep navigation under /preview/* while browsing the mockup,
+         same fix already applied to Header.astro (used by the other pages). */
+      (function () {
+        if (!window.location.pathname.startsWith('/preview')) return;
+        document.querySelectorAll('a[data-preview-aware]').forEach(function (a) {
+          var href = a.getAttribute('href');
+          if (href && href.charAt(0) === '/' && !href.startsWith('/preview')) {
+            a.setAttribute('href', '/preview' + href);
+          }
         });
       })();
 
