@@ -107,10 +107,13 @@ const mechanisms = [
   },
 ];
 
-// ponytail: pulled out of the product-image carousel (was product3.png, an
-// unreadable-as-text "What's Included" infographic slide). Checklist copy
-// below is a placeholder reconstruction, not extracted from the graphic —
-// confirm exact wording with the client before this ships as final.
+// ponytail: was product3.png, an unreadable-as-text "What's Included"
+// infographic slide baked into the gallery. Rendered as real HTML now,
+// as a slide INSIDE the same product-image carousel (see wl-prod__info
+// in the showcase markup below) instead of a stacked section — keeps the
+// checklist readable without adding extra page scroll. Checklist copy is
+// a placeholder reconstruction, not extracted from the graphic — confirm
+// exact wording with the client before this ships as final.
 const included = [
   { title: 'Physician consultation', desc: "A licensed U.S. physician reviews your intake and confirms you're a fit for treatment." },
   { title: 'Your prescribed medication', desc: 'A monthly supply of your compounded GLP-1, dosed to your plan.' },
@@ -118,9 +121,9 @@ const included = [
   { title: 'Free, discreet shipping', desc: 'Cold-chain packaging delivered straight to your door at no extra cost.' },
 ];
 
-// product4.png / product5.png — same treatment as `included` above: pulled
-// out of the product-photo carousel (unreadable-as-image infographic
-// slides) into real sections, copy transcribed verbatim from the slides.
+// product4.png / product5.png — same treatment as `included` above: real
+// HTML slides inside the product carousel, copy transcribed verbatim from
+// the old infographic slides.
 const telehealth = [
   { title: '100% Online Consultations', desc: 'No office visits required' },
   { title: 'HIPAA-Compliant Messaging', desc: 'Secure provider communication' },
@@ -398,7 +401,7 @@ const faqs = [
       @media (min-width: 900px) { .wl-prod { grid-template-columns: 1fr 1fr; gap: 56px; } }
       .wl-prod__stage { background: var(--card); border-radius: 22px; padding: 22px; }
       .popular-badge { display: inline-block; font-family: var(--font-condensed); font-size: 11px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; background: var(--gold); color: #fff; border-radius: 999px; padding: 5px 12px; }
-      .wl-prod__frame { display: grid; place-items: center; padding: 26px 0 18px; min-height: 280px; }
+      .wl-prod__frame { display: grid; place-items: center; padding: 26px 0 18px; min-height: 280px; position: relative; }
       .wl-prod__frame img { max-height: 260px; width: auto; transition: opacity .2s ease; }
       .wl-prod__frame img.fade-out { opacity: 0; }
       .wl-prod__frame img.fade-in { opacity: 1; }
@@ -413,6 +416,28 @@ const faqs = [
       #thumbnailsContainer { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
       #thumbnailsContainer .thumb-box { border: 1px solid var(--line); border-radius: 12px; padding: 5px; cursor: pointer; background: #fff; transition: border-color .15s; }
       #thumbnailsContainer .thumb-box.active { border-color: var(--brand); }
+      /* Label-style thumb for the 3 info slides below — same box, text
+         instead of a photo since there's no product shot to preview. */
+      #thumbnailsContainer .thumb-box--label { padding: 5px 12px; display: grid; place-items: center; font-family: var(--font-condensed); font-size: 10.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+      #thumbnailsContainer .thumb-box--label.active { color: var(--brand); }
+
+      /* ── Info slides — What's Included / Telehealth / Discreet Shipping,
+         now real HTML slides INSIDE the gallery (same dots/prev/next as the
+         product photos) instead of 3 extra sections stacked below the
+         showcase. Only one of {img, .wl-prod__info} is visible at a time —
+         see wl-script.js's goTo(); .wl-prod__frame's own min-height is a
+         floor, so a taller checklist simply grows the stage, it never
+         collapses back to a fixed scrollable box. ── */
+      .wl-prod__info { display: none; width: 100%; padding: 0 6px; text-align: left; transition: opacity .2s ease; }
+      .wl-prod__info.is-active { display: block; }
+      .wl-prod__info.fade-out { opacity: 0; }
+      .wl-prod__info.fade-in { opacity: 1; }
+      .wl-prod__info-eyebrow { display: block; font-family: var(--font-condensed); font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--brand); margin-bottom: 14px; }
+      .wl-prod__info-list { display: flex; flex-direction: column; gap: 14px; }
+      .wl-prod__info-item { display: flex; align-items: flex-start; gap: 12px; }
+      .wl-prod__info-item .wl-tick { margin-top: 1px; }
+      .wl-prod__info-item h4 { font-size: 13.5px; font-weight: 600; margin: 0 0 3px; }
+      .wl-prod__info-item p { font-size: 12.5px; color: var(--muted); margin: 0; line-height: 1.4; }
 
       .wl-trustpilot { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
       .wl-trustpilot span { font-family: var(--font-condensed); font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
@@ -438,28 +463,6 @@ const faqs = [
       .wl-note p { font-size: 13px; color: #6b5522; margin: 0; }
       .wl-note svg { flex: none; margin-top: 1px; }
 
-      /* ── What's included (pulled out of the gallery carousel) ──── */
-      .wl-included { display: grid; gap: 16px; grid-template-columns: 1fr; }
-      @media (min-width: 700px) { .wl-included { grid-template-columns: repeat(2, 1fr); gap: 16px; } }
-      /* Was 4 bare flex rows with no card, no background, nothing to catch
-         the eye — reads as the same .wl-mech__card / .jcard card language
-         the rest of the site already uses for a checklist-shaped list. */
-      .wl-included__item { display: flex; align-items: flex-start; gap: 14px; background: var(--card); border-radius: 16px; padding: 20px 22px; }
-      .wl-included__item h3 { font-size: 1rem; font-weight: 600; margin: 0 0 4px; }
-      .wl-included__item p { font-size: 13.5px; color: var(--muted); margin: 0; }
-
-      /* Same staggered reveal-on-scroll as the Process cards on the
-         homepage — IntersectionObserver, not `animation-timeline: view()`
-         (the Safari/macOS gap that already caused a bug on this site). No
-         JS / reduced motion / unsupported browser: cards just stay visible. */
-      @media (prefers-reduced-motion: no-preference) {
-        .wl-included__item { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s cubic-bezier(.22,.61,.36,1); }
-        .wl-included__item.is-visible { opacity: 1; transform: none; }
-        .wl-included__item:nth-child(1) { transition-delay: 0s; }
-        .wl-included__item:nth-child(2) { transition-delay: .1s; }
-        .wl-included__item:nth-child(3) { transition-delay: .2s; }
-        .wl-included__item:nth-child(4) { transition-delay: .3s; }
-      }
 
       /* ── Journey ────────────────────────────────────────────── */
       .wl-journey { position: relative; overflow: hidden; border-radius: 22px; background: var(--green); }
@@ -876,6 +879,55 @@ const faqs = [
                  wl-script.js's init() assigns anyway. Without it the tag ships
                  as a broken-image box until the script runs. -->
             <img id="mainProductImage" src="/assets/wl/semag-straight.png" alt="Compounded GLP-1 medication" />
+
+            <!-- Info slides — same 3 gallery-carousel stops the old
+                 product3/4/5.png infographic images used to occupy, now
+                 real HTML instead of unreadable-as-text pictures. wl-script.js
+                 appends these after the photo slides (same dots/prev/next)
+                 so the checklist copy lives inside the showcase instead of
+                 three extra full-width sections stacking below it. -->
+            <div class="wl-prod__info" data-info-slide="included">
+              <span class="wl-prod__info-eyebrow">What's Included</span>
+              <div class="wl-prod__info-list">
+                {included.map((item) => (
+                  <div class="wl-prod__info-item">
+                    <span class="wl-tick"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg></span>
+                    <div>
+                      <h4>{item.title}</h4>
+                      <p>{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div class="wl-prod__info" data-info-slide="telehealth">
+              <span class="wl-prod__info-eyebrow">Telehealth Platform</span>
+              <div class="wl-prod__info-list">
+                {telehealth.map((item) => (
+                  <div class="wl-prod__info-item">
+                    <span class="wl-tick"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg></span>
+                    <div>
+                      <h4>{item.title}</h4>
+                      <p>{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div class="wl-prod__info" data-info-slide="shipping">
+              <span class="wl-prod__info-eyebrow">Discreet Shipping</span>
+              <div class="wl-prod__info-list">
+                {shipping.map((item) => (
+                  <div class="wl-prod__info-item">
+                    <span class="wl-tick"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg></span>
+                    <div>
+                      <h4>{item.title}</h4>
+                      <p>{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
           <div class="wl-prod__nav">
             <button class="wl-navbtn" id="prevBtn" type="button" aria-label="Previous image">
@@ -924,69 +976,6 @@ const faqs = [
             Start Your Assessment <span class="wl-arw">→</span>
           </a>
           <p class="wl-foot">Compounded medications are not FDA-approved and are not equivalent to the brand-name drug.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ═══ What's Included — moved out of the product gallery carousel ═══ -->
-    <section class="wl-sec" style="padding-top:0;">
-      <div class="wl-wrap">
-        <div class="wl-head">
-          <span class="wl-eyebrow">What's Included</span>
-          <h2 class="wl-serif">Everything your <em>plan covers</em></h2>
-        </div>
-        <div class="wl-included">
-          {included.map((item) => (
-            <div class="wl-included__item">
-              <span class="wl-tick"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg></span>
-              <div>
-                <h3>{item.title}</h3>
-                <p>{item.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-
-    <!-- ═══ Telehealth Platform — moved out of the product gallery carousel (was product4.png) ═══ -->
-    <section class="wl-sec" style="padding-top:0;">
-      <div class="wl-wrap">
-        <div class="wl-head">
-          <span class="wl-eyebrow">Telehealth Platform</span>
-          <h2 class="wl-serif">Healthcare from <em>anywhere</em></h2>
-        </div>
-        <div class="wl-included">
-          {telehealth.map((item) => (
-            <div class="wl-included__item">
-              <span class="wl-tick"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg></span>
-              <div>
-                <h3>{item.title}</h3>
-                <p>{item.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-
-    <!-- ═══ Discreet Shipping — moved out of the product gallery carousel (was product5.png) ═══ -->
-    <section class="wl-sec" style="padding-top:0;">
-      <div class="wl-wrap">
-        <div class="wl-head">
-          <span class="wl-eyebrow">Discreet Shipping</span>
-          <h2 class="wl-serif">Privacy you can <em>trust</em></h2>
-        </div>
-        <div class="wl-included">
-          {shipping.map((item) => (
-            <div class="wl-included__item">
-              <span class="wl-tick"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg></span>
-              <div>
-                <h3>{item.title}</h3>
-                <p>{item.desc}</p>
-              </div>
-            </div>
-          ))}
         </div>
       </div>
     </section>
@@ -1183,21 +1172,5 @@ const faqs = [
       });
     })();
 
-    /* What's Included cards: staggered reveal-on-scroll, once per card.
-       Same mechanism as the homepage's Process/Journey cards — see their
-       comments for why this is IntersectionObserver and not
-       `animation-timeline: view()`. */
-    (function () {
-      var items = document.querySelectorAll('.wl-included__item');
-      if (!items.length || !matchMedia('(prefers-reduced-motion: no-preference)').matches) return;
-      var io = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (!entry.isIntersecting) return;
-          entry.target.classList.add('is-visible');
-          io.unobserve(entry.target);
-        });
-      }, { threshold: 0.25 });
-      items.forEach(function (el) { io.observe(el); });
-    })();
   </script>
 </Layout>
