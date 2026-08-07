@@ -6,7 +6,7 @@
  * authentication flow.
  *
  * POST /.netlify/functions/requestMessagingCode
- * Headers: { Authorization: 'Bearer <firebase-id-token>' }
+ * Headers: { Authorization: 'Bearer <supabase-access-token>' }
  * Body:    { "email": "patient@email.com" }
  *
  * MDI Endpoint: POST /v1/partner/patients/auth/2fa
@@ -15,7 +15,7 @@
  */
 
 const { mdiRequest, getAccessToken, getCorsHeaders, BASE_URL } = require('./lib/mdi-client');
-const { verifyFirebaseToken } = require('./lib/verify-firebase-token');
+const { verifySupabaseToken } = require('./lib/verify-supabase-token');
 
 exports.handler = async (event) => {
   const cors = getCorsHeaders(event);
@@ -33,11 +33,11 @@ exports.handler = async (event) => {
   }
 
   try {
-    // ── Step 1: Verify Firebase authentication ──────────────────
+    // ── Step 1: Verify Supabase authentication ──────────────────
     const authHeader = event.headers.authorization || event.headers.Authorization || '';
     const idToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
 
-    const user = await verifyFirebaseToken(idToken);
+    const user = await verifySupabaseToken(idToken);
     if (!user) {
       return {
         statusCode: 401,
@@ -52,7 +52,7 @@ exports.handler = async (event) => {
     const token = await getAccessToken();
 
     // Resolve patient email — always prefer MDI lookup by patient_id (the MDI email
-    // may differ from the Firebase login email), fall back to provided email
+    // may differ from the Supabase login email), fall back to provided email
     let email = null;
 
     if (patient_id) {

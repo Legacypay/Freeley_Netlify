@@ -43,6 +43,7 @@ const steps = [
     tipLabel: 'Note:',
     tip: 'All decisions are made by licensed physicians — never an algorithm or AI replacement.',
     img: '/assets/howItsWork/Physician_Reviews_Your_Profile.png',
+    facepile: true,
   },
   {
     n: '3',
@@ -80,40 +81,54 @@ const steps = [
 
 // The platform features carousel — icon art is the page's own ghost-icon
 // PNGs (already tuned gradients/offsets below, kept from the prior build).
+// Client feedback (2026-08-07): icons were abstract "ghost icon" art that
+// explained nothing — replaced with full-bleed Freeley app-screen mockups
+// (OpenAI gpt-image-1), so background-size/position switched from the old
+// hand-tuned per-icon offsets to a plain cover/top fill.
 const feats = [
   {
     title: 'Physician Messaging',
-    // ⚠️ Was showing the Ongoing-Care-&-Refills paragraph — wrong feature.
     desc: 'Message your physician directly through your Freeley account. Ask questions about your treatment, report side effects, or request an adjustment — most messages get a response within 24 hours.',
     gradient: 'linear-gradient(119.47deg, #D2CBC2 3.65%, #F0E9E0 109.47%)',
     icon: '/assets/howItsWork/Physician%20Messaging.png',
-    iconSize: '120%',
-    iconPos: 'center -300px',
+    iconSize: 'cover',
+    iconPos: 'top center',
   },
   {
     title: 'Progress Dashboard',
     desc: 'Track your weight, lab values, and treatment history over time. Visual charts make it easy to see your progress and share with your physician.',
     gradient: 'linear-gradient(180deg, #E7EAF0 0%, #F3F4EF 100%)',
     icon: '/assets/howItsWork/Progress%20Dashboard.png',
-    iconSize: '100%',
-    iconPos: 'center -50px',
+    iconSize: 'cover',
+    iconPos: 'top center',
   },
   {
     title: 'Smart Reminders',
     desc: 'Dosing reminders, refill notifications, and lab scheduling alerts — all configurable to your preferences. Never miss a dose or a check-in.',
     gradient: 'radial-gradient(160.98% 160.98% at 50% 100%, #F6EEE0 0%, #FFDAAD 100%)',
     icon: '/assets/howItsWork/Smart%20Reminders.png',
-    iconSize: '200%',
-    iconPos: '-235px -160px',
+    iconSize: 'cover',
+    iconPos: 'top center',
   },
   {
     title: 'Document Vault',
     desc: 'All your prescriptions, lab results, and physician notes are securely stored and accessible anytime. Export and share with your PCP as needed.',
     gradient: 'radial-gradient(171.32% 171.32% at 50.12% 100%, #F8FEFF 0%, #C7D0E4 100%)',
     icon: '/assets/howItsWork/Document%20Vault.png',
-    iconSize: '200%',
-    iconPos: 'center -295px',
+    iconSize: 'cover',
+    iconPos: 'top center',
   },
+];
+
+// Facepile for the physician-review step — 96x96 face crops taken from the
+// site's own existing doctor photos (dr.png, Physician Gating.png,
+// physicians/dr-martinez-v2.jpg), stored under /assets/howItsWork/facepile/
+// and rendered as 44px circles. Swap files 1:1 if real faces are generated
+// later: 96x96 px, face centered, tight head-and-shoulders crop.
+const facepile = [
+  { src: '/assets/howItsWork/facepile/doc-1.png', alt: 'Board-certified physician' },
+  { src: '/assets/howItsWork/facepile/doc-2.png', alt: 'Board-certified physician' },
+  { src: '/assets/howItsWork/facepile/doc-3.png', alt: 'Board-certified physician' },
 ];
 
 const pharmacyBadges = ['503A Licensed', 'USP 797 Compliant', 'State Board Approved', 'PCAB Accredited', 'Third-Party Tested', 'Cold Chain Verified'];
@@ -127,12 +142,31 @@ const specs = [
   { label: 'Expiry', value: 'Per batch CoA documentation' },
 ];
 
-// Already fully baked (photo + heading + copy) full-card exports — shown as
-// images, not overlaid with our own text.
+// Rebuilt as real HTML/CSS cards: the old yourSafety1–3.png were full-card
+// exports (heading + body copy baked into a 364×469 PNG, rendered at
+// 260–300 CSS px — blurry text on any retina screen). Headings/copy are now
+// live text; only the visual on top stays an image, using the higher-res
+// standalone exports that already live in this folder.
 const safetyCards = [
-  { img: '/assets/howItsWork/yourSafety1.png', alt: 'Physician Gating — no medication ships without an active prescription' },
-  { img: '/assets/howItsWork/yourSafety2.png', alt: 'HIPAA-Compliant Infrastructure — your data is encrypted and never sold' },
-  { img: '/assets/howItsWork/yourSafety3.png', alt: 'Adverse Event Monitoring — physicians are notified of any reported side effects' },
+  {
+    img: '/assets/howItsWork/Physician%20Gating.png',
+    bg: 'linear-gradient(180deg, #f0eae1 0%, #e7dfd2 100%)',
+    pill: 'Verified',
+    title: 'Physician Gating',
+    copy: "No medication ships without an active prescription from a licensed physician. Eligibility is determined by clinical criteria, not self-selection. If a treatment isn't right for you, your physician will explain why.",
+  },
+  {
+    img: '/assets/howItsWork/HIPAA-Compliant%20Infrastructure.png',
+    bg: 'linear-gradient(180deg, #eef1f6 0%, #dde3ea 100%)',
+    title: 'HIPAA-Compliant Infrastructure',
+    copy: 'All data is encrypted at rest and in transit. Our platform is HIPAA-compliant and our technology partners undergo annual security audits. Your health data is never sold or shared with third parties.',
+  },
+  {
+    img: '/assets/howItsWork/Adverse%20Event%20Monitoring.png',
+    bg: 'linear-gradient(180deg, #fdeed6 0%, #f8d9ab 100%)',
+    title: 'Adverse Event Monitoring',
+    copy: 'Patients are monitored for adverse events throughout their treatment. Your physician is notified immediately of any reported side effects and can adjust or discontinue treatment at any time.',
+  },
 ];
 ---
 
@@ -215,6 +249,15 @@ const safetyCards = [
       .wl-tl__text p { font-family: var(--font-sans); font-size: 14.5px; color: var(--muted); line-height: 1.6; margin: 0 0 16px; }
       .wl-tl__tip { background: rgba(15,107,69,.08); border-radius: 12px; padding: 14px 18px; font-size: 13px; color: var(--green-deep, #0d3122); line-height: 1.5; }
       .wl-tl__tip strong { display: block; margin-bottom: 4px; font-weight: 700; }
+      /* Facepile on the physician-review step — overlapping 44px circles. */
+      .wl-facepile { display: flex; align-items: center; gap: 12px; margin-top: 16px; }
+      .wl-facepile__imgs { display: flex; flex-shrink: 0; }
+      .wl-facepile__imgs img {
+        width: 44px; height: 44px; border-radius: 999px; object-fit: cover; display: block;
+        background: #dfe7e0; border: 2px solid #fff; box-shadow: 0 1px 4px rgba(23,34,42,.14);
+      }
+      .wl-facepile__imgs img + img { margin-left: -12px; }
+      .wl-facepile__label { font-family: var(--font-sans); font-size: 12.5px; color: var(--muted); line-height: 1.4; max-width: 30ch; }
       .wl-tl__img { border-radius: 18px; overflow: hidden; background: var(--card); aspect-ratio: 4 / 3; }
       .wl-tl__img img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
@@ -247,12 +290,9 @@ const safetyCards = [
         transition: transform .3s ease;
       }
       .wl-feat__card:hover .wl-feat__icon { transform: scale(1.04); }
-      /* The 3 stacked (short, wide) cards give the icon art much less height
-         than the tall swiper cards it was originally sized for — full
-         opacity there put the text right on top of the artwork's shapes.
-         Fading it and adding a scrim behind the text keeps it legible
-         without having to re-tune every icon's position/size by hand. */
-      .wl-feat__card:not(.wl-feat__card--0) .wl-feat__icon { opacity: .55; }
+      /* Full-bleed app-screen mockups now (was faded abstract icon art) —
+         full opacity, legibility comes from the scrim behind the text
+         below instead of dimming the whole image. */
       .wl-feat__body {
         position: relative; z-index: 1;
         background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, .82) 35%);
@@ -276,12 +316,25 @@ const safetyCards = [
       .wl-spec__label { font-size: 12.5px; color: var(--muted); }
       .wl-spec__value { font-family: var(--font-sans); font-size: 13px; font-weight: 600; color: var(--ink); text-align: right; }
 
-      /* ── Safety carousel ─────────────────────────────────────── */
+      /* ── Safety carousel (real HTML cards, image on top only) ── */
       .wl-safety-swiper { padding-bottom: 46px; }
-      .wl-safety-swiper .swiper-slide { width: 260px !important; }
+      .wl-safety-swiper .swiper-slide { width: 260px !important; height: auto; }
       @media (min-width: 700px) { .wl-safety-swiper .swiper-slide { width: 300px !important; } }
-      .wl-safety__card { border-radius: 20px; overflow: hidden; box-shadow: 0 20px 44px rgba(23,34,42,.14); }
-      .wl-safety__card img { width: 100%; display: block; }
+      .wl-safety__card {
+        border-radius: 20px; overflow: hidden; box-shadow: 0 20px 44px rgba(23,34,42,.14);
+        display: flex; flex-direction: column;
+      }
+      .wl-safety__art { position: relative; height: 200px; flex-shrink: 0; padding: 16px 16px 0; }
+      .wl-safety__art img { width: 100%; height: 100%; object-fit: contain; object-position: bottom center; display: block; }
+      .wl-safety__pill {
+        position: absolute; left: 50%; bottom: -12px; transform: translateX(-50%); z-index: 1;
+        background: #fff; color: var(--green); border-radius: 999px; padding: 5px 14px;
+        font-family: var(--font-sans); font-size: 12.5px; font-weight: 700; white-space: nowrap;
+        box-shadow: 0 2px 8px rgba(23,34,42,.12);
+      }
+      .wl-safety__txt { padding: 24px 22px 26px; }
+      .wl-safety__txt h3 { font-family: var(--font-serif); font-weight: 600; font-size: 1.3rem; line-height: 1.15; margin: 0 0 10px; color: var(--ink); }
+      .wl-safety__txt p { font-family: var(--font-sans); font-size: 13px; line-height: 1.55; color: rgba(23,34,42,.66); margin: 0; }
 
     </style>
   </Fragment>
@@ -310,6 +363,16 @@ const safetyCards = [
               <h2>{s.title}</h2>
               <p>{s.text}</p>
               <div class="wl-tl__tip"><strong>{s.tipLabel}</strong>{s.tip}</div>
+              {s.facepile && (
+                <div class="wl-facepile">
+                  <div class="wl-facepile__imgs">
+                    {facepile.map((f) => (
+                      <img src={f.src} alt={f.alt} width="44" height="44" loading="lazy" />
+                    ))}
+                  </div>
+                  <span class="wl-facepile__label">Board-certified physicians, licensed in your state</span>
+                </div>
+              )}
             </div>
             <div class="wl-tl__num">{s.n}</div>
             <div class="wl-tl__img">
@@ -378,8 +441,15 @@ const safetyCards = [
         <div class="swiper wl-safety-swiper">
           <div class="swiper-wrapper">
             {safetyCards.map((c) => (
-              <div class="swiper-slide wl-safety__card">
-                <img src={c.img} alt={c.alt} loading="lazy" />
+              <div class="swiper-slide wl-safety__card" style={`background:${c.bg}`}>
+                <div class="wl-safety__art">
+                  <img src={c.img} alt="" loading="lazy" />
+                  {c.pill && <span class="wl-safety__pill">{c.pill} ✓</span>}
+                </div>
+                <div class="wl-safety__txt">
+                  <h3>{c.title}</h3>
+                  <p>{c.copy}</p>
+                </div>
               </div>
             ))}
           </div>

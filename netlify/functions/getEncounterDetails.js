@@ -8,12 +8,12 @@
  * - Any attached documents
  *
  * POST /.netlify/functions/getEncounterDetails
- * Headers: { Authorization: 'Bearer <firebase-id-token>' }
+ * Headers: { Authorization: 'Bearer <supabase-access-token>' }
  * Body: { "patient_id": "uuid", "case_id": "uuid" }
  */
 
 const { mdiRequest, CORS_HEADERS } = require('./lib/mdi-client');
-const { verifyFirebaseToken } = require('./lib/verify-firebase-token');
+const { verifySupabaseToken } = require('./lib/verify-supabase-token');
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
@@ -25,10 +25,10 @@ exports.handler = async (event) => {
   }
 
   try {
-    // Verify Firebase auth
+    // Verify Supabase auth
     const authHeader = event.headers.authorization || event.headers.Authorization || '';
     const idToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
-    const user = await verifyFirebaseToken(idToken);
+    const user = await verifySupabaseToken(idToken);
     if (!user) {
       return { statusCode: 401, headers: CORS_HEADERS, body: JSON.stringify({ error: 'Authentication required.' }) };
     }

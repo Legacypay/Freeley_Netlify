@@ -1,0 +1,26 @@
+[
+  {
+    "output": "public/assets/howItsWork/Physician Messaging.png",
+    "width": 1372,
+    "height": 1944,
+    "prompt": "A full-bleed screenshot-style mockup of the 'Freeley' telehealth app's physician messaging screen, filling the entire tall canvas edge to edge (no border, no phone frame, no white margin). Header reads 'Freeley' in a clean serif wordmark with a small leaf/plus mark, deep forest-green accent (#0f6b45-ish) on a warm cream background. Below it, a chat thread: a small physician avatar circle, a short message bubble from the physician, and a short reply bubble from the patient, plus a message input bar at the very bottom. Content concentrated in the upper half of the frame, plenty of clean cream negative space in the lower third. Minimal, large, short UI text only (no dense paragraphs). Clean modern telehealth product design, photorealistic screen render."
+  },
+  {
+    "output": "public/assets/howItsWork/Progress Dashboard.png",
+    "width": 1209,
+    "height": 1036,
+    "prompt": "A full-bleed screenshot-style mockup of the 'Freeley' telehealth app's progress dashboard screen, filling the entire canvas edge to edge (no border, no phone frame, no white margin). Header reads 'Freeley' in a clean serif wordmark, deep forest-green accent on a warm cream background. Below it, a simple weight-trend line chart with a downward green trend line and 2-3 axis labels, plus a small lab-value stat card. Content concentrated in the upper two-thirds of the frame. Minimal, large, short UI text only (no dense paragraphs). Clean modern telehealth product design, photorealistic screen render."
+  },
+  {
+    "output": "public/assets/howItsWork/Smart Reminders.png",
+    "width": 3136,
+    "height": 2177,
+    "prompt": "A full-bleed screenshot-style mockup of the 'Freeley' telehealth app's reminders screen, filling the entire canvas edge to edge (no border, no phone frame, no white margin). Header reads 'Freeley' in a clean serif wordmark, deep forest-green accent on a warm cream background. Below it, 2 reminder cards stacked: one reading a short dosing-reminder label with a bell icon and a time, another reading a short refill-reminder label with a calendar icon. Content concentrated in the upper two-thirds of the frame. Minimal, large, short UI text only (no dense paragraphs). Clean modern telehealth product design, photorealistic screen render."
+  },
+  {
+    "output": "public/assets/howItsWork/Document Vault.png",
+    "width": 1821,
+    "height": 1539,
+    "prompt": "A full-bleed screenshot-style mockup of the 'Freeley' telehealth app's secure document vault screen, filling the entire canvas edge to edge (no border, no phone frame, no white margin). Header reads 'Freeley' in a clean serif wordmark with a small lock icon, deep forest-green accent on a warm cream background. Below it, a short list of 2-3 document rows (each with a file icon and a short label like 'Prescription' or 'Lab Results') inside rounded cards. Content concentrated in the upper two-thirds of the frame. Minimal, large, short UI text only (no dense paragraphs). Clean modern telehealth product design, photorealistic screen render."
+  }
+]

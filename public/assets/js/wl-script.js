@@ -38,9 +38,11 @@
             name: "Tirzepatide",
             title: "Compounded Tirzepatide",
             description: "Tirzepatide is a dual GIP/GLP-1 receptor agonist for enhanced weight loss results.",
+            // product2.png removed here (client feedback 2026-08-07): that
+            // unboxing shot is semaglutide-branded packaging, unrelated to
+            // tirzepatide. It stays in the semaglutide gallery above.
             images: [
                 "/assets/wl/tirzz-straight.png",
-                "/assets/wl/product2.png",
                 "/assets/wl/tirzz.png"
             ],
             features: [

@@ -1,0 +1,48 @@
+---
+// Persistent success banner shown only when ?payment=success — replaces
+// the old page's SECOND, redundant "🎉 Payment confirmed" toast (an
+// auto-dismissing fixed banner built purely in JS) with the one that
+// already says the same thing and doesn't disappear before a slow page
+// finishes loading.
+---
+
+<div class="hub-ppb" id="postPaymentBanner">
+  <div class="hub-ppb__inner">
+    <span class="eyebrow">✓ Payment Confirmed</span>
+    <h2>You're in. A licensed physician is reviewing your case now.</h2>
+    <p>You'll get an email update within <strong>24–48 hours</strong> with your prescription details and shipping timeline. Check below for your case status.</p>
+    <div class="hub-ppb__steps" role="list" aria-label="Order progress">
+      <span class="hub-ppb__step is-done" role="listitem"><span class="hub-ppb__dot">✓</span> Health Quiz</span>
+      <i class="ri-arrow-right-s-line" aria-hidden="true"></i>
+      <span class="hub-ppb__step is-done" role="listitem"><span class="hub-ppb__dot">✓</span> Checkout</span>
+      <i class="ri-arrow-right-s-line" aria-hidden="true"></i>
+      <span class="hub-ppb__step is-active" role="listitem" aria-current="step"><span class="hub-ppb__dot">3</span> Doctor Review</span>
+      <i class="ri-arrow-right-s-line" aria-hidden="true"></i>
+      <span class="hub-ppb__step is-upcoming" role="listitem"><span class="hub-ppb__dot">4</span> Shipped</span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .hub-ppb { display: none; background: linear-gradient(135deg, var(--green-deep) 0%, var(--green) 60%, #2c6e49 100%); color: #fff; padding: 28px 32px; text-align: center; position: relative; overflow: hidden; }
+  .hub-ppb__inner { max-width: 640px; margin: 0 auto; position: relative; z-index: 1; }
+  .hub-ppb .eyebrow { display: inline-flex; align-items: center; gap: 8px; background: rgba(125,186,150,.18); border: 1px solid rgba(125,186,150,.35); color: #a4db7f; font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; padding: 6px 14px; border-radius: 999px; margin-bottom: 14px; }
+  .hub-ppb h2 { font-family: var(--font-serif); font-weight: 600; font-size: 26px; line-height: 1.25; margin: 0 0 8px; }
+  .hub-ppb p { font-size: 14px; line-height: 1.6; color: rgba(255,255,255,.78); margin: 0 0 18px; max-width: 520px; margin-left: auto; margin-right: auto; }
+  .hub-ppb__steps { display: inline-flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center; font-size: 12px; font-weight: 500; color: rgba(255,255,255,.85); }
+  .hub-ppb__step { display: inline-flex; align-items: center; gap: 6px; }
+  .hub-ppb__dot { width: 18px; height: 18px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+  .hub-ppb__step.is-done .hub-ppb__dot { background: #a4db7f; color: var(--green-deep); }
+  .hub-ppb__step.is-active .hub-ppb__dot { background: #fff; color: var(--green-deep); box-shadow: 0 0 0 4px rgba(255,255,255,.18); }
+  .hub-ppb__step.is-upcoming { color: rgba(255,255,255,.5); }
+  .hub-ppb__step.is-upcoming .hub-ppb__dot { background: rgba(255,255,255,.15); color: rgba(255,255,255,.6); }
+</style>
+
+<script>
+  try {
+    if (new URLSearchParams(window.location.search).get('payment') === 'success') {
+      const banner = document.getElementById('postPaymentBanner');
+      if (banner) banner.style.display = 'block';
+    }
+  } catch (e) {}
+</script>

@@ -1301,6 +1301,29 @@ const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
       window.__SUPABASE_ANON_KEY__ = supabaseAnonKey;
     </script>
     <script src="/quiz-scripts/asw.js" is:inline></script>
+    <script is:inline>
+      // If the visitor already has a signed-in Freeley Health Hub (Supabase
+      // Auth) session — e.g. they clicked "Start New Treatment" from
+      // /hub — pre-fill Step 2's email field with their account email so
+      // they don't have to retype something we already know. Reuses
+      // asw.js's own getSupabaseClient() (a real global — that file isn't
+      // IIFE-wrapped) instead of creating a second client instance on this
+      // page. This only pre-fills the value; the field stays editable in
+      // case they want quiz correspondence sent to a different address.
+      (function () {
+        if (typeof getSupabaseClient !== 'function') return;
+        var client = getSupabaseClient();
+        if (!client) return;
+        client.auth.getSession().then(function (res) {
+          var session = res && res.data && res.data.session;
+          var email = session && session.user && session.user.email;
+          var emailInput = document.getElementById('email');
+          if (email && emailInput && !emailInput.value) {
+            emailInput.value = email;
+          }
+        });
+      })();
+    </script>
 </body>
 
 </html>

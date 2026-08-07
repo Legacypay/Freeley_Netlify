@@ -1,0 +1,42 @@
+---
+// Sidebar navigation — the portal's real IA (the old page's marketing
+// top-nav was injected on top of this and duplicated nothing patients
+// needed once logged in, so it's gone here). Tab-click wiring (showing the
+// matching panel) is page-level orchestration in hub.astro, since it has
+// to reach into every panel component's root element, not just this one.
+export interface HubNavItem {
+  id: string;
+  icon: string;
+  label: string;
+}
+
+interface Props {
+  navItems: HubNavItem[];
+}
+
+const { navItems } = Astro.props;
+---
+
+<nav class="hub-nav" aria-label="Patient hub sections">
+  {navItems.map((item, i) => (
+    <button type="button" class={`hub-nav-link ${i === 0 ? 'is-active' : ''}`} data-panel={item.id} aria-current={i === 0 ? 'true' : 'false'}>
+      <i class={item.icon} aria-hidden="true"></i> {item.label}
+    </button>
+  ))}
+  <button type="button" class="hub-nav-link hub-nav-link--danger" id="hubSignOut">
+    <i class="ri-logout-box-r-line" aria-hidden="true"></i> Sign Out
+  </button>
+</nav>
+
+<style>
+  .hub-nav { background: #fff; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; position: sticky; top: 24px; }
+  @media (max-width: 900px) { .hub-nav { position: static; display: flex; overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 12px; } }
+  .hub-nav-link { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 15px 22px; color: var(--muted); background: none; border: none; border-bottom: 1px solid var(--line); font-family: var(--font-sans); font-weight: 500; font-size: 14.5px; cursor: pointer; transition: all .2s; }
+  .hub-nav-link:last-child { border-bottom: none; }
+  @media (max-width: 900px) { .hub-nav-link { border-bottom: none; border-right: 1px solid var(--line); white-space: nowrap; } }
+  .hub-nav-link:hover { background: var(--cream); color: var(--ink); }
+  .hub-nav-link.is-active { background: rgba(15,107,69,.08); color: var(--brand); font-weight: 700; border-left: 3px solid var(--brand); }
+  @media (max-width: 900px) { .hub-nav-link.is-active { border-left: none; border-bottom: 3px solid var(--brand); } }
+  .hub-nav-link--danger { color: #b3261e; }
+  .hub-nav-link--danger:hover { background: #fdecea; color: #b3261e; }
+</style>

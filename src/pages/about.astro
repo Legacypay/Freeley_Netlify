@@ -21,6 +21,11 @@
 //    public/assets/about/). Since there are only 3 real cards, it's now a
 //    static 3-up row instead of a carousel — Swiper (JS/CSS) removed, it was
 //    only used by this section.
+//  - The 3 cards' title/description used to be baked into the PNGs
+//    (AI-rendered text — blurry, not centered, not accessible). Regenerated
+//    as icon-only images (generate-about-cards.js) with title/desc now real
+//    HTML, reusing the .wl-mech__card/__img/__body recipe from "What we
+//    stand for" above.
 //  - No FAQ section exists on this page, so the FAQ copy-paste bug pattern
 //    doesn't apply here.
 import Layout from '../layouts/Layout.astro';
@@ -64,12 +69,27 @@ const values = [
   },
 ];
 
-// "Built to be different" cards — only 3 real, distinct images exist under
-// public/assets/about/, rendered as a static row (see note above).
+// "Built to be different" cards — same img+title+desc recipe as `values`
+// above (.wl-mech__card), rendered as a static 3-up row (see note above).
 const differentCards = [
-  '/assets/about/card1.png',
-  '/assets/about/card2.png',
-  '/assets/about/card3.png',
+  {
+    img: '/assets/about/pharmacy-badge.png',
+    tint: '#E6E1D8',
+    title: '503A Licensed Pharmacy',
+    desc: 'We only partner with PCAB-accredited compounding pharmacies that meet USP 797 standards for potency, sterility, and quality.',
+  },
+  {
+    img: '/assets/about/flat-rate-dosing.png',
+    tint: '#DCE3DE',
+    title: 'Flat-Rate Dosing',
+    desc: 'Unlike competitors who charge more as your dose increases, our price stays the same from starting dose to maintenance dose.',
+  },
+  {
+    img: '/assets/about/lab-monitoring.png',
+    tint: '#F0E4D3',
+    title: 'Lab Monitoring Included',
+    desc: 'Quarterly biomarker panels ensure your treatment is working and your health markers stay in the safe range.',
+  },
 ];
 
 // The closing-CTA pill decoration array used to live here — moved into the
@@ -140,12 +160,12 @@ const differentCards = [
       .wl-mech__body h3 { font-family: var(--font-serif); font-size: 1.2rem; font-weight: 600; color: var(--ink); margin: 0 0 8px; line-height: 1.25; }
       .wl-mech__body p { font-family: var(--font-sans); font-size: 13.5px; line-height: 1.6; color: var(--muted); margin: 0; }
 
-      /* ── "Built to be different" cards (static 3-up row) ─────────── */
+      /* ── "Built to be different" cards (static 3-up row, reuses
+         .wl-mech__card/__img/__body) ──────────────────────────────── */
       .ab-cards-row { display: grid; grid-template-columns: 1fr; gap: 24px; }
       @media (min-width: 700px) { .ab-cards-row { grid-template-columns: repeat(3, 1fr); } }
-      .ab-card { border-radius: 20px; overflow: hidden; transition: transform .3s ease; }
-      .ab-card:hover { transform: translateY(-6px); }
-      .ab-card img { width: 100%; display: block; }
+      .ab-cards-row .wl-mech__card { transition: transform .3s ease; }
+      .ab-cards-row .wl-mech__card:hover { transform: translateY(-6px); }
 
       /* Closing band — now the shared <FinalCta> component
          (src/components/FinalCta.astro); its background/pill CSS lives there. */
@@ -230,9 +250,15 @@ const differentCards = [
       </div>
       <div class="wl-wrap">
         <div class="ab-cards-row">
-          {differentCards.map((img) => (
-            <div class="ab-card">
-              <img src={img} alt="" loading="lazy" />
+          {differentCards.map((c) => (
+            <div class="wl-mech__card">
+              <div class="wl-mech__img" style={`background:${c.tint}`}>
+                <img src={c.img} alt="" loading="lazy" />
+              </div>
+              <div class="wl-mech__body">
+                <h3>{c.title}</h3>
+                <p>{c.desc}</p>
+              </div>
             </div>
           ))}
         </div>

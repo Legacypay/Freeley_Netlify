@@ -7,7 +7,7 @@
  *   3. email — MDI API search via partner/vouchers
  *
  * POST /.netlify/functions/patientCases
- * Headers: { Authorization: 'Bearer <firebase-id-token>' }
+ * Headers: { Authorization: 'Bearer <supabase-access-token>' }
  *
  * Request Body:
  * {
@@ -18,7 +18,7 @@
  */
 
 const { CORS_HEADERS, mdiRequest } = require('./lib/mdi-client');
-const { verifyFirebaseToken } = require('./lib/verify-firebase-token');
+const { verifySupabaseToken } = require('./lib/verify-supabase-token');
 
 // Map MDI questionnaire IDs to patient-friendly product names
 const QUESTIONNAIRE_PRODUCT_MAP = {
@@ -72,11 +72,11 @@ exports.handler = async (event) => {
   }
 
   try {
-    // ── Step 1: Verify Firebase authentication ──────────────────
+    // ── Step 1: Verify Supabase authentication ──────────────────
     const authHeader = event.headers.authorization || event.headers.Authorization || '';
     const idToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
 
-    const user = await verifyFirebaseToken(idToken);
+    const user = await verifySupabaseToken(idToken);
     if (!user) {
       console.warn('[PATIENT CASES] Unauthorized access attempt');
       return {

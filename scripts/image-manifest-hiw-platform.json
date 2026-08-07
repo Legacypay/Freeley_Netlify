@@ -1,0 +1,18 @@
+[
+  {
+    "output": "public/assets/howItsWork/Physician Messaging.png",
+    "prompt": "A single large, soft, translucent 3D-rendered chat-bubble icon (representing direct messaging with a physician), centered, filling most of the frame. Soft pale beige/cream color palette, gentle shadows, minimal modern 3D icon style, plain transparent-friendly light background, no text."
+  },
+  {
+    "output": "public/assets/howItsWork/Progress Dashboard.png",
+    "prompt": "A single large, soft, translucent 3D-rendered bar-chart / analytics-dashboard icon (representing tracked progress over time), centered, filling most of the frame. Soft cool blue/gray-green color palette, gentle shadows, minimal modern 3D icon style, plain light background, no text."
+  },
+  {
+    "output": "public/assets/howItsWork/Smart Reminders.png",
+    "prompt": "A single large, soft, translucent 3D-rendered bell/notification icon (representing dosing and refill reminders), centered, filling most of the frame. Soft warm cream/gold color palette, gentle shadows, minimal modern 3D icon style, plain light background, no text."
+  },
+  {
+    "output": "public/assets/howItsWork/Document Vault.png",
+    "prompt": "A single large, soft, translucent 3D-rendered folder/lock icon (representing a secure document vault for prescriptions and lab results), centered, filling most of the frame. Soft cool blue/lavender color palette, gentle shadows, minimal modern 3D icon style, plain light background, no text."
+  }
+]

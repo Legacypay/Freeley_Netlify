@@ -1,0 +1,19 @@
+---
+// Records panel: clinical notes & files. Loaded lazily (first time this
+// tab is opened) by hub.astro calling loadMedicalRecords() from
+// src/lib/hub/dashboard.ts — no styles or script of its own, every class
+// here is a shared one from src/styles/hub.css.
+---
+
+<div id="panel-records" class="hub-panel">
+  <div class="hub-card">
+    <div class="hub-card__head"><h3>Clinical Notes & Files</h3></div>
+    <div id="records-loading" class="hub-loading"><div class="hub-spinner" style="width:22px; height:22px;"></div>Loading records...</div>
+    <div id="records-content" style="display:none;"></div>
+    <div id="records-empty" class="hub-empty" style="display:none;">
+      <i class="ri-file-list-3-line"></i>
+      <p>No clinical notes yet</p>
+      <p>Your physician's notes and medical files will appear here once your case is reviewed.</p>
+    </div>
+  </div>
+</div>

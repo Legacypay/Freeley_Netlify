@@ -11,14 +11,14 @@
  *      → Returns a patient bearer token for messaging API calls
  *
  * POST /.netlify/functions/validateMessagingCode
- * Headers: { Authorization: 'Bearer <firebase-id-token>' }
+ * Headers: { Authorization: 'Bearer <supabase-access-token>' }
  * Body:    { "email": "patient@email.com", "verification_code": "ABC123" }
  *
  * Returns: { "access_token": "...", "patient_id": "...", "patient_name": "..." }
  */
 
 const { getAccessToken, getCorsHeaders, BASE_URL } = require('./lib/mdi-client');
-const { verifyFirebaseToken } = require('./lib/verify-firebase-token');
+const { verifySupabaseToken } = require('./lib/verify-supabase-token');
 
 // Cache patient tokens server-side (per cold-start instance)
 // Key: email, Value: { access_token, patient_id, expires_at }
@@ -40,11 +40,11 @@ exports.handler = async (event) => {
   }
 
   try {
-    // ── Step 1: Verify Firebase authentication ──────────────────
+    // ── Step 1: Verify Supabase authentication ──────────────────
     const authHeader = event.headers.authorization || event.headers.Authorization || '';
     const idToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
 
-    const user = await verifyFirebaseToken(idToken);
+    const user = await verifySupabaseToken(idToken);
     if (!user) {
       return {
         statusCode: 401,

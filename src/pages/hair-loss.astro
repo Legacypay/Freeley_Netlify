@@ -108,11 +108,15 @@ const press = [
 // only), covering the angles and genders requested for the redesign.
 // Captions stay neutral/non-numeric except the first, which reuses the same
 // 94% figure already used elsewhere on this page (proofCards/wl-foot).
+// -sq variants are center-crops of the original landscape photos (head-
+// centered squares, see crop-hl-images.js in the scratchpad) so they fill
+// the square gallery slots instead of looking cramped. before.png/after.png
+// (the one real patient pair) is already near-square and needs no crop.
 const beforeAfterPairs = [
   { before: '/assets/hl/before.png', after: '/assets/hl/after.png', quote: '94% of patients see results.' },
-  { before: '/assets/hl/before-2.jpg', after: '/assets/hl/after-2.jpg', quote: 'Real patient progress.' },
-  { before: '/assets/hl/before-3.jpg', after: '/assets/hl/after-3.jpg', quote: 'Visible results over time.' },
-  { before: '/assets/hl/before-4.jpg', after: '/assets/hl/after-4.jpg', quote: 'Consistent, gradual improvement.' },
+  { before: '/assets/hl/before-2-sq.jpg', after: '/assets/hl/after-2-sq.jpg', quote: 'Real patient progress.' },
+  { before: '/assets/hl/before-3-sq.jpg', after: '/assets/hl/after-3-sq.jpg', quote: 'Visible results over time.' },
+  { before: '/assets/hl/before-4-sq.jpg', after: '/assets/hl/after-4-sq.jpg', quote: 'Consistent, gradual improvement.' },
 ];
 
 // Named testimonials, added after owner sign-off 2026-08-04 to expand the
@@ -238,14 +242,24 @@ const faqs = [
       .wl-hero { position: relative; overflow: hidden; }
       .wl-hero__img { display: none; }
       @media (min-width: 1024px) {
+        /* Client feedback (2026-08-07): this page's copy column is shorter
+           than /weight-loss's (no hero testimonial), so .wl-hero's organic
+           content height fell short of 761px (700 / the image's own 92%
+           cap) — the hero photo rendered ~600px instead of the intended
+           700px, looking "too small" next to the other routes. Forcing a
+           floor here decouples the image's size from how much copy a given
+           page happens to have. */
+        .wl-hero { min-height: 780px; }
         .wl-hero__img {
-          /* Bottom-anchored at its own aspect ratio and pinned to the
-             content column, not the viewport — the /weight-loss hero
-             treatment. hero.png is a studio cutout on a near-cream ground,
-             so the free top edge needs no mask. */
+          /* Client feedback (2026-08-07): match the /weight-loss and
+             /longevity hero treatment exactly — a TALL, height-led, real
+             transparent-alpha full-body cutout, bottom-anchored to the
+             content column, not a landscape photo-with-background. Width
+             cap is wider than weight-loss's 44% (single person) since this
+             is a two-person cutout side by side. */
           display: block; position: absolute; bottom: 0;
           right: max(0px, calc(50% - 600px));
-          height: min(92%, 700px); width: auto; max-width: 44%;
+          height: min(92%, 700px); width: auto; max-width: 54%;
           object-fit: contain; object-position: right bottom;
           -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 22%);
           mask-image: linear-gradient(to right, transparent 0%, #000 22%);
@@ -266,12 +280,16 @@ const faqs = [
       /* Hair-goal doors */
       .wl-goals { display: grid; gap: 10px; grid-template-columns: 1fr; margin: 0 0 14px; }
       @media (min-width: 560px) { .wl-goals { grid-template-columns: repeat(3, 1fr); } }
-      .wl-goal { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 13px 18px; font-family: var(--font-sans); font-size: 15px; font-weight: 600; color: var(--ink); cursor: pointer; transition: border-color .15s, transform .15s; }
+      /* !important: beats global.css's a:not([class*="btn"]) rule (0,3,1
+         specificity), same trap as .wl-notsure — this is an <a> too. */
+      .wl-goal { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 13px 18px; font-family: var(--font-sans); font-size: 15px; font-weight: 600; color: var(--gold) !important; cursor: pointer; transition: border-color .15s, transform .15s; }
       .wl-goal:hover { border-color: var(--brand); }
       @media (hover: hover) and (prefers-reduced-motion: no-preference) { .wl-goal:hover { transform: translateY(-2px); } }
-      .wl-goal svg { flex: none; color: var(--brand); }
+      .wl-goal svg { flex: none; color: var(--gold); }
       .wl-notsure { font-size: 14px; color: var(--muted); margin: 0 0 6px; }
-      .wl-notsure button, .wl-notsure a { background: none; border: none; padding: 0; font: inherit; font-weight: 600; color: var(--brand); cursor: pointer; text-decoration: none; }
+      /* !important: beats global.css's a:not([class*="btn"]) rule (0,3,1
+         specificity) which would otherwise force this link blue. */
+      .wl-notsure button, .wl-notsure a { background: none; border: none; padding: 0; font: inherit; font-weight: 600; color: var(--gold) !important; cursor: pointer; text-decoration: none; }
       .wl-notsure button:hover, .wl-notsure a:hover { text-decoration: underline; }
       .wl-hero__fineprint { font-family: var(--font-condensed); font-size: 12.5px; color: var(--muted); margin: 0 0 26px; }
 
@@ -336,12 +354,26 @@ const faqs = [
 
       /* ── Before / after ─────────────────────────────────────── */
       .wl-ba.swiper { overflow: hidden; padding-top: 6px; padding-bottom: 16px; }
-      .wl-ba .swiper-slide { width: 320px; height: auto; }
-      @media (min-width: 700px) { .wl-ba .swiper-slide { width: 400px; } }
-      .wl-ba__card { background: var(--card); border-radius: 18px; padding: 16px; height: 100%; }
-      .wl-ba__pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+      /* Slot width needs !important: public/global.css's legacy
+         `.swiper-slide { width: auto !important; max-width: 380px }` (see
+         line ~620) otherwise wins over Swiper's own inline width AND any
+         non-important rule here, capping every slide at 380px regardless of
+         source order. max-width is reset the same way so it can't clamp the
+         explicit width back down. Sizes bumped up from 320/400px so the
+         (now square) photos read as bigger/more prominent per client
+         feedback, instead of the old landscape crops looking cramped. */
+      .wl-ba .swiper-slide { width: 360px !important; max-width: none !important; height: auto; }
+      @media (min-width: 700px) { .wl-ba .swiper-slide { width: 460px !important; } }
+      @media (min-width: 1024px) { .wl-ba .swiper-slide { width: 560px !important; } }
+      .wl-ba__card { background: var(--card); border-radius: 18px; padding: 18px; height: 100%; }
+      .wl-ba__pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
       .wl-ba__box { position: relative; border-radius: 12px; overflow: hidden; background: #fff; }
-      .wl-ba__box img { width: 100%; height: auto; display: block; }
+      /* Square crop needs a square box to land in: before was `height: auto`
+         which just kept the landscape source's own squashed aspect ratio.
+         object-fit: cover makes the near-square original pair (before.png/
+         after.png) fill the same square slot as the newly cropped -sq.jpg
+         pairs without any visible seam between them in the carousel. */
+      .wl-ba__box img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; object-position: center top; display: block; }
       .wl-ba__label { position: absolute; top: 10px; left: 10px; z-index: 1; font-family: var(--font-condensed); font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; background: rgba(255,255,255,.92); color: var(--ink); border-radius: 999px; padding: 3px 10px; }
       .wl-ba__box--after .wl-ba__label { background: var(--green); color: #fff; }
       .wl-ba__quote { font-family: var(--font-serif); font-size: 1.05rem; font-style: italic; margin: 16px 0 6px; }
@@ -602,7 +634,12 @@ const faqs = [
 
     <!-- ═══ Hero ═══ -->
     <section class="wl-hero">
-      <img class="wl-hero__img" src="/assets/hl/hero-v2.png" alt="A Freeley hair-loss patient" fetchpriority="high" />
+      <!-- Client feedback (2026-08-07): the reused homepage cutout read as
+           generic fitness stock — replaced with a hair-loss-specific man+
+           woman photo, distinct from the homepage's pair, both with visibly
+           healthy hair. Real transparent-alpha cutout (chroma-key
+           generated), not a plain-background photo. -->
+      <img class="wl-hero__img" src="/assets/hl/hero-cutout.png" alt="Freeley hair-loss patients, a man and a woman" fetchpriority="high" />
       <div class="wl-wrap wl-hero__inner">
         <div class="wl-hero__col">
           <div class="wl-badgeline">
@@ -616,7 +653,7 @@ const faqs = [
             delivered discreetly to your door. Keep your hair, and your confidence.
           </p>
 
-          <img class="wl-hero__img-mob" src="/assets/hl/hero-mob-v2.png" alt="A Freeley hair-loss patient" />
+          <img class="wl-hero__img-mob" src="/assets/hl/hero-cutout.png" alt="Freeley hair-loss patients, a man and a woman" />
 
           <div class="wl-hero__from">
             From <span class="wl-price">$59</span>/month

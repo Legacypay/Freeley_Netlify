@@ -5,7 +5,7 @@
  * call Patient API endpoints (messaging, etc.) through our proxy functions.
  *
  * Flow:
- *   1. Verify Firebase auth (HIPAA requirement)
+ *   1. Verify Supabase auth (HIPAA requirement)
  *   2. Call Partner API → GET /v1/partner/patients/:patient/auth
  *      → returns { auth_link, verification_code }
  *   3. Validate via POST /v1/patient/auth/2fa/validate
@@ -13,14 +13,14 @@
  *   4. Return the token to the caller (our other Netlify functions or frontend)
  *
  * POST /.netlify/functions/getPatientToken
- * Headers: { Authorization: 'Bearer <firebase-id-token>' }
+ * Headers: { Authorization: 'Bearer <supabase-access-token>' }
  * Body:    { "patient_id": "uuid-here" }
  *
  * Returns: { "access_token": "...", "patient_id": "...", "expires_in": 3600 }
  */
 
 const { mdiRequest, getCorsHeaders, BASE_URL } = require('./lib/mdi-client');
-const { verifyFirebaseToken } = require('./lib/verify-firebase-token');
+const { verifySupabaseToken } = require('./lib/verify-supabase-token');
 
 // Simple in-memory cache for patient tokens (per cold-start instance)
 // Key: patient_id, Value: { access_token, expires_at }
@@ -42,13 +42,13 @@ exports.handler = async (event) => {
   }
 
   try {
-    // ── Step 1: Verify Firebase authentication ──────────────────
+    // ── Step 1: Verify Supabase authentication ──────────────────
     const authHeader = event.headers.authorization || event.headers.Authorization || '';
     const idToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
 
-    const user = await verifyFirebaseToken(idToken);
+    const user = await verifySupabaseToken(idToken);
     if (!user) {
-      console.warn('[PATIENT TOKEN] Unauthorized — no valid Firebase token');
+      console.warn('[PATIENT TOKEN] Unauthorized — no valid Supabase token');
       return {
         statusCode: 401,
         headers: cors,
@@ -105,7 +105,7 @@ exports.handler = async (event) => {
     // Body: { email, verification_code, voucher_id? }
     // Returns: { access_token, token_type, expires_in }
     //
-    // We extract the email from the auth_link URL or use the Firebase user email.
+    // We extract the email from the auth_link URL or use the Supabase user email.
     // MDI's auth_link typically contains the patient email as a query parameter.
     let patientEmail = user.email;
 
@@ -115,7 +115,7 @@ exports.handler = async (event) => {
         const url = new URL(authData.auth_link);
         const emailParam = url.searchParams.get('email');
         if (emailParam) patientEmail = emailParam;
-      } catch { /* use Firebase email */ }
+      } catch { /* use Supabase email */ }
     }
 
     console.log(`[PATIENT TOKEN] Validating 2FA for: ${patientEmail}`);

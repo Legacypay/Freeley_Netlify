@@ -1,0 +1,26 @@
+[
+  {
+    "output": "public/assets/howItsWork/Complete_Your_Health_Intake.png",
+    "prompt": "A clean modern app UI mockup on a smartphone screen, photographed at a slight angle on a soft neutral surface with warm natural light. The screen shows a health intake form: a progress bar near the top reading roughly 'Step 2 of 4', a short section header like 'Medical History', 2-3 rows of form fields/toggles with checkmarks, and a green 'Continue' button at the bottom. Keep on-screen text minimal, large, and clean (short words/labels only, no dense paragraphs) so it reads as a real form at a glance. Clean telehealth-brand aesthetic (deep green accent, cream/white UI), photorealistic device and lighting."
+  },
+  {
+    "output": "public/assets/howItsWork/Physician_Reviews_Your_Profile.png",
+    "prompt": "A clean modern app/dashboard UI mockup on a tablet or laptop screen, photographed at a slight angle with warm natural light. The screen shows a physician's review interface: a patient summary card (avatar placeholder, a couple of short label/value rows), a status badge reading 'Under Review' or a checkmark reading 'Approved', and a small 'Send to patient' button. Keep on-screen text minimal, large, and clean (short words/labels only). Clean telehealth-brand aesthetic (deep green accent, cream/white UI), photorealistic device and lighting."
+  },
+  {
+    "output": "public/assets/howItsWork/You_Receive_Your_Treatment_Plan.png",
+    "prompt": "A clean modern app UI mockup on a smartphone screen, photographed at a slight angle with warm natural light. The screen shows a treatment plan document view: a header reading 'Your Treatment Plan', a medication name line, a dosage line, a small titration-schedule mini-timeline (3 dots), and a green 'View details' button. Keep on-screen text minimal, large, and clean (short words/labels only, no dense paragraphs). Clean telehealth-brand aesthetic (deep green accent, cream/white UI), photorealistic device and lighting."
+  },
+  {
+    "output": "public/assets/howItsWork/Pharmacy Compounds Your Medication.png",
+    "prompt": "A clean modern app UI mockup on a smartphone screen, photographed at a slight angle with warm natural light, next to a blurred-background compounding pharmacy vial in soft focus. The screen shows an order-status tracker: a header reading 'Order Status', a progress stepper with a highlighted step reading 'Compounding', and a small 'Quality tested' checkmark badge. Keep on-screen text minimal, large, and clean. Clean telehealth-brand aesthetic (deep green accent, cream/white UI), photorealistic."
+  },
+  {
+    "output": "public/assets/howItsWork/Delivered_to_Your_Door.png",
+    "prompt": "A clean modern app UI mockup on a smartphone screen, photographed at a slight angle with warm natural light, resting near a plain unmarked shipping package in soft focus. The screen shows a delivery tracker: a header reading 'Out for Delivery', a simple route/map line icon, and an estimated arrival time label. Keep on-screen text minimal, large, and clean. Clean telehealth-brand aesthetic (deep green accent, cream/white UI), photorealistic."
+  },
+  {
+    "output": "public/assets/howItsWork/Ongoing_Care_&_Automatic_Refills.png",
+    "prompt": "A clean modern app UI mockup on a smartphone screen, photographed at a slight angle with warm natural light. The screen shows a refill management view: a header reading 'Next Refill', a date label, an 'Auto-refill' toggle switch shown ON (green), and a small calendar icon. Keep on-screen text minimal, large, and clean. Clean telehealth-brand aesthetic (deep green accent, cream/white UI), photorealistic device and lighting."
+  }
+]

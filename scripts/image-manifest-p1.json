@@ -1,0 +1,26 @@
+[
+  {
+    "output": "public/assets/howItsWork/Complete_Your_Health_Intake.png",
+    "prompt": "Photorealistic lifestyle photo, warm natural indoor light. A person in their late 20s-40s sits comfortably on a couch or at a kitchen table, looking at their smartphone with a light, focused smile, filling out a simple digital health form. Casual homewear, relaxed posture, shallow depth of field with a softly blurred living room background (plant, window light). No visible on-screen UI text -- the phone screen should read as a generic soft-glow form, not legible copy. Landscape orientation, 4:3 aspect ratio. Style: clean, editorial, telehealth-brand feel -- not stock-photo stiff."
+  },
+  {
+    "output": "public/assets/wl/tirzz.png",
+    "prompt": "Keep everything in this image identical -- same vial, same label text and design, same cap, same lighting, same background/composition -- only straighten the bottle so it stands perfectly upright and undistorted (the cap is already straight but the glass body reads as warped/tilted). Do not change the label artwork, color, or any text. Output at higher resolution than the source."
+  },
+  {
+    "output": "public/assets/howItsWork/You_Receive_Your_Treatment_Plan.png",
+    "prompt": "Generate a clean abstract icon graphic in a soft-UI telehealth-dashboard aesthetic: a soft light-gray radial gradient background with a faint square grid pattern, two small rounded-square corner badge icons in the top-left and bottom-right, and a central circular motif with soft glow/ring rays. The center icon should read clearly as a treatment plan/prescription document -- a clipboard or document icon with a checkmark, in deep green (#0f6b45-ish) and white -- not a bullseye/target pattern. 4:3 aspect ratio."
+  },
+  {
+    "output": "public/assets/l/Cellular_Energy.png",
+    "prompt": "Keep the same composition, lighting, and the physician figure (older man, white coat, gray beard) identical. Replace the second figure (currently a man) with a woman of similar age (55-65), warmly dressed, in the same consulting pose -- physician showing her something in his hand (pills/supplement), both smiling, same soft studio lighting and framing as the original. Photorealistic, telehealth-brand clean aesthetic, portrait orientation."
+  },
+  {
+    "output": "public/assets/l/Deep,Restorative Sleep.png",
+    "prompt": "Photorealistic lifestyle photo of a person aged 55-65 (target demographic: adults who want to feel younger) waking up rested in a softly lit bedroom, natural morning light, genuine relaxed smile, sitting up in bed or by the bedside. No product held to camera, no exaggerated commercial pose -- candid, editorial wellness photography. Full-bleed rectangular composition, 4:3 aspect ratio."
+  },
+  {
+    "output": "public/assets/l/Detox_&_Immunity.png",
+    "prompt": "Photorealistic lifestyle photo of a person aged 55-65 engaged in a light, energizing wellness activity that reads as detox and immunity -- e.g. drinking a glass of water or green juice outdoors, or a brisk morning walk -- genuine relaxed vitality, not a gym-flex pose. Full-bleed rectangular composition, natural light, 4:3 aspect ratio. Vary gender/ethnicity from a middle-aged man hugging a pillow so this doesn't repeat another card's look."
+  }
+]

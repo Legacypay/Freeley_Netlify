@@ -3,10 +3,10 @@
  *
  * Fetches messages for a patient from MDI's Partner Messaging API.
  * Uses the Partner token (server-side) for authentication — no patient 2FA needed.
- * Patient identity is verified via Firebase ID token.
+ * Patient identity is verified via Supabase access token.
  *
  * POST /.netlify/functions/getMessages
- * Headers: { Authorization: 'Bearer <firebase-id-token>' }
+ * Headers: { Authorization: 'Bearer <supabase-access-token>' }
  * Body: {
  *   "patient_id": "uuid",
  *   "channel": "patient",            // optional, defaults to "patient"
@@ -17,7 +17,7 @@
  */
 
 const { getAccessToken, getCorsHeaders, BASE_URL } = require('./lib/mdi-client');
-const { verifyFirebaseToken } = require('./lib/verify-firebase-token');
+const { verifySupabaseToken } = require('./lib/verify-supabase-token');
 
 exports.handler = async (event) => {
   const cors = getCorsHeaders(event);
@@ -35,11 +35,11 @@ exports.handler = async (event) => {
   }
 
   try {
-    // ── Step 1: Verify Firebase authentication ──────────────────
+    // ── Step 1: Verify Supabase authentication ──────────────────
     const authHeader = event.headers.authorization || event.headers.Authorization || '';
     const idToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
 
-    const user = await verifyFirebaseToken(idToken);
+    const user = await verifySupabaseToken(idToken);
     if (!user) {
       return {
         statusCode: 401,

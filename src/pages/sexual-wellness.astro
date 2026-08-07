@@ -1,7 +1,10 @@
 ---
 // SEXUAL WELLNESS — rebuilt 2026-07-29 in the /prototype design language,
-// the same treatment /weight-loss and /hair-loss got. All images are the
-// page's own existing assets under /assets/sw/.
+// the same treatment /weight-loss and /hair-loss got. Images are the page's
+// own assets under /assets/sw/ plus shared lifestyle shots from
+// /assets/promo/ and /assets/lifestyle/ (2026-08-07 client feedback: male
+// ED demographic — couple in the hero, older man + approved couple in the
+// journey/trust sections).
 //
 // EVERY DOM hook in public/assets/js/sw-script.js is preserved verbatim,
 // except the quiz modal: that div/script pair is gone, replaced by the
@@ -120,6 +123,15 @@ const benefits = [
   { title: 'Clinically Proven', desc: 'FDA-approved active ingredient.' },
 ];
 
+// One icon per grid position, shared by `included`/`benefits` (same 4-item
+// order in both: speed, reliability, delivery/convenience, precision/proof).
+const INFO_ICONS = [
+  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z"/></svg>',
+  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z"/><path d="m9 12 2 2 4-4"/></svg>',
+  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2"/><path d="M3 8h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8Z"/><path d="M3 8l3 4h12l3-4"/></svg>',
+  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6l-8-4Z"/><path d="m9 12 2 2 4-4"/></svg>',
+];
+
 const press = [
   { src: '/assets/brands/bloomberg.svg', name: 'Bloomberg' },
   { src: '/assets/brands/forbes.svg', name: 'Forbes' },
@@ -227,13 +239,26 @@ const faqs = [
       .wl-hero { position: relative; overflow: hidden; }
       .wl-hero__img { display: none; }
       @media (min-width: 1024px) {
+        /* Client feedback (2026-08-07): this page's copy column is shorter
+           than /weight-loss's (no hero testimonial), so .wl-hero's organic
+           content height fell short of 761px (700 / the image's own 92%
+           cap) — the hero photo rendered ~600px instead of the intended
+           700px, looking "too small" next to the other routes. Forcing a
+           floor here decouples the image's size from how much copy a given
+           page happens to have. */
+        .wl-hero { min-height: 780px; }
         .wl-hero__img {
-          /* Bottom-anchored at its own aspect ratio and pinned to the
-             content column, not the viewport — the shared vertical-hero
-             treatment. */
+          /* Client feedback (2026-08-07): match the /weight-loss and
+             /longevity hero treatment — a TALL, height-led, real
+             transparent-alpha full-body cutout, bottom-anchored to the
+             content column. Replaces both the earlier washed-out monochrome
+             cutout AND the rounded-card photo-with-background that came
+             after it — neither matched the site's established hero
+             convention. Width cap wider than weight-loss's 44% (single
+             person) since this is a two-person cutout side by side. */
           display: block; position: absolute; bottom: 0;
           right: max(0px, calc(50% - 600px));
-          height: min(92%, 700px); width: auto; max-width: 44%;
+          height: min(92%, 700px); width: auto; max-width: 54%;
           object-fit: contain; object-position: right bottom;
           -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 22%);
           mask-image: linear-gradient(to right, transparent 0%, #000 22%);
@@ -254,12 +279,16 @@ const faqs = [
       /* Duration doors */
       .wl-goals { display: grid; gap: 10px; grid-template-columns: 1fr; margin: 0 0 14px; }
       @media (min-width: 560px) { .wl-goals { grid-template-columns: repeat(3, 1fr); } }
-      .wl-goal { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 13px 18px; font-family: var(--font-sans); font-size: 15px; font-weight: 600; color: var(--ink); cursor: pointer; transition: border-color .15s, transform .15s; }
+      /* !important: beats global.css's a:not([class*="btn"]) rule (0,3,1
+         specificity), same trap as .wl-notsure — this is an <a> too. */
+      .wl-goal { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 13px 18px; font-family: var(--font-sans); font-size: 15px; font-weight: 600; color: var(--gold) !important; cursor: pointer; transition: border-color .15s, transform .15s; }
       .wl-goal:hover { border-color: var(--brand); }
       @media (hover: hover) and (prefers-reduced-motion: no-preference) { .wl-goal:hover { transform: translateY(-2px); } }
-      .wl-goal svg { flex: none; color: var(--brand); }
+      .wl-goal svg { flex: none; color: var(--gold); }
       .wl-notsure { font-size: 14px; color: var(--muted); margin: 0 0 6px; }
-      .wl-notsure button, .wl-notsure a { background: none; border: none; padding: 0; font: inherit; font-weight: 600; color: var(--brand); cursor: pointer; text-decoration: none; }
+      /* !important: beats global.css's a:not([class*="btn"]) rule (0,3,1
+         specificity) which would otherwise force this link blue. */
+      .wl-notsure button, .wl-notsure a { background: none; border: none; padding: 0; font: inherit; font-weight: 600; color: var(--gold) !important; cursor: pointer; text-decoration: none; }
       .wl-notsure button:hover, .wl-notsure a:hover { text-decoration: underline; }
       .wl-hero__fineprint { font-family: var(--font-condensed); font-size: 12.5px; color: var(--muted); margin: 0 0 26px; }
 
@@ -353,11 +382,22 @@ const faqs = [
       .wl-prod__info.fade-out { opacity: 0; }
       .wl-prod__info.fade-in { opacity: 1; }
       .wl-prod__info-eyebrow { display: block; font-family: var(--font-condensed); font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--brand); margin-bottom: 14px; }
-      .wl-prod__info-list { display: flex; flex-direction: column; gap: 14px; }
-      .wl-prod__info-item { display: flex; align-items: flex-start; gap: 12px; }
-      .wl-prod__info-item .wl-tick { margin-top: 1px; }
-      .wl-prod__info-item h4 { font-size: 13.5px; font-weight: 600; margin: 0 0 3px; }
-      .wl-prod__info-item p { font-size: 12.5px; color: var(--muted); margin: 0; line-height: 1.4; }
+      /* Client feedback (2026-08-07): the plain bullet list "se ve muy
+         plano" — replaced with a 2-up grid of icon cards on a soft gold
+         watermark, so the slide fills the frame like the photo slides do,
+         without going back to a baked-text image (same anti-pattern this
+         carousel was built to get away from). */
+      .wl-prod__info { position: relative; }
+      .wl-prod__info::before {
+        content: ''; position: absolute; inset: -8px -8px auto -8px; height: 190px;
+        background: radial-gradient(120% 100% at 15% 0%, rgba(195,154,78,.14), rgba(195,154,78,0) 70%);
+        border-radius: 20px; pointer-events: none; z-index: -1;
+      }
+      .wl-prod__info-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+      .wl-prod__info-item { display: flex; flex-direction: column; align-items: flex-start; gap: 9px; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 13px 12px; }
+      .wl-prod__info-item .wl-info-icon { width: 28px; height: 28px; border-radius: 9px; display: grid; place-items: center; background: var(--gold); color: #fff; flex: none; }
+      .wl-prod__info-item h4 { font-size: 12.5px; font-weight: 600; margin: 0 0 3px; line-height: 1.25; }
+      .wl-prod__info-item p { font-size: 11px; color: var(--muted); margin: 0; line-height: 1.4; }
 
       .wl-trustpilot { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
       .wl-trustpilot span { font-family: var(--font-condensed); font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
@@ -387,7 +427,9 @@ const faqs = [
 
       /* ── Journey ────────────────────────────────────────────── */
       .wl-journey { position: relative; overflow: hidden; border-radius: 22px; background: var(--green); }
-      .wl-journey__bg { position: absolute; inset: 0; background-image: url('/assets/sw/Here_sWhatHappensNext.jpg'); background-size: cover; background-position: center; }
+      /* Client-approved couple (the woman waiting at the man's shoulder) —
+         restored from the pre-refresh journey background. */
+      .wl-journey__bg { position: absolute; inset: 0; background-image: url('/assets/sw/Here_sWhatHappensNext.original.jpg'); background-size: cover; background-position: center; }
       /* Same angled scrim as /prototype's journey: the left, where all the
          type lives, carries the most cover. */
       .wl-journey__scrim {
@@ -561,7 +603,7 @@ const faqs = [
 
     <!-- ═══ Hero ═══ -->
     <section class="wl-hero">
-      <img class="wl-hero__img" src="/assets/sw/sw-hero.png" alt="A Freeley sexual-wellness patient" fetchpriority="high" />
+      <img class="wl-hero__img" src="/assets/sw/hero-cutout.png" alt="A happy couple" fetchpriority="high" />
       <div class="wl-wrap wl-hero__inner">
         <div class="wl-hero__col">
           <div class="wl-badgeline">
@@ -575,7 +617,7 @@ const faqs = [
             licensed U.S. physician. Fast-acting, reliable, and discreetly delivered.
           </p>
 
-          <img class="wl-hero__img-mob" src="/assets/sw/hero-mob.png" alt="A Freeley sexual-wellness patient" />
+          <img class="wl-hero__img-mob" src="/assets/sw/hero-cutout.png" alt="A happy couple" />
 
           <div class="wl-hero__from">
             From <span class="wl-price">$99</span>/month
@@ -715,9 +757,9 @@ const faqs = [
             <div class="wl-prod__info" data-info-slide="included">
               <span class="wl-prod__info-eyebrow">What's Included</span>
               <div class="wl-prod__info-list">
-                {included.map((item) => (
+                {included.map((item, i) => (
                   <div class="wl-prod__info-item">
-                    <span class="wl-tick"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg></span>
+                    <span class="wl-info-icon" set:html={INFO_ICONS[i % INFO_ICONS.length]} />
                     <div>
                       <h4>{item.title}</h4>
                       <p>{item.desc}</p>
@@ -729,9 +771,9 @@ const faqs = [
             <div class="wl-prod__info" data-info-slide="benefits">
               <span class="wl-prod__info-eyebrow">Why Tadalafil Troches</span>
               <div class="wl-prod__info-list">
-                {benefits.map((item) => (
+                {benefits.map((item, i) => (
                   <div class="wl-prod__info-item">
-                    <span class="wl-tick"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg></span>
+                    <span class="wl-info-icon" set:html={INFO_ICONS[i % INFO_ICONS.length]} />
                     <div>
                       <h4>{item.title}</h4>
                       <p>{item.desc}</p>
@@ -871,7 +913,7 @@ const faqs = [
           <a href="/partner-pharmacies" class="wl-btn-ghost" style="margin-top:8px;">See our partner pharmacies <span class="wl-arw">→</span></a>
         </div>
         <div class="wl-why__img">
-          <img src="/assets/sw/why-trust-freeley-lifestyle.jpg" alt="Freeley patient in a calm, everyday setting" loading="lazy" />
+          <img src="/assets/lifestyle/sw-lifestyle-confidence.jpg" alt="A confident middle-aged man relaxing on his balcony at dusk" loading="lazy" />
         </div>
       </div>
     </section>

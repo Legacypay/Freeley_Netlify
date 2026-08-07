@@ -1,0 +1,23 @@
+[
+  {
+    "output": "public/assets/howItsWork/Physician Gating.png",
+    "width": 900,
+    "height": 900,
+    "subject": "icon",
+    "prompt": "A single large, clean 3D-rendered shield icon with a checkmark in the center (representing physician-verified prescription gating), soft deep-green and white color palette, gentle shadow, modern minimal soft-3D icon style, no text."
+  },
+  {
+    "output": "public/assets/howItsWork/HIPAA-Compliant Infrastructure.png",
+    "width": 900,
+    "height": 900,
+    "subject": "icon",
+    "prompt": "A single large, clean 3D-rendered padlock icon merged with a subtle shield outline (representing encrypted, HIPAA-compliant data infrastructure), soft blue and white color palette, gentle shadow, modern minimal soft-3D icon style, no text, no phone mockup, no unrelated stats or badges."
+  },
+  {
+    "output": "public/assets/howItsWork/Adverse Event Monitoring.png",
+    "width": 900,
+    "height": 900,
+    "subject": "icon",
+    "prompt": "A single large, clean 3D-rendered heartbeat/pulse line icon inside a soft rounded monitor or alert-bell shape (representing ongoing adverse-event monitoring), soft amber/gold and white color palette, gentle shadow, modern minimal soft-3D icon style, no text."
+  }
+]

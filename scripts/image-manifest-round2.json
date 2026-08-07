@@ -1,0 +1,26 @@
+[
+  {
+    "output": "public/assets/sw/sw-hero-couple.png",
+    "width": 1536,
+    "height": 1024,
+    "prompt": "Photorealistic studio photo of a happy couple (man and woman, late 30s-40s) standing close together, warm confident smiles, telehealth/wellness brand feel. Plain, minimal, softly-lit solid neutral studio background (warm off-white or soft beige) -- NO scenery, NO city skyline, NO outdoor setting, NO props. Only the two people should be visually prominent, nothing else competing in the frame. Waist-up framing, landscape orientation."
+  },
+  {
+    "output": "public/assets/sw/Targeted_Absorption.png",
+    "prompt": "Replace the bullseye/dart-target subject completely -- do not keep any archery or target imagery. Keep the same rounded circular vignette badge frame, transparent-corner composition, and soft tint background style as this reference. New subject: a close-up photo of a person's hand holding a small mint-colored sublingual troche near their mouth/tongue, conveying fast oral absorption. Subject positioned in the upper 35% of the tall canvas (not centered lower), photorealistic, clean telehealth aesthetic, warm neutral tones."
+  },
+  {
+    "output": "public/assets/sw/Here_sWhatHappensNext.original.jpg",
+    "prompt": "Keep the exact same pose, composition, cheek-to-cheek closeness, dusk sky background, and romantic mood as this reference photo. Only change who the couple is: make them a clearly different pairing -- a Black man and a Caucasian woman, both in their 30s -- instead of the current pair. Same lighting, same warm dusk color grade, same intimate framing."
+  },
+  {
+    "output": "public/assets/l/Cellular_Energy.png",
+    "prompt": "Keep the same composition, lighting, physician figure (older man, white coat, gray beard), pose, and background/badge frame identical to this reference. Replace the second figure (currently a man) with a woman of similar age (55-65), warmly dressed, in the same consulting pose -- physician showing her something in his hand (pills/supplement), both smiling naturally. Pay close attention to anatomically correct hands and faces, photorealistic, no distortion or artifacts. Telehealth-brand clean aesthetic."
+  },
+  {
+    "output": "public/assets/hl/hero-loss-couple.png",
+    "width": 1536,
+    "height": 1024,
+    "prompt": "Photorealistic studio photo of a different man and woman than typical stock fitness models, both in their 30s, both with visibly healthy, full heads of hair, styled to clearly relate to a hair-care/hair-loss-treatment brand (one could be lightly touching/running fingers through their own hair, confident genuine smiles). Plain, minimal, softly-lit solid neutral studio background (soft white or warm beige) -- no scenery, no props, no gym setting. Waist-up framing, landscape orientation, telehealth-brand clean editorial aesthetic."
+  }
+]

@@ -1,27 +1,33 @@
 /**
  * Generate replacement images via Gemini 2.5 Flash Image ("nano banana").
  *
- * Backs up the current file next to itself as "<name>.original.<ext>"
- * (skipped if that backup already exists), generates a new image per
- * manifest entry, resizes/reformats it to match the original file, and
- * overwrites the original path.
+ * If "output" already exists: backs it up as "<name>.original.<ext>" (skipped
+ * if that backup already exists), sends the CURRENT image alongside the
+ * prompt so Gemini actually edits it (true image-conditioned edit, not a
+ * blind text-only reimagining — required for "keep everything identical,
+ * only change X" prompts), then overwrites it, resized to match the
+ * original's own dimensions.
+ * If "output" does not exist: pure text-to-image, creates it fresh, resized
+ * to the manifest entry's "width"/"height" (required in that case) — unless
+ * "editFrom" names another (already-generated) manifest entry's output path,
+ * in which case THAT image is sent as the conditioning source instead (e.g.
+ * generating an "after" photo from an already-generated "before" photo, so
+ * they read as the same person). Process the manifest in an order where any
+ * "editFrom" target comes before the entry that references it.
  *
  * Usage:
  *   GEMINI_API_KEY=xxx node scripts/generate-images.js <manifest.json>
  *
- * manifest.json: [{ "output": "public/assets/wl/hero.png", "prompt": "..." }, ...]
- * Paths in "output" are relative to the repo root.
+ * manifest.json: [{ "output": "public/assets/wl/hero.png", "prompt": "...",
+ *                    "width": 900, "height": 900 /* only for new files *\/,
+ *                    "editFrom": "public/assets/wl/other.png" /* optional *\/ }, ...]
+ * Paths in "output"/"editFrom" are relative to the repo root.
  */
 
 const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
-
-const apiKey = process.env.GEMINI_API_KEY;
-if (!apiKey) {
-  console.error('❌ Missing GEMINI_API_KEY. Run with: GEMINI_API_KEY=xxx node scripts/generate-images.js <manifest.json>');
-  process.exit(1);
-}
+const { generateImage, MIME_TYPES, MODEL } = require('./lib/openai-image');
 
 const manifestPath = process.argv[2];
 if (!manifestPath) {
@@ -30,31 +36,6 @@ if (!manifestPath) {
 }
 
 const REPO_ROOT = path.join(__dirname, '..');
-const MODEL = 'gemini-2.5-flash-image';
-
-async function generateImage(prompt) {
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${apiKey}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { responseModalities: ['IMAGE'] }
-      })
-    }
-  );
-
-  const data = await response.json();
-  const parts = data?.candidates?.[0]?.content?.parts || [];
-  const imagePart = parts.find((p) => p.inlineData?.data);
-
-  if (!imagePart) {
-    throw new Error(JSON.stringify(data.error || data || 'No image returned'));
-  }
-
-  return Buffer.from(imagePart.inlineData.data, 'base64');
-}
 
 async function processEntry(entry) {
   const outputPath = path.join(REPO_ROOT, entry.output);
@@ -63,29 +44,49 @@ async function processEntry(entry) {
 
   console.log(`\n🎨 Generating: ${entry.output}...`);
 
-  if (!fs.existsSync(outputPath)) {
-    throw new Error(`Original file not found: ${entry.output}`);
-  }
+  const exists = fs.existsSync(outputPath);
+  let targetWidth, targetHeight, sourceImage;
 
-  const backupPath = outputPath.replace(new RegExp(`\\.${ext}$`, 'i'), `.original.${ext}`);
-  const original = sharp(outputPath);
-  const meta = await original.metadata();
+  if (exists) {
+    const backupPath = outputPath.replace(new RegExp(`\\.${ext}$`, 'i'), `.original.${ext}`);
+    const originalBuffer = fs.readFileSync(outputPath);
+    const meta = await sharp(originalBuffer).metadata();
+    targetWidth = meta.width;
+    targetHeight = meta.height;
+    sourceImage = { buffer: originalBuffer, mimeType: MIME_TYPES[ext] || 'image/png' };
 
-  if (!fs.existsSync(backupPath)) {
-    fs.copyFileSync(outputPath, backupPath);
-    console.log(`   💾 Backed up original to ${path.relative(REPO_ROOT, backupPath)}`);
+    if (!fs.existsSync(backupPath)) {
+      fs.copyFileSync(outputPath, backupPath);
+      console.log(`   💾 Backed up original to ${path.relative(REPO_ROOT, backupPath)}`);
+    } else {
+      console.log(`   ↪ Backup already exists, skipping backup step`);
+    }
   } else {
-    console.log(`   ↪ Backup already exists, skipping backup step`);
+    if (!entry.width || !entry.height) {
+      throw new Error(`New file (no existing original) needs "width"/"height" in the manifest: ${entry.output}`);
+    }
+    targetWidth = entry.width;
+    targetHeight = entry.height;
+    fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+
+    if (entry.editFrom) {
+      const editFromPath = path.join(REPO_ROOT, entry.editFrom);
+      if (!fs.existsSync(editFromPath)) {
+        throw new Error(`"editFrom" target not found (check manifest order): ${entry.editFrom}`);
+      }
+      const editFromExt = path.extname(editFromPath).slice(1).toLowerCase();
+      sourceImage = { buffer: fs.readFileSync(editFromPath), mimeType: MIME_TYPES[editFromExt] || 'image/png' };
+    }
   }
 
-  const rawImage = await generateImage(entry.prompt);
+  const rawImage = await generateImage(entry.prompt, sourceImage);
 
   await sharp(rawImage)
-    .resize(meta.width, meta.height, { fit: 'cover' })
+    .resize(targetWidth, targetHeight, { fit: 'cover' })
     .toFormat(format)
     .toFile(outputPath);
 
-  console.log(`   ✅ Replaced: ${entry.output} (${meta.width}x${meta.height})`);
+  console.log(`   ✅ ${exists ? 'Replaced' : 'Created'}: ${entry.output} (${targetWidth}x${targetHeight})`);
 }
 
 async function run() {

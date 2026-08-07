@@ -1,0 +1,20 @@
+[
+  {
+    "output": "public/assets/howItsWork/Progress Dashboard.png",
+    "width": 1400,
+    "height": 700,
+    "prompt": "A full-bleed screenshot-style mockup crop of a weight-trend line chart from the 'Freeley' telehealth app, filling the entire wide landscape canvas edge to edge (no border, no phone frame, no white margin, no page title or header text of any kind -- just the chart card itself). A simple downward-trending green line chart with 2-3 small axis labels (numbers and month abbreviations only), on a warm cream background with a subtle rounded card border. Deep forest-green line color. No large heading text anywhere in the image. Clean modern telehealth product design, photorealistic screen render."
+  },
+  {
+    "output": "public/assets/howItsWork/Document Vault.png",
+    "width": 1400,
+    "height": 700,
+    "prompt": "A full-bleed screenshot-style mockup crop of a document list from the 'Freeley' telehealth app, filling the entire wide landscape canvas edge to edge (no border, no phone frame, no white margin, no page title or header text of any kind -- just the list rows themselves). Two rounded list-row cards stacked, each with a small file icon and a short label ('Prescription', 'Lab Results'), deep forest-green icon/text accents on a warm cream background. No large heading text anywhere in the image. Clean modern telehealth product design, photorealistic screen render."
+  },
+  {
+    "output": "public/assets/howItsWork/Smart Reminders.png",
+    "width": 1400,
+    "height": 700,
+    "prompt": "A full-bleed screenshot-style mockup crop of two reminder cards from the 'Freeley' telehealth app, filling the entire wide landscape canvas edge to edge (no border, no phone frame, no white margin, no page title or header text of any kind -- just the reminder rows themselves). Two rounded list-row cards stacked: one with a bell icon reading a short dosing-reminder label and a time, one with a calendar icon reading a short refill-reminder label and a date. Warm orange icon accents, deep green text, cream background. No large heading text anywhere in the image. Clean modern telehealth product design, photorealistic screen render."
+  }
+]

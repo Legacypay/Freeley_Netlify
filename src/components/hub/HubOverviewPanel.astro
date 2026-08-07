@@ -1,0 +1,81 @@
+---
+// Overview panel: current treatment summary + latest provider message.
+// Data loading (loadOverviewCases / loadLatestProviderMessage) lives in
+// src/lib/hub/dashboard.ts and is kicked off by hub.astro on `hub:auth`.
+---
+
+<div id="panel-overview" class="hub-panel is-active">
+  <div id="overview-loading" class="hub-loading">
+    <div class="hub-spinner"></div>
+    Loading your treatment data...
+  </div>
+
+  <div id="overview-has-case" style="display:none;">
+    <div class="hub-card">
+      <div class="hub-card__head">
+        <h3>Current Treatment Plan</h3>
+        <span class="hub-badge" id="overview-status-badge">Active</span>
+      </div>
+      <div class="hub-med">
+        <img id="overview-product-img" src="" alt="" class="hub-med__img" loading="lazy" decoding="async" />
+        <div>
+          <div class="hub-med__name" id="overview-product-name">Your Treatment</div>
+          <div class="hub-med__desc" id="overview-product-desc">Loading...</div>
+          <div class="hub-med__meta" id="overview-updated"></div>
+        </div>
+      </div>
+      <div style="font-size:11px; color:var(--muted); margin-bottom:14px;" id="overview-patient-id"></div>
+      <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        <button type="button" class="hub-btn hub-btn--outline" disabled title="Coming soon"><i class="ri-focus-3-line" aria-hidden="true"></i> Request Refill / Dosage Change</button>
+        <button type="button" class="hub-btn" id="hubOpenMessagingOverview"><i class="ri-customer-service-2-line" aria-hidden="true"></i> Message Care Team</button>
+      </div>
+    </div>
+
+    <div class="hub-card" id="latestMessageCard">
+      <div class="hub-card__head">
+        <h3>Latest Provider Message</h3>
+      </div>
+      <div id="latestMessageContent" class="hub-msg" style="margin:0;">
+        <div class="hub-empty" style="padding:20px 0;">
+          <i class="ri-chat-3-line"></i>
+          No messages yet. Your care team will reach out once they review your case.
+        </div>
+      </div>
+      <div style="margin-top:14px; text-align:center;">
+        <button type="button" class="hub-btn hub-btn--outline hub-btn--sm" id="hubOpenMessagingLatest"><i class="ri-chat-3-line" aria-hidden="true"></i> Open Messages</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="overview-no-case" style="display:none;">
+    <div class="hub-card hub-empty">
+      <i class="ri-capsule-line"></i>
+      <h3 style="font-family:var(--font-serif); color:var(--ink); margin-bottom:8px;">No Active Treatment</h3>
+      <p>Start a new treatment to get personalized care from our medical team.</p>
+      <a href="/assessment-quiz" class="hub-btn" style="display:inline-flex; margin-top:8px;"><i class="ri-add-line" aria-hidden="true"></i> Start New Treatment</a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .hub-med { display: flex; gap: 20px; align-items: center; margin-bottom: 22px; }
+  .hub-med__img { width: 80px; height: 80px; border-radius: 12px; background: var(--card); border: 1px solid var(--line); object-fit: cover; flex-shrink: 0; }
+  .hub-med__name { font-size: 17px; color: var(--ink); font-weight: 700; margin-bottom: 4px; }
+  .hub-med__desc { font-size: 13px; color: var(--muted); }
+  .hub-med__meta { font-size: 12px; font-weight: 600; color: var(--ink); margin-top: 8px; }
+</style>
+
+<script>
+  // Cross-component call via a real import, not a global — the button
+  // click resolves openMessaging through the module graph instead of
+  // reaching for a same-page global that might not be assigned yet (the
+  // exact hazard class that broke this page's hub:auth listener before
+  // this refactor: `window.openMessaging` was referenced before the
+  // is:inline script further down the page had assigned it).
+  import { openMessaging } from '../../lib/hub/chat';
+
+  ['hubOpenMessagingOverview', 'hubOpenMessagingLatest'].forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('click', () => openMessaging());
+  });
+</script>

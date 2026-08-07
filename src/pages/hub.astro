@@ -1,0 +1,199 @@
+---
+// HEALTH HUB — rebuilt in the /prototype design language. Full rebuild, not
+// a re-skin: public/hub.html + public/hub-tabs.js + public/shared.css were a
+// standalone static page (its own Firebase Auth screen, a sidebar-tabbed
+// patient dashboard, an MDI case-status card, and a slide-over secure
+// messaging drawer). None of that markup/CSS/JS is pulled in by reference —
+// every function below is re-implemented against this page's own elements.
+//
+// This is a logged-in PATIENT PORTAL, not a marketing page, so it does NOT
+// use the public Header.astro (its GLP-1/Hair Loss/... marketing nav made no
+// sense once you're inside the dashboard — the old page's real navigation
+// was always the sidebar below, "Hub Overview / Treatments / Records /
+// Billing / Sign Out"). It gets its own slim portal topbar instead. Footer
+// stays — the legal disclaimer + HIPAA/Terms links are required sitewide.
+//
+// All /.netlify/functions/* endpoints below are the SAME live backend the
+// old hub.html called (verified the functions exist under netlify/functions/).
+// This is real functionality, not a placeholder mock — dropping it would
+// break patient login. Auth itself was migrated from the old page's Firebase
+// Auth to Supabase Auth (@supabase/supabase-js).
+//
+// Markup lives in src/components/hub/*.astro, client logic in
+// src/lib/hub/*.ts (real ES modules — see src/lib/hub/supabase.ts's doc
+// comment for why that specifically matters on this page). This page itself
+// only composes those pieces and owns the cross-component wiring that has
+// to reach more than one of them: nav-tab -> panel switching, sign-out, and
+// showing the dashboard on the `hub:auth` event.
+import Layout from '../layouts/Layout.astro';
+import Footer from '../components/Footer.astro';
+import HubPostPaymentBanner from '../components/hub/HubPostPaymentBanner.astro';
+import HubAuthScreen from '../components/hub/HubAuthScreen.astro';
+import HubTopbar from '../components/hub/HubTopbar.astro';
+import HubNav from '../components/hub/HubNav.astro';
+import HubOverviewPanel from '../components/hub/HubOverviewPanel.astro';
+import HubTreatmentsPanel from '../components/hub/HubTreatmentsPanel.astro';
+import HubRecordsPanel from '../components/hub/HubRecordsPanel.astro';
+import HubBillingPanel from '../components/hub/HubBillingPanel.astro';
+import HubChatWidget from '../components/hub/HubChatWidget.astro';
+import '../styles/hub.css';
+
+const navItems = [
+  { id: 'overview', icon: 'ri-dashboard-line', label: 'Hub Overview' },
+  { id: 'treatments', icon: 'ri-medicine-bottle-line', label: 'Active Treatments & Refills' },
+  { id: 'records', icon: 'ri-folder-open-line', label: 'Medical Records & Notes' },
+  { id: 'billing', icon: 'ri-bank-card-line', label: 'Billing & Receipts' },
+];
+---
+
+<Layout title="Freeley Health Hub — Patient Portal">
+  <Fragment slot="head">
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="description" content="Freeley patient portal: case status, prescriptions, and messaging." />
+    <link rel="canonical" href="https://freeley.com/hub" />
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
+  </Fragment>
+
+  <main class="hub-page">
+    <HubPostPaymentBanner />
+    <HubAuthScreen />
+
+    <!-- ═══ Dashboard screen ═══ -->
+    <div id="dashboard-screen">
+      <HubTopbar />
+
+      <div class="hub-wrap hub-shell">
+        <div class="hub-grid">
+          <HubNav navItems={navItems} />
+
+          <div>
+            <HubOverviewPanel />
+            <HubTreatmentsPanel />
+            <HubRecordsPanel />
+            <HubBillingPanel />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <HubChatWidget />
+
+    <Footer />
+  </main>
+
+  <script>
+    // Page-level orchestration only: the pieces below each have to reach
+    // across more than one Hub* component, so they can't live inside any
+    // single component's own script.
+    import { signOut } from '../lib/hub/auth';
+    import { setText } from '../lib/hub/dom';
+    import { loadOverviewCases, refreshCaseStatus, loadMedicalRecords, loadBillingHistory } from '../lib/hub/dashboard';
+    // supabase.ts's onAuthStateChange fires its FIRST callback (with any
+    // already-persisted session — the normal case on a repeat visit/hard
+    // refresh) asynchronously, and can resolve fast enough (no network
+    // round-trip needed to read localStorage) to beat this script's own
+    // `hub:auth` listener below to the punch: HubAuthScreen's <script>
+    // renders earlier in the document, so ITS import of supabase.ts (via
+    // auth.ts) evaluates — and can fire — before this page-level deferred
+    // module script even starts running. Module import order only
+    // guarantees synchronous evaluation order; it says nothing about an
+    // async callback outracing a *later* script's own top-level code, so
+    // that fire-and-forget CustomEvent can dispatch into a moment nothing
+    // is listening yet and simply be lost (this is why a hard refresh
+    // while already signed in silently dumped back to the login screen).
+    // Fix: explicitly check the current session too, right after
+    // registering the listener, instead of trusting the event alone for
+    // this first paint.
+    import { supabase } from '../lib/hub/supabase';
+
+    const authScreen = document.getElementById('auth-screen') as HTMLElement;
+    const dashboardScreen = document.getElementById('dashboard-screen') as HTMLElement;
+
+    // ── Sign out ─────────────────────────────────────────────────────
+    const signOutBtn = document.getElementById('hubSignOut');
+    if (signOutBtn) {
+      signOutBtn.addEventListener('click', async () => {
+        await signOut();
+        dashboardScreen.style.display = 'none';
+        authScreen.style.display = 'flex';
+        const loginEmail = document.getElementById('loginEmail') as HTMLInputElement | null;
+        const loginPassword = document.getElementById('loginPassword') as HTMLInputElement | null;
+        if (loginEmail) loginEmail.value = '';
+        if (loginPassword) loginPassword.value = '';
+      });
+    }
+
+    // ── Panel / tab switching ───────────────────────────────────────
+    const navLinks = document.querySelectorAll<HTMLElement>('.hub-nav-link[data-panel]');
+    let recordsLoaded = false;
+    let billingLoaded = false;
+
+    function switchPanel(panelId: string) {
+      navLinks.forEach((el) => {
+        const isActive = el.dataset.panel === panelId;
+        el.classList.toggle('is-active', isActive);
+        el.setAttribute('aria-current', isActive ? 'true' : 'false');
+      });
+      document.querySelectorAll('.hub-panel').forEach((el) => el.classList.remove('is-active'));
+      const panel = document.getElementById('panel-' + panelId);
+      if (panel) panel.classList.add('is-active');
+      // Scroll the freshly-selected panel into view on mobile, where the
+      // horizontal tab bar sits above it — a fixed `scrollTo(top: 260)`
+      // assumed one exact header height, but the post-payment banner
+      // (HubPostPaymentBanner) is conditionally rendered and shifts
+      // everything below it, so a fixed pixel target under- or
+      // over-scrolls depending on whether it's showing. scrollIntoView
+      // targets the actual panel, so it's correct either way.
+      if (panel && window.innerWidth < 900) {
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        panel.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+      }
+
+      if (panelId === 'treatments') refreshCaseStatus();
+      if (panelId === 'records' && !recordsLoaded) {
+        recordsLoaded = true;
+        loadMedicalRecords();
+      }
+      if (panelId === 'billing' && !billingLoaded) {
+        billingLoaded = true;
+        loadBillingHistory();
+      }
+    }
+
+    navLinks.forEach((link) => {
+      link.addEventListener('click', () => switchPanel(link.dataset.panel!));
+    });
+
+    // ── Sign-in → show dashboard ─────────────────────────────────────
+    let dashboardShown = false;
+    function showDashboard(email: string, displayName: string | null) {
+      if (dashboardShown) return; // the explicit getSession() check below and a
+      dashboardShown = true;      // genuine hub:auth event can both fire; only act once
+      authScreen.style.display = 'none';
+      dashboardScreen.style.display = 'block';
+
+      const formattedName = displayName || email.split('@')[0].charAt(0).toUpperCase() + email.split('@')[0].slice(1);
+      setText('dashUserName', formattedName);
+      setText('dashUserInitial', formattedName.charAt(0).toUpperCase());
+      setText('dashUserEmail', email);
+
+      setTimeout(loadOverviewCases, 200);
+    }
+
+    window.addEventListener('hub:auth', ((e: CustomEvent<{ email: string; displayName: string | null }>) => {
+      showDashboard(e.detail.email, e.detail.displayName);
+    }) as EventListener);
+
+    // Catch the case where onAuthStateChange's initial fire (an already-
+    // persisted session, e.g. after a hard refresh) already happened and
+    // dispatched `hub:auth` before the listener above was registered — see
+    // the comment on the supabase.ts import up top. getSession() is cheap
+    // (reads the already-initialized in-memory client, no extra network
+    // call when nothing needs refreshing) and safe to call unconditionally.
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session && data.session.user) {
+        showDashboard(data.session.user.email!, data.session.user.user_metadata?.full_name || null);
+      }
+    });
+  </script>
+</Layout>

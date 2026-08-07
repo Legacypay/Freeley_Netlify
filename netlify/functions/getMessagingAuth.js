@@ -4,10 +4,10 @@
  * Generates a one-time-use, pre-authenticated messaging link for a patient
  * to communicate with their assigned clinician via MDI's secure messaging.
  *
- * REQUIRES a valid Firebase ID token in the Authorization header (HIPAA).
+ * REQUIRES a valid Supabase access token in the Authorization header (HIPAA).
  *
  * POST /.netlify/functions/getMessagingAuth
- * Headers: { Authorization: 'Bearer <firebase-id-token>' }
+ * Headers: { Authorization: 'Bearer <supabase-access-token>' }
  * Body:    { "patient_id": "uuid-here" }
  *
  * Returns:
@@ -26,7 +26,7 @@
  */
 
 const { mdiRequest, getCorsHeaders } = require('./lib/mdi-client');
-const { verifyFirebaseToken } = require('./lib/verify-firebase-token');
+const { verifySupabaseToken } = require('./lib/verify-supabase-token');
 
 exports.handler = async (event) => {
   const cors = getCorsHeaders(event);
@@ -45,13 +45,13 @@ exports.handler = async (event) => {
   }
 
   try {
-    // ── Step 1: Verify Firebase authentication ──────────────────
+    // ── Step 1: Verify Supabase authentication ──────────────────
     const authHeader = event.headers.authorization || event.headers.Authorization || '';
     const idToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
 
-    const user = await verifyFirebaseToken(idToken);
+    const user = await verifySupabaseToken(idToken);
     if (!user) {
-      console.warn('[MESSAGING AUTH] Unauthorized — no valid Firebase token');
+      console.warn('[MESSAGING AUTH] Unauthorized — no valid Supabase token');
       return {
         statusCode: 401,
         headers: cors,

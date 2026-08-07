@@ -37,12 +37,15 @@ const goals = [
 // placeholder, not real per-tier pricing. pricing.json is now the source of
 // truth for every tier (longevity.default), including the new 24-month rate,
 // so the ladder is rebuilt from those real numbers instead.
+// Client feedback (2026-08-07): the plan ladder disclosed too much up front
+// (per-tier savings badges) AND showed too many tiers — no other page's
+// plan selector works this way. Trimmed to the 3 tiers the client asked
+// for (1/6/12-month); boxes render term + price only. `best` still drives
+// the highlighted border, now on 12-month (the cheapest of the 3 shown).
 const plans = [
-  { term: '1-month', price: '$129', save: null },
-  { term: '3-month', price: '$115', save: 'Save 11%' },
-  { term: '6-month', price: '$99', save: 'Save 23%' },
-  { term: '12-month', price: '$89', save: 'Save 31%' },
-  { term: '24-month', price: '$79', save: 'Save 39%', best: true },
+  { term: '1-month', price: '$129' },
+  { term: '6-month', price: '$99' },
+  { term: '12-month', price: '$89', best: true },
 ];
 
 const trustPoints = [
@@ -60,6 +63,14 @@ const mechanisms = [
   {
     title: 'Cellular Energy & Repair',
     desc: 'NAD+ treatments work on the mitochondrial level to restore DNA, boost cognitive clarity, and eliminate "brain fog" mid-day.',
+    // NEEDS GENERATION (2026-08-07 feedback): this photo shows two men
+    // (an older pharmacist/physician and an older male patient reviewing a
+    // pill bottle) — should be a man + woman instead, matching the page's
+    // 50-60 target demographic. Checked src/assets/** and public/assets/**
+    // for an existing older man+woman pair photo; none exists (the only
+    // "couple" stock photos in the repo — public/assets/home/hero-image.png,
+    // src/assets/figma-v5/hero-couple-green.jpg — are fitness models in
+    // their 20s-30s, wrong age). Left in place until a real asset lands.
     img: '/assets/l/Cellular_Energy.png',
     // This photo's subjects sit lower in frame than the other two cards' —
     // default object-position:top would crop their heads out.
@@ -81,10 +92,16 @@ const mechanisms = [
 ];
 
 // "6+ Custom Peptide Protocols" — the old page's second card row.
+// Sermorelin/Glutathione originally used stock cutouts of women in their
+// 20s (beauty-ad look, wrong demographic) — swapped 2026-08-07 for existing
+// 50-60 lifestyle photography already in the repo (unused elsewhere on this
+// page): public/assets/lifestyle/lg-lifestyle-vitality.jpg and
+// public/assets/about/value-integrity.jpg. NAD+'s DNA-strand graphic has no
+// people in it, so it's untouched.
 const proofCards = [
-  { title: 'Sermorelin (Youthful markers)', img: '/assets/l/Sermorelin_(Youthful_markers).png', tint: '#E4DDD4' },
+  { title: 'Sermorelin (Youthful markers)', img: '/assets/lifestyle/lg-lifestyle-vitality.jpg', tint: '#E4DDD4' },
   { title: 'NAD+ (Cellular engine repair)', img: '/assets/l/NAD+_(Cellular_engine_repair).png', tint: '#D1D9DC' },
-  { title: 'Glutathione (Immunity & Detox)', img: '/assets/l/Glutathione_(Immunity_&_Detox).png', tint: '#F6EEE0' },
+  { title: 'Glutathione (Immunity & Detox)', img: '/assets/about/value-integrity.jpg', tint: '#F6EEE0' },
 ];
 
 // "What's Included" / "Key Benefits" — copy transcribed verbatim from
@@ -240,12 +257,16 @@ const faqs = [
       /* Goal doors */
       .wl-goals { display: grid; gap: 10px; grid-template-columns: 1fr; margin: 0 0 14px; }
       @media (min-width: 560px) { .wl-goals { grid-template-columns: repeat(3, 1fr); } }
-      .wl-goal { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 13px 18px; font-family: var(--font-sans); font-size: 15px; font-weight: 600; color: var(--ink); cursor: pointer; transition: border-color .15s, transform .15s; }
+      /* !important: beats global.css's a:not([class*="btn"]) rule (0,3,1
+         specificity), same trap as .wl-notsure — this is an <a> too. */
+      .wl-goal { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 13px 18px; font-family: var(--font-sans); font-size: 15px; font-weight: 600; color: var(--gold) !important; cursor: pointer; transition: border-color .15s, transform .15s; }
       .wl-goal:hover { border-color: var(--brand); }
       @media (hover: hover) and (prefers-reduced-motion: no-preference) { .wl-goal:hover { transform: translateY(-2px); } }
-      .wl-goal svg { flex: none; color: var(--brand); }
+      .wl-goal svg { flex: none; color: var(--gold); }
       .wl-notsure { font-size: 14px; color: var(--muted); margin: 0 0 6px; }
-      .wl-notsure button, .wl-notsure a { background: none; border: none; padding: 0; font: inherit; font-weight: 600; color: var(--brand); cursor: pointer; text-decoration: none; }
+      /* !important: beats global.css's a:not([class*="btn"]) rule (0,3,1
+         specificity) which would otherwise force this link blue. */
+      .wl-notsure button, .wl-notsure a { background: none; border: none; padding: 0; font: inherit; font-weight: 600; color: var(--gold) !important; cursor: pointer; text-decoration: none; }
       .wl-notsure button:hover, .wl-notsure a:hover { text-decoration: underline; }
       .wl-hero__fineprint { font-family: var(--font-condensed); font-size: 12.5px; color: var(--muted); margin: 0 0 22px; }
 
@@ -253,9 +274,7 @@ const faqs = [
       .wl-hero__from .wl-price { font-size: 1.7rem; }
       .wl-hero__qual { font-family: var(--font-condensed); font-size: 12.5px; color: var(--muted); display: block; margin-top: 2px; }
 
-      /* Plan strip — the old page's 1/3/6-month cards, restyled. Now 5 tiers
-         (added 12/24-month); the 3-column grid wraps the extra two onto a
-         second row rather than needing a layout change. Cards are real
+      /* Plan strip — 3 tiers (1/6/12-month) in a single row. Cards are real
          <button>s (clickable/selectable), so the reset below undoes the
          browser's default button chrome. */
       .wl-plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 4px 0 26px; }
@@ -570,7 +589,6 @@ const faqs = [
                 <div class="wl-plans__price">{p.price}<span>*</span></div>
                 <div class="wl-plans__meta">
                   <span>{p.term}</span>
-                  {p.save && <b>{p.save}</b>}
                 </div>
               </button>
             ))}
@@ -578,26 +596,6 @@ const faqs = [
         </div>
       </div>
     </section>
-
-    <!-- ═══ Trust bar ═══ -->
-    <div class="wl-trustbar">
-      <div class="wl-wrap">
-        <ul>
-          {trustPoints.map((t) => (
-            <li>
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
-              {t}
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
-    <div class="wl-wrap wl-certs">
-      <span>Verified &amp; Certified</span>
-      <img src="/assets/hipaa_badge.png" alt="HIPAA Compliant" loading="lazy" />
-      <img src="/assets/49921676.png" alt="LegitScript Certified" loading="lazy" />
-      <img src="/assets/usa_badge.png" alt="Made in USA" loading="lazy" />
-    </div>
 
     <!-- ═══ Inline CTA band ═══ -->
     <section class="wl-sec" style="padding-bottom:0;">
@@ -770,8 +768,30 @@ const faqs = [
       </div>
     </section>
 
+    <!-- ═══ Trust bar — moved to a mid-page break (2026-08-07 feedback):
+         was right under the hero, now sits after the pricing/purchase
+         decision and before the aspirational Journey section. ═══ -->
+    <div class="wl-trustbar">
+      <div class="wl-wrap">
+        <ul>
+          {trustPoints.map((t) => (
+            <li>
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
+              {t}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+    <div class="wl-wrap wl-certs">
+      <span>Verified &amp; Certified</span>
+      <img src="/assets/hipaa_badge.png" alt="HIPAA Compliant" loading="lazy" />
+      <img src="/assets/49921676.png" alt="LegitScript Certified" loading="lazy" />
+      <img src="/assets/usa_badge.png" alt="Made in USA" loading="lazy" />
+    </div>
+
     <!-- ═══ Journey ═══ -->
-    <section class="wl-sec" style="padding-top:0;">
+    <section class="wl-sec">
       <div class="wl-wrap">
         <div class="wl-journey">
           <div class="wl-journey__bg"></div>

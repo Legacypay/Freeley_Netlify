@@ -1,0 +1,35 @@
+---
+// Slim portal topbar (logo + greeting + profile chip). This is a logged-in
+// PATIENT PORTAL, not a marketing page, so it does NOT use the public
+// Header.astro — its GLP-1/Hair Loss/... marketing nav made no sense once
+// you're inside the dashboard. Text content (name/email/initial) is filled
+// in by hub.astro's own script on the `hub:auth` event, same as before.
+---
+
+<div class="hub-topbar">
+  <div class="hub-wrap hub-topbar__row">
+    <div class="hub-topbar__brand">
+      <a href="/"><img src="/assets/brand/freeley_logo_transparent_green.png" alt="Freeley" class="hub-topbar__logo" /></a>
+      <span class="hub-topbar__title">Hello, <span id="dashUserName">Patient</span></span>
+    </div>
+    <div class="hub-profile">
+      <div class="hub-profile__avatar" id="dashUserInitial">P</div>
+      <div>
+        <div class="hub-profile__email" id="dashUserEmail">user@example.com</div>
+        <div class="hub-profile__id">Patient ID: #FL-88291</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .hub-topbar { background: #fff; border-bottom: 1px solid var(--line); padding: 22px 0; }
+  .hub-topbar__row { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .hub-topbar__brand { display: flex; align-items: center; gap: 14px; }
+  .hub-topbar__logo { height: 30px; width: auto; }
+  .hub-topbar__title { font-family: var(--font-serif); font-weight: 600; font-size: 15px; color: var(--ink); border-left: 1px solid var(--line); padding-left: 14px; }
+  .hub-profile { display: flex; align-items: center; gap: 12px; background: var(--card); padding: 8px 18px 8px 8px; border-radius: 999px; border: 1px solid var(--line); }
+  .hub-profile__avatar { width: 36px; height: 36px; background: rgba(15,107,69,.12); color: var(--brand); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex-shrink: 0; }
+  .hub-profile__email { font-size: 13.5px; font-weight: 600; color: var(--ink); }
+  .hub-profile__id { font-size: 11px; color: var(--muted); margin-top: 2px; }
+</style>

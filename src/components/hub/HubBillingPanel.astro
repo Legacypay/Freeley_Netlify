@@ -1,0 +1,50 @@
+---
+// Billing panel: payment methods + invoice history. Loaded lazily by
+// hub.astro calling loadBillingHistory() from src/lib/hub/dashboard.ts.
+---
+
+<div id="panel-billing" class="hub-panel">
+  <div class="hub-card">
+    <div class="hub-card__head"><h3>Payment Methods</h3></div>
+    <div id="billing-loading" class="hub-loading"><div class="hub-spinner" style="width:22px; height:22px;"></div>Loading billing...</div>
+    <div id="payment-methods-content" style="display:none;"></div>
+    <div id="payment-methods-empty" class="hub-empty" style="display:none;">
+      <i class="ri-bank-card-line"></i>
+      <p>No payment methods on file</p>
+      <p>Payment information is managed through your checkout process.</p>
+    </div>
+  </div>
+  <div class="hub-card">
+    <div class="hub-card__head"><h3>Invoice History</h3></div>
+    <div id="invoices-content" style="display:none;"></div>
+    <div id="invoices-empty" class="hub-empty" style="display:none;">
+      <i class="ri-receipt-line"></i>
+      <p>No invoices yet</p>
+      <p>Your receipts will appear here after your first order.</p>
+    </div>
+  </div>
+</div>
+
+<style is:global>
+  /* is:global, deliberately: .hub-pm-row and .hub-table rows below are
+     rendered into #payment-methods-content / #invoices-content via
+     innerHTML from src/lib/hub/dashboard.ts's loadBillingHistory(), not by
+     this component's own template — Astro's scoped-style attribute is only
+     ever applied to elements the compiler sees at build time, so a scoped
+     <style> here would silently fail to reach that injected markup. */
+  .hub-pm { display: flex; align-items: center; gap: 16px; padding: 16px; border: 1px solid var(--line); border-radius: 12px; margin-bottom: 8px; }
+  .hub-pm i { font-size: 26px; color: var(--brand); }
+  .hub-pm__brand { font-weight: 700; font-size: 14.5px; color: var(--ink); }
+  .hub-pm__exp { font-size: 12.5px; color: var(--muted); }
+  .hub-table { width: 100%; font-size: 13.5px; text-align: left; border-collapse: collapse; }
+  .hub-table th { padding: 12px 0; border-bottom: 2px solid var(--line); color: var(--muted); font-weight: 600; }
+  .hub-table td { padding: 13px 0; border-bottom: 1px solid var(--line); color: var(--ink); }
+  .hub-table td.hub-table__muted { color: var(--muted); }
+  .hub-receipt-link { display: inline-flex; align-items: center; gap: 4px; }
+  /* Text link inside a table cell — the one spot on this page a real
+     <a href> is genuinely correct (external Stripe receipt URL), so it
+     needs the sitewide anchor-color trap's alternate fix: !important on
+     color, not a "btn" class rename. Same pattern as .wl-notsure a
+     elsewhere in this repo. */
+  .hub-receipt-link, .hub-receipt-link:hover { color: var(--brand) !important; text-decoration: none; }
+</style>

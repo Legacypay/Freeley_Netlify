@@ -1,0 +1,66 @@
+/* Health Hub — cross-cutting styles shared by 2+ src/components/hub/*
+   components (buttons, cards, badges, empty/loading states, the panel
+   shell, page chrome). Genuinely single-owner style blocks (auth screen,
+   topbar, nav, chat drawer, post-payment banner, per-panel-only classes
+   like .hub-med/.hub-status/.hub-pm/.hub-table) live as scoped <style> in
+   their own component instead — see each component file. Imported once
+   from src/pages/hub.astro's frontmatter (plain Vite CSS import, same
+   pattern as src/styles/tailwind.css), so no `is:inline` is needed here. */
+
+.hub-page { background: var(--cream); color: var(--ink); font-family: var(--font-sans); line-height: 1.55; overflow-x: clip; }
+.hub-page img { max-width: 100%; }
+.hub-wrap { max-width: 1200px; margin: 0 auto; padding-left: 28px; padding-right: 28px; }
+/* .container carries two site-wide traps (padding-inline: 0.75rem from
+   global.css + a legacy `max-width:1480px !important` further down
+   style.css) — this page never uses .container, only its own .hub-wrap,
+   same fix documented in how-it-works.astro / Footer.astro. */
+.hub-page a:focus-visible, .hub-page button:focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; border-radius: 8px; }
+
+/* Buttons — "btn" must be substring of the class name so global.css's
+   `a:not([class*="btn"])` trap (forces #2563eb blue) never applies. */
+.hub-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: var(--green); color: #fff; border: none; border-radius: 999px; font-family: var(--font-sans); font-size: 14px; font-weight: 600; padding: 12px 22px; cursor: pointer; text-decoration: none; transition: background .15s; }
+.hub-btn:hover { background: var(--green-deep); color: #fff; }
+.hub-btn:disabled { background: var(--line); color: var(--muted); cursor: not-allowed; }
+.hub-btn--outline { background: transparent; color: var(--muted); border: 1px solid var(--line); }
+.hub-btn--outline:hover { background: var(--card); color: var(--ink); }
+.hub-btn--sm { padding: 8px 16px; font-size: 13px; }
+
+#dashboard-screen { display: none; }
+
+.hub-shell { padding: 40px 0 88px; }
+.hub-grid { display: grid; grid-template-columns: 300px 1fr; gap: 32px; }
+@media (max-width: 900px) { .hub-grid { grid-template-columns: 1fr; } }
+
+.hub-panel { display: none; animation: hubFadeIn .35s ease; }
+.hub-panel.is-active { display: block; }
+@keyframes hubFadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) { .hub-panel { animation: none; } }
+
+.hub-card { background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: 30px; margin-bottom: 22px; }
+.hub-card__head { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 22px; padding-bottom: 16px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.hub-card__head h3 { font-family: var(--font-serif); font-weight: 600; font-size: 19px; color: var(--ink); margin: 0; }
+
+.hub-badge { display: inline-block; padding: 4px 11px; font-size: 11px; font-weight: 700; border-radius: 999px; text-transform: uppercase; letter-spacing: .04em; background: #fff8e1; color: #f57f17; }
+.hub-badge--ok { background: #e8f5e9; color: #2e7d32; }
+.hub-badge--bad { background: #ffebee; color: #c62828; }
+
+.hub-empty { text-align: center; padding: 44px 24px; color: var(--muted); }
+.hub-empty i { font-size: 44px; opacity: .35; display: block; margin-bottom: 14px; }
+.hub-empty p { margin: 0 0 6px; font-size: 14.5px; }
+.hub-empty p + p { font-size: 13px; opacity: .8; margin: 0; }
+.hub-empty--dashed { border: 1px dashed var(--line); border-radius: 16px; }
+
+.hub-spinner { width: 26px; height: 26px; border: 3px solid var(--line); border-top-color: var(--brand); border-radius: 50%; margin: 0 auto 14px; animation: hubSpin .8s linear infinite; }
+@keyframes hubSpin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .hub-spinner { animation: none; } }
+.hub-loading { text-align: center; padding: 44px 0; color: var(--muted); font-size: 14px; }
+
+/* Provider message / clinical note card — used statically in the Overview
+   panel's "Latest Provider Message" card and rendered dynamically into the
+   Records panel by src/lib/hub/dashboard.ts's loadMedicalRecords(). */
+.hub-msg { padding: 22px; border-radius: 14px; background: var(--cream); border-left: 4px solid var(--brand); margin-bottom: 14px; }
+.hub-msg__meta { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.hub-msg__avatar { width: 32px; height: 32px; border-radius: 50%; background: rgba(15,107,69,.12); color: var(--brand); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.hub-msg__name { font-size: 13.5px; font-weight: 700; color: var(--ink); }
+.hub-msg__date { font-size: 11.5px; color: var(--muted); }
+.hub-msg__body { font-size: 13.5px; color: var(--muted); line-height: 1.6; }

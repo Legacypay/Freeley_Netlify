@@ -2,10 +2,10 @@
  * Netlify Function: caseStatus
  *
  * Allows authenticated patients to check the status of their MDI case.
- * REQUIRES a valid Firebase ID token in the Authorization header.
+ * REQUIRES a valid Supabase access token in the Authorization header.
  *
  * POST /.netlify/functions/caseStatus
- * Headers: { Authorization: 'Bearer <firebase-id-token>' }
+ * Headers: { Authorization: 'Bearer <supabase-access-token>' }
  *
  * Request Body:
  * {
@@ -22,7 +22,7 @@
  */
 
 const { mdiRequest, CORS_HEADERS } = require('./lib/mdi-client');
-const { verifyFirebaseToken } = require('./lib/verify-firebase-token');
+const { verifySupabaseToken } = require('./lib/verify-supabase-token');
 const { getStore } = require('@netlify/blobs');
 
 // Map MDI internal statuses to patient-friendly messages
@@ -92,13 +92,13 @@ exports.handler = async (event) => {
   }
 
   try {
-    // ── Step 1: Verify Firebase authentication ──────────────────
+    // ── Step 1: Verify Supabase authentication ──────────────────
     const authHeader = event.headers.authorization || event.headers.Authorization || '';
     const idToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
-    
-    const user = await verifyFirebaseToken(idToken);
+
+    const user = await verifySupabaseToken(idToken);
     if (!user) {
-      console.warn('[CASE STATUS] Unauthorized access attempt — no valid Firebase token');
+      console.warn('[CASE STATUS] Unauthorized access attempt — no valid Supabase token');
       return {
         statusCode: 401,
         headers: CORS_HEADERS,
@@ -113,7 +113,7 @@ exports.handler = async (event) => {
 
     let resolvedPatientId = patient_id;
     let resolvedCaseId = case_id;
-    let resolvedEmail = null; // MDI patient email (may differ from Firebase email)
+    let resolvedEmail = null; // MDI patient email (may differ from Supabase email)
 
     // ── Step 2b: If case_id missing, resolve from blob store ───
     if (!resolvedCaseId && (voucher_id || resolvedPatientId)) {
@@ -287,4 +287,4 @@ exports.handler = async (event) => {
 };
 
 // Exported for reference only
-exports.verifyFirebaseToken = verifyFirebaseToken;
+exports.verifySupabaseToken = verifySupabaseToken;
