@@ -12,6 +12,10 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import FinalCta from '../components/FinalCta.astro';
+// QuizModal is rendered per-page, not by Layout — without it here the
+// Header CTA and the FinalCta buttons on all 4 legal pages fell through to
+// a real navigation to /assessment-quiz instead of opening the modal.
+import QuizModal from '../components/QuizModal.astro';
 
 interface Props {
   metaTitle: string;
@@ -51,6 +55,8 @@ const { metaTitle, eyebrow, heroPlain, heroEm, updated, ctaFeatures } = Astro.pr
     </FinalCta>
   </main>
   <Footer />
+
+  <QuizModal />
 
   <style>
     .wl-page { background: var(--cream); color: var(--ink); font-family: var(--font-sans); line-height: 1.55; overflow-x: clip; }

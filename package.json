@@ -10,7 +10,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui"
+    "test:e2e:ui": "playwright test --ui",
+    "dev:netlify": "netlify dev"
   },
   "keywords": [],
   "author": "",

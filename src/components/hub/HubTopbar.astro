@@ -7,10 +7,17 @@
 ---
 
 <div class="hub-topbar">
-  <div class="hub-wrap hub-topbar__row">
+  <div class="hub-topbar__row">
     <div class="hub-topbar__brand">
-      <a href="/"><img src="/assets/brand/freeley_logo_transparent_green.png" alt="Freeley" class="hub-topbar__logo" /></a>
-      <span class="hub-topbar__title">Hello, <span id="dashUserName">Patient</span></span>
+      <button type="button" class="hub-navtoggle" id="hubNavToggle" aria-label="Open menu" aria-expanded="false" aria-controls="hubNav">
+        <i class="ri-menu-line" aria-hidden="true"></i>
+      </button>
+      <a href="/" class="hub-topbar__logo-link"><img src="/assets/brand/freeley_logo_transparent_green.png" alt="Freeley" class="hub-topbar__logo" /></a>
+      <div class="hub-topbar__divider" aria-hidden="true"></div>
+      <div>
+        <span class="hub-eyebrow hub-topbar__kicker">Patient Portal</span>
+        <span class="hub-topbar__title hub-serif">Hello, <span id="dashUserName">Patient</span></span>
+      </div>
     </div>
     <div class="hub-profile">
       <div class="hub-profile__avatar" id="dashUserInitial">P</div>
@@ -23,13 +30,49 @@
 </div>
 
 <style>
-  .hub-topbar { background: #fff; border-bottom: 1px solid var(--line); padding: 22px 0; }
-  .hub-topbar__row { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
-  .hub-topbar__brand { display: flex; align-items: center; gap: 14px; }
-  .hub-topbar__logo { height: 30px; width: auto; }
-  .hub-topbar__title { font-family: var(--font-serif); font-weight: 600; font-size: 15px; color: var(--ink); border-left: 1px solid var(--line); padding-left: 14px; }
-  .hub-profile { display: flex; align-items: center; gap: 12px; background: var(--card); padding: 8px 18px 8px 8px; border-radius: 999px; border: 1px solid var(--line); }
-  .hub-profile__avatar { width: 36px; height: 36px; background: rgba(15,107,69,.12); color: var(--brand); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex-shrink: 0; }
+  /* Sticky chrome. The height is pinned to --hub-tb (set on .hub-page)
+     rather than left to content, because the sidebar anchors itself to
+     exactly that offset — a topbar that grew or wrapped would desync the
+     rail from the bar it's supposed to hang off. */
+  .hub-topbar { background: #fff; border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 30; height: var(--hub-tb); display: flex; align-items: center; }
+  /* width:100% is load-bearing: as a flex item of .hub-topbar this row
+     would otherwise shrink to its content, leaving space-between nothing
+     to distribute and collapsing the logo and the profile chip together
+     in the middle. Full-bleed padding (not the centred .hub-wrap) so the
+     logo lines up with the left edge, same as the rail below it. */
+  .hub-topbar__row { width: 100%; flex-wrap: nowrap; padding: 0 32px 0 26px; }
+  /* Brand-to-gold hairline under the whole topbar — a quiet signature
+     mark the rest of the site doesn't need (the public header sits on a
+     transparent hero), but a logged-in dashboard chrome benefits from. */
+  .hub-topbar::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: linear-gradient(90deg, var(--brand), var(--gold) 55%, transparent); opacity: .75; }
+  .hub-topbar__row { display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+  .hub-topbar__brand { display: flex; align-items: center; gap: 16px; min-width: 0; }
+  /* Drawer trigger — desktop has the rail permanently on screen, so the
+     toggle only exists at the breakpoint where the rail goes off-canvas. */
+  .hub-navtoggle { display: none; align-items: center; justify-content: center; width: 42px; height: 42px; flex-shrink: 0; border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 13px; font-size: 21px; cursor: pointer; padding: 0; }
+  .hub-navtoggle:hover { background: var(--cream); }
+  .hub-topbar__logo-link { display: flex; }
+  .hub-topbar__logo { height: 52px; width: auto; }
+  @media (max-width: 560px) { .hub-topbar__logo { height: 40px; } }
+  .hub-topbar__divider { width: 1px; height: 30px; background: var(--line); flex-shrink: 0; }
+  .hub-topbar__kicker { margin-bottom: 3px; }
+  .hub-topbar__title { display: block; font-size: 17px; color: var(--ink); }
+  .hub-profile { display: flex; align-items: center; gap: 12px; background: var(--card); padding: 7px 18px 7px 7px; border-radius: 999px; border: 1px solid var(--line); }
+  .hub-profile__avatar { width: 38px; height: 38px; background: var(--green); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex-shrink: 0; box-shadow: 0 0 0 3px rgba(15,107,69,.14); }
   .hub-profile__email { font-size: 13.5px; font-weight: 600; color: var(--ink); }
-  .hub-profile__id { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .hub-profile__id { font-size: 11px; color: var(--muted); margin-top: 2px; font-family: var(--font-condensed); letter-spacing: .03em; }
+  /* Mobile topbar: [menu] [logo] ......... [avatar]. The greeting block is
+     dropped rather than shrunk — logo + eyebrow + greeting + a full email
+     chip cannot coexist on a 390px row without wrapping into two lines,
+     and the avatar chip already identifies who is signed in. */
+  @media (max-width: 900px) {
+    .hub-navtoggle { display: inline-flex; }
+    .hub-topbar__row { padding: 12px 16px; gap: 12px; }
+    .hub-topbar__brand { gap: 12px; }
+    .hub-topbar__divider, .hub-topbar__kicker, .hub-topbar__title { display: none; }
+    .hub-topbar__logo { height: 38px; }
+    .hub-profile { padding: 4px; gap: 0; background: none; border: none; }
+    .hub-profile > div:not(.hub-profile__avatar) { display: none; }
+    .hub-profile__avatar { width: 36px; height: 36px; }
+  }
 </style>

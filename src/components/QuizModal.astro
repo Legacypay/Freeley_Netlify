@@ -212,13 +212,17 @@
     // Clicks land on the dialog element itself only when they hit the backdrop.
     dlg.addEventListener('click', function (e) { if (e.target === dlg) dlg.close(); });
 
-    document.querySelectorAll('a[href^="/assessment-quiz"]').forEach(function (a) {
-      a.addEventListener('click', function (e) {
-        // Leave modified clicks alone so "open in new tab" still works.
-        if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-        e.preventDefault();
-        open();
-      });
+    // Delegated, not one listener per link. querySelectorAll() only ever saw
+    // the links present at load, so any CTA rendered later via innerHTML
+    // (the /hub panels do exactly that) kept its real href and navigated
+    // away instead of opening the modal. Delegation covers both.
+    document.addEventListener('click', function (e) {
+      var a = e.target && e.target.closest && e.target.closest('a[href^="/assessment-quiz"]');
+      if (!a) return;
+      // Leave modified clicks alone so "open in new tab" still works.
+      if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      e.preventDefault();
+      open();
     });
 
     // The shared header CTA (src/components/Header.astro) stays a <button>

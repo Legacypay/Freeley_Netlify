@@ -4,6 +4,15 @@ import { supabase } from './supabase';
 
 export type AuthResult = { success: true; status?: string } | { success: false; message: string };
 
+// Where Google OAuth, the signup confirmation email and the password-reset
+// email send the user back to. Deliberately the CURRENT url instead of a
+// hardcoded '/hub': behind the coming-soon gate the page is served at
+// /preview/hub, and bare /hub is swallowed by the forced catch-all in
+// netlify.toml — so a hardcoded '/hub' returns from Google with a valid
+// session in the URL hash and drops the user on the waitlist page, which
+// has no hub script to consume it. Reads at call time, not module load.
+const returnUrl = () => window.location.origin + window.location.pathname;
+
 function supabaseErrorMessage(message?: string): string {
   const messages: Record<string, string> = {
     'User already registered': 'An account with this email already exists. Try signing in.',
@@ -24,7 +33,7 @@ export async function signUp(email: string, password: string, name?: string): Pr
     const opts: Parameters<typeof supabase.auth.signUp>[0] = {
       email,
       password,
-      options: { emailRedirectTo: window.location.origin + '/hub' },
+      options: { emailRedirectTo: returnUrl() },
     };
     if (name) (opts as any).options.data = { full_name: name };
 
@@ -72,7 +81,7 @@ export async function googleSignIn(): Promise<AuthResult> {
     // session once the page reloads.
     const res = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: window.location.origin + '/hub' },
+      options: { redirectTo: returnUrl() },
     });
     if (res.error) return { success: false, message: supabaseErrorMessage(res.error.message) };
     return { success: true };
@@ -86,7 +95,7 @@ export function signOut() {
 }
 
 export function resetPassword(email: string) {
-  return supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/hub' });
+  return supabase.auth.resetPasswordForEmail(email, { redirectTo: returnUrl() });
 }
 
 export async function accessToken(): Promise<string> {

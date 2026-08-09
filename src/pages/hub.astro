@@ -26,7 +26,6 @@
 // to reach more than one of them: nav-tab -> panel switching, sign-out, and
 // showing the dashboard on the `hub:auth` event.
 import Layout from '../layouts/Layout.astro';
-import Footer from '../components/Footer.astro';
 import HubPostPaymentBanner from '../components/hub/HubPostPaymentBanner.astro';
 import HubAuthScreen from '../components/hub/HubAuthScreen.astro';
 import HubTopbar from '../components/hub/HubTopbar.astro';
@@ -36,6 +35,11 @@ import HubTreatmentsPanel from '../components/hub/HubTreatmentsPanel.astro';
 import HubRecordsPanel from '../components/hub/HubRecordsPanel.astro';
 import HubBillingPanel from '../components/hub/HubBillingPanel.astro';
 import HubChatWidget from '../components/hub/HubChatWidget.astro';
+// The portal's "Start New Treatment" CTAs point at /assessment-quiz like
+// every other CTA on the site; without this component they were plain
+// navigations, dropping the patient out of the portal instead of opening
+// the quiz over it.
+import QuizModal from '../components/QuizModal.astro';
 import '../styles/hub.css';
 
 const navItems = [
@@ -60,17 +64,25 @@ const navItems = [
 
     <!-- ═══ Dashboard screen ═══ -->
     <div id="dashboard-screen">
-      <HubTopbar />
+      <!-- App shell: topbar and rail are fixed chrome; .hub-main is the
+           ONLY scroll region. No site footer in here — this is a logged-in
+           portal, not a marketing page; the required legal links are kept
+           as the compact row at the bottom of the content instead. -->
+      <div class="hub-app">
+        <HubTopbar />
 
-      <div class="hub-wrap hub-shell">
-        <div class="hub-grid">
-          <HubNav navItems={navItems} />
+        <div class="hub-shell">
+          <div class="hub-grid">
+            <HubNav navItems={navItems} />
 
-          <div>
-            <HubOverviewPanel />
-            <HubTreatmentsPanel />
-            <HubRecordsPanel />
-            <HubBillingPanel />
+            <div class="hub-main">
+              <div class="hub-main__inner">
+                <HubOverviewPanel />
+                <HubTreatmentsPanel />
+                <HubRecordsPanel />
+                <HubBillingPanel />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -78,7 +90,7 @@ const navItems = [
 
     <HubChatWidget />
 
-    <Footer />
+    <QuizModal />
   </main>
 
   <script>

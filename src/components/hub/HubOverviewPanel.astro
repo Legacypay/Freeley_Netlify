@@ -11,9 +11,44 @@
   </div>
 
   <div id="overview-has-case" style="display:none;">
-    <div class="hub-card">
+    <!-- Stat rail — new row above the hero card. Sourced live from data
+         already present elsewhere on the page (case-status badge, the
+         product name, the assigned clinician on the Treatments tab) via
+         this component's own <script> below, not parallel dead markup:
+         dashboard.ts/hub.astro are off-limits so this mirrors their output
+         instead of duplicating their fetch logic. "Next Refill" has no
+         backing field anywhere in dashboard.ts's API responses, so it's a
+         static placeholder on purpose, not an oversight. -->
+    <div class="hub-stats-row">
+      <div class="hub-stat">
+        <span class="hub-stat__ic"><i class="ri-heart-pulse-line" aria-hidden="true"></i></span>
+        <div class="hub-stat__body">
+          <span class="hub-eyebrow">Case Status</span>
+          <div class="hub-stat__value hub-serif" id="overview-stat-status">Loading&hellip;</div>
+        </div>
+      </div>
+      <div class="hub-stat">
+        <span class="hub-stat__ic"><i class="ri-calendar-check-line" aria-hidden="true"></i></span>
+        <div class="hub-stat__body">
+          <span class="hub-eyebrow">Next Refill</span>
+          <div class="hub-stat__value hub-serif" id="overview-stat-refill">Contact care team</div>
+        </div>
+      </div>
+      <div class="hub-stat">
+        <span class="hub-stat__ic"><i class="ri-user-heart-line" aria-hidden="true"></i></span>
+        <div class="hub-stat__body">
+          <span class="hub-eyebrow">Care Team</span>
+          <div class="hub-stat__value hub-serif" id="overview-stat-clinician">Not yet assigned</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hub-card hub-card--hero">
       <div class="hub-card__head">
-        <h3>Current Treatment Plan</h3>
+        <div>
+          <span class="hub-eyebrow hub-card__kicker">Your Treatment</span>
+          <h3>Current Treatment Plan</h3>
+        </div>
         <span class="hub-badge" id="overview-status-badge">Active</span>
       </div>
       <div class="hub-med">
@@ -24,16 +59,19 @@
           <div class="hub-med__meta" id="overview-updated"></div>
         </div>
       </div>
-      <div style="font-size:11px; color:var(--muted); margin-bottom:14px;" id="overview-patient-id"></div>
+      <div class="hub-med__patient" id="overview-patient-id"></div>
       <div style="display:flex; gap:12px; flex-wrap:wrap;">
-        <button type="button" class="hub-btn hub-btn--outline" disabled title="Coming soon"><i class="ri-focus-3-line" aria-hidden="true"></i> Request Refill / Dosage Change</button>
-        <button type="button" class="hub-btn" id="hubOpenMessagingOverview"><i class="ri-customer-service-2-line" aria-hidden="true"></i> Message Care Team</button>
+        <button type="button" class="hub-btn hub-btn--outline" disabled title="Coming soon"><span class="hub-btn__ic"><i class="ri-focus-3-line" aria-hidden="true"></i></span> Request Refill / Dosage Change</button>
+        <button type="button" class="hub-btn hub-btn--gold" id="hubOpenMessagingOverview"><span class="hub-btn__ic"><i class="ri-customer-service-2-line" aria-hidden="true"></i></span> Message Care Team</button>
       </div>
     </div>
 
     <div class="hub-card" id="latestMessageCard">
       <div class="hub-card__head">
-        <h3>Latest Provider Message</h3>
+        <div>
+          <span class="hub-eyebrow hub-card__kicker">From Your Care Team</span>
+          <h3>Latest Provider Message</h3>
+        </div>
       </div>
       <div id="latestMessageContent" class="hub-msg" style="margin:0;">
         <div class="hub-empty" style="padding:20px 0;">
@@ -41,8 +79,8 @@
           No messages yet. Your care team will reach out once they review your case.
         </div>
       </div>
-      <div style="margin-top:14px; text-align:center;">
-        <button type="button" class="hub-btn hub-btn--outline hub-btn--sm" id="hubOpenMessagingLatest"><i class="ri-chat-3-line" aria-hidden="true"></i> Open Messages</button>
+      <div style="margin-top:16px; text-align:center;">
+        <button type="button" class="hub-btn hub-btn--outline hub-btn--sm" id="hubOpenMessagingLatest"><span class="hub-btn__ic"><i class="ri-chat-3-line" aria-hidden="true"></i></span> Open Messages</button>
       </div>
     </div>
   </div>
@@ -50,19 +88,39 @@
   <div id="overview-no-case" style="display:none;">
     <div class="hub-card hub-empty">
       <i class="ri-capsule-line"></i>
-      <h3 style="font-family:var(--font-serif); color:var(--ink); margin-bottom:8px;">No Active Treatment</h3>
+      <h3 class="hub-serif" style="font-size:19px; color:var(--ink); margin-bottom:8px;">No Active Treatment</h3>
       <p>Start a new treatment to get personalized care from our medical team.</p>
-      <a href="/assessment-quiz" class="hub-btn" style="display:inline-flex; margin-top:8px;"><i class="ri-add-line" aria-hidden="true"></i> Start New Treatment</a>
+      <a href="/assessment-quiz" class="hub-btn" style="display:inline-flex; margin-top:8px;"><span class="hub-btn__ic"><i class="ri-add-line" aria-hidden="true"></i></span> Start New Treatment</a>
     </div>
   </div>
 </div>
 
 <style>
+  .hub-stats-row { display: flex; gap: 16px; margin-bottom: 22px; }
+  .hub-stat { flex: 1; min-width: 0; display: flex; align-items: center; gap: 14px; background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; box-shadow: 0 1px 2px rgba(20,40,30,.05); }
+  .hub-stat__ic { width: 42px; height: 42px; border-radius: 999px; background: rgba(15,107,69,.1); color: var(--brand); display: inline-grid; place-items: center; font-size: 18px; flex-shrink: 0; }
+  .hub-stat__body { min-width: 0; }
+  .hub-stat__value { font-size: 17px; font-weight: 600; color: var(--ink); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  @media (max-width: 600px) { .hub-stats-row { flex-direction: column; } }
+
   .hub-med { display: flex; gap: 20px; align-items: center; margin-bottom: 22px; }
-  .hub-med__img { width: 80px; height: 80px; border-radius: 12px; background: var(--card); border: 1px solid var(--line); object-fit: cover; flex-shrink: 0; }
-  .hub-med__name { font-size: 17px; color: var(--ink); font-weight: 700; margin-bottom: 4px; }
-  .hub-med__desc { font-size: 13px; color: var(--muted); }
-  .hub-med__meta { font-size: 12px; font-weight: 600; color: var(--ink); margin-top: 8px; }
+  .hub-med__img { width: 84px; height: 84px; border-radius: 14px; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.22); object-fit: cover; flex-shrink: 0; padding: 6px; }
+  .hub-med__name { font-family: var(--font-serif); font-size: 19px; color: #fff; font-weight: 600; margin-bottom: 4px; letter-spacing: -.01em; }
+  .hub-med__desc { font-size: 13px; color: rgba(255,255,255,.72); }
+  .hub-med__meta { font-size: 12px; font-weight: 600; color: var(--gold); margin-top: 8px; }
+  .hub-med__patient { font-family: var(--font-condensed); font-size: 11px; letter-spacing: .04em; color: rgba(255,255,255,.6); margin-bottom: 16px; }
+  /* Gold accent for the panel's single highest-intent action, same role
+     var(--gold) plays for prices/CTAs on the marketing pages. */
+  .hub-card--hero .hub-btn--gold { background: var(--gold); }
+  .hub-card--hero .hub-btn--gold:hover { background: #b3893f; }
+  .hub-card--hero .hub-btn--outline { background: rgba(255,255,255,.08); color: #fff; border-color: rgba(255,255,255,.28); }
+  .hub-card--hero .hub-btn--outline:hover { background: rgba(255,255,255,.16); color: #fff; }
+  .hub-card--hero .hub-btn:disabled { background: rgba(255,255,255,.08); color: rgba(255,255,255,.4); }
+  /* var(--line) is near-invisible on the dark hero card, so the outline
+     button's coin needs its own border color here (light grey → translucent
+     white), same fix the hero's .hub-btn--outline already needed. */
+  .hub-card--hero .hub-btn--outline .hub-btn__ic { border-color: rgba(255,255,255,.4); color: #fff; }
+  .hub-card--hero .hub-btn:disabled .hub-btn__ic { border-color: rgba(255,255,255,.25); }
 </style>
 
 <script>
@@ -78,4 +136,24 @@
     const el = document.getElementById(id);
     if (el) el.addEventListener('click', () => openMessaging());
   });
+
+  // Stat rail sync — mirrors text dashboard.ts already writes into
+  // #overview-status-badge and #mdi-clinician-name (Treatments tab) into
+  // this panel's stat tiles, instead of adding a parallel fetch (this
+  // component can't import dashboard.ts's loaders' internals or touch
+  // hub.astro's script, so watching the DOM it already updates is the
+  // lazy correct option — no polling, no new API calls).
+  function mirrorText(srcId: string, dstId: string) {
+    const src = document.getElementById(srcId);
+    const dst = document.getElementById(dstId);
+    if (!src || !dst) return;
+    const sync = () => {
+      const text = (src.textContent || '').trim();
+      if (text) dst.textContent = text;
+    };
+    sync();
+    new MutationObserver(sync).observe(src, { childList: true, characterData: true, subtree: true });
+  }
+  mirrorText('overview-status-badge', 'overview-stat-status');
+  mirrorText('mdi-clinician-name', 'overview-stat-clinician');
 </script>

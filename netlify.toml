@@ -147,6 +147,17 @@
   to = "/:splat"
   status = 200
 
+# The Health Hub's backend (patientCases, getMessages, sendMessage, …). The
+# hub is reachable at /preview/hub through the rule above, but every one of
+# its API calls goes to /.netlify/functions/*, and the forced catch-all below
+# shadows those too — the fetch comes back 200 with the waitlist HTML, so the
+# dashboard loads and then silently fails on every request. Inert once the
+# gate is removed.
+[[redirects]]
+  from = "/.netlify/functions/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
 # The full comparison table, linked from the capsule on /preview. Without this
 # pass-through the forced catch-all below answers it with the waitlist HTML and
 # the button appears broken. Remove along with the gate, like /preview.

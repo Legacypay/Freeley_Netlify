@@ -17,26 +17,112 @@ interface Props {
 const { navItems } = Astro.props;
 ---
 
-<nav class="hub-nav" aria-label="Patient hub sections">
+<div class="hub-nav-backdrop" id="hubNavBackdrop" hidden></div>
+
+<nav class="hub-nav" id="hubNav" aria-label="Patient hub sections">
+  <span class="hub-eyebrow hub-nav__kicker">Menu</span>
   {navItems.map((item, i) => (
     <button type="button" class={`hub-nav-link ${i === 0 ? 'is-active' : ''}`} data-panel={item.id} aria-current={i === 0 ? 'true' : 'false'}>
-      <i class={item.icon} aria-hidden="true"></i> {item.label}
+      <span class="hub-nav-link__icon"><i class={item.icon} aria-hidden="true"></i></span>
+      <span class="hub-nav-link__label">{item.label}</span>
     </button>
   ))}
   <button type="button" class="hub-nav-link hub-nav-link--danger" id="hubSignOut">
-    <i class="ri-logout-box-r-line" aria-hidden="true"></i> Sign Out
+    <span class="hub-nav-link__icon"><i class="ri-logout-box-r-line" aria-hidden="true"></i></span>
+    <span class="hub-nav-link__label">Sign Out</span>
   </button>
 </nav>
 
 <style>
-  .hub-nav { background: #fff; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; position: sticky; top: 24px; }
-  @media (max-width: 900px) { .hub-nav { position: static; display: flex; overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 12px; } }
-  .hub-nav-link { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 15px 22px; color: var(--muted); background: none; border: none; border-bottom: 1px solid var(--line); font-family: var(--font-sans); font-weight: 500; font-size: 14.5px; cursor: pointer; transition: all .2s; }
-  .hub-nav-link:last-child { border-bottom: none; }
-  @media (max-width: 900px) { .hub-nav-link { border-bottom: none; border-right: 1px solid var(--line); white-space: nowrap; } }
+  /* Round 2: a genuine icon rail, not a 280px text list squeezed onto an
+     icon-only look. Desktop container narrows to the .hub-grid 88px
+     column — icon tiles stay put, the label leaves the flow entirely and
+     becomes a hover/focus flyout, so the CONTAINER shape changes, not
+     just the row styling inside it. The ≤900px segmented pill-bar from
+     round 1 is untouched: it already worked, only the desktop rail above
+     it changed. */
+  /* A real sidebar: flush against the topbar's bottom edge (no top
+     radius, no top border, no gap) and sized off the VIEWPORT, never off
+     the open panel — height:100% tied it to the content column, so it
+     resized on every tab switch. sticky+100vh keeps both dimensions
+     constant no matter which tab is open or how long that panel is.
+     Sign Out is pinned to the bottom by the auto margin below. */
+  /* Plain in-flow grid item again — no sticky, no fixed, no z-index. It
+     stays put because it lives OUTSIDE the page's scroll region (.hub-main
+     is the only scroller, see hub.css), which is also why the footer can
+     no longer cover it. Height is the shell's height, so it is identical
+     on every tab. */
+  .hub-nav { background: #fff; border-right: 1px solid var(--line); border-radius: 0; padding: 24px 14px 20px; display: flex; flex-direction: column; align-items: stretch; gap: 2px; height: 100%; overflow-y: auto; }
+  .hub-nav__kicker { display: block; padding: 4px 12px 12px; }
+  /* Mobile: off-canvas drawer, not a horizontal scroll strip. A strip
+     hid its own last items behind a scroll nobody discovers, and gave the
+     four sections no visible hierarchy. Opened by #hubNavToggle in the
+     topbar (see the script below). */
+  .hub-nav-backdrop { display: none; }
+  @media (max-width: 900px) {
+    .hub-nav {
+      position: fixed; top: 0; left: 0; bottom: 0; z-index: 1200;
+      width: 284px; max-width: 82vw; height: 100%; padding: 20px 14px;
+      border-right: 1px solid var(--line); border-radius: 0;
+      box-shadow: 4px 0 24px rgba(0,0,0,.18);
+      transform: translateX(-100%); transition: transform .28s cubic-bezier(.4,0,.2,1);
+      overflow-y: auto;
+    }
+    .hub-nav.is-open { transform: translateX(0); }
+    @media (prefers-reduced-motion: reduce) { .hub-nav { transition: none; } }
+    .hub-nav-backdrop { display: block; position: fixed; inset: 0; z-index: 1100; background: rgba(0,0,0,.42); opacity: 0; transition: opacity .28s ease; }
+    .hub-nav-backdrop[hidden] { display: none; }
+    .hub-nav-backdrop.is-open { opacity: 1; }
+  }
+  .hub-nav-link { position: relative; display: flex; align-items: center; justify-content: flex-start; gap: 13px; width: 100%; text-align: left; padding: 8px 12px 8px 8px; color: var(--muted); background: none; border: none; border-radius: 14px; font-family: var(--font-sans); font-weight: 600; font-size: 14px; cursor: pointer; transition: background .18s, color .18s; margin-bottom: 2px; }
   .hub-nav-link:hover { background: var(--cream); color: var(--ink); }
-  .hub-nav-link.is-active { background: rgba(15,107,69,.08); color: var(--brand); font-weight: 700; border-left: 3px solid var(--brand); }
-  @media (max-width: 900px) { .hub-nav-link.is-active { border-left: none; border-bottom: 3px solid var(--brand); } }
-  .hub-nav-link--danger { color: #b3261e; }
+  .hub-nav-link__icon { display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 13px; background: var(--cream); color: var(--muted); flex-shrink: 0; font-size: 17px; transition: background .18s, color .18s; }
+  /* Labels stay inline and always visible. An icon-only rail with
+     hover-reveal tooltips was tried and reverted: this is a patient
+     portal, not a power-user IDE — an unlabeled glyph for "Medical
+     Records & Notes" vs "Billing & Receipts" is not readable at a glance,
+     and hover-only labels are unreachable on touch entirely. */
+  .hub-nav-link__label { white-space: nowrap; }
+  /* Active state — a filled brand-color icon chip plus a tinted row, not
+     just a swapped text color, so it reads unmistakably as "you are here"
+     at a glance (mirrors .medication-toggle's active pill treatment on
+     weight-loss.astro). */
+  .hub-nav-link.is-active { background: rgba(15,107,69,.09); color: var(--brand); }
+  .hub-nav-link.is-active .hub-nav-link__icon { background: var(--brand); color: #fff; box-shadow: 0 3px 8px rgba(15,107,69,.35); }
+  .hub-nav-link--danger { color: #b3261e; margin-top: auto; padding-top: 13px; border-top: 1px solid var(--line); border-radius: 12px; }
+  .hub-nav-link--danger .hub-nav-link__icon { background: #fdecea; color: #b3261e; }
   .hub-nav-link--danger:hover { background: #fdecea; color: #b3261e; }
+  .hub-nav-link--danger:hover .hub-nav-link__icon { background: #b3261e; color: #fff; }
 </style>
+
+<script>
+  // Mobile drawer wiring. Deliberately lives here and not in hub.astro's
+  // page script: that one owns panel switching and must stay untouched.
+  // This only toggles a class, so the two never contend — a nav-link click
+  // still reaches hub.astro's own listener exactly as before.
+  const nav = document.getElementById('hubNav');
+  const backdrop = document.getElementById('hubNavBackdrop');
+  const toggle = document.getElementById('hubNavToggle');
+  const desktop = window.matchMedia('(min-width: 901px)');
+
+  function setOpen(open: boolean) {
+    if (!nav || !backdrop) return;
+    nav.classList.toggle('is-open', open);
+    backdrop.hidden = !open;
+    // Next frame, so the backdrop has a painted opacity:0 to animate from
+    // — toggling `hidden` and the class in the same frame skips the fade.
+    requestAnimationFrame(() => backdrop.classList.toggle('is-open', open));
+    toggle?.setAttribute('aria-expanded', String(open));
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+
+  toggle?.addEventListener('click', () => setOpen(!nav?.classList.contains('is-open')));
+  backdrop?.addEventListener('click', () => setOpen(false));
+  // Close on selection: the panel is behind the drawer, so leaving it open
+  // would hide the thing the patient just asked to see.
+  nav?.querySelectorAll('.hub-nav-link').forEach((l) => l.addEventListener('click', () => setOpen(false)));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
+  // Rotating to landscape past the breakpoint leaves the rail permanently
+  // visible; without this the body would stay scroll-locked forever.
+  desktop.addEventListener('change', (e) => { if (e.matches) setOpen(false); });
+</script>
