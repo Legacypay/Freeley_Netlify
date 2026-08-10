@@ -4,7 +4,9 @@
 // own assets under /assets/sw/ plus shared lifestyle shots from
 // /assets/promo/ and /assets/lifestyle/ (2026-08-07 client feedback: male
 // ED demographic — couple in the hero, older man + approved couple in the
-// journey/trust sections).
+// journey/trust sections; 2026-08-10 follow-up: hero swapped to a closer,
+// more intimate pose — couple holding a pillow — still a transparent-alpha
+// cutout like the other routes, just a shorter min-height floor).
 //
 // EVERY DOM hook in public/assets/js/sw-script.js is preserved verbatim,
 // except the quiz modal: that div/script pair is gone, replaced by the
@@ -239,26 +241,17 @@ const faqs = [
       .wl-hero { position: relative; overflow: hidden; }
       .wl-hero__img { display: none; }
       @media (min-width: 1024px) {
-        /* Client feedback (2026-08-07): this page's copy column is shorter
-           than /weight-loss's (no hero testimonial), so .wl-hero's organic
-           content height fell short of 761px (700 / the image's own 92%
-           cap) — the hero photo rendered ~600px instead of the intended
-           700px, looking "too small" next to the other routes. Forcing a
-           floor here decouples the image's size from how much copy a given
-           page happens to have. */
-        .wl-hero { min-height: 780px; }
+        /* Client feedback (2026-08-10): closer/more intimate hero — couple
+           holding a pillow — but "doesn't need to be full height" like the
+           /weight-loss and /longevity cutouts. Still a real transparent-
+           alpha cutout (no card/background), just a shorter min-height
+           floor since it no longer needs to reach 700px to read as
+           intentional. */
+        .wl-hero { min-height: 640px; }
         .wl-hero__img {
-          /* Client feedback (2026-08-07): match the /weight-loss and
-             /longevity hero treatment — a TALL, height-led, real
-             transparent-alpha full-body cutout, bottom-anchored to the
-             content column. Replaces both the earlier washed-out monochrome
-             cutout AND the rounded-card photo-with-background that came
-             after it — neither matched the site's established hero
-             convention. Width cap wider than weight-loss's 44% (single
-             person) since this is a two-person cutout side by side. */
           display: block; position: absolute; bottom: 0;
           right: max(0px, calc(50% - 600px));
-          height: min(92%, 700px); width: auto; max-width: 54%;
+          height: min(88%, 560px); width: auto; max-width: 46%;
           object-fit: contain; object-position: right bottom;
           -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 22%);
           mask-image: linear-gradient(to right, transparent 0%, #000 22%);
@@ -267,7 +260,7 @@ const faqs = [
       .wl-hero__inner { position: relative; z-index: 2; padding-top: 40px; padding-bottom: 64px; }
       .wl-hero__col { max-width: 560px; }
       @media (min-width: 1024px) { .wl-hero__col { max-width: 54%; } }
-      .wl-hero__img-mob { display: block; width: auto; height: auto; max-height: 320px; margin: 10px auto 28px; }
+      .wl-hero__img-mob { display: block; width: auto; height: auto; max-height: 300px; margin: 10px auto 28px; }
       @media (min-width: 1024px) { .wl-hero__img-mob { display: none; } }
       .wl-hero h1 { font-size: clamp(2.6rem, 5.4vw, 4.2rem); line-height: 1.04; margin: 18px 0 20px; }
       .wl-hero__sub { font-size: 1.05rem; color: var(--muted); margin: 0 0 26px; max-width: 46ch; }
@@ -603,7 +596,7 @@ const faqs = [
 
     <!-- ═══ Hero ═══ -->
     <section class="wl-hero">
-      <img class="wl-hero__img" src="/assets/sw/hero-cutout.png" alt="A happy couple" fetchpriority="high" />
+      <img class="wl-hero__img" src="/assets/sw/hero-intimate.png" alt="A couple sharing a close, intimate moment" fetchpriority="high" />
       <div class="wl-wrap wl-hero__inner">
         <div class="wl-hero__col">
           <div class="wl-badgeline">
@@ -617,7 +610,7 @@ const faqs = [
             licensed U.S. physician. Fast-acting, reliable, and discreetly delivered.
           </p>
 
-          <img class="wl-hero__img-mob" src="/assets/sw/hero-cutout.png" alt="A happy couple" />
+          <img class="wl-hero__img-mob" src="/assets/sw/hero-intimate.png" alt="A couple sharing a close, intimate moment" />
 
           <div class="wl-hero__from">
             From <span class="wl-price">$99</span>/month
