@@ -33,6 +33,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import FinalCta from '../components/FinalCta.astro';
 import QuizModal from '../components/QuizModal.astro';
+import ProductInfoModal from '../components/ProductInfoModal.astro';
 
 const ASSESSMENT = '/assessment-quiz';
 
@@ -103,9 +104,9 @@ const mechanisms = [
 // assets/brand/slide_sw_whats_included.png. That slide's content was
 // ALSO trapped as an unreadable image (public/assets/sw/product3.png)
 // inside sw-script.js's product-gallery images[] array; removed there.
-// Rendered as real HTML now, as a slide INSIDE the same product-image
-// carousel (see wl-prod__info in the showcase markup below) instead of a
-// stacked section — same fix weight-loss.astro's commit already got.
+// Rendered as real HTML now, inside the ProductInfoModal popup (see
+// productInfoSections below) instead of a stacked section or a carousel
+// slide.
 const included = [
   { title: 'Tadalafil Troches', desc: 'Fast-dissolving sublingual tablets.' },
   { title: 'Licensed Provider Review', desc: 'Discreet physician consultation.' },
@@ -125,13 +126,11 @@ const benefits = [
   { title: 'Clinically Proven', desc: 'FDA-approved active ingredient.' },
 ];
 
-// One icon per grid position, shared by `included`/`benefits` (same 4-item
-// order in both: speed, reliability, delivery/convenience, precision/proof).
-const INFO_ICONS = [
-  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z"/></svg>',
-  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z"/><path d="m9 12 2 2 4-4"/></svg>',
-  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2"/><path d="M3 8h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8Z"/><path d="M3 8l3 4h12l3-4"/></svg>',
-  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6l-8-4Z"/><path d="m9 12 2 2 4-4"/></svg>',
+// Plan-details popup sections (see src/components/ProductInfoModal.astro) —
+// `included`/`benefits` above feed this, not the photo carousel.
+const productInfoSections = [
+  { id: 'included', label: 'Included', eyebrow: "What's Included", items: included },
+  { id: 'benefits', label: 'Benefits', eyebrow: 'Why Tadalafil Troches', items: benefits },
 ];
 
 const press = [
@@ -360,38 +359,6 @@ const faqs = [
       #thumbnailsContainerSW { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
       #thumbnailsContainerSW .thumb-box { border: 1px solid var(--line); border-radius: 12px; padding: 5px; cursor: pointer; background: #fff; transition: border-color .15s; }
       #thumbnailsContainerSW .thumb-box.active { border-color: var(--brand); }
-      /* Label-style thumb for the 2 info slides below — same box, text
-         instead of a photo since there's no product shot to preview. */
-      #thumbnailsContainerSW .thumb-box--label { padding: 5px 12px; display: grid; place-items: center; font-family: var(--font-condensed); font-size: 10.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
-      #thumbnailsContainerSW .thumb-box--label.active { color: var(--brand); }
-
-      /* ── Info slides — What's Included / Key Benefits, now real HTML
-         slides INSIDE the gallery (same dots/prev/next as the product
-         photos) instead of 2 extra sections stacked below the showcase.
-         Only one of {img, .wl-prod__info} is visible at a time — see
-         sw-script.js's goToSW(). ── */
-      .wl-prod__info { display: none; width: 100%; padding: 0 6px; text-align: left; transition: opacity .2s ease; }
-      .wl-prod__info.is-active { display: block; }
-      .wl-prod__info.fade-out { opacity: 0; }
-      .wl-prod__info.fade-in { opacity: 1; }
-      .wl-prod__info-eyebrow { display: block; font-family: var(--font-condensed); font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--brand); margin-bottom: 14px; }
-      /* Client feedback (2026-08-07): the plain bullet list "se ve muy
-         plano" — replaced with a 2-up grid of icon cards on a soft gold
-         watermark, so the slide fills the frame like the photo slides do,
-         without going back to a baked-text image (same anti-pattern this
-         carousel was built to get away from). */
-      .wl-prod__info { position: relative; }
-      .wl-prod__info::before {
-        content: ''; position: absolute; inset: -8px -8px auto -8px; height: 190px;
-        background: radial-gradient(120% 100% at 15% 0%, rgba(195,154,78,.14), rgba(195,154,78,0) 70%);
-        border-radius: 20px; pointer-events: none; z-index: -1;
-      }
-      .wl-prod__info-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-      .wl-prod__info-item { display: flex; flex-direction: column; align-items: flex-start; gap: 9px; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 13px 12px; }
-      .wl-prod__info-item .wl-info-icon { width: 28px; height: 28px; border-radius: 9px; display: grid; place-items: center; background: var(--gold); color: #fff; flex: none; }
-      .wl-prod__info-item h4 { font-size: 12.5px; font-weight: 600; margin: 0 0 3px; line-height: 1.25; }
-      .wl-prod__info-item p { font-size: 11px; color: var(--muted); margin: 0; line-height: 1.4; }
-
       .wl-trustpilot { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
       .wl-trustpilot span { font-family: var(--font-condensed); font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
       .wl-trustpilot img { height: 18px; width: auto; }
@@ -740,41 +707,6 @@ const faqs = [
             <!-- src seeded with tadalafil's first image — the exact value
                  sw-script.js's initSW() assigns anyway. -->
             <img id="mainProductImageSW" src="/assets/sw/product1.png" alt="Compounded sexual wellness medication" />
-
-            <!-- Info slides — same 2 gallery-carousel stops the old
-                 product3/4.png infographic images used to occupy, now real
-                 HTML instead of unreadable-as-text pictures. sw-script.js
-                 appends these after the photo slides (same dots/prev/next)
-                 so the checklist copy lives inside the showcase instead of
-                 two extra full-width sections stacking below it. -->
-            <div class="wl-prod__info" data-info-slide="included">
-              <span class="wl-prod__info-eyebrow">What's Included</span>
-              <div class="wl-prod__info-list">
-                {included.map((item, i) => (
-                  <div class="wl-prod__info-item">
-                    <span class="wl-info-icon" set:html={INFO_ICONS[i % INFO_ICONS.length]} />
-                    <div>
-                      <h4>{item.title}</h4>
-                      <p>{item.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div class="wl-prod__info" data-info-slide="benefits">
-              <span class="wl-prod__info-eyebrow">Why Tadalafil Troches</span>
-              <div class="wl-prod__info-list">
-                {benefits.map((item, i) => (
-                  <div class="wl-prod__info-item">
-                    <span class="wl-info-icon" set:html={INFO_ICONS[i % INFO_ICONS.length]} />
-                    <div>
-                      <h4>{item.title}</h4>
-                      <p>{item.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
           <div class="wl-prod__nav">
             <button class="wl-navbtn" id="prevBtnSW" type="button" aria-label="Previous image">
@@ -787,6 +719,11 @@ const faqs = [
           </div>
           <div id="thumbnailsContainerSW"></div>
           <p class="wl-foot" style="margin-top:14px;">Packaging and troche design shown are representative and may change. Your actual medication's appearance and labeling may differ.</p>
+          <ProductInfoModal
+            sections={productInfoSections}
+            idSuffix="SW"
+            triggerLabel="What's Included & Why Tadalafil Troches"
+          />
         </div>
 
         <div>

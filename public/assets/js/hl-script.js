@@ -156,18 +156,6 @@ var Tawk_API = Tawk_API || {},
     // =============================================
     // DATA CONFIGURATION - Edit this section only
     // =============================================
-    // =============================================
-    // INFO SLIDES — What's Included / Clinical Timeline / Discreet
-    // Shipping. Same content on every medication (not per-SKU), appended
-    // after the photo slides so they share the gallery's dots/prev/next
-    // instead of living in 3 separate sections below the showcase.
-    // =============================================
-    const INFO_SLIDES = [
-        { key: 'included', label: 'Included' },
-        { key: 'expectedResults', label: 'Timeline' },
-        { key: 'shipping', label: 'Shipping' }
-    ];
-
     const hairMedicationData = {
         cedar: {
             name: "Cedar",
@@ -181,8 +169,8 @@ var Tawk_API = Tawk_API || {},
             // product1.png (Willow's OWN labeled bottle — wrong ingredients
             // to show a Cedar shopper) is no longer used here.
             // product4/product5 (old "What's Included"/"Expected Results"
-            // infographic slides) live as real HTML sections below the
-            // gallery instead — see hair-loss.astro.
+            // infographic slides) live in the ProductInfoModal popup
+            // instead — see hair-loss.astro.
             images: [
                 "/assets/hl/product-cedar-straight.png",
                 "/assets/hl/product3.png",
@@ -212,8 +200,8 @@ var Tawk_API = Tawk_API || {},
             // OWN labeled bottles (wrong ingredients for an Ivy shopper to see).
             // Straight bottle -> pills -> tilted bottle, same sequence as
             // Cedar/Willow. product4/product5 (old "What's Included"/
-            // "Expected Results" infographic slides) live as real HTML
-            // sections below the gallery instead — see hair-loss.astro.
+            // "Expected Results" infographic slides) live in the
+            // ProductInfoModal popup instead — see hair-loss.astro.
             images: [
                 "/assets/hl/product-ivy.png",
                 "/assets/hl/product3.png",
@@ -241,8 +229,8 @@ var Tawk_API = Tawk_API || {},
             // ingredients to show a Willow shopper — swapped for Willow's
             // own tilted shot (generated 2026-08-04, matches product1.png's
             // label). product4/product5 (old "What's Included"/"Expected
-            // Results" infographic slides) live as real HTML sections below
-            // the gallery instead — see hair-loss.astro.
+            // Results" infographic slides) live in the ProductInfoModal
+            // popup instead — see hair-loss.astro.
             images: [
                 "/assets/hl/product1.png",
                 "/assets/hl/product3.png",
@@ -279,7 +267,6 @@ var Tawk_API = Tawk_API || {},
     const thumbContainerHair = document.getElementById("thumbnailsContainerHair");
     const featuresContainerHair = document.getElementById("featuresListHair");
     const medicationButtonsHair = document.querySelectorAll('.medication-toggle .btn');
-    const infoSlideElsHair = document.querySelectorAll('.wl-prod__info');
 
     // =============================================
     // HELPER FUNCTIONS
@@ -292,13 +279,12 @@ var Tawk_API = Tawk_API || {},
         return getCurrentHairData().images;
     }
 
-    // Total slide count = product photos + the 3 fixed info slides.
     function getHairSlideCount() {
-        return getHairImagePaths().length + INFO_SLIDES.length;
+        return getHairImagePaths().length;
     }
 
     // =============================================
-    // GENERATE THUMBNAILS FROM MAIN IMAGES + INFO SLIDES
+    // GENERATE THUMBNAILS FROM MAIN IMAGES
     // =============================================
     function generateHairThumbnails(images) {
         thumbContainerHair.innerHTML = '';
@@ -323,21 +309,6 @@ var Tawk_API = Tawk_API || {},
             thumbDiv.addEventListener('click', function() {
                 const idx = parseInt(this.getAttribute('data-index'), 10);
                 goToHair(idx);
-            });
-        });
-
-        // No product photo to preview for these — a text label chip
-        // instead of an image thumb.
-        INFO_SLIDES.forEach((slide, i) => {
-            const index = images.length + i;
-            const thumbDiv = document.createElement('div');
-            thumbDiv.className = 'thumb-box thumb-box--label';
-            thumbDiv.setAttribute('data-index', index);
-            thumbDiv.textContent = slide.label;
-            thumbContainerHair.appendChild(thumbDiv);
-
-            thumbDiv.addEventListener('click', function() {
-                goToHair(index);
             });
         });
     }
@@ -400,37 +371,13 @@ var Tawk_API = Tawk_API || {},
         if (index < 0) index = total - 1;
         if (index >= total) index = 0;
 
-        // Whichever element (the photo, or the currently-shown info slide)
-        // is on screen right now is what fades out — not always mainImgHair.
-        const outgoing = currentHairIndex < images.length
-            ? mainImgHair
-            : infoSlideElsHair[currentHairIndex - images.length];
-        if (outgoing) outgoing.classList.add("fade-out");
+        mainImgHair.classList.add("fade-out");
 
         setTimeout(function() {
             currentHairIndex = index;
-            const showingImage = currentHairIndex < images.length;
 
-            // Clear stale fade classes off EVERY slide element first — a
-            // slide hidden via display:none while mid-fade (e.g. an image
-            // slide swapped away from while an info slide was showing)
-            // would otherwise keep its "fade-out" class forever and render
-            // invisible the next time it's shown (e.g. after a medication
-            // switch resets back to slide 0).
             mainImgHair.classList.remove("fade-out", "fade-in");
-            infoSlideElsHair.forEach(function(el) { el.classList.remove("fade-out", "fade-in"); });
-
-            if (showingImage) {
-                mainImgHair.src = images[currentHairIndex];
-                mainImgHair.style.display = "";
-                infoSlideElsHair.forEach(function(el) { el.classList.remove("is-active"); });
-            } else {
-                mainImgHair.style.display = "none";
-                const infoIndex = currentHairIndex - images.length;
-                infoSlideElsHair.forEach(function(el, i) {
-                    el.classList.toggle("is-active", i === infoIndex);
-                });
-            }
+            mainImgHair.src = images[currentHairIndex];
 
             const dots = document.querySelectorAll("#dotContainerHair .dot-indicator");
             dots.forEach(function(d, i) {
@@ -442,14 +389,10 @@ var Tawk_API = Tawk_API || {},
                 tb.classList.toggle("active", i === currentHairIndex);
             });
 
-            const incoming = showingImage ? mainImgHair : infoSlideElsHair[currentHairIndex - images.length];
-            if (incoming) {
-                incoming.classList.remove("fade-out");
-                incoming.classList.add("fade-in");
-                setTimeout(function() {
-                    incoming.classList.remove("fade-in");
-                }, 400);
-            }
+            mainImgHair.classList.add("fade-in");
+            setTimeout(function() {
+                mainImgHair.classList.remove("fade-in");
+            }, 400);
         }, 200);
     }
 
@@ -463,9 +406,7 @@ var Tawk_API = Tawk_API || {},
         const images = data.images;
 
         mainImgHair.src = images[0];
-        mainImgHair.style.display = "";
         mainImgHair.classList.remove("fade-out", "fade-in");
-        infoSlideElsHair.forEach(function(el) { el.classList.remove("is-active", "fade-out", "fade-in"); });
         generateHairThumbnails(images);
         generateHairDots(getHairSlideCount());
         updateHairDetails();
@@ -523,9 +464,7 @@ var Tawk_API = Tawk_API || {},
         const images = data.images;
 
         mainImgHair.src = images[0];
-        mainImgHair.style.display = "";
         mainImgHair.classList.remove("fade-out", "fade-in");
-        infoSlideElsHair.forEach(function(el) { el.classList.remove("is-active", "fade-out", "fade-in"); });
         generateHairThumbnails(images);
         generateHairDots(getHairSlideCount());
         updateHairDetails();

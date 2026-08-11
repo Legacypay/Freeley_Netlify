@@ -29,6 +29,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import FinalCta from '../components/FinalCta.astro';
 import QuizModal from '../components/QuizModal.astro';
+import ProductInfoModal from '../components/ProductInfoModal.astro';
 
 const ASSESSMENT = '/assessment-quiz';
 
@@ -87,11 +88,9 @@ const mechanisms = [
 // "94% of men keep the hair they have" — the old page's second card row.
 const proofCards = [
   { title: 'Physician-prescribed ingredients', img: '/assets/hl/Physician-prescribed_ingredients.jpg', tint: '#E4DDD4' },
-  // The "8 out of 10" figure is approved copy (see PRODUCT.md) — kept as a
-  // badge overlaid on the photo (same recipe as index.astro's
-  // .process__badge "48hr Door-to-Door" chip) instead of the old bare-stat
-  // card, now that this card has a real photo again.
-  { title: 'See visible regrowth', img: '/assets/hl/Visible_Regrowth.jpg', badge: '8', badgeSuffix: '/10', tint: '#D1D9DC' },
+  // 2026-08-11: removed the "8/10" badge per client request — the card
+  // keeps its photo and title, just without the overlaid stat chip.
+  { title: 'See visible regrowth', img: '/assets/hl/Visible_Regrowth.jpg', tint: '#D1D9DC' },
   { title: 'Works seamlessly into your routine', img: '/assets/hl/Works_seamlessly_into_your_routine_v2.jpg', tint: '#F6EEE0' },
 ];
 
@@ -193,6 +192,21 @@ const shipping = [
   { title: 'Temperature-controlled', desc: 'Cold-chain integrity maintained.' },
   { title: 'Free standard shipping', desc: 'Included with every order.' },
   { title: 'Tracking provided', desc: "Know exactly when it's arriving." },
+];
+
+// Plan-details popup sections (see src/components/ProductInfoModal.astro) —
+// `included`/`expectedResults`/`shipping` above feed this, not the photo
+// carousel. `expectedResults`' range chip becomes each item's `badge`.
+const productInfoSections = [
+  { id: 'included', label: 'Included', eyebrow: "What's Included", items: included },
+  {
+    id: 'expectedResults',
+    label: 'Timeline',
+    eyebrow: 'Clinical Timeline',
+    items: expectedResults.map((r) => ({ title: r.title, desc: r.desc, badge: r.range })),
+    note: '*Individual results vary. Based on clinical studies of the active ingredients.',
+  },
+  { id: 'shipping', label: 'Shipping', eyebrow: 'Discreet Shipping', items: shipping },
 ];
 
 const faqs = [
@@ -407,32 +421,6 @@ const faqs = [
       #thumbnailsContainerHair { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
       #thumbnailsContainerHair .thumb-box { border: 1px solid var(--line); border-radius: 12px; padding: 5px; cursor: pointer; background: #fff; transition: border-color .15s; }
       #thumbnailsContainerHair .thumb-box.active { border-color: var(--brand); }
-      /* Label-style thumb for the 3 info slides below — same box, text
-         instead of a photo since there's no product shot to preview. */
-      #thumbnailsContainerHair .thumb-box--label { padding: 5px 12px; display: grid; place-items: center; font-family: var(--font-condensed); font-size: 10.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
-      #thumbnailsContainerHair .thumb-box--label.active { color: var(--brand); }
-
-      /* ── Info slides — What's Included / Clinical Timeline / Discreet
-         Shipping, now real HTML slides INSIDE the gallery (same dots/prev/
-         next as the product photos) instead of 3 extra sections stacked
-         below the showcase. Only one of {img, .wl-prod__info} is visible at
-         a time — see hl-script.js's goToHair(); .wl-prod__frame's own
-         min-height is a floor, so a taller checklist simply grows the
-         stage, it never collapses back to a fixed scrollable box. ── */
-      .wl-prod__info { display: none; width: 100%; padding: 0 6px; text-align: left; transition: opacity .2s ease; }
-      .wl-prod__info.is-active { display: block; }
-      .wl-prod__info.fade-out { opacity: 0; }
-      .wl-prod__info.fade-in { opacity: 1; }
-      .wl-prod__info-eyebrow { display: block; font-family: var(--font-condensed); font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--brand); margin-bottom: 14px; }
-      .wl-prod__info-list { display: flex; flex-direction: column; gap: 14px; }
-      .wl-prod__info-item { display: flex; align-items: flex-start; gap: 12px; }
-      .wl-prod__info-item .wl-tick { margin-top: 1px; }
-      /* Clinical Timeline's items swap the checkmark for a small text badge
-         (the item's date range) — same ~22px height/alignment as .wl-tick. */
-      .wl-prod__info-badge { flex: none; height: 22px; margin-top: 1px; display: inline-flex; align-items: center; justify-content: center; background: var(--brand); color: #fff; font-family: var(--font-condensed); font-size: 10px; font-weight: 700; letter-spacing: .02em; padding: 0 9px; border-radius: 999px; white-space: nowrap; }
-      .wl-prod__info-item h4 { font-size: 13.5px; font-weight: 600; margin: 0 0 3px; }
-      .wl-prod__info-item p { font-size: 12.5px; color: var(--muted); margin: 0; line-height: 1.4; }
-
       .wl-trustpilot { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
       .wl-trustpilot span { font-family: var(--font-condensed); font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
       .wl-trustpilot img { height: 18px; width: auto; }
@@ -856,57 +844,6 @@ const faqs = [
             <!-- src seeded with cedar's first image — the exact value
                  hl-script.js's initHair() assigns anyway. -->
             <img id="mainProductImageHair" src="/assets/hl/product-cedar-straight.png" alt="Compounded hair-loss medication" />
-
-            <!-- Info slides — same gallery-carousel stops the old
-                 product4/product5.png infographic images used to occupy,
-                 now real HTML instead of unreadable-as-text pictures.
-                 hl-script.js appends these after the photo slides (same
-                 dots/prev/next) so the checklist copy lives inside the
-                 showcase instead of three extra full-width sections
-                 stacking below it. -->
-            <div class="wl-prod__info" data-info-slide="included">
-              <span class="wl-prod__info-eyebrow">What's Included</span>
-              <div class="wl-prod__info-list">
-                {included.map((item) => (
-                  <div class="wl-prod__info-item">
-                    <span class="wl-tick"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg></span>
-                    <div>
-                      <h4>{item.title}</h4>
-                      <p>{item.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div class="wl-prod__info" data-info-slide="expectedResults">
-              <span class="wl-prod__info-eyebrow">Clinical Timeline</span>
-              <div class="wl-prod__info-list">
-                {expectedResults.map((r) => (
-                  <div class="wl-prod__info-item">
-                    <span class="wl-prod__info-badge">{r.range}</span>
-                    <div>
-                      <h4>{r.title}</h4>
-                      <p>{r.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <p class="wl-foot" style="margin-top:14px;">*Individual results vary. Based on clinical studies of the active ingredients.</p>
-            </div>
-            <div class="wl-prod__info" data-info-slide="shipping">
-              <span class="wl-prod__info-eyebrow">Discreet Shipping</span>
-              <div class="wl-prod__info-list">
-                {shipping.map((item) => (
-                  <div class="wl-prod__info-item">
-                    <span class="wl-tick"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg></span>
-                    <div>
-                      <h4>{item.title}</h4>
-                      <p>{item.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
           <div class="wl-prod__nav">
             <button class="wl-navbtn" id="prevBtnHair" type="button" aria-label="Previous image">
@@ -919,6 +856,11 @@ const faqs = [
           </div>
           <div id="thumbnailsContainerHair"></div>
           <p class="wl-foot" style="margin-top:14px;">Packaging and bottle design shown are representative and may change. Your actual medication's appearance and labeling may differ.</p>
+          <ProductInfoModal
+            sections={productInfoSections}
+            idSuffix="Hair"
+            triggerLabel="What's Included, Timeline & Shipping"
+          />
         </div>
 
         <div>

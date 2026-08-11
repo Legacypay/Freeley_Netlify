@@ -15,9 +15,8 @@
     // slides (same content as assets/brand/slide_sw_*.png), stuffed into
     // the carousel by mistake. Only product1.png (real troche photo) and
     // product2.svg (real packaging art) belong here. The slide copy now
-    // lives as real HTML slides INSIDE this same gallery (see INFO_SLIDES
-    // below and .wl-prod__info in sexual-wellness.astro) instead of 2
-    // stacked sections below the showcase.
+    // lives in the ProductInfoModal popup instead (see
+    // sexual-wellness.astro's productInfoSections).
     const swProductData = {
         tadalafil: {
             name: "Tadalafil",
@@ -64,17 +63,6 @@
     };
 
     // =============================================
-    // INFO SLIDES — What's Included / Key Benefits. Same content
-    // regardless of medication, appended after the photo slides so they
-    // share the gallery's dots/prev/next instead of living in 2 separate
-    // sections below the showcase.
-    // =============================================
-    const INFO_SLIDES = [
-        { key: 'included', label: 'Included' },
-        { key: 'benefits', label: 'Benefits' }
-    ];
-
-    // =============================================
     // GALLERY STATE
     // =============================================
     let currentSWMedication = 'tadalafil';
@@ -90,7 +78,6 @@
     const thumbContainerSW = document.getElementById("thumbnailsContainerSW");
     const featuresContainerSW = document.getElementById("featuresListSW");
     const medicationButtonsSW = document.querySelectorAll('.medication-toggle .btn');
-    const infoSlideElsSW = document.querySelectorAll('.wl-prod__info');
 
     // =============================================
     // HELPER FUNCTIONS
@@ -99,13 +86,12 @@
         return swProductData[currentSWMedication];
     }
 
-    // Total slide count = product photos + the 2 fixed info slides.
     function getSWSlideCount() {
-        return getCurrentSWData().images.length + INFO_SLIDES.length;
+        return getCurrentSWData().images.length;
     }
 
     // =============================================
-    // GENERATE THUMBNAILS FROM MAIN IMAGES + INFO SLIDES
+    // GENERATE THUMBNAILS FROM MAIN IMAGES
     // =============================================
     function generateSWThumbnails(images) {
         if (!thumbContainerSW) return;
@@ -131,21 +117,6 @@
             thumbDiv.addEventListener('click', function() {
                 const idx = parseInt(this.getAttribute('data-index'), 10);
                 goToSW(idx);
-            });
-        });
-
-        // No product photo to preview for these — a text label chip
-        // instead of an image thumb.
-        INFO_SLIDES.forEach((slide, i) => {
-            const index = images.length + i;
-            const thumbDiv = document.createElement('div');
-            thumbDiv.className = 'thumb-box thumb-box--label';
-            thumbDiv.setAttribute('data-index', index);
-            thumbDiv.textContent = slide.label;
-            thumbContainerSW.appendChild(thumbDiv);
-
-            thumbDiv.addEventListener('click', function() {
-                goToSW(index);
             });
         });
     }
@@ -218,38 +189,13 @@
         if (index >= total) index = 0;
 
         if (mainImgSW) {
-            // Whichever element (the photo, or the currently-shown info
-            // slide) is on screen right now is what fades out — not
-            // always mainImgSW.
-            const outgoing = currentSWIndex < images.length
-                ? mainImgSW
-                : infoSlideElsSW[currentSWIndex - images.length];
-            if (outgoing) outgoing.classList.add("fade-out");
+            mainImgSW.classList.add("fade-out");
 
             setTimeout(function() {
                 currentSWIndex = index;
-                const showingImage = currentSWIndex < images.length;
 
-                // Clear stale fade classes off EVERY slide element first —
-                // a slide hidden via display:none while mid-fade (e.g. an
-                // image slide swapped away from while an info slide was
-                // showing) would otherwise keep its "fade-out" class
-                // forever and render invisible the next time it's shown
-                // (e.g. after a medication switch resets back to slide 0).
                 mainImgSW.classList.remove("fade-out", "fade-in");
-                infoSlideElsSW.forEach(function(el) { el.classList.remove("fade-out", "fade-in"); });
-
-                if (showingImage) {
-                    mainImgSW.src = images[currentSWIndex];
-                    mainImgSW.style.display = "";
-                    infoSlideElsSW.forEach(function(el) { el.classList.remove("is-active"); });
-                } else {
-                    mainImgSW.style.display = "none";
-                    const infoIndex = currentSWIndex - images.length;
-                    infoSlideElsSW.forEach(function(el, i) {
-                        el.classList.toggle("is-active", i === infoIndex);
-                    });
-                }
+                mainImgSW.src = images[currentSWIndex];
 
                 const dots = document.querySelectorAll("#dotContainerSW .dot-indicator");
                 dots.forEach(function(d, i) {
@@ -261,14 +207,10 @@
                     tb.classList.toggle("active", i === currentSWIndex);
                 });
 
-                const incoming = showingImage ? mainImgSW : infoSlideElsSW[currentSWIndex - images.length];
-                if (incoming) {
-                    incoming.classList.remove("fade-out");
-                    incoming.classList.add("fade-in");
-                    setTimeout(function() {
-                        incoming.classList.remove("fade-in");
-                    }, 400);
-                }
+                mainImgSW.classList.add("fade-in");
+                setTimeout(function() {
+                    mainImgSW.classList.remove("fade-in");
+                }, 400);
             }, 200);
         }
     }
@@ -284,10 +226,8 @@
 
         if (mainImgSW) {
             mainImgSW.src = images[0];
-            mainImgSW.style.display = "";
             mainImgSW.classList.remove("fade-out", "fade-in");
         }
-        infoSlideElsSW.forEach(function(el) { el.classList.remove("is-active", "fade-out", "fade-in"); });
         generateSWThumbnails(images);
         generateSWDots(getSWSlideCount());
         updateSWDetails();
@@ -350,10 +290,8 @@
 
         if (mainImgSW) {
             mainImgSW.src = images[0];
-            mainImgSW.style.display = "";
             mainImgSW.classList.remove("fade-out", "fade-in");
         }
-        infoSlideElsSW.forEach(function(el) { el.classList.remove("is-active", "fade-out", "fade-in"); });
         generateSWThumbnails(images);
         generateSWDots(getSWSlideCount());
         updateSWDetails();
