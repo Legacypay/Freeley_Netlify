@@ -116,6 +116,23 @@
   to = "/style/:splat"
   status = 200
 
+# GA4/Meta Pixel/Clarity + first-touch attribution capture, injected as
+# absolute-path <script src> tags into every Astro page's <head> via the
+# "tracking-scripts" integration in astro.config.mjs. Same absolute-path
+# problem as /global.css above — without these the catch-all answers
+# /analytics.js and /attribution.js with the waitlist HTML, so the browser
+# refuses to execute it ("Refused to execute script ... MIME type
+# ('text/html')") and both scripts silently never run.
+[[redirects]]
+  from = "/analytics.js"
+  to = "/analytics.js"
+  status = 200
+
+[[redirects]]
+  from = "/attribution.js"
+  to = "/attribution.js"
+  status = 200
+
 # Product card images on /pricing (image-18.png etc.) and the assessment
 # quiz's inline script — same absolute-path problem as above.
 [[redirects]]
