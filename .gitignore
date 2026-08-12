@@ -11,6 +11,8 @@ www/
 _process_product_images.py
 assets/brand/_originals_pre_bgremove/
 generated/
+*.original.png
+.omc/
 
 # Environment secrets — never commit
 .env
