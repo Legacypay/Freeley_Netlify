@@ -29,6 +29,17 @@
  * opts.transparent) — set this on cutout-style product/object shots meant
  * to sit on a page's own background color. Leave it unset for full-bleed
  * photos/illustrations that are supposed to have a background baked in.
+ *
+ * "model": optional per-entry override of openai-image.js's pinned MODEL
+ * (gpt-image-1.5). Only use this on entries that also leave "transparent"
+ * unset — gpt-image-2 dropped transparent-background support outright, so
+ * pairing the two just errors.
+ *
+ * "forceNew": true skips the default "output already exists → send it back
+ * as an edit-conditioning source" behavior even when "output" does exist —
+ * use this when you want a genuinely new image (different subject/scene),
+ * not an edit of whatever's currently there. Requires "width"/"height" like
+ * any other new-file entry; still backs up the old file first.
  */
 
 const fs = require('fs');
@@ -54,7 +65,7 @@ async function processEntry(entry) {
   const exists = fs.existsSync(outputPath);
   let targetWidth, targetHeight, sourceImage;
 
-  if (exists) {
+  if (exists && !entry.forceNew) {
     const backupPath = outputPath.replace(new RegExp(`\\.${ext}$`, 'i'), `.original.${ext}`);
     const originalBuffer = fs.readFileSync(outputPath);
     const meta = await sharp(originalBuffer).metadata();
@@ -76,6 +87,14 @@ async function processEntry(entry) {
     targetHeight = entry.height;
     fs.mkdirSync(path.dirname(outputPath), { recursive: true });
 
+    if (exists && entry.forceNew) {
+      const backupPath = outputPath.replace(new RegExp(`\\.${ext}$`, 'i'), `.original.${ext}`);
+      if (!fs.existsSync(backupPath)) {
+        fs.copyFileSync(outputPath, backupPath);
+        console.log(`   💾 Backed up original to ${path.relative(REPO_ROOT, backupPath)}`);
+      }
+    }
+
     if (entry.editFrom) {
       const editFromPath = path.join(REPO_ROOT, entry.editFrom);
       if (!fs.existsSync(editFromPath)) {
@@ -86,7 +105,7 @@ async function processEntry(entry) {
     }
   }
 
-  const rawImage = await generateImage(entry.prompt, sourceImage, { transparent: !!entry.transparent });
+  const rawImage = await generateImage(entry.prompt, sourceImage, { transparent: !!entry.transparent, model: entry.model });
 
   await sharp(rawImage)
     .resize(targetWidth, targetHeight, { fit: 'cover' })
@@ -99,7 +118,8 @@ async function processEntry(entry) {
 async function run() {
   const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
 
-  console.log(`\n🖼️  Generating ${manifest.length} image(s) via ${MODEL}`);
+  const models = [...new Set(manifest.map((e) => e.model || MODEL))].join(', ');
+  console.log(`\n🖼️  Generating ${manifest.length} image(s) via ${models}`);
   console.log('─'.repeat(60));
 
   let success = 0;

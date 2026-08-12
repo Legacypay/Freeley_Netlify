@@ -1,0 +1,18 @@
+[
+  {
+    "output": "public/assets/hl/product-willow-pills.png",
+    "editFrom": "public/assets/hl/product1.png",
+    "model": "gpt-image-2",
+    "width": 700,
+    "height": 900,
+    "prompt": "Same pill bottle, same cap color, same exact label design and text as the reference image — but now a close-up commercial supplement-photography shot: the same bottle standing slightly behind, with a small handful of the same white tablets spilled out in front of it on the same plain light background. Same lighting style. No new text, no extra props, no other bottles."
+  },
+  {
+    "output": "public/assets/wl/tirzz-angle2.png",
+    "editFrom": "public/assets/wl/tirzz-straight.png",
+    "model": "gpt-image-2",
+    "width": 700,
+    "height": 900,
+    "prompt": "Same dark forest-green glass medication vial, same black-and-silver cap, same exact white label design and text as the reference image — but photographed from a different angle: tilted about 25-30 degrees, resting at a slight angle as if just set down, catching a soft highlight along the glass. Same clean studio product-photography lighting and plain background as the reference. No new text, no extra props."
+  }
+]

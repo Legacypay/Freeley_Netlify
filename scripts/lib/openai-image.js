@@ -26,6 +26,13 @@
  * omitting opts — only callers generating cutout-style product/object shots
  * (e.g. generate-images.js manifest entries with `"transparent": true`)
  * should pass opts.transparent.
+ *
+ * opts.model: per-call override of the pinned MODEL constant above. Only
+ * meaningful when opts.transparent is NOT set — full-bleed lifestyle/scene
+ * shots with a baked-in background don't hit the gpt-image-2 limitation
+ * this file is otherwise pinned against, so a caller generating that kind
+ * of image (not a cutout) can opt into the newer model without moving the
+ * pin for every other caller.
  */
 
 const apiKey = process.env.OPENAI_API_KEY;
@@ -39,10 +46,11 @@ const MIME_TYPES = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', we
 
 async function generateImage(prompt, sourceImage, opts = {}) {
   let response;
+  const model = opts.model || MODEL;
 
   if (sourceImage) {
     const form = new FormData();
-    form.append('model', MODEL);
+    form.append('model', model);
     form.append('prompt', prompt);
     if (opts.transparent) {
       form.append('background', 'transparent');
@@ -55,7 +63,7 @@ async function generateImage(prompt, sourceImage, opts = {}) {
       body: form,
     });
   } else {
-    const body = { model: MODEL, prompt, size: 'auto' };
+    const body = { model, prompt, size: 'auto' };
     if (opts.transparent) {
       body.background = 'transparent';
       body.output_format = 'png';

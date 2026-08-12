@@ -1,0 +1,74 @@
+[
+  {
+    "output": "public/assets/wl/semaglutide-card-telehealth.png",
+    "editFrom": "public/assets/wl/semag-straight.png",
+    "model": "gpt-image-2",
+    "width": 900,
+    "height": 900,
+    "prompt": "Same dark forest-green glass medication vial, same cap, same exact label text as the reference image — recomposed as a premium product card: vial centered-left, slightly tilted, standing on a soft seamless radial-gradient studio background transitioning from pale sage green (#e8efe9) at the edges to soft warm off-white at the center, gentle soft shadow beneath. Leave generous empty negative space in the upper-right corner (no text, nothing generated there). Clean bright editorial commercial lighting. No text anywhere except the vial's own existing label."
+  },
+  {
+    "output": "public/assets/wl/semaglutide-card-shipping.png",
+    "editFrom": "public/assets/wl/semag-straight.png",
+    "model": "gpt-image-2",
+    "width": 900,
+    "height": 900,
+    "prompt": "Same dark forest-green glass medication vial, same cap, same exact label text as the reference image, standing upright next to a small plain unmarked kraft-brown shipping box with its flaps open, on a soft seamless pale cream (#f6f2e9) studio background, gentle soft shadow beneath both objects. Leave generous empty negative space in the upper-right corner (no text, nothing generated there). Clean bright editorial commercial product photography lighting. No text or logos on the box, no text anywhere except the vial's own existing label."
+  },
+  {
+    "output": "public/assets/hl/cedar-card-included.png",
+    "editFrom": "public/assets/hl/product-cedar-straight.png",
+    "model": "gpt-image-2",
+    "width": 900,
+    "height": 900,
+    "prompt": "Same pill bottle, same cap color, same exact label design and text as the reference image — recomposed as a premium product card: bottle centered-left, slightly tilted, standing on a soft seamless radial-gradient studio background transitioning from pale cream (#f6f2e9) at the edges to soft warm off-white at the center, gentle soft shadow beneath. Leave generous empty negative space in the upper-right corner (no text, nothing generated there). Clean bright editorial commercial lighting. No text anywhere except the bottle's own existing label."
+  },
+  {
+    "output": "public/assets/hl/cedar-card-timeline.png",
+    "editFrom": "public/assets/hl/product-cedar-tilted.png",
+    "model": "gpt-image-2",
+    "width": 900,
+    "height": 900,
+    "prompt": "Same pill bottle, same cap color, same exact label design and text as the reference image — recomposed as a premium product card: bottle centered-left, standing on a soft seamless radial-gradient studio background transitioning from pale warm gold (#f5eede) at the edges to soft warm off-white at the center, gentle soft shadow beneath. Leave generous empty negative space in the upper-right corner (no text, nothing generated there). Clean bright editorial commercial lighting. No text anywhere except the bottle's own existing label."
+  },
+  {
+    "output": "public/assets/hl/cedar-card-shipping.png",
+    "editFrom": "public/assets/hl/product-cedar-straight.png",
+    "model": "gpt-image-2",
+    "width": 900,
+    "height": 900,
+    "prompt": "Same pill bottle, same cap color, same exact label design and text as the reference image, standing upright next to a small plain unmarked kraft-brown shipping box with its flaps open, on a soft seamless pale cream (#f6f2e9) studio background, gentle soft shadow beneath both objects. Leave generous empty negative space in the upper-right corner (no text, nothing generated there). Clean bright editorial commercial product photography lighting. No text or logos on the box, no text anywhere except the bottle's own existing label."
+  },
+  {
+    "output": "public/assets/sw/tadalafil-card-included.png",
+    "editFrom": "public/assets/sw/product1.png",
+    "model": "gpt-image-2",
+    "width": 900,
+    "height": 900,
+    "prompt": "Same teal/green squarish dissolving troche tablets from the reference image (embossed 'Freeley' logo on top) — recomposed as a premium product card: the troches arranged neatly slightly left of center, on a soft seamless radial-gradient studio background transitioning from pale cream (#f6f2e9) at the edges to soft warm off-white at the center, gentle soft shadow beneath. Leave generous empty negative space in the upper-right corner (no text, nothing generated there). Clean bright editorial commercial lighting. No text anywhere in the image."
+  },
+  {
+    "output": "public/assets/sw/tadalafil-card-benefits.png",
+    "editFrom": "public/assets/sw/product1.png",
+    "model": "gpt-image-2",
+    "width": 900,
+    "height": 900,
+    "prompt": "Same teal/green squarish dissolving troche tablets from the reference image (embossed 'Freeley' logo on top) — recomposed as a premium product card, different angle than a straight-on shot: the troches arranged slightly left of center, on a soft seamless radial-gradient studio background transitioning from pale warm gold (#f5eede) at the edges to soft warm off-white at the center, gentle soft shadow beneath. Leave generous empty negative space in the upper-right corner (no text, nothing generated there). Clean bright editorial commercial lighting. No text anywhere in the image."
+  },
+  {
+    "output": "public/assets/l/sermorelin-card-included.png",
+    "editFrom": "public/assets/l/sermorelin.png",
+    "model": "gpt-image-2",
+    "width": 900,
+    "height": 900,
+    "prompt": "Same dark forest-green glass medication vial, same cap, same exact label text as the reference image — recomposed as a premium product card: vial centered-left, slightly tilted, standing on a soft seamless radial-gradient studio background transitioning from pale cream (#f6f2e9) at the edges to soft warm off-white at the center, gentle soft shadow beneath. Leave generous empty negative space in the upper-right corner (no text, nothing generated there). Clean bright editorial commercial lighting. No text anywhere except the vial's own existing label."
+  },
+  {
+    "output": "public/assets/l/sermorelin-card-benefits.png",
+    "editFrom": "public/assets/l/sermorelin.png",
+    "model": "gpt-image-2",
+    "width": 900,
+    "height": 900,
+    "prompt": "Same dark forest-green glass medication vial, same cap, same exact label text as the reference image — recomposed as a premium product card, different angle than a straight-on shot: vial centered-left, standing on a soft seamless radial-gradient studio background transitioning from pale warm gold (#f5eede) at the edges to soft warm off-white at the center, gentle soft shadow beneath. Leave generous empty negative space in the upper-right corner (no text, nothing generated there). Clean bright editorial commercial lighting. No text anywhere except the vial's own existing label."
+  }
+]

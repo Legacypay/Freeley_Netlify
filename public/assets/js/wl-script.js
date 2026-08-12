@@ -43,6 +43,7 @@
             // tirzepatide. It stays in the semaglutide gallery above.
             images: [
                 "/assets/wl/tirzz-straight.png",
+                "/assets/wl/tirzz-angle2.webp",
                 "/assets/wl/tirzz.png"
             ],
             features: [

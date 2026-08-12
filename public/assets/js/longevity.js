@@ -22,7 +22,8 @@
             // slides) now live in the ProductInfoModal popup instead —
             // see longevity.astro.
             images: [
-                "/assets/l/sermorelin.png"
+                "/assets/l/sermorelin.png",
+                "/assets/l/sermorelin-angle2.webp"
             ],
             features: [
                 "Sourced from 503A US pharmacies",
@@ -44,7 +45,8 @@
             description: "NAD+ boosts cellular energy and supports healthy aging at the molecular level.",
             // OWN labeled bottle only — see sermorelin's comment above.
             images: [
-                "/assets/l/nad+.png"
+                "/assets/l/nad+.png",
+                "/assets/l/nad-angle2.webp"
             ],
             features: [
                 "Sourced from 503A US pharmacies",
@@ -64,7 +66,8 @@
             description: "Glutathione is a powerful antioxidant that supports detoxification and immune health.",
             // OWN labeled bottle only — see sermorelin's comment above.
             images: [
-                "/assets/l/glutathione.png"
+                "/assets/l/glutathione.png",
+                "/assets/l/glutathione-angle2.webp"
             ],
             features: [
                 "Sourced from 503A US pharmacies",

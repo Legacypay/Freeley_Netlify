@@ -1,0 +1,11 @@
+[
+  {
+    "output": "public/assets/wl/tirzz-angle2.png",
+    "forceNew": true,
+    "editFrom": "public/assets/wl/tirzz-straight.png",
+    "model": "gpt-image-2",
+    "width": 700,
+    "height": 900,
+    "prompt": "Same dark forest-green glass medication vial, same black-and-silver cap, same exact white label design and text as the reference image — but photographed from a different angle: tilted about 25-30 degrees, resting at a slight angle as if just set down, catching a soft highlight along the glass. Place the vial on a plain, seamless, light neutral studio background (soft off-white/light grey, evenly lit, subtle soft shadow beneath the vial) — matching standard commercial product photography, NOT a black or dark background. No new text, no extra props."
+  }
+]

@@ -173,7 +173,7 @@ var Tawk_API = Tawk_API || {},
             // instead — see hair-loss.astro.
             images: [
                 "/assets/hl/product-cedar-straight.png",
-                "/assets/hl/product3.png",
+                "/assets/hl/product-cedar-pills.webp",
                 "/assets/hl/product-cedar-tilted.png"
             ],
             features: [
@@ -204,7 +204,7 @@ var Tawk_API = Tawk_API || {},
             // ProductInfoModal popup instead — see hair-loss.astro.
             images: [
                 "/assets/hl/product-ivy.png",
-                "/assets/hl/product3.png",
+                "/assets/hl/product-ivy-pills.webp",
                 "/assets/hl/product-ivy-tilted.png"
             ],
             features: [
@@ -233,7 +233,7 @@ var Tawk_API = Tawk_API || {},
             // popup instead — see hair-loss.astro.
             images: [
                 "/assets/hl/product1.png",
-                "/assets/hl/product3.png",
+                "/assets/hl/product-willow-pills.webp",
                 "/assets/hl/product-willow-tilted.png"
             ],
             features: [

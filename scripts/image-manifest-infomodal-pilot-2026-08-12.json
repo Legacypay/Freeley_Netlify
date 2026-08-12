@@ -1,0 +1,10 @@
+[
+  {
+    "output": "public/assets/wl/semaglutide-card.png",
+    "editFrom": "public/assets/wl/semag-straight.png",
+    "model": "gpt-image-2",
+    "width": 900,
+    "height": 900,
+    "prompt": "Same dark forest-green glass medication vial, same black-and-silver cap, same exact white label design and text as the reference image ('weight loss' badge, 'Compounded', 'Semaglutide', '2 mL Vial', 'Multiple doses', 'Rx Only') — recomposed as a premium e-commerce product card: the vial centered and slightly tilted, standing on a soft, seamless radial-gradient studio background transitioning from pale cream (#f6f2e9) at the edges to soft warm off-white at the center, with a gentle soft shadow beneath the vial. Leave generous empty negative space in the upper-right corner of the frame (no text, no badge, nothing generated there) so a price badge can be added afterward in software. Clean, bright, editorial commercial photography lighting. No text anywhere except the vial's own existing label."
+  }
+]

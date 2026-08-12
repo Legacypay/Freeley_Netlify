@@ -12,6 +12,8 @@ _process_product_images.py
 assets/brand/_originals_pre_bgremove/
 generated/
 *.original.png
+*-card-base.png
+*-card-*-base.png
 .omc/
 
 # Environment secrets — never commit

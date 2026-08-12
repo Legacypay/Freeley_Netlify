@@ -198,15 +198,17 @@ const shipping = [
 // `included`/`expectedResults`/`shipping` above feed this, not the photo
 // carousel. `expectedResults`' range chip becomes each item's `badge`.
 const productInfoSections = [
-  { id: 'included', label: 'Included', eyebrow: "What's Included", items: included },
+  { id: 'included', label: 'Included', eyebrow: "What's Included", items: included, image: '/assets/hl/cedar-card-included.webp', imageAlt: 'Cedar Hair Growth Tablet bottle' },
   {
     id: 'expectedResults',
     label: 'Timeline',
     eyebrow: 'Clinical Timeline',
     items: expectedResults.map((r) => ({ title: r.title, desc: r.desc, badge: r.range })),
     note: '*Individual results vary. Based on clinical studies of the active ingredients.',
+    image: '/assets/hl/cedar-card-timeline.webp',
+    imageAlt: 'Cedar Hair Growth Tablet bottle',
   },
-  { id: 'shipping', label: 'Shipping', eyebrow: 'Discreet Shipping', items: shipping },
+  { id: 'shipping', label: 'Shipping', eyebrow: 'Discreet Shipping', items: shipping, image: '/assets/hl/cedar-card-shipping.webp', imageAlt: 'Cedar Hair Growth Tablet bottle with shipping box' },
 ];
 
 const faqs = [

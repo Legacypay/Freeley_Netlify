@@ -42,6 +42,13 @@ export interface InfoSection {
   items: InfoItem[];
   /** Optional small print under the item grid (e.g. a results disclaimer). */
   note?: string;
+  /** Optional product-card photo shown beside the item list (path under
+   *  public/, e.g. "/assets/wl/semaglutide-card.png") — when set, the panel
+   *  switches to a two-column layout (image left, checklist right). The
+   *  `eyebrow` text doubles as the pill label overlaid on the image, so no
+   *  new copy needs inventing per section. */
+  image?: string;
+  imageAlt?: string;
 }
 
 interface Props {
@@ -132,25 +139,57 @@ const titleId = `pimTitle${idSuffix}`;
           aria-labelledby={`${dialogId}-tab-${s.id}`}
           hidden={i !== 0}
         >
-          <span class="pim__panel-eyebrow">{s.eyebrow}</span>
-          <div class="pim__list">
-            {s.items.map((item) => (
-              <div class="pim__item">
-                {item.badge ? (
-                  <span class="pim__badge">{item.badge}</span>
-                ) : (
-                  <span class="pim__tick" aria-hidden="true">
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
-                  </span>
-                )}
-                <div>
-                  <h4>{item.title}</h4>
-                  <p>{item.desc}</p>
+          {s.image ? (
+            // One cohesive "scene", not a photo bolted next to a text block:
+            // the product photo is the panel's own full-bleed background —
+            // generated with a soft gradient reserving its right half as
+            // negative space (see scripts/image-manifest-infomodal-*.json) —
+            // and the checklist renders as real HTML directly over that
+            // reserved area. Real text (not baked into the image, unlike the
+            // first version of this) stays crisp at any zoom, is readable by
+            // screen readers, and never needs a paid re-generation when copy
+            // changes — only scripts/compose-info-cards.js's SVG-on-pixel
+            // approach is gone; the plain product photo it read from is what
+            // ships now.
+            <div class="pim__scene">
+              <img src={s.image} alt={s.imageAlt || s.eyebrow} loading="lazy" />
+              <div class="pim__scene-copy">
+                <span class="pim__panel-eyebrow">{s.eyebrow}</span>
+                <div class="pim__list">
+                  {s.items.map((item) => (
+                    <div class="pim__item">
+                      {item.badge && <span class="pim__badge">{item.badge}</span>}
+                      <h4>{item.title}</h4>
+                      <p>{item.desc}</p>
+                    </div>
+                  ))}
                 </div>
+                {s.note && <p class="pim__note">{s.note}</p>}
               </div>
-            ))}
-          </div>
-          {s.note && <p class="pim__note">{s.note}</p>}
+            </div>
+          ) : (
+            <div class="pim__panel-body">
+              <span class="pim__panel-eyebrow">{s.eyebrow}</span>
+              <div class="pim__list">
+                {s.items.map((item) => (
+                  <div class="pim__item">
+                    {item.badge ? (
+                      <span class="pim__badge">{item.badge}</span>
+                    ) : (
+                      <span class="pim__tick" aria-hidden="true">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
+                      </span>
+                    )}
+                    <div>
+                      <h4>{item.title}</h4>
+                      <p>{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {s.note && <p class="pim__note">{s.note}</p>}
+            </div>
+          )}
         </div>
       ))}
     </div>
@@ -177,7 +216,10 @@ const titleId = `pimTitle${idSuffix}`;
 
   /* ── Dialog shell ─────────────────────────────────────────── */
   .pim__dialog {
-    width: min(600px, calc(100vw - 32px));
+    /* 660, not 600: the card-image panels (.pim__scene) overlay a real
+       checklist over ~54% of a square product photo — 600px left that
+       overlay column cramped. */
+    width: min(660px, calc(100vw - 32px));
     max-height: calc(100vh - 48px);
     margin: auto; padding: 0; border: 0; border-radius: 26px; overflow: hidden;
     background: #fff; color: var(--ink);
@@ -223,6 +265,36 @@ const titleId = `pimTitle${idSuffix}`;
 
   /* ── Panels ───────────────────────────────────────────────── */
   .pim__panels { flex: 1 1 auto; overflow-y: auto; padding: 22px 30px 28px; }
+
+  /* One cohesive scene: the product photo (its own gradient background
+     reserves the right side, see scripts/image-manifest-infomodal-*.json)
+     fills the panel, and the real checklist overlays that reserved area
+     directly — not a photo thumbnail bolted next to a separate text block. */
+  .pim__scene { position: relative; border-radius: 18px; overflow: hidden; aspect-ratio: 1 / 1; background: var(--cream); }
+  .pim__scene img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+  .pim__scene-copy {
+    position: absolute; inset: 0 0 0 auto; width: 54%;
+    padding: 8% 7% 7% 3%;
+    display: flex; flex-direction: column; overflow-y: auto;
+  }
+  .pim__scene-copy .pim__panel-eyebrow { margin-bottom: 12px; }
+  .pim__scene-copy .pim__list { display: block; }
+  .pim__scene-copy .pim__item {
+    display: block; background: none; border: none; border-radius: 0;
+    padding: 0 0 14px; margin-bottom: 14px; border-bottom: 1px solid rgba(26,28,26,.12);
+  }
+  .pim__scene-copy .pim__item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .pim__scene-copy .pim__item:hover { transform: none; box-shadow: none; border-color: rgba(26,28,26,.12); }
+  .pim__scene-copy .pim__badge { display: block; background: none; height: auto; padding: 0; margin: 0 0 4px; color: var(--gold); font-size: 10px; }
+  .pim__scene-copy .pim__item h4 { font-family: var(--font-serif); font-size: 15px; margin: 0 0 3px; }
+  .pim__scene-copy .pim__item p { font-size: 12px; }
+  .pim__scene-copy .pim__note { font-size: 10.5px; font-style: italic; margin-top: 10px; }
+  @media (max-width: 480px) {
+    .pim__scene-copy { width: 58%; padding: 7% 5% 6% 3%; }
+    .pim__scene-copy .pim__item h4 { font-size: 13.5px; }
+    .pim__scene-copy .pim__item p { font-size: 11px; }
+  }
+
   .pim__panel-eyebrow { display: block; font-family: var(--font-condensed); font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; }
   .pim__list { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 12px; }
   .pim__item {

@@ -1,0 +1,10 @@
+[
+  {
+    "output": "public/assets/l/sermorelin-angle2.png",
+    "editFrom": "public/assets/l/sermorelin.png",
+    "model": "gpt-image-2",
+    "width": 700,
+    "height": 900,
+    "prompt": "Same dark forest-green glass medication vial, same black-and-silver cap, same white label design and exact same text (\"weight loss\"/\"longevity\" pill badge, \"Compounded\", \"Sermorelin\", \"2 mL vial\", \"Multiple doses\", \"Rx Only\") — but photographed from a different angle: tilted about 30 degrees, catching a soft highlight along the glass, resting at a slight angle as if just set down. Same clean studio product-photography lighting and plain background as the reference image. No new text, no extra props."
+  }
+]
