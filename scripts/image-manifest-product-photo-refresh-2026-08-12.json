@@ -1,0 +1,85 @@
+[
+  {
+    "output": "public/assets/hl/product-cedar-straight.png",
+    "prompt": "Keep this exact bottle, cap design, label artwork, and every word of label text (the letter monogram, 'Finasteride, Minoxidil, Biotin', and everything else) completely unchanged -- do not alter any wording or the number of pills visible. Only elevate the studio photography quality: add a crisp, soft-edged contact shadow beneath the bottle so it reads as grounded on a surface rather than floating flatly, deepen the glass/plastic reflections and highlight rim-light along the cap ridges and bottle edge for a more premium, editorial product-photography look, and add subtle depth via a soft gradient of light across the label so it doesn't look flat-lit. Keep the transparent background exactly as-is. Output at higher resolution than the source.",
+    "transparent": true
+  },
+  {
+    "output": "public/assets/hl/product-cedar-tilted.png",
+    "prompt": "Keep this exact bottle, cap design, label artwork, and every word of label text ('Finasteride, Minoxidil, Biotin' and everything else) completely unchanged -- only two things: (1) fix the cap so its top ellipse, ridge lines, and highlight follow the SAME tilt/rotation angle as the bottle body -- right now the cap reads as photographed dead-on/straight while the body is clearly tilted, which looks like two mismatched shots glued together; make it read as one single rigid object photographed at one consistent tilted angle, and (2) elevate the overall studio photography quality: add a soft, grounded contact shadow, richer glass/plastic reflections, and a subtle rim highlight for a more premium, editorial look. Keep the transparent background exactly as-is. Do not change the label wording, ingredient names, or pill count. Output at higher resolution than the source.",
+    "transparent": true
+  },
+  {
+    "output": "public/assets/hl/product-ivy.png",
+    "prompt": "Keep this exact bottle, cap design, label artwork, and every word of label text (the letter monogram, 'Dutasteride, Minoxidil, Biotin', and everything else) completely unchanged -- do not alter any wording or the number of pills visible. Only elevate the studio photography quality: add a crisp, soft-edged contact shadow beneath the bottle so it reads as grounded on a surface rather than floating flatly, deepen the glass/plastic reflections and highlight rim-light along the cap ridges and bottle edge for a more premium, editorial product-photography look, and add subtle depth via a soft gradient of light across the label so it doesn't look flat-lit. Keep the transparent background exactly as-is. Output at higher resolution than the source.",
+    "transparent": true
+  },
+  {
+    "output": "public/assets/hl/product-ivy-tilted.png",
+    "prompt": "Keep this exact bottle, cap design, label artwork, and every word of label text ('Dutasteride, Minoxidil, Biotin' and everything else) completely unchanged -- only two things: (1) fix the cap so its top ellipse, ridge lines, and highlight follow the SAME tilt/rotation angle as the bottle body -- right now the cap reads as photographed dead-on/straight while the body is clearly tilted, which looks like two mismatched shots glued together; make it read as one single rigid object photographed at one consistent tilted angle, and (2) elevate the overall studio photography quality: add a soft, grounded contact shadow, richer glass/plastic reflections, and a subtle rim highlight for a more premium, editorial look. Keep the transparent background exactly as-is. Do not change the label wording, ingredient names, or pill count. Output at higher resolution than the source.",
+    "transparent": true
+  },
+  {
+    "output": "public/assets/hl/product1.png",
+    "prompt": "Keep this exact bottle, cap design, label artwork, and every word of label text (the letter monogram, 'Spironolactone, Minoxidil, Biotin', and everything else) completely unchanged -- do not alter any wording or the number of pills visible. Only elevate the studio photography quality: add a crisp, soft-edged contact shadow beneath the bottle so it reads as grounded on a surface rather than floating flatly, deepen the glass/plastic reflections and highlight rim-light along the cap ridges and bottle edge for a more premium, editorial product-photography look, and add subtle depth via a soft gradient of light across the label so it doesn't look flat-lit. Keep the transparent background exactly as-is. Output at higher resolution than the source.",
+    "transparent": true
+  },
+  {
+    "output": "public/assets/hl/product-willow-tilted.png",
+    "prompt": "Keep this exact bottle, cap design, label artwork, and every word of label text ('Spironolactone, Minoxidil, Biotin' and everything else) completely unchanged -- only two things: (1) fix the cap so its top ellipse, ridge lines, and highlight follow the SAME tilt/rotation angle as the bottle body -- right now the cap reads as photographed dead-on/straight while the body is clearly tilted, which looks like two mismatched shots glued together; make it read as one single rigid object photographed at one consistent tilted angle, and (2) elevate the overall studio photography quality: add a soft, grounded contact shadow, richer glass/plastic reflections, and a subtle rim highlight for a more premium, editorial look. Keep the transparent background exactly as-is. Do not change the label wording, ingredient names, or pill count. Output at higher resolution than the source.",
+    "transparent": true
+  },
+  {
+    "output": "public/assets/hl/product3.png",
+    "prompt": "Keep the exact pills/tablets shown, their shape, imprint, and count completely unchanged. Only elevate the studio photography quality of this close-up: add a soft, natural contact shadow grounding the pile, richer highlights on the tablet surfaces so they read as crisp, real pharmaceutical tablets rather than a flat render, and a touch more contrast/depth for a premium, editorial product-photo look. Keep the transparent background exactly as-is. Output at higher resolution than the source.",
+    "transparent": true
+  },
+  {
+    "output": "public/assets/wl/semag-straight.png",
+    "prompt": "Keep this exact vial, cap, silver crimp band, label artwork, and every word of label text ('weight loss', 'Compounded', 'Semaglutide', '2 mL Vial', 'Multiple doses', 'Rx Only') completely unchanged -- do not alter any wording. Only elevate the studio photography quality: deepen and smooth the glass reflections and specular highlight on the dark green glass body, add a soft, naturally grounded contact shadow beneath the vial, richen the metallic sheen on the silver crimp band and black cap ridges, and add a touch more contrast/depth so the shot reads as a premium editorial product photo rather than a flat render. Keep the transparent background exactly as-is. Output at higher resolution than the source.",
+    "transparent": true
+  },
+  {
+    "output": "public/assets/wl/semag.png",
+    "prompt": "Keep this exact vial, cap, silver crimp band, label artwork, and every word of label text ('weight loss', 'Compounded', 'Semaglutide', '2 mL Vial', 'Multiple doses', 'Rx Only') and the current tilt angle completely unchanged -- do not alter any wording. Only elevate the studio photography quality: deepen and smooth the glass reflections and specular highlight on the dark green glass body, add a soft, naturally grounded contact shadow beneath the vial, richen the metallic sheen on the silver crimp band and black cap ridges, and add a touch more contrast/depth so the shot reads as a premium editorial product photo rather than a flat render. Keep the transparent background exactly as-is. Output at higher resolution than the source.",
+    "transparent": true
+  },
+  {
+    "output": "public/assets/wl/tirzz-straight.png",
+    "prompt": "Keep this exact vial, cap, silver crimp band, label artwork, and every word of label text ('weight loss', 'Compounded', 'Tirzepatide', '2 mL Vial', 'Multiple doses', 'Rx Only') completely unchanged -- do not alter any wording. Only elevate the studio photography quality: deepen and smooth the glass reflections and specular highlight on the dark green glass body, add a soft, naturally grounded contact shadow beneath the vial, richen the metallic sheen on the silver crimp band and black cap ridges, and add a touch more contrast/depth so the shot reads as a premium editorial product photo rather than a flat render. Keep the transparent background exactly as-is. Output at higher resolution than the source.",
+    "transparent": true
+  },
+  {
+    "output": "public/assets/wl/tirzz.png",
+    "prompt": "Keep this exact vial, cap, silver crimp band, label artwork, every word of label text ('weight loss', 'Compounded', 'Tirzepatide', '2 mL Vial', 'Multiple doses', 'Rx Only'), and the current tilt angle completely unchanged -- do not alter any wording. Only elevate the studio photography quality: deepen and smooth the glass reflections and specular highlight on the dark green glass body, add a soft, naturally grounded contact shadow beneath the vial, richen the metallic sheen on the silver crimp band and black cap ridges, and add a touch more contrast/depth so the shot reads as a premium editorial product photo rather than a flat render. Keep the transparent background exactly as-is. Output at higher resolution than the source.",
+    "transparent": true
+  },
+  {
+    "output": "public/assets/sw/product1.png",
+    "prompt": "Keep this exact troche/lozenge shape, size, embossed 'Freeley' logo, teal color, and transparent background completely unchanged. Only elevate the studio photography quality: add a soft grounded contact shadow, a richer surface sheen/highlight that reads the material as a smooth compounded lozenge, and a touch more contrast and depth for a premium editorial product-photo look. Do not add any text or ingredient labeling onto the troche itself. Output at higher resolution than the source.",
+    "transparent": true
+  },
+  {
+    "output": "public/assets/sw/product1-olympus.png",
+    "width": 986,
+    "height": 1024,
+    "editFrom": "public/assets/sw/product1.png",
+    "prompt": "Using the reference image's exact troche/lozenge shape, size, embossed 'Freeley' logo placement and style, camera angle, studio lighting, contact shadow, and transparent background as the template, produce a color variant: recolor the troche material from teal to a deep plum/burgundy tone, to visually signal a distinct, premium-tier formula, different from the teal Tadalafil-only troche. Keep everything else -- shape, embossing, lighting style, shadow, transparent background -- identical to the reference. Do not add any text or ingredient labeling onto the troche.",
+    "transparent": true
+  },
+  {
+    "output": "public/assets/l/sermorelin.png",
+    "prompt": "Keep this exact vial, cap, silver crimp band, label artwork, every word of label text ('longevity', 'Compounded', 'Sermorelin', '2 mL vial', 'Multiple doses', 'Rx Only'), and the current tilt angle completely unchanged -- do not alter any wording. Only elevate the studio photography quality: deepen and smooth the glass reflections and specular highlight on the dark green glass body, add a soft, naturally grounded contact shadow beneath the vial, richen the metallic sheen on the silver crimp band and black cap ridges, and add a touch more contrast/depth so the shot reads as a premium editorial product photo rather than a flat render. Keep the transparent background exactly as-is. Output at higher resolution than the source.",
+    "transparent": true
+  },
+  {
+    "output": "public/assets/l/nad+.png",
+    "prompt": "Keep this exact vial, cap, silver crimp band, label artwork, every word of label text ('longevity', 'Compounded', 'NAD+', '2 mL Vial', 'Multiple doses', 'Rx Only'), and the current tilt angle completely unchanged -- do not alter any wording. Only elevate the studio photography quality: deepen and smooth the glass reflections and specular highlight on the dark green glass body, add a soft, naturally grounded contact shadow beneath the vial, richen the metallic sheen on the silver crimp band and black cap ridges, and add a touch more contrast/depth so the shot reads as a premium editorial product photo rather than a flat render. Keep the transparent background exactly as-is. Output at higher resolution than the source.",
+    "transparent": true
+  },
+  {
+    "output": "public/assets/l/glutathione.png",
+    "prompt": "Keep this exact vial, cap, silver crimp band, label artwork, every word of label text ('longevity', 'Compounded', 'Glutathione', '2 mL Vial', 'Multiple doses', 'Rx Only'), and the current tilt angle completely unchanged -- do not alter any wording. Only elevate the studio photography quality: deepen and smooth the glass reflections and specular highlight on the dark green glass body, add a soft, naturally grounded contact shadow beneath the vial, richen the metallic sheen on the silver crimp band and black cap ridges, and add a touch more contrast/depth so the shot reads as a premium editorial product photo rather than a flat render. Keep the transparent background exactly as-is. Output at higher resolution than the source.",
+    "transparent": true
+  }
+]

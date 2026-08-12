@@ -1,0 +1,9 @@
+[
+  {
+    "output": "generated/product-photos-for-bg-removal/sw-olympus-double.png",
+    "width": 1100,
+    "height": 1150,
+    "transparent": true,
+    "prompt": "Studio product photograph of TWO square-ish, rounded-edge compounded medication troches/lozenges, deep plum/burgundy colored, arranged together: one troche lying flat and angled toward camera-left with its top face fully visible, showing a circular embossed 'Freeley' wordmark logo centered on top in a matching darker plum; a second troche positioned just behind/beside it, slightly overlapping, rotated at a different angle so mostly its top-right corner and one side face are visible (no readable text needed on the second one's obscured face). Smooth, semi-matte pharmaceutical-compound material, soft directional studio lighting, soft realistic contact shadows beneath both pieces. Same premium editorial product-photography style, material, and plum/burgundy color as a single troche shot -- this is a two-piece variant of the same product. Transparent background -- absolutely no vignette, glow, halo, gradient, spotlight, or studio-backdrop texture of any kind, pure flat alpha transparency. Comfortable empty margin around both pieces on all sides. High resolution, no text or labeling beyond the embossed logo."
+  }
+]

@@ -70,5 +70,41 @@ if (stickyBar) {
     window.addEventListener("resize", handleSticky);
 }
 
+// =============================================
+// PRODUCT PHOTO HOVER-ZOOM — cursor-following magnify inside the product
+// stage, same idea as a marketplace PDP zoom (MercadoLibre-style). Scoped
+// to .wl-prod__frame, which /hair-loss, /weight-loss, /sexual-wellness and
+// /longevity's product showcase all share (this file is loaded on all
+// four); querySelectorAll just finds nothing on pages without it. Desktop
+// only — (hover: hover) and (pointer: fine) excludes touch, where a
+// persistent hover state doesn't exist and would just get stuck open.
+// Reads the <img>'s own live src/position each time rather than caching
+// anything, so it keeps working across the gallery's medication-toggle
+// image swaps (those only ever change .src, never replace the element).
+// =============================================
+if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    document.querySelectorAll('.wl-prod__frame').forEach(function(frame) {
+        const zoomImg = frame.querySelector('img');
+        if (!zoomImg) return;
+
+        frame.addEventListener('mouseenter', function() {
+            frame.classList.add('is-zoomed');
+        });
+
+        frame.addEventListener('mousemove', function(e) {
+            const rect = zoomImg.getBoundingClientRect();
+            if (!rect.width || !rect.height) return;
+            const x = Math.min(100, Math.max(0, ((e.clientX - rect.left) / rect.width) * 100));
+            const y = Math.min(100, Math.max(0, ((e.clientY - rect.top) / rect.height) * 100));
+            zoomImg.style.transformOrigin = x + '% ' + y + '%';
+        });
+
+        frame.addEventListener('mouseleave', function() {
+            frame.classList.remove('is-zoomed');
+            zoomImg.style.transformOrigin = '50% 50%';
+        });
+    });
+}
+
 
 

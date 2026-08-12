@@ -1,0 +1,12 @@
+[
+  {
+    "output": "public/assets/hl/product-cedar-tilted.png",
+    "transparent": true,
+    "prompt": "Keep everything in this image identical -- same bottle, same cap design, same label artwork, same every word of label text ('Finasteride, Minoxidil, Biotin' and everything else), same pill count, same tilt angle, same lighting, same framing/crop/zoom, same transparent background -- only straighten the cap so its top ellipse and ridge lines match the tilt angle of the bottle body (the cap currently reads as photographed straight-on/flat while the body is clearly tilted, like two mismatched shots glued together). Do not change anything else. Output at higher resolution than the source."
+  },
+  {
+    "output": "public/assets/hl/product-ivy-tilted.png",
+    "transparent": true,
+    "prompt": "Keep everything in this image identical -- same bottle, same cap design, same label artwork, same every word of label text ('Dutasteride, Minoxidil, Biotin' and everything else), same pill count, same tilt angle, same lighting, same framing/crop/zoom, same transparent background -- only straighten the cap so its top ellipse and ridge lines match the tilt angle of the bottle body (the cap currently reads as photographed straight-on/flat while the body is clearly tilted, like two mismatched shots glued together). Do not change anything else. Output at higher resolution than the source."
+  }
+]

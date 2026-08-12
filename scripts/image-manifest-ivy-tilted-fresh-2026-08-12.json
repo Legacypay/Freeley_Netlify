@@ -1,0 +1,9 @@
+[
+  {
+    "output": "public/assets/hl/product-ivy-tilted.png",
+    "width": 900,
+    "height": 1200,
+    "transparent": true,
+    "prompt": "Studio product photograph of a clear plastic pill bottle for a hair-growth supplement, photographed at a slight dynamic tilt (rotated roughly 15-20 degrees off vertical, as if leaning, not perfectly upright -- the cap's top ellipse, ridge lines, and highlight must clearly follow that SAME tilt angle as the body, reading as one single rigid object photographed at one consistent tilted angle). The bottle has a dark forest-green ridged screw-on cap. Around the middle of the bottle wraps a cream/off-white paper label: at the top of the label a large serif capital letter 'F' monogram in dark forest-green, below it a thin horizontal dark-green rule line, then centered dark-green serif text reading exactly 'Dutasteride,' on one line, 'Minoxidil,' on the next line, and 'Biotin' on the last line -- three lines, spell every word exactly as given, nothing else. Through the clear plastic above and below the label, small round white tablets are visible filling the bottle. Photorealistic, glossy plastic and cap reflections, a soft rim highlight along the tilted edge, a soft naturally grounded contact shadow beneath the bottle reading the tilt correctly. The bottle must be fully within frame with comfortable margin on all sides (cap not touching the top edge, base not touching the bottom edge) -- do not crop or zoom in tight. The entire area around the bottle must be pure flat alpha transparency -- absolutely no vignette, glow, halo, gradient, spotlight, or studio-backdrop texture of any kind. Premium editorial product photography, high resolution."
+  }
+]

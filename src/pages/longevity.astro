@@ -337,10 +337,13 @@ const faqs = [
       @media (min-width: 900px) { .wl-prod { grid-template-columns: 1fr 1fr; gap: 56px; } }
       .wl-prod__stage { background: var(--card); border-radius: 22px; padding: 22px; }
       .popular-badge { display: inline-block; font-family: var(--font-condensed); font-size: 11px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; background: var(--gold); color: #fff; border-radius: 999px; padding: 5px 12px; }
-      .wl-prod__frame { display: grid; place-items: center; padding: 26px 0 18px; min-height: 280px; position: relative; }
-      .wl-prod__frame img { max-height: 260px; width: auto; transition: opacity .2s ease; }
+      .wl-prod__frame { display: grid; place-items: center; padding: 26px 0 18px; min-height: 280px; position: relative; overflow: hidden; cursor: zoom-in; }
+      .wl-prod__frame img { max-height: 260px; width: auto; transition: opacity .2s ease, transform .08s ease-out; }
       .wl-prod__frame img.fade-out { opacity: 0; }
       .wl-prod__frame img.fade-in { opacity: 1; }
+      /* Hover-zoom (see public/style/script.js) — transform-origin is set
+         per-mousemove in JS so the magnified area follows the cursor. */
+      .wl-prod__frame.is-zoomed img { transform: scale(2.2); }
       .wl-prod__nav { display: flex; align-items: center; justify-content: space-between; }
       .wl-navbtn { background: #fff; border: 1px solid var(--line); border-radius: 999px; width: 42px; height: 42px; display: grid; place-items: center; cursor: pointer; color: var(--green); transition: border-color .15s; }
       .wl-navbtn:hover { border-color: var(--brand); }

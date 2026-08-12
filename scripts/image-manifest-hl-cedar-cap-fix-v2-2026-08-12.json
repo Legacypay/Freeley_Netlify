@@ -1,0 +1,7 @@
+[
+  {
+    "output": "public/assets/hl/product-cedar-tilted.png",
+    "transparent": true,
+    "prompt": "Keep everything in this image identical -- same bottle, same cap design, same label artwork, same every word of label text ('Finasteride, Minoxidil, Biotin' and everything else), same pill count, same tilt angle, same lighting, same framing/crop/zoom -- only straighten the cap so its top ellipse and ridge lines match the tilt angle of the bottle body (the cap currently reads as photographed straight-on/flat while the body is clearly tilted, like two mismatched shots glued together). The area around the bottle MUST be pure flat transparency -- absolutely no vignette, glow, halo, gradient, spotlight, or studio-backdrop texture of any kind behind or around the bottle. Do not change anything else. Output at higher resolution than the source."
+  }
+]

@@ -45,8 +45,8 @@
             title: "Olympus",
             description: "Oxytocin and Bremelanotide combined with Tadalafil for enhanced arousal and sustained blood flow.",
             images: [
-                "/assets/sw/product1.png",
-                "/assets/sw/product2.svg"
+                "/assets/sw/product1-olympus.png",
+                "/assets/sw/product2-olympus.png"
             ],
             features: [
                 "Oxytocin / Bremelanotide with or without Tadalafil",

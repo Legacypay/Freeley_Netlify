@@ -20,8 +20,15 @@
  *
  * manifest.json: [{ "output": "public/assets/wl/hero.png", "prompt": "...",
  *                    "width": 900, "height": 900 /* only for new files *\/,
- *                    "editFrom": "public/assets/wl/other.png" /* optional *\/ }, ...]
+ *                    "editFrom": "public/assets/wl/other.png" /* optional *\/,
+ *                    "transparent": true /* optional, see below *\/ }, ...]
  * Paths in "output"/"editFrom" are relative to the repo root.
+ *
+ * "transparent": true asks the model for a real alpha-transparent
+ * background instead of its default opaque fill (see scripts/lib's
+ * opts.transparent) — set this on cutout-style product/object shots meant
+ * to sit on a page's own background color. Leave it unset for full-bleed
+ * photos/illustrations that are supposed to have a background baked in.
  */
 
 const fs = require('fs');
@@ -79,7 +86,7 @@ async function processEntry(entry) {
     }
   }
 
-  const rawImage = await generateImage(entry.prompt, sourceImage);
+  const rawImage = await generateImage(entry.prompt, sourceImage, { transparent: !!entry.transparent });
 
   await sharp(rawImage)
     .resize(targetWidth, targetHeight, { fit: 'cover' })

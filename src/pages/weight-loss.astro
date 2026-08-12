@@ -35,6 +35,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import FinalCta from '../components/FinalCta.astro';
 import QuizModal from '../components/QuizModal.astro';
+import ProductInfoModal from '../components/ProductInfoModal.astro';
 
 const ASSESSMENT = '/assessment-quiz';
 
@@ -109,11 +110,11 @@ const mechanisms = [
 
 // ponytail: was product3.png, an unreadable-as-text "What's Included"
 // infographic slide baked into the gallery. Rendered as real HTML now,
-// as a slide INSIDE the same product-image carousel (see wl-prod__info
-// in the showcase markup below) instead of a stacked section — keeps the
-// checklist readable without adding extra page scroll. Checklist copy is
-// a placeholder reconstruction, not extracted from the graphic — confirm
-// exact wording with the client before this ships as final.
+// inside the <ProductInfoModal> popup (see productInfoSections below)
+// instead of a stacked section — keeps the checklist readable without
+// adding extra page scroll. Checklist copy is a placeholder reconstruction,
+// not extracted from the graphic — confirm exact wording with the client
+// before this ships as final.
 const included = [
   { title: 'Physician consultation', desc: "A licensed U.S. physician reviews your intake and confirms you're a fit for treatment." },
   { title: 'Your prescribed medication', desc: 'A monthly supply of your compounded GLP-1, dosed to your plan.' },
@@ -122,8 +123,8 @@ const included = [
 ];
 
 // product4.png / product5.png — same treatment as `included` above: real
-// HTML slides inside the product carousel, copy transcribed verbatim from
-// the old infographic slides.
+// HTML now, inside the <ProductInfoModal> popup, copy transcribed verbatim
+// from the old infographic slides.
 const telehealth = [
   { title: '100% Online Consultations', desc: 'No office visits required' },
   { title: 'HIPAA-Compliant Messaging', desc: 'Secure provider communication' },
@@ -136,6 +137,17 @@ const shipping = [
   { title: 'Temperature-Controlled', desc: 'Cold chain integrity maintained' },
   { title: 'Free Standard Shipping', desc: 'Included with every order' },
   { title: 'Tracking Provided', desc: 'Know exactly when it arrives' },
+];
+
+// Plan-details popup sections (see src/components/ProductInfoModal.astro) —
+// `included`/`telehealth`/`shipping` above feed this, not the photo
+// carousel. Same move hair-loss.astro/longevity.astro/sexual-wellness.astro
+// already made: a button opens a tabbed popup instead of these living as
+// extra non-photo slides inside the product-photo gallery.
+const productInfoSections = [
+  { id: 'included', label: 'Included', eyebrow: "What's Included", items: included },
+  { id: 'telehealth', label: 'Telehealth', eyebrow: 'Telehealth Platform', items: telehealth },
+  { id: 'shipping', label: 'Shipping', eyebrow: 'Discreet Shipping', items: shipping },
 ];
 
 const press = [
@@ -405,10 +417,13 @@ const faqs = [
       @media (min-width: 900px) { .wl-prod { grid-template-columns: 1fr 1fr; gap: 56px; } }
       .wl-prod__stage { background: var(--card); border-radius: 22px; padding: 22px; }
       .popular-badge { display: inline-block; font-family: var(--font-condensed); font-size: 11px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; background: var(--gold); color: #fff; border-radius: 999px; padding: 5px 12px; }
-      .wl-prod__frame { display: grid; place-items: center; padding: 26px 0 18px; min-height: 280px; position: relative; }
-      .wl-prod__frame img { max-height: 260px; width: auto; transition: opacity .2s ease; }
+      .wl-prod__frame { display: grid; place-items: center; padding: 26px 0 18px; min-height: 280px; position: relative; overflow: hidden; cursor: zoom-in; }
+      .wl-prod__frame img { max-height: 260px; width: auto; transition: opacity .2s ease, transform .08s ease-out; }
       .wl-prod__frame img.fade-out { opacity: 0; }
       .wl-prod__frame img.fade-in { opacity: 1; }
+      /* Hover-zoom (see public/style/script.js) — transform-origin is set
+         per-mousemove in JS so the magnified area follows the cursor. */
+      .wl-prod__frame.is-zoomed img { transform: scale(2.2); }
       .wl-prod__nav { display: flex; align-items: center; justify-content: space-between; }
       .wl-navbtn { background: #fff; border: 1px solid var(--line); border-radius: 999px; width: 42px; height: 42px; display: grid; place-items: center; cursor: pointer; color: var(--green); transition: border-color .15s; }
       .wl-navbtn:hover { border-color: var(--brand); }
@@ -420,28 +435,6 @@ const faqs = [
       #thumbnailsContainer { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
       #thumbnailsContainer .thumb-box { border: 1px solid var(--line); border-radius: 12px; padding: 5px; cursor: pointer; background: #fff; transition: border-color .15s; }
       #thumbnailsContainer .thumb-box.active { border-color: var(--brand); }
-      /* Label-style thumb for the 3 info slides below — same box, text
-         instead of a photo since there's no product shot to preview. */
-      #thumbnailsContainer .thumb-box--label { padding: 5px 12px; display: grid; place-items: center; font-family: var(--font-condensed); font-size: 10.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
-      #thumbnailsContainer .thumb-box--label.active { color: var(--brand); }
-
-      /* ── Info slides — What's Included / Telehealth / Discreet Shipping,
-         now real HTML slides INSIDE the gallery (same dots/prev/next as the
-         product photos) instead of 3 extra sections stacked below the
-         showcase. Only one of {img, .wl-prod__info} is visible at a time —
-         see wl-script.js's goTo(); .wl-prod__frame's own min-height is a
-         floor, so a taller checklist simply grows the stage, it never
-         collapses back to a fixed scrollable box. ── */
-      .wl-prod__info { display: none; width: 100%; padding: 0 6px; text-align: left; transition: opacity .2s ease; }
-      .wl-prod__info.is-active { display: block; }
-      .wl-prod__info.fade-out { opacity: 0; }
-      .wl-prod__info.fade-in { opacity: 1; }
-      .wl-prod__info-eyebrow { display: block; font-family: var(--font-condensed); font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--brand); margin-bottom: 14px; }
-      .wl-prod__info-list { display: flex; flex-direction: column; gap: 14px; }
-      .wl-prod__info-item { display: flex; align-items: flex-start; gap: 12px; }
-      .wl-prod__info-item .wl-tick { margin-top: 1px; }
-      .wl-prod__info-item h4 { font-size: 13.5px; font-weight: 600; margin: 0 0 3px; }
-      .wl-prod__info-item p { font-size: 12.5px; color: var(--muted); margin: 0; line-height: 1.4; }
 
       .wl-trustpilot { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
       .wl-trustpilot span { font-family: var(--font-condensed); font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
@@ -883,55 +876,6 @@ const faqs = [
                  wl-script.js's init() assigns anyway. Without it the tag ships
                  as a broken-image box until the script runs. -->
             <img id="mainProductImage" src="/assets/wl/semag-straight.png" alt="Compounded GLP-1 medication" />
-
-            <!-- Info slides — same 3 gallery-carousel stops the old
-                 product3/4/5.png infographic images used to occupy, now
-                 real HTML instead of unreadable-as-text pictures. wl-script.js
-                 appends these after the photo slides (same dots/prev/next)
-                 so the checklist copy lives inside the showcase instead of
-                 three extra full-width sections stacking below it. -->
-            <div class="wl-prod__info" data-info-slide="included">
-              <span class="wl-prod__info-eyebrow">What's Included</span>
-              <div class="wl-prod__info-list">
-                {included.map((item) => (
-                  <div class="wl-prod__info-item">
-                    <span class="wl-tick"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg></span>
-                    <div>
-                      <h4>{item.title}</h4>
-                      <p>{item.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div class="wl-prod__info" data-info-slide="telehealth">
-              <span class="wl-prod__info-eyebrow">Telehealth Platform</span>
-              <div class="wl-prod__info-list">
-                {telehealth.map((item) => (
-                  <div class="wl-prod__info-item">
-                    <span class="wl-tick"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg></span>
-                    <div>
-                      <h4>{item.title}</h4>
-                      <p>{item.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div class="wl-prod__info" data-info-slide="shipping">
-              <span class="wl-prod__info-eyebrow">Discreet Shipping</span>
-              <div class="wl-prod__info-list">
-                {shipping.map((item) => (
-                  <div class="wl-prod__info-item">
-                    <span class="wl-tick"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg></span>
-                    <div>
-                      <h4>{item.title}</h4>
-                      <p>{item.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
           <div class="wl-prod__nav">
             <button class="wl-navbtn" id="prevBtn" type="button" aria-label="Previous image">
@@ -944,6 +888,11 @@ const faqs = [
           </div>
           <div id="thumbnailsContainer"></div>
           <p class="wl-foot" style="margin-top:14px;">Packaging and vial design shown are representative and may change. Your actual medication's appearance and labeling may differ.</p>
+          <ProductInfoModal
+            sections={productInfoSections}
+            idSuffix="Wl"
+            triggerLabel="What's Included, Telehealth & Shipping"
+          />
         </div>
 
         <div>

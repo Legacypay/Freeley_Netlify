@@ -10,6 +10,7 @@ dist/
 www/
 _process_product_images.py
 assets/brand/_originals_pre_bgremove/
+generated/
 
 # Environment secrets — never commit
 .env

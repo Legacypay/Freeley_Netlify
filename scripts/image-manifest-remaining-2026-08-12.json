@@ -1,0 +1,40 @@
+[
+  {
+    "output": "public/assets/wl/tirzz-straight.png",
+    "transparent": true,
+    "prompt": "Keep this exact vial, cap, silver crimp band, label artwork, and every word of label text ('weight loss', 'Compounded', 'Tirzepatide', '2 mL Vial', 'Multiple doses', 'Rx Only') completely unchanged -- do not alter any wording. CRITICAL: keep the exact same framing, camera distance, zoom level, crop, and margins as the source image -- the vial must occupy the same amount of the frame it does now, with the same empty space around it; do not move the product closer to the camera, crop tighter, or fill more of the frame. Only elevate the studio photography quality: deepen and smooth the glass reflections and specular highlight on the dark green glass body, add a soft, naturally grounded contact shadow beneath the vial, richen the metallic sheen on the silver crimp band and black cap ridges, and add a touch more contrast/depth so the shot reads as a premium editorial product photo rather than a flat render. Keep the transparent background exactly as-is."
+  },
+  {
+    "output": "public/assets/wl/tirzz.png",
+    "transparent": true,
+    "prompt": "Keep this exact vial, cap, silver crimp band, label artwork, every word of label text ('weight loss', 'Compounded', 'Tirzepatide', '2 mL Vial', 'Multiple doses', 'Rx Only'), and the current tilt angle completely unchanged -- do not alter any wording. CRITICAL: keep the exact same framing, camera distance, zoom level, crop, and margins as the source image -- the vial must occupy the same amount of the frame it does now, with the same empty space around it; do not move the product closer to the camera, crop tighter, or fill more of the frame. Only elevate the studio photography quality: deepen and smooth the glass reflections and specular highlight on the dark green glass body, add a soft, naturally grounded contact shadow beneath the vial, richen the metallic sheen on the silver crimp band and black cap ridges, and add a touch more contrast/depth so the shot reads as a premium editorial product photo rather than a flat render. Keep the transparent background exactly as-is."
+  },
+  {
+    "output": "public/assets/sw/product1.png",
+    "transparent": true,
+    "prompt": "Keep this exact troche/lozenge shape, size, embossed 'Freeley' logo, teal color, and transparent background completely unchanged. CRITICAL: keep the exact same framing, camera distance, zoom level, crop, and margins as the source image -- the troche must occupy the same amount of the frame it does now; do not move it closer to the camera or fill more of the frame. Only elevate the studio photography quality: add a soft grounded contact shadow, a richer surface sheen/highlight that reads the material as a smooth compounded lozenge, and a touch more contrast and depth for a premium editorial product-photo look. Do not add any text or ingredient labeling onto the troche itself."
+  },
+  {
+    "output": "public/assets/sw/product1-olympus.png",
+    "width": 986,
+    "height": 1024,
+    "editFrom": "public/assets/sw/product1.png",
+    "transparent": true,
+    "prompt": "Using the reference image's exact troche/lozenge shape, size, framing/crop/margins, embossed 'Freeley' logo placement and style, camera angle, studio lighting, contact shadow, and transparent background as the template, produce a color variant: recolor the troche material from teal to a deep plum/burgundy tone, to visually signal a distinct, premium-tier formula, different from the teal Tadalafil-only troche. Keep everything else -- shape, size, framing, embossing, lighting style, shadow, transparent background -- identical to the reference. Do not add any text or ingredient labeling onto the troche."
+  },
+  {
+    "output": "public/assets/l/sermorelin.png",
+    "transparent": true,
+    "prompt": "Keep this exact vial, cap, silver crimp band, label artwork, every word of label text ('longevity', 'Compounded', 'Sermorelin', '2 mL vial', 'Multiple doses', 'Rx Only'), and the current tilt angle completely unchanged -- do not alter any wording. CRITICAL: keep the exact same framing, camera distance, zoom level, crop, and margins as the source image -- the vial must occupy the same amount of the frame it does now, with the same empty space around it; do not move the product closer to the camera, crop tighter, or fill more of the frame. Only elevate the studio photography quality: deepen and smooth the glass reflections and specular highlight on the dark green glass body, add a soft, naturally grounded contact shadow beneath the vial, richen the metallic sheen on the silver crimp band and black cap ridges, and add a touch more contrast/depth so the shot reads as a premium editorial product photo rather than a flat render. Keep the transparent background exactly as-is."
+  },
+  {
+    "output": "public/assets/l/nad+.png",
+    "transparent": true,
+    "prompt": "Keep this exact vial, cap, silver crimp band, label artwork, every word of label text ('longevity', 'Compounded', 'NAD+', '2 mL Vial', 'Multiple doses', 'Rx Only'), and the current tilt angle completely unchanged -- do not alter any wording. CRITICAL: keep the exact same framing, camera distance, zoom level, crop, and margins as the source image -- the vial must occupy the same amount of the frame it does now, with the same empty space around it; do not move the product closer to the camera, crop tighter, or fill more of the frame. Only elevate the studio photography quality: deepen and smooth the glass reflections and specular highlight on the dark green glass body, add a soft, naturally grounded contact shadow beneath the vial, richen the metallic sheen on the silver crimp band and black cap ridges, and add a touch more contrast/depth so the shot reads as a premium editorial product photo rather than a flat render. Keep the transparent background exactly as-is."
+  },
+  {
+    "output": "public/assets/l/glutathione.png",
+    "transparent": true,
+    "prompt": "Keep this exact vial, cap, silver crimp band, label artwork, every word of label text ('longevity', 'Compounded', 'Glutathione', '2 mL Vial', 'Multiple doses', 'Rx Only'), and the current tilt angle completely unchanged -- do not alter any wording. CRITICAL: keep the exact same framing, camera distance, zoom level, crop, and margins as the source image -- the vial must occupy the same amount of the frame it does now, with the same empty space around it; do not move the product closer to the camera, crop tighter, or fill more of the frame. Only elevate the studio photography quality: deepen and smooth the glass reflections and specular highlight on the dark green glass body, add a soft, naturally grounded contact shadow beneath the vial, richen the metallic sheen on the silver crimp band and black cap ridges, and add a touch more contrast/depth so the shot reads as a premium editorial product photo rather than a flat render. Keep the transparent background exactly as-is."
+  }
+]

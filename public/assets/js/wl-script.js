@@ -56,17 +56,12 @@
         }
     };
 
-    // =============================================
-    // INFO SLIDES — What's Included / Telehealth Platform / Discreet
-    // Shipping. Same content on every medication (not per-SKU), appended
-    // after the photo slides so they share the gallery's dots/prev/next
-    // instead of living in 3 separate sections below the showcase.
-    // =============================================
-    const INFO_SLIDES = [
-        { key: 'included', label: 'Included' },
-        { key: 'telehealth', label: 'Telehealth' },
-        { key: 'shipping', label: 'Shipping' }
-    ];
+    // What's Included / Telehealth Platform / Discreet Shipping used to be
+    // appended here as extra non-photo slides sharing the gallery's
+    // dots/prev/next. They now live in the <ProductInfoModal> popup instead
+    // (see weight-loss.astro's "Plan Details" trigger button) — same move
+    // hair-loss.astro/longevity.astro/sexual-wellness.astro already made,
+    // so the gallery below holds only real product photography again.
 
     // =============================================
     // GALLERY STATE
@@ -84,7 +79,6 @@
     const thumbContainer = document.getElementById("thumbnailsContainer");
     const featuresContainer = document.getElementById("featuresList");
     const medicationButtons = document.querySelectorAll('.medication-toggle .btn');
-    const infoSlideEls = document.querySelectorAll('.wl-prod__info');
 
     // =============================================
     // HELPER FUNCTIONS
@@ -97,13 +91,12 @@
         return getCurrentData().images;
     }
 
-    // Total slide count = product photos + the 3 fixed info slides.
     function getSlideCount() {
-        return getImagePaths().length + INFO_SLIDES.length;
+        return getImagePaths().length;
     }
 
     // =============================================
-    // GENERATE THUMBNAILS FROM MAIN IMAGES + INFO SLIDES
+    // GENERATE THUMBNAILS FROM MAIN IMAGES
     // =============================================
     function generateThumbnails(images) {
         thumbContainer.innerHTML = '';
@@ -128,21 +121,6 @@
             thumbDiv.addEventListener('click', function() {
                 const idx = parseInt(this.getAttribute('data-index'), 10);
                 goTo(idx);
-            });
-        });
-
-        // No product photo to preview for these — a text label chip
-        // instead of an image thumb.
-        INFO_SLIDES.forEach((slide, i) => {
-            const index = images.length + i;
-            const thumbDiv = document.createElement('div');
-            thumbDiv.className = 'thumb-box thumb-box--label';
-            thumbDiv.setAttribute('data-index', index);
-            thumbDiv.textContent = slide.label;
-            thumbContainer.appendChild(thumbDiv);
-
-            thumbDiv.addEventListener('click', function() {
-                goTo(index);
             });
         });
     }
@@ -205,37 +183,13 @@
         if (index < 0) index = total - 1;
         if (index >= total) index = 0;
 
-        // Whichever element (the photo, or the currently-shown info slide)
-        // is on screen right now is what fades out — not always mainImg.
-        const outgoing = currentIndex < images.length
-            ? mainImg
-            : infoSlideEls[currentIndex - images.length];
-        if (outgoing) outgoing.classList.add("fade-out");
+        mainImg.classList.add("fade-out");
 
         setTimeout(function() {
             currentIndex = index;
-            const showingImage = currentIndex < images.length;
 
-            // Clear stale fade classes off EVERY slide element first — a
-            // slide hidden via display:none while mid-fade (e.g. an image
-            // slide swapped away from while an info slide was showing)
-            // would otherwise keep its "fade-out" class forever and render
-            // invisible the next time it's shown (e.g. after a medication
-            // switch resets back to slide 0).
             mainImg.classList.remove("fade-out", "fade-in");
-            infoSlideEls.forEach(function(el) { el.classList.remove("fade-out", "fade-in"); });
-
-            if (showingImage) {
-                mainImg.src = images[currentIndex];
-                mainImg.style.display = "";
-                infoSlideEls.forEach(function(el) { el.classList.remove("is-active"); });
-            } else {
-                mainImg.style.display = "none";
-                const infoIndex = currentIndex - images.length;
-                infoSlideEls.forEach(function(el, i) {
-                    el.classList.toggle("is-active", i === infoIndex);
-                });
-            }
+            mainImg.src = images[currentIndex];
 
             const dots = document.querySelectorAll("#dotContainer .dot-indicator");
             dots.forEach(function(d, i) {
@@ -247,14 +201,10 @@
                 tb.classList.toggle("active", i === currentIndex);
             });
 
-            const incoming = showingImage ? mainImg : infoSlideEls[currentIndex - images.length];
-            if (incoming) {
-                incoming.classList.remove("fade-out");
-                incoming.classList.add("fade-in");
-                setTimeout(function() {
-                    incoming.classList.remove("fade-in");
-                }, 400);
-            }
+            mainImg.classList.add("fade-in");
+            setTimeout(function() {
+                mainImg.classList.remove("fade-in");
+            }, 400);
         }, 200);
     }
 
@@ -268,9 +218,7 @@
         const images = data.images;
 
         mainImg.src = images[0];
-        mainImg.style.display = "";
         mainImg.classList.remove("fade-out", "fade-in");
-        infoSlideEls.forEach(function(el) { el.classList.remove("is-active", "fade-out", "fade-in"); });
         generateThumbnails(images);
         generateDots(getSlideCount());
         updateDetails();
@@ -344,7 +292,6 @@
         const images = data.images;
 
         mainImg.src = images[0];
-        infoSlideEls.forEach(function(el) { el.classList.remove("is-active"); });
         generateThumbnails(images);
         generateDots(getSlideCount());
         updateDetails();
