@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Freeley Medical Article — Freeley Blog</title>
+  <link rel="canonical" href="https://freeley.com/AGENTS">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="shared.css">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <style>
+    .blog-hero {
+      padding: 160px 0 80px;
+      text-align: center;
+      background-image: url("assets/brand/freeley_pattern_light.jpg");
+      background-size: cover;
+      background-attachment: fixed;
+      background-color: var(--cream);
+      border-bottom: 1px solid var(--border);
+    }
+    .blog-hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(38px, 5vw, 64px);
+      font-weight: 400;
+      color: var(--charcoal);
+      margin-bottom: 24px;
+      max-width: 800px;
+      margin-inline: auto;
+      line-height: 1.1;
+    }
+    .blog-meta {
+      font-size: 14px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+    .blog-content {
+      padding: 80px 24px;
+      max-width: 760px;
+      margin: 0 auto;
+      color: var(--charcoal);
+      font-size: 18px;
+      line-height: 1.8;
+      font-weight: 300;
+    }
+    .blog-content h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 36px;
+      margin: 48px 0 24px;
+      line-height: 1.2;
+    }
+    .blog-content h3 {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600;
+      font-size: 22px;
+      margin: 32px 0 16px;
+    }
+    .blog-content ul {
+      margin-bottom: 24px;
+      padding-left: 20px;
+    }
+    .blog-content li {
+      margin-bottom: 12px;
+    }
+    .blog-content p {
+      margin-bottom: 24px;
+    }
+    .blog-content strong {
+      font-weight: 600;
+    }
+    .blog-cta {
+      margin-top: 60px;
+      padding: 40px;
+      background: var(--off-white);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      text-align: center;
+    }
+
+  </style>
+</head>
+<body>
+  <!-- NAV (Simplified placeholder, assume shared.js handles real nav injection) -->
+  <section class="blog-hero">
+    <div class="container reveal">
+      <div class="blog-meta">Medical Education · 4 min read</div>
+      <h1>Freeley Medical Article</h1>
+    </div>
+  </section>
+
+  <div class="blog-content reveal reveal-delay-1">
+    <!-- Parent: ../AGENTS.md -->
+<!-- Generated: 2026-08-12 | Updated: 2026-08-12 -->
+
+<h1>content/blog/</h1>
+<h2>Purpose</h2>
+<p>140 Markdown blog posts for the Freeley marketing site&#39;s SEO blog. Each file is one article: YAML frontmatter followed by a Markdown body. This directory is almost entirely auto-populated: a daily GitHub Actions bot (&quot;Freeley Auto-SEO Bot&quot;) generates one new article per day via the OpenAI API and commits it here with the message <code>🤖 Auto-SEO: new article + rebuilt blog</code> (see recent git log, and <code>../AGENTS.md</code> for the full pipeline). A handful of posts (e.g. <code>seo-test-article.md</code>) were added manually for testing.</p>
+<h2>Key Files</h2>
+<p>Not enumerated individually (140 files, uniform structure). Filenames are kebab-case slugs derived from their target SEO keyword, e.g. <code>where-to-buy-tirzepatide-online-safely.md</code>, <code>benefits-of-telehealth-for-hair-loss-solutions.md</code>. No date prefixes or subfolders — flat directory, one file per article, filename == URL slug (the file is later published at <code>/&lt;slug&gt;.html</code> by <code>build_blog.js</code>).</p>
+<h2>For AI Agents</h2>
+<h3>Working In This Directory</h3>
+<p>This directory is consumed by <code>build_blog.js</code> at the repo root (see <code>../AGENTS.md</code>), <strong>not</strong> by any Astro content collection. When adding a post by hand, match the schema below exactly and re-run <code>node build_blog.js</code> afterward to regenerate the static page, <code>blog.html</code>, and <code>sitemap.xml</code>.</p>
+<h3>Frontmatter Schema</h3>
+<p>Based on sampling 7 representative posts (<code>503a-compounding-pharmacy-explained.md</code>, <code>best-online-weight-loss-clinic-2026.md</code>, <code>why-do-i-have-erectile-dysfunction-in-my-30s.md</code>, <code>weight-loss-plateau-after-3-months-glp-1.md</code>, <code>telehealth-solutions-for-erectile-dysfunction-treatment.md</code>, <code>where-to-get-peptide-therapy-for-anti-aging.md</code>, <code>florida-telehealth-for-sexual-wellness.md</code>):</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Required</th>
+<th>Type / Format</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>title</code></td>
+<td>Yes</td>
+<td>Quoted string</td>
+<td>SEO-friendly article title. Used as <code>&lt;title&gt;</code> and <code>&lt;h1&gt;</code> in the generated page. Falls back to <code>&quot;Freeley Medical Article&quot;</code> if missing.</td>
+</tr>
+<tr>
+<td><code>tag</code></td>
+<td>Yes</td>
+<td>Unquoted string, one of a fixed set</td>
+<td>Category label shown as the eyebrow/meta line. Observed values: <code>Medical Education</code>, <code>Weight Loss</code>, <code>Men&#39;s Health</code>, <code>Peptides</code>, <code>Telehealth</code>. <code>seo-agent.js</code>&#39;s prompt additionally allows <code>Hair Loss</code> and <code>Longevity</code>. Falls back to <code>&quot;Medical Education&quot;</code> if missing.</td>
+</tr>
+<tr>
+<td><code>excerpt</code></td>
+<td>Yes</td>
+<td>Quoted string, 1–2 sentences</td>
+<td>Used as the card summary on <code>blog.html</code>. Falls back to a generic sentence if missing.</td>
+</tr>
+<tr>
+<td><code>date</code></td>
+<td>Yes</td>
+<td>ISO 8601 timestamp, e.g. <code>&quot;2023-10-05T10:00:00Z&quot;</code></td>
+<td>Quoting is inconsistent across files (both <code>date: &quot;2023-…Z&quot;</code> and bare <code>date: 2023-…Z</code> appear) — both parse fine as YAML. Used to sort <code>blog.html</code> newest-first and to build <code>sitemap.xml</code> <code>&lt;lastmod&gt;</code>. Falls back to <code>new Date()</code> (build time) if missing.</td>
+</tr>
+<tr>
+<td><code>image</code></td>
+<td>No</td>
+<td>Quoted relative path, e.g. <code>&quot;assets/blog/best-online-weight-loss-clinic-2026.jpg&quot;</code></td>
+<td>Present on only ~20 of 140 posts (a legacy/optional field). <strong>Not read</strong> by <code>build_blog.js</code> — the generated page template is typography-only and ignores it. Safe to omit.</td>
+</tr>
+</tbody></table>
+<p>Minimal valid frontmatter block:</p>
+<pre><code class="language-yaml">---
+title: &quot;Your SEO-Friendly Title Here&quot;
+tag: Weight Loss
+excerpt: &quot;One to two sentence summary for search results and the blog index card.&quot;
+date: &quot;2026-08-12T10:00:00Z&quot;
+---
+</code></pre>
+<h3>Body Structure</h3>
+<ul>
+<li>Pure Markdown, rendered with <code>marked</code> (no MDX/Astro components, no raw HTML expected).</li>
+<li>Do <strong>not</strong> include an H1 — the frontmatter <code>title</code> already becomes the page&#39;s H1; posts start directly with <code>##</code> (H2) sections.</li>
+<li>Typical shape: 3–6 <code>##</code> sections, some with <code>###</code> subsections, mixing prose paragraphs, bold key terms (<code>**term**</code>), and bulleted/numbered lists.</li>
+<li>Posts end with an implicit hand-off to the site&#39;s CTA (the page template appends its own &quot;Complete Free Assessment&quot; CTA block automatically — do not duplicate one in the Markdown body, though older/manual posts may reference <code>freeley.com/quiz.html</code> inline per the AI prompt&#39;s instruction).</li>
+<li>Typical length: several hundred to ~1000 words; <code>build_blog.js</code> computes read time from word count at 200 wpm.</li>
+</ul>
+<h3>Testing Requirements</h3>
+<ul>
+<li>No automated tests. After adding/editing a post: run <code>node build_blog.js</code> from the repo root and confirm <code>/&lt;slug&gt;.html</code>, <code>blog.html</code>, and <code>sitemap.xml</code> regenerate without errors.</li>
+<li>Filenames must be filesystem-safe/URL-safe kebab-case (<code>[a-z0-9-]+.md</code>) — this becomes the live URL path.</li>
+</ul>
+<h3>Common Patterns</h3>
+<ul>
+<li>Slug/filename is derived from the <em>source keyword</em> in <code>../seo-keywords.txt</code>, not from the generated <code>title</code> — titles are often longer/more editorial than the slug (e.g. slug <code>weight-loss-plateau-after-3-months-glp-1.md</code> → title <code>&quot;Overcoming the Weight Loss Plateau After 3 Months on GLP-1: Strategies and Insights&quot;</code>).</li>
+<li>Article-topic keywords cluster around Freeley&#39;s core verticals: weight loss (semaglutide/tirzepatide/GLP-1), men&#39;s health (ED, TRT), hair loss (minoxidil, finasteride), peptides/longevity, and telehealth-in-Florida angles.</li>
+</ul>
+<h2>Dependencies</h2>
+<h3>Internal</h3>
+<ul>
+<li>Consumed by <code>../../build_blog.js</code> (repo root); populated by <code>../../seo-agent.js</code> and the <code>../../.github/workflows/daily-seo.yml</code> automation. See <code>../AGENTS.md</code> for the full pipeline.</li>
+</ul>
+<h3>External</h3>
+<ul>
+<li><code>gray-matter</code> — parses the YAML frontmatter block.</li>
+<li><code>marked</code> — renders the Markdown body to HTML.</li>
+</ul>
+<!-- MANUAL: Any manually added notes below this line are preserved on regeneration -->
+
+    <div class="blog-cta">
+      <h3 style="margin-top:0">Ready to start your journey?</h3>
+      <p style="margin-bottom:24px; font-size:16px;">Consult directly with a licensed physician to find the right treatment path for you.</p>
+      <a href="/quiz" class="btn btn-primary" style="display:inline-block">Complete Free Assessment →</a>
+    </div>
+  </div>
+
+  <script src="shared.js"></script>
+  <script>initPage('');</script>
+</body>
+</html>
