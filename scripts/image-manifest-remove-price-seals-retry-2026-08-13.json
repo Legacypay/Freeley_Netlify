@@ -1,0 +1,47 @@
+[
+  {
+    "output": "public/assets/hl/slide-price-cedar.webp",
+    "editFrom": "public/assets/hl/slide-price-cedar.original.webp",
+    "forceNew": true,
+    "width": 900,
+    "height": 1200,
+    "size": "1024x1536",
+    "prompt": "Edit this product card image: completely REMOVE the golden scalloped-edge seal badge with the price text from the upper area, filling the space it occupied with the exact same flat pale cream background (#f6f2e9) so no trace of the badge remains. Keep the product, its label, its text, the soft shadow, the colors and lighting identical to the source. The small italic dark-green 'Slide for details >>' text must appear ONCE at the bottom center, positioned clearly INSIDE the frame with a generous margin — at least 12% of the image height between the text and the bottom edge — never touching or crossing the edge. Do NOT add any other text, objects, badges or watermarks."
+  },
+  {
+    "output": "public/assets/hl/slide-price-ivy.webp",
+    "editFrom": "public/assets/hl/slide-price-ivy.original.webp",
+    "forceNew": true,
+    "width": 900,
+    "height": 1200,
+    "size": "1024x1536",
+    "prompt": "Edit this product card image: completely REMOVE the golden scalloped-edge seal badge with the price text from the upper area, filling the space it occupied with the exact same flat pale cream background (#f6f2e9) so no trace of the badge remains. Keep the product, its label, its text, the soft shadow, the colors and lighting identical to the source. The small italic dark-green 'Slide for details >>' text must appear ONCE at the bottom center, positioned clearly INSIDE the frame with a generous margin — at least 12% of the image height between the text and the bottom edge — never touching or crossing the edge. Do NOT add any other text, objects, badges or watermarks."
+  },
+  {
+    "output": "public/assets/sw/slide-price-olympus.webp",
+    "editFrom": "public/assets/sw/slide-price-olympus.original.webp",
+    "forceNew": true,
+    "width": 900,
+    "height": 1200,
+    "size": "1024x1536",
+    "prompt": "Edit this product card image: completely REMOVE the golden scalloped-edge seal badge with the price text from the upper area, filling the space it occupied with the exact same flat pale cream background (#f6f2e9) so no trace of the badge remains. Keep the product, its label, its text, the soft shadow, the colors and lighting identical to the source. The small italic dark-green 'Slide for details >>' text must appear ONCE at the bottom center, positioned clearly INSIDE the frame with a generous margin — at least 12% of the image height between the text and the bottom edge — never touching or crossing the edge. Do NOT add any other text, objects, badges or watermarks."
+  },
+  {
+    "output": "public/assets/l/slide-price-sermorelin.webp",
+    "editFrom": "public/assets/l/slide-price-sermorelin.original.webp",
+    "forceNew": true,
+    "width": 900,
+    "height": 1200,
+    "size": "1024x1536",
+    "prompt": "Edit this product card image: completely REMOVE the golden scalloped-edge seal badge with the price text from the upper area, filling the space it occupied with the exact same flat pale cream background (#f6f2e9) so no trace of the badge remains. Keep the product, its label, its text, the soft shadow, the colors and lighting identical to the source. The small italic dark-green 'Slide for details >>' text must appear ONCE at the bottom center, positioned clearly INSIDE the frame with a generous margin — at least 12% of the image height between the text and the bottom edge — never touching or crossing the edge. Do NOT add any other text, objects, badges or watermarks."
+  },
+  {
+    "output": "public/assets/l/slide-price-nad.webp",
+    "editFrom": "public/assets/l/slide-price-nad.original.webp",
+    "forceNew": true,
+    "width": 900,
+    "height": 1200,
+    "size": "1024x1536",
+    "prompt": "Edit this product card image: completely REMOVE the golden scalloped-edge seal badge with the price text from the upper area, filling the space it occupied with the exact same flat pale cream background (#f6f2e9) so no trace of the badge remains. Keep the product, its label, its text, the soft shadow, the colors and lighting identical to the source. The small italic dark-green 'Slide for details >>' text must appear ONCE at the bottom center, positioned clearly INSIDE the frame with a generous margin — at least 12% of the image height between the text and the bottom edge — never touching or crossing the edge. Do NOT add any other text, objects, badges or watermarks."
+  }
+]

@@ -52,6 +52,11 @@ async function generateImage(prompt, sourceImage, opts = {}) {
     const form = new FormData();
     form.append('model', model);
     form.append('prompt', prompt);
+    // opts.size ('1024x1024' etc): without it, edits inherit the source
+    // image's aspect — a portrait source makes the model compose portrait,
+    // and the caller's square cover-resize then crops the sides off (badges
+    // at the frame edge get cut). Square manifests should pass it.
+    if (opts.size) form.append('size', opts.size);
     if (opts.transparent) {
       form.append('background', 'transparent');
       form.append('output_format', 'png');
@@ -63,7 +68,7 @@ async function generateImage(prompt, sourceImage, opts = {}) {
       body: form,
     });
   } else {
-    const body = { model, prompt, size: 'auto' };
+    const body = { model, prompt, size: opts.size || 'auto' };
     if (opts.transparent) {
       body.background = 'transparent';
       body.output_format = 'png';

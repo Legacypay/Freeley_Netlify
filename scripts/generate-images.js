@@ -105,7 +105,7 @@ async function processEntry(entry) {
     }
   }
 
-  const rawImage = await generateImage(entry.prompt, sourceImage, { transparent: !!entry.transparent, model: entry.model });
+  const rawImage = await generateImage(entry.prompt, sourceImage, { transparent: !!entry.transparent, model: entry.model, size: entry.size });
 
   await sharp(rawImage)
     .resize(targetWidth, targetHeight, { fit: 'cover' })

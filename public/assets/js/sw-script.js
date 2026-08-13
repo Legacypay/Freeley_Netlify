@@ -22,9 +22,18 @@
             name: "Tadalafil",
             title: "Tadalafil",
             description: "Tadalafil supports sustained blood flow for up to 36 hours — available as a daily 5mg dose or an as-needed 20mg dose.",
+            // Brello-style gallery (2026-08-12): price-badge hero slide
+            // first, real photos, then branded info slides (baked text —
+            // regenerate via scripts/image-manifest-product-slides-*.json on
+            // any copy change).
             images: [
+                "/assets/sw/slide-price-tadalafil.webp",
                 "/assets/sw/product1.png",
-                "/assets/sw/product2.svg"
+                "/assets/sw/product2.svg",
+                "/assets/sw/slide-included.webp",
+                "/assets/sw/slide-benefits.webp",
+                "/assets/shared/slide-journey.webp",
+                "/assets/shared/slide-hub.webp"
             ],
             features: [
                 "5mg daily or 20mg as-needed dosing",
@@ -44,9 +53,15 @@
             name: "Olympus",
             title: "Olympus",
             description: "Oxytocin and Bremelanotide combined with Tadalafil for enhanced arousal and sustained blood flow.",
+            // Brello-style slides — see tadalafil's comment above.
             images: [
+                "/assets/sw/slide-price-olympus.webp",
                 "/assets/sw/product1-olympus.png",
-                "/assets/sw/product2-olympus.png"
+                "/assets/sw/product2-olympus.png",
+                "/assets/sw/slide-included.webp",
+                "/assets/sw/slide-benefits.webp",
+                "/assets/shared/slide-journey.webp",
+                "/assets/shared/slide-hub.webp"
             ],
             features: [
                 "Oxytocin / Bremelanotide with or without Tadalafil",

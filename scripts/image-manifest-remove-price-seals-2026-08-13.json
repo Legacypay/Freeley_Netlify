@@ -1,0 +1,52 @@
+[
+  {
+    "output": "public/assets/wl/slide-price-semaglutide.webp",
+    "prompt": "Edit this product card image: completely REMOVE the golden scalloped-edge seal badge with the price text from the upper area, filling the space it occupied with the exact same flat pale cream background (#f6f2e9) so no trace of the badge remains. Keep EVERYTHING else pixel-identical to the source: the product, its label and all its text, the soft shadow beneath it, the small italic 'Slide for details >>' text at the bottom center, the colors, lighting, framing and composition. Do NOT add any new text, objects, badges or watermarks. Do NOT move or restyle anything.",
+    "size": "1024x1536"
+  },
+  {
+    "output": "public/assets/wl/slide-price-tirzepatide.webp",
+    "prompt": "Edit this product card image: completely REMOVE the golden scalloped-edge seal badge with the price text from the upper area, filling the space it occupied with the exact same flat pale cream background (#f6f2e9) so no trace of the badge remains. Keep EVERYTHING else pixel-identical to the source: the product, its label and all its text, the soft shadow beneath it, the small italic 'Slide for details >>' text at the bottom center, the colors, lighting, framing and composition. Do NOT add any new text, objects, badges or watermarks. Do NOT move or restyle anything.",
+    "size": "1024x1536"
+  },
+  {
+    "output": "public/assets/hl/slide-price-cedar.webp",
+    "prompt": "Edit this product card image: completely REMOVE the golden scalloped-edge seal badge with the price text from the upper area, filling the space it occupied with the exact same flat pale cream background (#f6f2e9) so no trace of the badge remains. Keep EVERYTHING else pixel-identical to the source: the product, its label and all its text, the soft shadow beneath it, the small italic 'Slide for details >>' text at the bottom center, the colors, lighting, framing and composition. Do NOT add any new text, objects, badges or watermarks. Do NOT move or restyle anything.",
+    "size": "1024x1536"
+  },
+  {
+    "output": "public/assets/hl/slide-price-ivy.webp",
+    "prompt": "Edit this product card image: completely REMOVE the golden scalloped-edge seal badge with the price text from the upper area, filling the space it occupied with the exact same flat pale cream background (#f6f2e9) so no trace of the badge remains. Keep EVERYTHING else pixel-identical to the source: the product, its label and all its text, the soft shadow beneath it, the small italic 'Slide for details >>' text at the bottom center, the colors, lighting, framing and composition. Do NOT add any new text, objects, badges or watermarks. Do NOT move or restyle anything.",
+    "size": "1024x1536"
+  },
+  {
+    "output": "public/assets/hl/slide-price-willow.webp",
+    "prompt": "Edit this product card image: completely REMOVE the golden scalloped-edge seal badge with the price text from the upper area, filling the space it occupied with the exact same flat pale cream background (#f6f2e9) so no trace of the badge remains. Keep EVERYTHING else pixel-identical to the source: the product, its label and all its text, the soft shadow beneath it, the small italic 'Slide for details >>' text at the bottom center, the colors, lighting, framing and composition. Do NOT add any new text, objects, badges or watermarks. Do NOT move or restyle anything.",
+    "size": "1024x1536"
+  },
+  {
+    "output": "public/assets/sw/slide-price-tadalafil.webp",
+    "prompt": "Edit this product card image: completely REMOVE the golden scalloped-edge seal badge with the price text from the upper area, filling the space it occupied with the exact same flat pale cream background (#f6f2e9) so no trace of the badge remains. Keep EVERYTHING else pixel-identical to the source: the product, its label and all its text, the soft shadow beneath it, the small italic 'Slide for details >>' text at the bottom center, the colors, lighting, framing and composition. Do NOT add any new text, objects, badges or watermarks. Do NOT move or restyle anything.",
+    "size": "1024x1536"
+  },
+  {
+    "output": "public/assets/sw/slide-price-olympus.webp",
+    "prompt": "Edit this product card image: completely REMOVE the golden scalloped-edge seal badge with the price text from the upper area, filling the space it occupied with the exact same flat pale cream background (#f6f2e9) so no trace of the badge remains. Keep EVERYTHING else pixel-identical to the source: the product, its label and all its text, the soft shadow beneath it, the small italic 'Slide for details >>' text at the bottom center, the colors, lighting, framing and composition. Do NOT add any new text, objects, badges or watermarks. Do NOT move or restyle anything.",
+    "size": "1024x1536"
+  },
+  {
+    "output": "public/assets/l/slide-price-sermorelin.webp",
+    "prompt": "Edit this product card image: completely REMOVE the golden scalloped-edge seal badge with the price text from the upper area, filling the space it occupied with the exact same flat pale cream background (#f6f2e9) so no trace of the badge remains. Keep EVERYTHING else pixel-identical to the source: the product, its label and all its text, the soft shadow beneath it, the small italic 'Slide for details >>' text at the bottom center, the colors, lighting, framing and composition. Do NOT add any new text, objects, badges or watermarks. Do NOT move or restyle anything.",
+    "size": "1024x1536"
+  },
+  {
+    "output": "public/assets/l/slide-price-nad.webp",
+    "prompt": "Edit this product card image: completely REMOVE the golden scalloped-edge seal badge with the price text from the upper area, filling the space it occupied with the exact same flat pale cream background (#f6f2e9) so no trace of the badge remains. Keep EVERYTHING else pixel-identical to the source: the product, its label and all its text, the soft shadow beneath it, the small italic 'Slide for details >>' text at the bottom center, the colors, lighting, framing and composition. Do NOT add any new text, objects, badges or watermarks. Do NOT move or restyle anything.",
+    "size": "1024x1536"
+  },
+  {
+    "output": "public/assets/l/slide-price-glutathione.webp",
+    "prompt": "Edit this product card image: completely REMOVE the golden scalloped-edge seal badge with the price text from the upper area, filling the space it occupied with the exact same flat pale cream background (#f6f2e9) so no trace of the badge remains. Keep EVERYTHING else pixel-identical to the source: the product, its label and all its text, the soft shadow beneath it, the small italic 'Slide for details >>' text at the bottom center, the colors, lighting, framing and composition. Do NOT add any new text, objects, badges or watermarks. Do NOT move or restyle anything.",
+    "size": "1024x1536"
+  }
+]

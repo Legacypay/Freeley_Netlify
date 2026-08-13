@@ -21,9 +21,18 @@
             // wl.png/kb.png (What's Included / Key Benefits infographic
             // slides) now live in the ProductInfoModal popup instead —
             // see longevity.astro.
+            // Brello-style gallery (2026-08-12): price-badge hero slide
+            // first, real photos, then branded info slides (baked text —
+            // regenerate via scripts/image-manifest-product-slides-*.json on
+            // any copy change).
             images: [
+                "/assets/l/slide-price-sermorelin.webp",
                 "/assets/l/sermorelin.png",
-                "/assets/l/sermorelin-angle2.webp"
+                "/assets/l/sermorelin-angle2.webp",
+                "/assets/l/slide-included.webp",
+                "/assets/l/slide-benefits.webp",
+                "/assets/shared/slide-journey.webp",
+                "/assets/shared/slide-hub.webp"
             ],
             features: [
                 "Sourced from 503A US pharmacies",
@@ -44,9 +53,15 @@
             title: "NAD+ Peptide Therapy",
             description: "NAD+ boosts cellular energy and supports healthy aging at the molecular level.",
             // OWN labeled bottle only — see sermorelin's comment above.
+            // Brello-style slides — see sermorelin's comment above.
             images: [
+                "/assets/l/slide-price-nad.webp",
                 "/assets/l/nad+.png",
-                "/assets/l/nad-angle2.webp"
+                "/assets/l/nad-angle2.webp",
+                "/assets/l/slide-included.webp",
+                "/assets/l/slide-benefits.webp",
+                "/assets/shared/slide-journey.webp",
+                "/assets/shared/slide-hub.webp"
             ],
             features: [
                 "Sourced from 503A US pharmacies",
@@ -65,9 +80,15 @@
             title: "Glutathione Peptide Therapy",
             description: "Glutathione is a powerful antioxidant that supports detoxification and immune health.",
             // OWN labeled bottle only — see sermorelin's comment above.
+            // Brello-style slides — see sermorelin's comment above.
             images: [
+                "/assets/l/slide-price-glutathione.webp",
                 "/assets/l/glutathione.png",
-                "/assets/l/glutathione-angle2.webp"
+                "/assets/l/glutathione-angle2.webp",
+                "/assets/l/slide-included.webp",
+                "/assets/l/slide-benefits.webp",
+                "/assets/shared/slide-journey.webp",
+                "/assets/shared/slide-hub.webp"
             ],
             features: [
                 "Sourced from 503A US pharmacies",

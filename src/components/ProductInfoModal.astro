@@ -153,6 +153,7 @@ const titleId = `pimTitle${idSuffix}`;
             // ships now.
             <div class="pim__scene">
               <img src={s.image} alt={s.imageAlt || s.eyebrow} loading="lazy" />
+              <div class="pim__scene-scrim" aria-hidden="true"></div>
               <div class="pim__scene-copy">
                 <span class="pim__panel-eyebrow">{s.eyebrow}</span>
                 <div class="pim__list">
@@ -272,9 +273,19 @@ const titleId = `pimTitle${idSuffix}`;
      directly — not a photo thumbnail bolted next to a separate text block. */
   .pim__scene { position: relative; border-radius: 18px; overflow: hidden; aspect-ratio: 1 / 1; background: var(--cream); }
   .pim__scene img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+  /* Same technique as .wl-journey__scrim (see the vertical pages' "Here's
+     what happens next" section): a flat color mask laid directly over the
+     photo, NOT a floating card — the checklist text sits right on top of
+     the masked photo, no box/blur/shadow of its own. Heaviest where the
+     text lives (right), fading out toward the product on the left so the
+     photo still reads unmasked there. */
+  .pim__scene-scrim {
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent 0%, transparent 28%, rgba(253,252,247,.55) 42%, rgba(253,252,247,.93) 58%, rgba(253,252,247,.98) 100%);
+  }
   .pim__scene-copy {
     position: absolute; inset: 0 0 0 auto; width: 54%;
-    padding: 8% 7% 7% 3%;
+    padding: 8% 7% 7% 4%;
     display: flex; flex-direction: column; overflow-y: auto;
   }
   .pim__scene-copy .pim__panel-eyebrow { margin-bottom: 12px; }
@@ -286,12 +297,16 @@ const titleId = `pimTitle${idSuffix}`;
   .pim__scene-copy .pim__item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
   .pim__scene-copy .pim__item:hover { transform: none; box-shadow: none; border-color: rgba(26,28,26,.12); }
   .pim__scene-copy .pim__badge { display: block; background: none; height: auto; padding: 0; margin: 0 0 4px; color: var(--gold); font-size: 10px; }
-  .pim__scene-copy .pim__item h4 { font-family: var(--font-serif); font-size: 15px; margin: 0 0 3px; }
+  /* Sans, not the modal's usual serif — deliberately a different voice than
+     the photo's own printed (serif) label so the two never look like the
+     same typographic system fighting for the same line. */
+  .pim__scene-copy .pim__item h4 { font-family: var(--font-sans); font-weight: 700; font-size: 14px; letter-spacing: -.01em; margin: 0 0 3px; }
   .pim__scene-copy .pim__item p { font-size: 12px; }
   .pim__scene-copy .pim__note { font-size: 10.5px; font-style: italic; margin-top: 10px; }
   @media (max-width: 480px) {
-    .pim__scene-copy { width: 58%; padding: 7% 5% 6% 3%; }
-    .pim__scene-copy .pim__item h4 { font-size: 13.5px; }
+    .pim__scene-copy { width: 58%; padding: 7% 5% 6% 4%; }
+    .pim__scene-scrim { background: linear-gradient(90deg, transparent 0%, transparent 18%, rgba(253,252,247,.6) 34%, rgba(253,252,247,.95) 52%, rgba(253,252,247,.98) 100%); }
+    .pim__scene-copy .pim__item h4 { font-size: 13px; }
     .pim__scene-copy .pim__item p { font-size: 11px; }
   }
 

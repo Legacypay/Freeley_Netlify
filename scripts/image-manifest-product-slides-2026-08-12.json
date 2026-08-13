@@ -1,0 +1,193 @@
+[
+  {
+    "output": "public/assets/wl/slide-price-semaglutide.webp",
+    "editFrom": "public/assets/wl/semag-straight.png",
+    "width": 900,
+    "height": 1200,
+    "prompt": "Vertical portrait 3:4 composition. E-commerce product hero card for a premium telehealth brand. The exact same dark forest-green glass medication vial from the reference image — same cap, same label reading 'weight loss', 'Compounded', 'Semaglutide', '2 mL Vial · Multiple doses', 'Rx Only' — standing centered-left on a soft flat pale cream background (#f6f2e9) with a gentle soft shadow beneath. In the upper-right area — kept FULLY inside the frame with a comfortable margin from the top and right edges, never cropped — a golden scalloped-edge seal badge (warm gold gradient #e6cd97 to #c9a94f) containing three lines of dark-green text: '$199' in large elegant serif numerals, 'Per Month' below in smaller clean sans-serif, and '12-Month Plan' in small sans-serif underneath. At the bottom center of the card, small italic dark-green sans-serif text reading 'Slide for details >>'. Clean, bright, minimal premium DTC health-brand aesthetic. Absolutely NO other text, numbers, watermarks or stray characters beyond the text specified above. Every element — headline, product, badge and every line of text — stays FULLY inside the frame with comfortable margins on all four edges; nothing touches or crosses any edge. All typography crisp, perfectly spelled and legible.",
+    "size": "1024x1536",
+    "forceNew": true
+  },
+  {
+    "output": "public/assets/wl/slide-price-tirzepatide.webp",
+    "editFrom": "public/assets/wl/tirzz-straight.png",
+    "width": 900,
+    "height": 1200,
+    "prompt": "Vertical portrait 3:4 composition. E-commerce product hero card for a premium telehealth brand. The exact same medication vial from the reference image — same cap, same label text — standing centered-left on a soft flat pale cream background (#f6f2e9) with a gentle soft shadow beneath. In the upper-right area — kept FULLY inside the frame with a comfortable margin from the top and right edges, never cropped — a golden scalloped-edge seal badge (warm gold gradient #e6cd97 to #c9a94f) containing three lines of dark-green text: '$299' in large elegant serif numerals, 'Per Month' below in smaller clean sans-serif, and '12-Month Plan' in small sans-serif underneath. At the bottom center of the card, small italic dark-green sans-serif text reading 'Slide for details >>'. Clean, bright, minimal premium DTC health-brand aesthetic. Absolutely NO other text, numbers, watermarks or stray characters beyond the text specified above. Every element — headline, product, badge and every line of text — stays FULLY inside the frame with comfortable margins on all four edges; nothing touches or crosses any edge. All typography crisp, perfectly spelled and legible.",
+    "size": "1024x1536",
+    "forceNew": true
+  },
+  {
+    "output": "public/assets/hl/slide-price-cedar.webp",
+    "editFrom": "public/assets/hl/product-cedar-straight.png",
+    "width": 900,
+    "height": 1200,
+    "prompt": "Vertical portrait 3:4 composition. E-commerce product hero card for a premium telehealth brand. The exact same pill bottle from the reference image — same green cap, same label reading 'F', 'Finasteride, Minoxidil, Biotin' — standing centered-left on a soft flat pale cream background (#f6f2e9) with a gentle soft shadow beneath. In the upper-right area — kept FULLY inside the frame with a comfortable margin from the top and right edges, never cropped — a golden scalloped-edge seal badge (warm gold gradient #e6cd97 to #c9a94f) containing three lines of dark-green text: '$49' in large elegant serif numerals, 'Per Month' below in smaller clean sans-serif, and '24-Month Plan' in small sans-serif underneath. At the bottom center of the card, small italic dark-green sans-serif text reading 'Slide for details >>'. Clean, bright, minimal premium DTC health-brand aesthetic. Absolutely NO other text, numbers, watermarks or stray characters beyond the text specified above. Every element — headline, product, badge and every line of text — stays FULLY inside the frame with comfortable margins on all four edges; nothing touches or crosses any edge. All typography crisp, perfectly spelled and legible.",
+    "size": "1024x1536",
+    "forceNew": true
+  },
+  {
+    "output": "public/assets/hl/slide-price-ivy.webp",
+    "editFrom": "public/assets/hl/product-ivy.png",
+    "width": 900,
+    "height": 1200,
+    "prompt": "Vertical portrait 3:4 composition. E-commerce product hero card for a premium telehealth brand. The exact same pill bottle from the reference image — same cap, same label text — standing centered-left on a soft flat pale cream background (#f6f2e9) with a gentle soft shadow beneath. In the upper-right area — kept FULLY inside the frame with a comfortable margin from the top and right edges, never cropped — a golden scalloped-edge seal badge (warm gold gradient #e6cd97 to #c9a94f) containing three lines of dark-green text: '$49' in large elegant serif numerals, 'Per Month' below in smaller clean sans-serif, and '24-Month Plan' in small sans-serif underneath. At the bottom center of the card, small italic dark-green sans-serif text reading 'Slide for details >>'. Clean, bright, minimal premium DTC health-brand aesthetic. Absolutely NO other text, numbers, watermarks or stray characters beyond the text specified above. Every element — headline, product, badge and every line of text — stays FULLY inside the frame with comfortable margins on all four edges; nothing touches or crosses any edge. All typography crisp, perfectly spelled and legible.",
+    "size": "1024x1536",
+    "forceNew": true
+  },
+  {
+    "output": "public/assets/hl/slide-price-willow.webp",
+    "editFrom": "public/assets/hl/product1.png",
+    "width": 900,
+    "height": 1200,
+    "prompt": "Vertical portrait 3:4 composition. E-commerce product hero card for a premium telehealth brand. The exact same pill bottle from the reference image — same cap, same label text — standing centered-left on a soft flat pale cream background (#f6f2e9) with a gentle soft shadow beneath. In the upper-right area — kept FULLY inside the frame with a comfortable margin from the top and right edges, never cropped — a golden scalloped-edge seal badge (warm gold gradient #e6cd97 to #c9a94f) containing three lines of dark-green text: '$49' in large elegant serif numerals, 'Per Month' below in smaller clean sans-serif, and '24-Month Plan' in small sans-serif underneath. At the bottom center of the card, small italic dark-green sans-serif text reading 'Slide for details >>'. Clean, bright, minimal premium DTC health-brand aesthetic. Absolutely NO other text, numbers, watermarks or stray characters beyond the text specified above. Every element — headline, product, badge and every line of text — stays FULLY inside the frame with comfortable margins on all four edges; nothing touches or crosses any edge. All typography crisp, perfectly spelled and legible.",
+    "size": "1024x1536",
+    "forceNew": true
+  },
+  {
+    "output": "public/assets/sw/slide-price-tadalafil.webp",
+    "editFrom": "public/assets/sw/product1.png",
+    "width": 900,
+    "height": 1200,
+    "prompt": "Vertical portrait 3:4 composition. E-commerce product hero card for a premium telehealth brand. The exact same teal-green dissolving troche tablets from the reference image (embossed 'Freeley' logo) arranged centered-left on a soft flat pale cream background (#f6f2e9) with a gentle soft shadow beneath. In the upper-right area — kept FULLY inside the frame with a comfortable margin from the top and right edges, never cropped — a golden scalloped-edge seal badge (warm gold gradient #e6cd97 to #c9a94f) containing three lines of dark-green text: '$59' in large elegant serif numerals, 'Per Month' below in smaller clean sans-serif, and '24-Month Plan' in small sans-serif underneath. At the bottom center of the card, small italic dark-green sans-serif text reading 'Slide for details >>'. Clean, bright, minimal premium DTC health-brand aesthetic. Absolutely NO other text, numbers, watermarks or stray characters beyond the text specified above. Every element — headline, product, badge and every line of text — stays FULLY inside the frame with comfortable margins on all four edges; nothing touches or crosses any edge. All typography crisp, perfectly spelled and legible.",
+    "size": "1024x1536",
+    "forceNew": true
+  },
+  {
+    "output": "public/assets/sw/slide-price-olympus.webp",
+    "editFrom": "public/assets/sw/product1-olympus.png",
+    "width": 900,
+    "height": 1200,
+    "prompt": "Vertical portrait 3:4 composition. E-commerce product hero card for a premium telehealth brand. The exact same product from the reference image arranged centered-left on a soft flat pale cream background (#f6f2e9) with a gentle soft shadow beneath. In the upper-right area — kept FULLY inside the frame with a comfortable margin from the top and right edges, never cropped — a golden scalloped-edge seal badge (warm gold gradient #e6cd97 to #c9a94f) containing three lines of dark-green text: '$85' in large elegant serif numerals, 'Per Month' below in smaller clean sans-serif, and '24-Month Plan' in small sans-serif underneath. At the bottom center of the card, small italic dark-green sans-serif text reading 'Slide for details >>'. Clean, bright, minimal premium DTC health-brand aesthetic. Absolutely NO other text, numbers, watermarks or stray characters beyond the text specified above. Every element — headline, product, badge and every line of text — stays FULLY inside the frame with comfortable margins on all four edges; nothing touches or crosses any edge. All typography crisp, perfectly spelled and legible.",
+    "size": "1024x1536",
+    "forceNew": true
+  },
+  {
+    "output": "public/assets/l/slide-price-sermorelin.webp",
+    "editFrom": "public/assets/l/sermorelin.png",
+    "width": 900,
+    "height": 1200,
+    "prompt": "Vertical portrait 3:4 composition. E-commerce product hero card for a premium telehealth brand. The exact same dark glass medication vial from the reference image — same cap, same label text — standing centered-left on a soft flat pale cream background (#f6f2e9) with a gentle soft shadow beneath. In the upper-right area — kept FULLY inside the frame with a comfortable margin from the top and right edges, never cropped — a golden scalloped-edge seal badge (warm gold gradient #e6cd97 to #c9a94f) containing three lines of dark-green text: '$79' in large elegant serif numerals, 'Per Month' below in smaller clean sans-serif, and '24-Month Plan' in small sans-serif underneath. At the bottom center of the card, small italic dark-green sans-serif text reading 'Slide for details >>'. Clean, bright, minimal premium DTC health-brand aesthetic. Absolutely NO other text, numbers, watermarks or stray characters beyond the text specified above. Every element — headline, product, badge and every line of text — stays FULLY inside the frame with comfortable margins on all four edges; nothing touches or crosses any edge. All typography crisp, perfectly spelled and legible.",
+    "size": "1024x1536",
+    "forceNew": true
+  },
+  {
+    "output": "public/assets/l/slide-price-nad.webp",
+    "editFrom": "public/assets/l/nad+.png",
+    "width": 900,
+    "height": 1200,
+    "prompt": "Vertical portrait 3:4 composition. E-commerce product hero card for a premium telehealth brand. The exact same dark glass medication vial from the reference image — same cap, same label text — standing centered-left on a soft flat pale cream background (#f6f2e9) with a gentle soft shadow beneath. In the upper-right area — kept FULLY inside the frame with a comfortable margin from the top and right edges, never cropped — a golden scalloped-edge seal badge (warm gold gradient #e6cd97 to #c9a94f) containing three lines of dark-green text: '$129' in large elegant serif numerals, 'Per Month' below in smaller clean sans-serif, and '24-Month Plan' in small sans-serif underneath. At the bottom center of the card, small italic dark-green sans-serif text reading 'Slide for details >>'. Clean, bright, minimal premium DTC health-brand aesthetic. Absolutely NO other text, numbers, watermarks or stray characters beyond the text specified above. Every element — headline, product, badge and every line of text — stays FULLY inside the frame with comfortable margins on all four edges; nothing touches or crosses any edge. All typography crisp, perfectly spelled and legible.",
+    "size": "1024x1536",
+    "forceNew": true
+  },
+  {
+    "output": "public/assets/l/slide-price-glutathione.webp",
+    "editFrom": "public/assets/l/glutathione.png",
+    "width": 900,
+    "height": 1200,
+    "prompt": "Vertical portrait 3:4 composition. E-commerce product hero card for a premium telehealth brand. The exact same dark glass medication vial from the reference image — same cap, same label text — standing centered-left on a soft flat pale cream background (#f6f2e9) with a gentle soft shadow beneath. In the upper-right area — kept FULLY inside the frame with a comfortable margin from the top and right edges, never cropped — a golden scalloped-edge seal badge (warm gold gradient #e6cd97 to #c9a94f) containing three lines of dark-green text: '$79' in large elegant serif numerals, 'Per Month' below in smaller clean sans-serif, and '24-Month Plan' in small sans-serif underneath. At the bottom center of the card, small italic dark-green sans-serif text reading 'Slide for details >>'. Clean, bright, minimal premium DTC health-brand aesthetic. Absolutely NO other text, numbers, watermarks or stray characters beyond the text specified above. Every element — headline, product, badge and every line of text — stays FULLY inside the frame with comfortable margins on all four edges; nothing touches or crosses any edge. All typography crisp, perfectly spelled and legible.",
+    "size": "1024x1536",
+    "forceNew": true
+  },
+  {
+    "output": "public/assets/shared/slide-journey.webp",
+    "width": 900,
+    "height": 1200,
+    "prompt": "Vertical portrait 3:4 composition. Branded process infographic card for a premium telehealth brand, flat pale cream background (#fdfcf7). Top: headline in dark forest-green elegant serif type reading \"Here's Exactly What Happens Next\", with a thin gold underline. Below: a vertical list of four numbered steps, each with a gold circled number, a simple dark-green line icon, a short bold dark-green sans-serif title and one small muted caption line: '1 Online Assessment — 5 minutes, no appointment', '2 Physician Review — a licensed U.S. doctor reviews your intake', '3 Shipped To You — free, discreet, fast delivery', '4 Ongoing Care — check-ins and dose adjustments included'. Clean, bright, minimal editorial layout with generous whitespace. Absolutely NO other text, numbers, watermarks or stray characters beyond the text specified above. Every element — headline, product, badge and every line of text — stays FULLY inside the frame with comfortable margins on all four edges; nothing touches or crosses any edge. All typography crisp, perfectly spelled and legible.",
+    "size": "1024x1536",
+    "forceNew": true
+  },
+  {
+    "output": "public/assets/shared/slide-hub.webp",
+    "width": 900,
+    "height": 1200,
+    "prompt": "Vertical portrait 3:4 composition. Branded app-promo infographic card for a premium telehealth brand, flat pale cream background (#fdfcf7). Top: small dark-green uppercase sans-serif eyebrow text 'INCLUDED WITH YOUR PLAN', then a headline in dark forest-green elegant serif type reading 'The Freeley Health Hub'. Left side: a slightly tilted modern smartphone mockup showing a clean cream-and-green patient dashboard with a progress chart. Right side: three short feature rows, each with a simple dark-green line icon, a bold dark-green sans-serif title and one small muted caption: 'Manage Your Plan — refills and dose updates', 'Message Your Care Team — secure and private', 'Track Your Progress — milestones and results'. Clean, bright, minimal editorial layout. Absolutely NO other text, numbers, watermarks or stray characters beyond the text specified above. Every element — headline, product, badge and every line of text — stays FULLY inside the frame with comfortable margins on all four edges; nothing touches or crosses any edge. All typography crisp, perfectly spelled and legible.",
+    "size": "1024x1536",
+    "forceNew": true
+  },
+  {
+    "output": "public/assets/wl/slide-included.webp",
+    "editFrom": "public/assets/wl/semag-straight.png",
+    "width": 900,
+    "height": 1200,
+    "prompt": "Vertical portrait 3:4 composition. Branded advertising infographic card for a premium telehealth weight-loss brand, flat pale cream background (#fdfcf7). Top: headline in dark forest-green elegant serif type reading \"What's Included\", with a thin gold underline. Left side: the exact same dark forest-green Semaglutide vial from the reference image, medium size, soft shadow. Right side: a vertical list of four feature rows, each with a small dark-green circled checkmark, a bold dark-green sans-serif title and one small muted gray caption line: 'Physician consultation — A licensed U.S. physician reviews your intake', 'Your prescribed medication — A monthly supply of your compounded GLP-1', 'Ongoing check-ins — Progress tracked, dose adjusted as you go', 'Free, discreet shipping — Cold-chain packaging to your door'. Clean, bright, minimal editorial layout with generous whitespace. Absolutely NO other text, numbers, watermarks or stray characters beyond the text specified above. Every element — headline, product, badge and every line of text — stays FULLY inside the frame with comfortable margins on all four edges; nothing touches or crosses any edge. All typography crisp, perfectly spelled and legible.",
+    "size": "1024x1536",
+    "forceNew": true
+  },
+  {
+    "output": "public/assets/wl/slide-telehealth.webp",
+    "width": 900,
+    "height": 1200,
+    "prompt": "Vertical portrait 3:4 composition. Branded advertising infographic card for a premium telehealth brand, flat pale cream background (#fdfcf7). Top: headline in dark forest-green elegant serif type reading 'Telehealth Platform', with a thin gold underline. Left side: a slightly tilted modern smartphone mockup showing a clean cream-and-green patient dashboard. Right side: a vertical list of four feature rows, each with a small dark-green circled checkmark, a bold dark-green sans-serif title and one small muted gray caption line: '100% Online Consultations — No office visits required', 'HIPAA-Compliant Messaging — Secure provider communication', 'Prescription Management — Easy refills & adjustments', 'Progress Tracking — Monitor your health journey'. Clean, bright, minimal editorial layout with generous whitespace. Absolutely NO other text, numbers, watermarks or stray characters beyond the text specified above. Every element — headline, product, badge and every line of text — stays FULLY inside the frame with comfortable margins on all four edges; nothing touches or crosses any edge. All typography crisp, perfectly spelled and legible.",
+    "size": "1024x1536",
+    "forceNew": true
+  },
+  {
+    "output": "public/assets/wl/slide-shipping.webp",
+    "width": 900,
+    "height": 1200,
+    "prompt": "Vertical portrait 3:4 composition. Branded advertising infographic card for a premium telehealth brand, flat pale cream background (#fdfcf7). Top: headline in dark forest-green elegant serif type reading 'Discreet Shipping', with a thin gold underline. Left side: a small plain unmarked kraft-brown shipping box with a subtle ice-pack peeking out, soft shadow. Right side: a vertical list of four feature rows, each with a small dark-green circled checkmark, a bold dark-green sans-serif title and one small muted gray caption line: 'Plain Unmarked Packaging — No visible medication labels', 'Temperature-Controlled — Cold chain integrity maintained', 'Free Standard Shipping — Included with every order', 'Tracking Provided — Know exactly when it arrives'. Clean, bright, minimal editorial layout with generous whitespace. Absolutely NO other text, numbers, watermarks or stray characters beyond the text specified above. Every element — headline, product, badge and every line of text — stays FULLY inside the frame with comfortable margins on all four edges; nothing touches or crosses any edge. All typography crisp, perfectly spelled and legible.",
+    "size": "1024x1536",
+    "forceNew": true
+  },
+  {
+    "output": "public/assets/hl/slide-included.webp",
+    "editFrom": "public/assets/hl/product-cedar-straight.png",
+    "width": 900,
+    "height": 1200,
+    "prompt": "Vertical portrait 3:4 composition. Branded advertising infographic card for a premium telehealth hair-loss brand, flat pale cream background (#fdfcf7). Top: headline in dark forest-green elegant serif type reading \"What's Included\", with a thin gold underline. Left side: the exact same green-capped pill bottle from the reference image, medium size, soft shadow. Right side: a vertical list of five feature rows, each with a small dark-green circled checkmark, a bold dark-green sans-serif title and one small muted gray caption line: 'Finasteride or Dutasteride — Clinically proven DHT blockers', 'Licensed provider review — A board-certified physician confirms your plan', 'Monthly supply delivered — Consistent treatment to your door', 'Progress monitoring — Regular check-ins and dose adjustments', 'Treatment guide — Get the most out of your results'. Clean, bright, minimal editorial layout with generous whitespace. Absolutely NO other text, numbers, watermarks or stray characters beyond the text specified above. Every element — headline, product, badge and every line of text — stays FULLY inside the frame with comfortable margins on all four edges; nothing touches or crosses any edge. All typography crisp, perfectly spelled and legible.",
+    "size": "1024x1536",
+    "forceNew": true
+  },
+  {
+    "output": "public/assets/hl/slide-timeline.webp",
+    "width": 900,
+    "height": 1200,
+    "prompt": "Vertical portrait 3:4 composition. Branded advertising infographic card for a premium telehealth hair-loss brand, flat pale cream background (#fdfcf7). Top: headline in dark forest-green elegant serif type reading 'Clinical Timeline', with a thin gold underline. Below: a vertical timeline of four milestone rows connected by a thin gold line, each row with a small gold pill-shaped badge and a bold dark-green sans-serif title plus one small muted gray caption: 'Month 1-2 — Reduced shedding: hair loss begins to slow', 'Month 3-4 — Stabilization: noticeable decrease in thinning', 'Month 6+ — New growth: visible regrowth in many patients', 'Ongoing — Maintenance: continue for lasting results'. At the very bottom, tiny muted italic text reading 'Individual results vary'. Clean, bright, minimal editorial layout with generous whitespace. Absolutely NO other text, numbers, watermarks or stray characters beyond the text specified above. Every element — headline, product, badge and every line of text — stays FULLY inside the frame with comfortable margins on all four edges; nothing touches or crosses any edge. All typography crisp, perfectly spelled and legible.",
+    "size": "1024x1536",
+    "forceNew": true
+  },
+  {
+    "output": "public/assets/hl/slide-shipping.webp",
+    "width": 900,
+    "height": 1200,
+    "prompt": "Vertical portrait 3:4 composition. Branded advertising infographic card for a premium telehealth brand, flat pale cream background (#fdfcf7). Top: headline in dark forest-green elegant serif type reading 'Discreet Shipping', with a thin gold underline. Left side: a small plain unmarked kraft-brown shipping box, soft shadow. Right side: a vertical list of four feature rows, each with a small dark-green circled checkmark, a bold dark-green sans-serif title and one small muted gray caption line: 'Plain, unmarked packaging — No visible medication labels', 'Temperature-controlled — Cold-chain integrity maintained', 'Free standard shipping — Included with every order', 'Tracking provided — Know exactly when it arrives'. Clean, bright, minimal editorial layout with generous whitespace. Absolutely NO other text, numbers, watermarks or stray characters beyond the text specified above. Every element — headline, product, badge and every line of text — stays FULLY inside the frame with comfortable margins on all four edges; nothing touches or crosses any edge. All typography crisp, perfectly spelled and legible.",
+    "size": "1024x1536",
+    "forceNew": true
+  },
+  {
+    "output": "public/assets/sw/slide-included.webp",
+    "editFrom": "public/assets/sw/product1.png",
+    "width": 900,
+    "height": 1200,
+    "prompt": "Vertical portrait 3:4 composition. Branded advertising infographic card for a premium telehealth sexual-wellness brand, flat pale cream background (#fdfcf7). Top: headline in dark forest-green elegant serif type reading \"What's Included\", with a thin gold underline. Left side: the exact same teal-green dissolving troche tablets from the reference image, medium size, soft shadow. Right side: a vertical list of four feature rows, each with a small dark-green circled checkmark, a bold dark-green sans-serif title and one small muted gray caption line: 'Tadalafil Troches — Fast-dissolving sublingual tablets', 'Licensed Provider Review — Discreet physician consultation', 'Monthly Supply Delivered — Convenient home delivery', 'Dosage Optimization — Personalized to your needs'. Clean, bright, minimal editorial layout with generous whitespace. Absolutely NO other text, numbers, watermarks or stray characters beyond the text specified above. Every element — headline, product, badge and every line of text — stays FULLY inside the frame with comfortable margins on all four edges; nothing touches or crosses any edge. All typography crisp, perfectly spelled and legible.",
+    "size": "1024x1536",
+    "forceNew": true
+  },
+  {
+    "output": "public/assets/sw/slide-benefits.webp",
+    "editFrom": "public/assets/sw/product1.png",
+    "width": 900,
+    "height": 1200,
+    "prompt": "Vertical portrait 3:4 composition. Branded advertising infographic card for a premium telehealth sexual-wellness brand, flat pale cream background (#fdfcf7). Top: headline in dark forest-green elegant serif type reading 'Why Tadalafil Troches', with a thin gold underline. Left side: the exact same teal-green dissolving troche tablets from the reference image, medium size, soft shadow. Right side: a vertical list of four feature rows, each with a small gold four-pointed sparkle icon, a bold dark-green sans-serif title and one small muted gray caption line: 'Faster Absorption — Sublingual delivery for quick onset', 'Long-Lasting Effect — Up to 36 hours of readiness', 'Discreet & Convenient — No water needed, dissolves quickly', 'Clinically Proven — FDA-approved active ingredient'. Clean, bright, minimal editorial layout with generous whitespace. Absolutely NO other text, numbers, watermarks or stray characters beyond the text specified above. Every element — headline, product, badge and every line of text — stays FULLY inside the frame with comfortable margins on all four edges; nothing touches or crosses any edge. All typography crisp, perfectly spelled and legible.",
+    "size": "1024x1536",
+    "forceNew": true
+  },
+  {
+    "output": "public/assets/l/slide-included.webp",
+    "editFrom": "public/assets/l/sermorelin.png",
+    "width": 900,
+    "height": 1200,
+    "prompt": "Vertical portrait 3:4 composition. Branded advertising infographic card for a premium telehealth longevity brand, flat pale cream background (#fdfcf7). Top: headline in dark forest-green elegant serif type reading \"What's Included\", with a thin gold underline. Left side: the exact same dark glass peptide vial from the reference image, medium size, soft shadow. Right side: a vertical list of four feature rows, each with a small dark-green circled checkmark, a bold dark-green sans-serif title and one small muted gray caption line: 'Sermorelin, NAD+ or Glutathione — Premium peptide therapies', 'Licensed Provider Consultation — Personalized protocol design', 'Monthly Supply Shipped — Pharmaceutical-grade compounds', 'Ongoing Optimization — Dosage refinement & monitoring'. Clean, bright, minimal editorial layout with generous whitespace. Absolutely NO other text, numbers, watermarks or stray characters beyond the text specified above. Every element — headline, product, badge and every line of text — stays FULLY inside the frame with comfortable margins on all four edges; nothing touches or crosses any edge. All typography crisp, perfectly spelled and legible.",
+    "size": "1024x1536",
+    "forceNew": true
+  },
+  {
+    "output": "public/assets/l/slide-benefits.webp",
+    "width": 900,
+    "height": 1200,
+    "prompt": "Vertical portrait 3:4 composition. Branded advertising infographic card for a premium telehealth longevity brand, flat pale cream background (#fdfcf7). Top: headline in dark forest-green elegant serif type reading 'Peptide Therapy Advantages', with a thin gold underline. Below: a vertical list of five feature rows, each with a small gold four-pointed sparkle icon, a bold dark-green sans-serif title and one small muted gray caption line: 'Enhanced Recovery — Faster muscle & tissue repair', 'Improved Sleep Quality — Deeper, more restorative rest', 'Increased Energy — Natural vitality boost', 'Cellular Health — Anti-aging at the molecular level', 'Immune Support — Strengthened natural defenses'. Clean, bright, minimal editorial layout with generous whitespace. Absolutely NO other text, numbers, watermarks or stray characters beyond the text specified above. Every element — headline, product, badge and every line of text — stays FULLY inside the frame with comfortable margins on all four edges; nothing touches or crosses any edge. All typography crisp, perfectly spelled and legible.",
+    "size": "1024x1536",
+    "forceNew": true
+  }
+]

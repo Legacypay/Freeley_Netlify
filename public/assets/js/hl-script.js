@@ -171,10 +171,20 @@ var Tawk_API = Tawk_API || {},
             // product4/product5 (old "What's Included"/"Expected Results"
             // infographic slides) live in the ProductInfoModal popup
             // instead — see hair-loss.astro.
+            // Brello-style gallery (2026-08-12): price-badge hero slide
+            // first, real photos, then branded info slides (baked text —
+            // regenerate via scripts/image-manifest-product-slides-*.json on
+            // any copy change).
             images: [
+                "/assets/hl/slide-price-cedar.webp",
                 "/assets/hl/product-cedar-straight.png",
                 "/assets/hl/product-cedar-pills.webp",
-                "/assets/hl/product-cedar-tilted.png"
+                "/assets/hl/product-cedar-tilted.png",
+                "/assets/hl/slide-included.webp",
+                "/assets/hl/slide-timeline.webp",
+                "/assets/hl/slide-shipping.webp",
+                "/assets/shared/slide-journey.webp",
+                "/assets/shared/slide-hub.webp"
             ],
             features: [
                 "Biotin 5mg / Finasteride 1mg / Minoxidil 2.5mg",
@@ -202,10 +212,17 @@ var Tawk_API = Tawk_API || {},
             // Cedar/Willow. product4/product5 (old "What's Included"/
             // "Expected Results" infographic slides) live in the
             // ProductInfoModal popup instead — see hair-loss.astro.
+            // Brello-style slides — see cedar's comment above.
             images: [
+                "/assets/hl/slide-price-ivy.webp",
                 "/assets/hl/product-ivy.png",
                 "/assets/hl/product-ivy-pills.webp",
-                "/assets/hl/product-ivy-tilted.png"
+                "/assets/hl/product-ivy-tilted.png",
+                "/assets/hl/slide-included.webp",
+                "/assets/hl/slide-timeline.webp",
+                "/assets/hl/slide-shipping.webp",
+                "/assets/shared/slide-journey.webp",
+                "/assets/shared/slide-hub.webp"
             ],
             features: [
                 "Minoxidil 1mg / Dutasteride 0.4mg with Biotin",
@@ -231,10 +248,17 @@ var Tawk_API = Tawk_API || {},
             // label). product4/product5 (old "What's Included"/"Expected
             // Results" infographic slides) live in the ProductInfoModal
             // popup instead — see hair-loss.astro.
+            // Brello-style slides — see cedar's comment above.
             images: [
+                "/assets/hl/slide-price-willow.webp",
                 "/assets/hl/product1.png",
                 "/assets/hl/product-willow-pills.webp",
-                "/assets/hl/product-willow-tilted.png"
+                "/assets/hl/product-willow-tilted.png",
+                "/assets/hl/slide-included.webp",
+                "/assets/hl/slide-timeline.webp",
+                "/assets/hl/slide-shipping.webp",
+                "/assets/shared/slide-journey.webp",
+                "/assets/shared/slide-hub.webp"
             ],
             features: [
                 "Minoxidil 1mg / Spironolactone 60mg with Biotin",

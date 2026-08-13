@@ -14,16 +14,24 @@
             name: "Semaglutide",
             title: "Compounded Semaglutide",
             description: "Semaglutide is a GLP-1 receptor agonist that helps regulate appetite and blood sugar levels.",
-            // product3.png ("What's Included"), product4.png (Telehealth
-            // Platform), and product5.png (Discreet Shipping) all moved out
-            // of the gallery into their own sections on weight-loss.astro —
-            // gallery now holds only real product photography: the new
-            // straight-on bottle shot, the lifestyle/unboxing shot, and the
-            // existing tilted bottle shot.
+            // Brello-style gallery (2026-08-12): slide 1 is the AI-generated
+            // hero card with the price badge baked in, then the real product
+            // photography, then the branded info slides (What's Included /
+            // Telehealth / Shipping + shared journey & hub) — every slide is
+            // a selling argument, like brellohealth.com's product galleries.
+            // Regenerate via scripts/image-manifest-product-slides-*.json
+            // (text is baked into the images — a copy change means a paid
+            // regeneration).
             images: [
+                "/assets/wl/slide-price-semaglutide.webp",
                 "/assets/wl/semag-straight.png",
                 "/assets/wl/product2.png",
-                "/assets/wl/semag.png"
+                "/assets/wl/semag.png",
+                "/assets/wl/slide-included.webp",
+                "/assets/wl/slide-telehealth.webp",
+                "/assets/wl/slide-shipping.webp",
+                "/assets/shared/slide-journey.webp",
+                "/assets/shared/slide-hub.webp"
             ],
             features: [
                 "Compounded GLP-1 receptor agonist",
@@ -41,10 +49,17 @@
             // product2.png removed here (client feedback 2026-08-07): that
             // unboxing shot is semaglutide-branded packaging, unrelated to
             // tirzepatide. It stays in the semaglutide gallery above.
+            // Brello-style slides — see semaglutide's comment above.
             images: [
+                "/assets/wl/slide-price-tirzepatide.webp",
                 "/assets/wl/tirzz-straight.png",
                 "/assets/wl/tirzz-angle2.webp",
-                "/assets/wl/tirzz.png"
+                "/assets/wl/tirzz.png",
+                "/assets/wl/slide-included.webp",
+                "/assets/wl/slide-telehealth.webp",
+                "/assets/wl/slide-shipping.webp",
+                "/assets/shared/slide-journey.webp",
+                "/assets/shared/slide-hub.webp"
             ],
             features: [
                 "Compounded GLP-1 receptor agonist",
@@ -57,12 +72,11 @@
         }
     };
 
-    // What's Included / Telehealth Platform / Discreet Shipping used to be
-    // appended here as extra non-photo slides sharing the gallery's
-    // dots/prev/next. They now live in the <ProductInfoModal> popup instead
-    // (see weight-loss.astro's "Plan Details" trigger button) — same move
-    // hair-loss.astro/longevity.astro/sexual-wellness.astro already made,
-    // so the gallery below holds only real product photography again.
+    // What's Included / Telehealth Platform / Discreet Shipping are back in
+    // the gallery as of 2026-08-12 — this time as branded 3:4 slides
+    // (slide-*.webp above) generated in the Freeley design language, not the
+    // old unreadable infographics. The <ProductInfoModal> popup still exists
+    // on the page alongside them.
 
     // =============================================
     // GALLERY STATE
