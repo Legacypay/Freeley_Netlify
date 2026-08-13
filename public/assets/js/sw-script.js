@@ -28,7 +28,6 @@
             // any copy change).
             images: [
                 "/assets/sw/slide-price-tadalafil.webp",
-                "/assets/sw/product1.png",
                 "/assets/sw/product2.svg",
                 "/assets/sw/slide-included.webp",
                 "/assets/sw/slide-benefits.webp",
@@ -56,7 +55,6 @@
             // Brello-style slides — see tadalafil's comment above.
             images: [
                 "/assets/sw/slide-price-olympus.webp",
-                "/assets/sw/product1-olympus.png",
                 "/assets/sw/product2-olympus.png",
                 "/assets/sw/slide-included.webp",
                 "/assets/sw/slide-benefits.webp",

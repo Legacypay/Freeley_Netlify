@@ -24,7 +24,6 @@
             // regeneration).
             images: [
                 "/assets/wl/slide-price-semaglutide.webp",
-                "/assets/wl/semag-straight.png",
                 "/assets/wl/product2.png",
                 "/assets/wl/semag.png",
                 "/assets/wl/slide-included.webp",
@@ -52,8 +51,6 @@
             // Brello-style slides — see semaglutide's comment above.
             images: [
                 "/assets/wl/slide-price-tirzepatide.webp",
-                "/assets/wl/tirzz-straight.png",
-                "/assets/wl/tirzz-angle2.webp",
                 "/assets/wl/tirzz.png",
                 "/assets/wl/slide-included.webp",
                 "/assets/wl/slide-telehealth.webp",

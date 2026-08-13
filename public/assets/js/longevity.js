@@ -28,7 +28,6 @@
             images: [
                 "/assets/l/slide-price-sermorelin.webp",
                 "/assets/l/sermorelin.png",
-                "/assets/l/sermorelin-angle2.webp",
                 "/assets/l/slide-included.webp",
                 "/assets/l/slide-benefits.webp",
                 "/assets/shared/slide-journey.webp",
@@ -57,7 +56,6 @@
             images: [
                 "/assets/l/slide-price-nad.webp",
                 "/assets/l/nad+.png",
-                "/assets/l/nad-angle2.webp",
                 "/assets/l/slide-included.webp",
                 "/assets/l/slide-benefits.webp",
                 "/assets/shared/slide-journey.webp",
@@ -84,7 +82,6 @@
             images: [
                 "/assets/l/slide-price-glutathione.webp",
                 "/assets/l/glutathione.png",
-                "/assets/l/glutathione-angle2.webp",
                 "/assets/l/slide-included.webp",
                 "/assets/l/slide-benefits.webp",
                 "/assets/shared/slide-journey.webp",
