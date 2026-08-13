@@ -285,7 +285,8 @@ const faqs = [
       /* Plan strip — 3 tiers (1/6/12-month) in a single row. Cards are real
          <button>s (clickable/selectable), so the reset below undoes the
          browser's default button chrome. */
-      .wl-plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 4px 0 26px; }
+      .wl-plans { display: grid; grid-template-columns: 1fr; gap: 10px; margin: 4px 0 26px; }
+      @media (min-width: 640px) { .wl-plans { grid-template-columns: repeat(3, 1fr); } }
       .wl-plans__item { display: block; width: 100%; font: inherit; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 12px 10px; text-align: center; cursor: pointer; transition: border-color .15s, box-shadow .15s; }
       .wl-plans__item--best { border-color: var(--brand); box-shadow: 0 6px 20px rgba(15,107,69,.10); }
       .wl-plans__item.is-selected { border-color: var(--brand); box-shadow: 0 0 0 2px var(--brand) inset; }
@@ -334,7 +335,8 @@ const faqs = [
 
       /* ── Product showcase (longevity.js-driven) ─────────────── */
       .wl-prod { display: grid; gap: 40px; grid-template-columns: 1fr; align-items: start; }
-      @media (min-width: 900px) { .wl-prod { grid-template-columns: 1fr 1fr; gap: 56px; } }
+      @media (min-width: 768px) { .wl-prod { grid-template-columns: 1fr 1fr; gap: 36px; } }
+      @media (min-width: 900px) { .wl-prod { gap: 56px; } }
       /* Image-first stage (Brello-style): no padded card — the 3:4 slide IS
          the visual. Thumbnail rail left on desktop, arrows + badge + dots
          overlaid on the image itself. See weight-loss.astro. */
