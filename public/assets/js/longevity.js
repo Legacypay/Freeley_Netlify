@@ -201,7 +201,7 @@
         if (saveBadge) saveBadge.textContent = data.save || '';
 
         const badge = document.querySelector('.popular-badge');
-        if (badge) badge.textContent = data.badge;
+        if (badge) { badge.textContent = data.badge; badge.style.display = currentIndex === 0 ? '' : 'none'; }
 
         if (featuresContainer) {
             featuresContainer.innerHTML = '';
@@ -235,6 +235,9 @@
 
             setTimeout(function() {
                 currentIndex = index;
+
+                const popularBadge = document.querySelector('.popular-badge');
+                if (popularBadge) popularBadge.style.display = index === 0 ? '' : 'none';
 
                 mainImg.classList.remove("fade-out", "fade-in");
                 mainImg.src = images[currentIndex];

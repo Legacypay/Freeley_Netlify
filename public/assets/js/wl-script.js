@@ -24,7 +24,6 @@
             // regeneration).
             images: [
                 "/assets/wl/slide-price-semaglutide.webp",
-                "/assets/wl/product2.png",
                 "/assets/wl/semag.png",
                 "/assets/wl/slide-included.webp",
                 "/assets/wl/slide-telehealth.webp",
@@ -168,7 +167,7 @@
         if (originalPrice) originalPrice.textContent = data.originalPrice;
 
         const badge = document.querySelector('.popular-badge');
-        if (badge) badge.textContent = data.badge;
+        if (badge) { badge.textContent = data.badge; badge.style.display = currentIndex === 0 ? '' : 'none'; }
 
         featuresContainer.innerHTML = '';
         data.features.forEach(feature => {
@@ -199,6 +198,9 @@
 
         setTimeout(function() {
             currentIndex = index;
+
+            const popularBadge = document.querySelector('.popular-badge');
+            if (popularBadge) popularBadge.style.display = index === 0 ? '' : 'none';
 
             mainImg.classList.remove("fade-out", "fade-in");
             mainImg.src = images[currentIndex];

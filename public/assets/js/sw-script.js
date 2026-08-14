@@ -55,7 +55,6 @@
             // Brello-style slides — see tadalafil's comment above.
             images: [
                 "/assets/sw/slide-price-olympus.webp",
-                "/assets/sw/product2-olympus.png",
                 "/assets/sw/slide-included.webp",
                 "/assets/sw/slide-benefits.webp",
                 "/assets/shared/slide-journey.webp",
@@ -172,7 +171,7 @@
         if (saveBadge) saveBadge.textContent = data.save || '';
 
         const badge = document.querySelector('.popular-badge');
-        if (badge) badge.textContent = data.badge;
+        if (badge) { badge.textContent = data.badge; badge.style.display = currentSWIndex === 0 ? '' : 'none'; }
 
         if (featuresContainerSW) {
             featuresContainerSW.innerHTML = '';
@@ -206,6 +205,9 @@
 
             setTimeout(function() {
                 currentSWIndex = index;
+
+                const popularBadge = document.querySelector('.popular-badge');
+                if (popularBadge) popularBadge.style.display = index === 0 ? '' : 'none';
 
                 mainImgSW.classList.remove("fade-out", "fade-in");
                 mainImgSW.src = images[currentSWIndex];

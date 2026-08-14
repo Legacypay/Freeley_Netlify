@@ -178,7 +178,6 @@ var Tawk_API = Tawk_API || {},
             images: [
                 "/assets/hl/slide-price-cedar.webp",
                 "/assets/hl/product-cedar-pills.webp",
-                "/assets/hl/product-cedar-tilted.png",
                 "/assets/hl/slide-included.webp",
                 "/assets/hl/slide-timeline.webp",
                 "/assets/hl/slide-shipping.webp",
@@ -365,7 +364,7 @@ var Tawk_API = Tawk_API || {},
         if (originalPrice) originalPrice.textContent = data.originalPrice || '';
 
         const badge = document.querySelector('.popular-badge');
-        if (badge) badge.textContent = data.badge;
+        if (badge) { badge.textContent = data.badge; badge.style.display = currentHairIndex === 0 ? '' : 'none'; }
 
         featuresContainerHair.innerHTML = '';
         data.features.forEach(feature => {
@@ -396,6 +395,9 @@ var Tawk_API = Tawk_API || {},
 
         setTimeout(function() {
             currentHairIndex = index;
+
+            const popularBadge = document.querySelector('.popular-badge');
+            if (popularBadge) popularBadge.style.display = index === 0 ? '' : 'none';
 
             mainImgHair.classList.remove("fade-out", "fade-in");
             mainImgHair.src = images[currentHairIndex];
