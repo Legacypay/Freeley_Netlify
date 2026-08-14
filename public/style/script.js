@@ -81,25 +81,51 @@ if (stickyBar) {
 // Reads the <img>'s own live src/position each time rather than caching
 // anything, so it keeps working across the gallery's medication-toggle
 // image swaps (those only ever change .src, never replace the element).
+//
+// mousemove is bound to .wl-prod__main (the whole stage: image + arrows +
+// dots), NOT .wl-prod__frame alone — #prevBtn/#nextBtn are painted on top
+// of the frame (.wl-prod__nav is display:contents, so they're positioned
+// absolute over the image) but live outside the frame's DOM subtree.
+// Binding only to the frame meant crossing onto/off an arrow on the way to
+// click it fired the frame's mouseleave/mouseenter back-to-back, snapping
+// the zoom out and back in "de golpe" right in the path to Prev/Next.
+// Fix: every stage mousemove checks the cursor against each .wl-navbtn's
+// rect (+ NAV_DEAD_ZONE px of margin, so the zoom eases out just *before*
+// the cursor reaches the button instead of snapping off exactly at its
+// edge) and simply skips turning the zoom on while inside that zone —
+// no zoom is meant to happen there at all, not a flicker to smooth over.
 // =============================================
 if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    const NAV_DEAD_ZONE = 20; // px of padding around each arrow button
+
     document.querySelectorAll('.wl-prod__frame').forEach(function(frame) {
         const zoomImg = frame.querySelector('img');
         if (!zoomImg) return;
+        const stage = frame.closest('.wl-prod__main') || frame;
+        const navBtns = Array.from(stage.querySelectorAll('.wl-navbtn'));
 
-        frame.addEventListener('mouseenter', function() {
-            frame.classList.add('is-zoomed');
-        });
+        function nearNavBtn(x, y) {
+            return navBtns.some(function(btn) {
+                const r = btn.getBoundingClientRect();
+                return x >= r.left - NAV_DEAD_ZONE && x <= r.right + NAV_DEAD_ZONE &&
+                       y >= r.top - NAV_DEAD_ZONE && y <= r.bottom + NAV_DEAD_ZONE;
+            });
+        }
 
-        frame.addEventListener('mousemove', function(e) {
+        stage.addEventListener('mousemove', function(e) {
+            if (nearNavBtn(e.clientX, e.clientY)) {
+                frame.classList.remove('is-zoomed');
+                return;
+            }
             const rect = zoomImg.getBoundingClientRect();
             if (!rect.width || !rect.height) return;
             const x = Math.min(100, Math.max(0, ((e.clientX - rect.left) / rect.width) * 100));
             const y = Math.min(100, Math.max(0, ((e.clientY - rect.top) / rect.height) * 100));
             zoomImg.style.transformOrigin = x + '% ' + y + '%';
+            frame.classList.add('is-zoomed');
         });
 
-        frame.addEventListener('mouseleave', function() {
+        stage.addEventListener('mouseleave', function() {
             frame.classList.remove('is-zoomed');
             zoomImg.style.transformOrigin = '50% 50%';
         });
