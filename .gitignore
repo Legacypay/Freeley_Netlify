@@ -22,5 +22,8 @@ generated/
 .env.local
 env
 
+# Local image-generation backups (originals live in git history already)
+*.original.*
+
 # Internal-only — contains real drug costs/margins, never for public repo
 Freeley-Pricing-Sheet.pdf

@@ -1,0 +1,79 @@
+[
+  {
+    "output": "public/assets/hl/slide-timeline.webp",
+    "fit": "contain",
+    "background": "#fef8f3",
+    "size": "1024x1536",
+    "prompt": "Edit this vertical product-info slide. Keep the exact same visual style, cream background colour, dark-green serif heading with the thin gold underline, all pill/badge shapes, the connecting timeline line, and EVERY line of text spelled and worded identically, in the same order, nothing added or removed. LAYOUT FIX ONLY: the heading must NOT touch the top edge — add generous breathing room above it — and the whole composition must be vertically centred inside the frame with balanced whitespace top and bottom and a comfortable margin on all four sides, so nothing is crowded at the top or clipped at any edge."
+  },
+  {
+    "output": "public/assets/hl/slide-shipping.webp",
+    "fit": "contain",
+    "background": "#faf5ef",
+    "size": "1024x1536",
+    "prompt": "Edit this vertical product-info slide. Keep the exact same visual style, cream background colour, dark-green serif heading with the thin gold underline, the cardboard box illustration, the dark-green circular white-checkmark icons, and EVERY line of text spelled and worded identically, in the same order, nothing added or removed. LAYOUT FIX ONLY: the heading must NOT touch the top edge — add generous breathing room above it — and centre the whole composition vertically with balanced whitespace top and bottom and a comfortable margin on all four sides, so nothing is crowded at the top or clipped at any edge."
+  },
+  {
+    "output": "public/assets/hl/slide-included.webp",
+    "fit": "contain",
+    "background": "#fdfbf8",
+    "size": "1024x1536",
+    "prompt": "Edit this vertical product-info slide. Keep the exact same visual style, cream background, dark-green serif heading with the thin gold underline, the dark-green circular white-checkmark icons, and the translucent pill-bottle illustration on the left (green cap, white label with a large serif 'F' monogram, a thin divider, and the three-line label text 'Finasteride, Minoxidil, Biotin'). Keep every word spelled identically. LAYOUT: the heading 'What’s Included' must NOT touch the top edge — add generous breathing room above it — and centre the composition vertically with a comfortable margin on all four sides, nothing crowded at the top or clipped at any edge. TEXT: the checklist must contain EXACTLY these five rows, each appearing only ONCE, in order — 'Finasteride or Dutasteride — Clinically proven DHT blockers', 'Licensed provider review — A board-certified physician confirms your plan', 'Monthly supply delivered — Consistent treatment to your door', 'Progress monitoring — Regular check-ins and dose adjustments', 'Treatment guide — Get the most out of your results'. Remove any duplicated row so none repeats."
+  },
+  {
+    "output": "public/assets/wl/slide-included.webp",
+    "fit": "contain",
+    "background": "#fcfaf6",
+    "size": "1024x1536",
+    "prompt": "Edit this vertical product-info slide. Keep the exact same visual style, cream background, dark-green serif heading with the thin gold underline, the dark-green circular white-checkmark icons, and the dark-green medication vial illustration on the left (black cap, silver band, label reading 'weight loss', 'Compounded', 'Semaglutide', '2mL Vial · Multiple doses', 'Rx Only'). Keep EVERY line of text spelled and worded identically, in the same order, nothing added or removed. LAYOUT FIX ONLY: the heading must NOT touch the top edge — add generous breathing room above it — and centre the composition vertically with balanced whitespace and a comfortable margin on all four sides, so nothing is crowded at the top or clipped at any edge."
+  },
+  {
+    "output": "public/assets/wl/slide-telehealth.webp",
+    "fit": "contain",
+    "background": "#fcf6f0",
+    "size": "1024x1536",
+    "prompt": "Edit this vertical product-info slide. Keep the exact same visual style, cream background, dark-green serif heading with the thin gold underline, the smartphone app mockup on the left, the dark-green circular white-checkmark icons, and EVERY line of text spelled and worded identically, in the same order, nothing added or removed. LAYOUT FIX ONLY: the heading must NOT touch the top edge — add generous breathing room above it — and centre the composition vertically with balanced whitespace and a comfortable margin on all four sides, so nothing is crowded at the top or clipped at any edge."
+  },
+  {
+    "output": "public/assets/wl/slide-shipping.webp",
+    "fit": "contain",
+    "background": "#fef9f3",
+    "size": "1024x1536",
+    "prompt": "Edit this vertical product-info slide. Keep the exact same visual style, cream background, dark-green serif heading with the thin gold underline, the cardboard box illustration, the dark-green circular white-checkmark icons, and EVERY line of text spelled and worded identically, in the same order, nothing added or removed. LAYOUT FIX ONLY: the heading must NOT touch the top edge — add generous breathing room above it — and centre the composition vertically with balanced whitespace and a comfortable margin on all four sides, so nothing is crowded at the top or clipped at any edge."
+  },
+  {
+    "output": "public/assets/sw/slide-included.webp",
+    "fit": "contain",
+    "background": "#faf9f3",
+    "size": "1024x1536",
+    "prompt": "Edit this vertical product-info slide. Keep the exact same visual style, cream background, dark-green serif heading with the thin gold underline, the green 'Freeley' troche/lozenge illustration on the left, the dark-green circular white-checkmark icons, and EVERY line of text spelled and worded identically, in the same order, nothing added or removed. LAYOUT FIX ONLY: the heading must NOT touch the top edge — add generous breathing room above it — and centre the composition vertically with balanced whitespace and a comfortable margin on all four sides, so nothing is crowded at the top or clipped at any edge."
+  },
+  {
+    "output": "public/assets/sw/slide-benefits.webp",
+    "fit": "contain",
+    "background": "#fcfbf5",
+    "size": "1024x1536",
+    "prompt": "Edit this vertical product-info slide. Keep the exact same visual style, cream background, dark-green serif heading with the thin gold underline, the green 'Freeley' troche/lozenge illustration on the left, the small gold sparkle bullet icons, and every line of text worded identically, in the same order, nothing added or removed. TEXT FIX: correct the misspelling — 'quik' must read 'quick', so the line reads 'Sublingual delivery for quick onset'. Keep all other words exactly the same. LAYOUT FIX: the heading must NOT touch the top edge — add generous breathing room above it — and centre the composition vertically with balanced whitespace and a comfortable margin on all four sides, so nothing is crowded at the top or clipped at any edge."
+  },
+  {
+    "output": "public/assets/l/slide-included.webp",
+    "fit": "contain",
+    "background": "#f2efe7",
+    "size": "1024x1536",
+    "prompt": "Edit this vertical product-info slide. Keep the exact same visual style, cream background, dark-green serif heading with the thin gold underline, the dark-green 'longevity' Sermorelin vial illustration on the left, the dark-green circular white-checkmark icons, and EVERY line of text spelled and worded identically, in the same order, nothing added or removed. LAYOUT FIX ONLY: the heading must NOT touch the top edge — add generous breathing room above it — and centre the composition vertically with balanced whitespace and a comfortable margin on all four sides, so nothing is crowded at the top or clipped at any edge."
+  },
+  {
+    "output": "public/assets/l/slide-benefits.webp",
+    "fit": "contain",
+    "background": "#f8f2ed",
+    "size": "1024x1536",
+    "prompt": "Edit this vertical product-info slide. Keep the exact same visual style, cream background, dark-green serif heading with the thin gold underline, the gold sparkle bullet icons, thin row divider lines, and EVERY line of text spelled and worded identically, in the same order, nothing added or removed (five rows: Enhanced Recovery, Improved Sleep Quality, Increased Energy, Cellular Health, Immune Support). LAYOUT FIX ONLY: the heading must NOT touch the top edge — add generous breathing room above it — and centre the composition vertically with balanced whitespace and a comfortable margin on all four sides, so nothing is crowded at the top or clipped at any edge."
+  },
+  {
+    "output": "public/assets/shared/slide-journey.webp",
+    "fit": "contain",
+    "background": "#fcf6f0",
+    "size": "1024x1536",
+    "prompt": "Edit this vertical product-info slide. Keep the exact same visual style, warm cream background, dark-green serif heading with the thin gold underline, the gold numbered circles (1,2,3,4), the dark-green line icons (laptop, stethoscope, box, heart-plus), and EVERY line of text spelled and worded identically, in the same order, nothing added or removed. LAYOUT FIX ONLY: the heading must NOT touch the top edge — add generous breathing room above it — and centre the composition vertically with balanced whitespace and a comfortable margin on all four sides, so nothing is crowded at the top or clipped at any edge."
+  }
+]
