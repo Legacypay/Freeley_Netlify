@@ -107,8 +107,16 @@ async function processEntry(entry) {
 
   const rawImage = await generateImage(entry.prompt, sourceImage, { transparent: !!entry.transparent, model: entry.model, size: entry.size });
 
+  const fit = entry.fit || 'cover';
+  const resizeOpts = { fit };
+  // "contain" preserves the model's full framing (nothing cropped) and pads
+  // the aspect gap with a flat colour — pass "background" (e.g. the slide's
+  // cream) so the pad is seamless. "cover" (default) crops to fill and can
+  // clip a heading or edge text when the model returns a different aspect.
+  if (fit === 'contain') resizeOpts.background = entry.background || '#ffffff';
+
   await sharp(rawImage)
-    .resize(targetWidth, targetHeight, { fit: 'cover' })
+    .resize(targetWidth, targetHeight, resizeOpts)
     .toFormat(format)
     .toFile(outputPath);
 

@@ -28,7 +28,6 @@
             // any copy change).
             images: [
                 "/assets/sw/slide-price-tadalafil.webp",
-                "/assets/sw/product2.svg",
                 "/assets/sw/slide-included.webp",
                 "/assets/sw/slide-benefits.webp",
                 "/assets/shared/slide-journey.webp",

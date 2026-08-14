@@ -177,7 +177,6 @@ var Tawk_API = Tawk_API || {},
             // any copy change).
             images: [
                 "/assets/hl/slide-price-cedar.webp",
-                "/assets/hl/product-cedar-pills.webp",
                 "/assets/hl/slide-included.webp",
                 "/assets/hl/slide-timeline.webp",
                 "/assets/hl/slide-shipping.webp",
@@ -213,8 +212,6 @@ var Tawk_API = Tawk_API || {},
             // Brello-style slides — see cedar's comment above.
             images: [
                 "/assets/hl/slide-price-ivy.webp",
-                "/assets/hl/product-ivy-pills.webp",
-                "/assets/hl/product-ivy-tilted.png",
                 "/assets/hl/slide-included.webp",
                 "/assets/hl/slide-timeline.webp",
                 "/assets/hl/slide-shipping.webp",
@@ -248,8 +245,6 @@ var Tawk_API = Tawk_API || {},
             // Brello-style slides — see cedar's comment above.
             images: [
                 "/assets/hl/slide-price-willow.webp",
-                "/assets/hl/product-willow-pills.webp",
-                "/assets/hl/product-willow-tilted.png",
                 "/assets/hl/slide-included.webp",
                 "/assets/hl/slide-timeline.webp",
                 "/assets/hl/slide-shipping.webp",
