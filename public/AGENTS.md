@@ -56,6 +56,6 @@ No automated tests. Verify a legacy page by opening `dist/<slug>.html` after `np
 
 ### External
 - Google Fonts (Cormorant Garamond, DM Sans, Montserrat) — legacy pages link these directly; Astro pages self-host via `astro.config.mjs`'s `fonts` config instead.
-- Tidio (legacy pages) / Tawk.to (Astro pages) — two different chat widgets, not yet consolidated (see CSP comment in `netlify.toml`).
+- Tidio (legacy `.html` pages only, via `shared.js`). Tawk.to (previously used on Astro pages) was removed site-wide 2026-08-14 — no live-chat widget currently on the Astro pages.
 
 <!-- MANUAL: Any manually added notes below this line are preserved on regeneration -->

@@ -54,6 +54,6 @@ No automated tests. Verify visually with `npm run dev` against the specific rout
 ### Internal
 - `../layouts/Layout.astro`, `../components/Header.astro`, `../components/Footer.astro`, `../components/FinalCta.astro`, `../components/QuizModal.astro`, `../components/LegalArticle.astro`, `../components/ProductInfoModal.astro`, `../components/hub/*` (hub.astro only), `../data/compare.ts` (compare.astro, index.astro), `../lib/supabaseClient.ts` (waitlist.astro), `../lib/hub/*` (hub.astro), `../styles/tailwind.css` / `../styles/hub.css`.
 ### External
-- Swiper (carousels, CDN), Font Awesome / RemixIcon (icon fonts, CDN), `@supabase/supabase-js` (assessment-quiz.astro, waitlist.astro, hub.astro), Tawk.to (live-chat widget embedded on most marketing pages).
+- Swiper (carousels, CDN), Font Awesome / RemixIcon (icon fonts, CDN), `@supabase/supabase-js` (assessment-quiz.astro, waitlist.astro, hub.astro). Tawk.to (live-chat widget) was removed site-wide 2026-08-14.
 
 <!-- MANUAL: Any manually added notes below this line are preserved on regeneration -->
