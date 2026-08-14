@@ -10,9 +10,7 @@ import QuizModal from '../components/QuizModal.astro';
 import FinalCta from '../components/FinalCta.astro';
 import logo from '../assets/brand/freeley_logo_transparent_green.webp';
 import logoWhite from '../assets/brand/freeley_logo_transparent_white.webp';
-// Hero trust badges — exactly the set used on the original landing (index.astro):
-// Trustpilot / LegitScript / Made in USA, from src/assets/badges/.
-import trustPilot from '../assets/badges/trust_pilot.png';
+// Hero trust badges — LegitScript / HIPAA / Made in USA, from src/assets/badges/.
 import legitScript from '../assets/badges/49921676.png';
 import hipaaBadge from '../assets/badges/hipaa_badge.png';
 import usaBadge from '../assets/badges/usa_badge.png';
@@ -940,13 +938,8 @@ const press = [
             <div class="avatars"><span></span><span></span><span></span><span></span></div>
             <div class="hero__count"><b>12,000+</b><span>Patients treated</span></div>
           </div>
-          <div class="hero__rating">
-            <span class="stars">★★★★★</span> Excellent · <b>4.9/5</b> on Trustpilot
-          </div>
-
           <!-- badges shown inline on mobile (overlay on desktop) -->
           <div class="badge-mob hero__badges" style="position:static;">
-            <Image src={trustPilot} alt="Trustpilot rating" />
             <Image src={legitScript} class="lg" alt="LegitScript certified" />
             <Image src={hipaaBadge} alt="HIPAA Compliant" />
             <Image src={usaBadge} alt="Made in USA" />
@@ -954,7 +947,6 @@ const press = [
         </div>
       </div>
       <div class="hero__badges">
-        <Image src={trustPilot} alt="Trustpilot rating" />
         <Image src={legitScript} class="lg" alt="LegitScript certified" />
         <Image src={hipaaBadge} alt="HIPAA Compliant" />
         <Image src={usaBadge} alt="Made in USA" />
