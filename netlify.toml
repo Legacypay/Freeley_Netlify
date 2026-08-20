@@ -323,10 +323,15 @@
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 
+# /assets/* filenames carry NO content hash and get overwritten in place on
+# every image/script fix — a year-long immutable cache here meant browsers
+# kept stale galleries indefinitely (2026-08-20: client kept seeing the old
+# teal Olympus slides after the fix shipped). must-revalidate + Netlify's
+# ETags means cheap 304s and instant propagation of asset updates.
 [[headers]]
   for = "/assets/*"
   [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
+    Cache-Control = "public, max-age=0, must-revalidate"
 
 # Astro build output — JS, CSS, optimized images, and the self-hosted font
 # files (/_astro/fonts/*.woff2). Every filename carries a content hash, so a
