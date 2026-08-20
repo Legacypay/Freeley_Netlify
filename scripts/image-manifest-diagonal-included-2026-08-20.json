@@ -1,0 +1,54 @@
+[
+  {
+    "output": "public/assets/l/slide-price-sermorelin.webp",
+    "size": "1024x1536",
+    "prompt": "Rotate the vial so it leans diagonally to the right, tilted about 12 degrees clockwise, as if photographed at a dynamic angle. Keep absolutely everything else identical: the same slim dark green glass vial with textured black cap and silver band, the same label text ('longevity' badge, 'Compounded', 'Sermorelin', '2 mL Vial', 'Multiple doses', 'Rx Only'), the same soft product shadow adjusted naturally for the tilt, pure white background, and the small green italic 'Slide for details' caption at the bottom exactly as it is."
+  },
+  {
+    "output": "public/assets/l/slide-price-nad.webp",
+    "size": "1024x1536",
+    "prompt": "Rotate the vial so it leans diagonally to the right, tilted about 12 degrees clockwise, as if photographed at a dynamic angle. Keep absolutely everything else identical: the same slim dark green glass vial with textured black cap and silver band, the same label text ('longevity' badge, 'Compounded', 'NAD+', '2 mL Vial', 'Multiple doses', 'Rx Only'), the same soft product shadow adjusted naturally for the tilt, pure white background, and the small green italic 'Slide for details' caption at the bottom exactly as it is."
+  },
+  {
+    "output": "public/assets/l/slide-price-glutathione.webp",
+    "size": "1024x1536",
+    "prompt": "Rotate the vial so it leans diagonally to the right, tilted about 12 degrees clockwise, as if photographed at a dynamic angle. Keep absolutely everything else identical: the same slim dark green glass vial with textured black cap and silver band, the same label text ('longevity' badge, 'Compounded', 'Glutathione', '2 mL Vial', 'Multiple doses', 'Rx Only'), the same soft product shadow adjusted naturally for the tilt, pure white background, and the small green italic 'Slide for details' caption at the bottom exactly as it is."
+  },
+  {
+    "output": "public/assets/l/slide-included-nad.webp",
+    "editFrom": "public/assets/l/slide-included.webp",
+    "width": 900,
+    "height": 1200,
+    "size": "1024x1536",
+    "prompt": "One change only: on the vial's label, change the product name 'Sermorelin' to 'NAD+'. Keep absolutely everything else pixel-identical: the serif 'What's Included' heading with the gold underline, all four checklist items and their exact text, the tilted dark green vial with 'longevity' badge, 'Compounded', '2 mL vial', 'Multiple doses', 'Rx Only', the layout and the white background."
+  },
+  {
+    "output": "public/assets/l/slide-included-glutathione.webp",
+    "editFrom": "public/assets/l/slide-included.webp",
+    "width": 900,
+    "height": 1200,
+    "size": "1024x1536",
+    "prompt": "One change only: on the vial's label, change the product name 'Sermorelin' to 'Glutathione'. Keep absolutely everything else pixel-identical: the serif 'What's Included' heading with the gold underline, all four checklist items and their exact text, the tilted dark green vial with 'longevity' badge, 'Compounded', '2 mL vial', 'Multiple doses', 'Rx Only', the layout and the white background."
+  },
+  {
+    "output": "public/assets/hl/slide-price-cedar.webp",
+    "size": "1024x1536",
+    "prompt": "Zoom out so the entire bottle is fully visible with generous white margin around it — the bottle should occupy about 55 percent of the frame height, centered, matching a standard e-commerce product shot. Keep absolutely everything else identical: the same clear glass bottle full of white tablets with the ribbed dark green cap, the same white label with the serif 'F' monogram and 'Finasteride, Minoxidil, Biotin' text, the same soft shadow, pure white background, and the small green italic 'Slide for details' caption at the bottom exactly as it is."
+  },
+  {
+    "output": "public/assets/hl/slide-included-ivy.webp",
+    "editFrom": "public/assets/hl/slide-included.webp",
+    "width": 900,
+    "height": 1200,
+    "size": "1024x1536",
+    "prompt": "Two changes only: on the bottle's label, change the ingredient lines 'Finasteride, Minoxidil, Biotin' to 'Dutasteride, Minoxidil, Biotin', and change the first checklist item title 'Finasteride or Dutasteride' to 'Dutasteride'. Keep absolutely everything else pixel-identical: the serif 'What's Included' heading with the gold underline, all other checklist text, the clear glass bottle of white tablets with dark green cap and serif 'F' monogram label, the layout and the white background."
+  },
+  {
+    "output": "public/assets/hl/slide-included-willow.webp",
+    "editFrom": "public/assets/hl/slide-included.webp",
+    "width": 900,
+    "height": 1200,
+    "size": "1024x1536",
+    "prompt": "Three changes only: on the bottle's label, change the ingredient lines 'Finasteride, Minoxidil, Biotin' to 'Spironolactone, Minoxidil, Biotin'; change the first checklist item title 'Finasteride or Dutasteride' to 'Spironolactone'; and change that item's subtitle 'Clinically proven DHT blockers' to 'Clinically proven anti-androgen'. Keep absolutely everything else pixel-identical: the serif 'What's Included' heading with the gold underline, all other checklist text, the clear glass bottle of white tablets with dark green cap and serif 'F' monogram label, the layout and the white background."
+  }
+]

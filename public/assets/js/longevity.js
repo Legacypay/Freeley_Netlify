@@ -54,7 +54,7 @@
             // Brello-style slides — see sermorelin's comment above.
             images: [
                 "/assets/l/slide-price-nad.webp",
-                "/assets/l/slide-included.webp",
+                "/assets/l/slide-included-nad.webp",
                 "/assets/l/slide-benefits.webp",
                 "/assets/shared/slide-journey.webp",
                 "/assets/shared/slide-hub.webp"
@@ -79,7 +79,7 @@
             // Brello-style slides — see sermorelin's comment above.
             images: [
                 "/assets/l/slide-price-glutathione.webp",
-                "/assets/l/slide-included.webp",
+                "/assets/l/slide-included-glutathione.webp",
                 "/assets/l/slide-benefits.webp",
                 "/assets/shared/slide-journey.webp",
                 "/assets/shared/slide-hub.webp"

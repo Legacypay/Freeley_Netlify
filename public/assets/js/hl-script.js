@@ -200,7 +200,7 @@ updateProductCarousel(0);
             // Brello-style slides — see cedar's comment above.
             images: [
                 "/assets/hl/slide-price-ivy.webp",
-                "/assets/hl/slide-included.webp",
+                "/assets/hl/slide-included-ivy.webp",
                 "/assets/hl/slide-timeline.webp",
                 "/assets/hl/slide-shipping.webp",
                 "/assets/shared/slide-journey.webp",
@@ -233,7 +233,7 @@ updateProductCarousel(0);
             // Brello-style slides — see cedar's comment above.
             images: [
                 "/assets/hl/slide-price-willow.webp",
-                "/assets/hl/slide-included.webp",
+                "/assets/hl/slide-included-willow.webp",
                 "/assets/hl/slide-timeline.webp",
                 "/assets/hl/slide-shipping.webp",
                 "/assets/shared/slide-journey.webp",
