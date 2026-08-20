@@ -39,13 +39,6 @@ import ProductInfoModal from '../components/ProductInfoModal.astro';
 
 const ASSESSMENT = '/assessment-quiz';
 
-// Weight-goal doors — each id is a quiz-modal trigger wl-script.js binds.
-const goals = [
-  { id: 'start-assessment1', label: '10–25 lbs' },
-  { id: 'start-assessment2', label: '25–50 lbs' },
-  { id: 'start-assessment3', label: '50+ lbs' },
-];
-
 // Real ladder from pricing.json (semaglutide). The old page printed "$99*"
 // on all three tiers, which is only the 12-month rate — see the note in
 // PRODUCT.md about the qualifier having to travel with the number.
@@ -323,26 +316,6 @@ const faqs = [
       .wl-badgeline { display: inline-flex; align-items: center; gap: 8px; background: rgba(15,107,69,.06); border: 1px solid rgba(15,107,69,.16); border-radius: 999px; padding: 6px 14px 6px 10px; }
       .wl-badgeline img { width: 16px; height: auto; }
       .wl-badgeline span { font-family: var(--font-condensed); font-size: 11.5px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--brand); }
-
-      /* Weight-goal doors */
-      .wl-goals { display: grid; gap: 10px; grid-template-columns: 1fr; margin: 0 0 14px; }
-      @media (min-width: 560px) { .wl-goals { grid-template-columns: repeat(3, 1fr); } }
-      /* !important: beats global.css's a:not([class*="btn"]) rule (0,3,1
-         specificity), same trap as .wl-notsure — this is an <a> too. */
-      /* #8a6a1f, not var(--gold) — the token (#c39a4e) is ~2.6:1 on white,
-         under WCAG AA's 4.5:1 floor for 15px text. This darker gold holds
-         the same family at ~5:1 so the pill reads as clickable. */
-      .wl-goal { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 13px 18px; font-family: var(--font-sans); font-size: 15px; font-weight: 600; color: #8a6a1f !important; cursor: pointer; transition: border-color .15s, transform .15s; }
-      .wl-goal:hover { border-color: var(--brand); }
-      @media (hover: hover) and (prefers-reduced-motion: no-preference) { .wl-goal:hover { transform: translateY(-2px); } }
-      .wl-goal svg { flex: none; color: #8a6a1f; }
-      .wl-notsure { font-size: 14px; color: var(--muted); margin: 0 0 6px; }
-      /* !important: beats global.css's a:not([class*="btn"]) rule (0,3,1
-         specificity) which would otherwise force this link blue. Same
-         contrast fix as .wl-goal above. */
-      .wl-notsure button, .wl-notsure a { background: none; border: none; padding: 0; font: inherit; font-weight: 600; color: #8a6a1f !important; cursor: pointer; text-decoration: none; }
-      .wl-notsure button:hover, .wl-notsure a:hover { text-decoration: underline; }
-      .wl-hero__fineprint { font-family: var(--font-condensed); font-size: 12.5px; color: var(--muted); margin: 0 0 26px; }
 
       .wl-hero__from { font-size: 1rem; margin: 0 0 8px; }
       .wl-hero__from .wl-price { font-size: 1.7rem; }
@@ -768,20 +741,6 @@ const faqs = [
             From <span class="wl-price">$199</span>/month
             <span class="wl-hero__qual">on the 12-month plan · no membership fee, cancel anytime</span>
           </div>
-
-          <p class="wl-eyebrow" style="margin:26px 0 12px;">What's your weight loss goal?</p>
-          <div class="wl-goals">
-            {goals.map((g) => (
-              <a href="/assessment-quiz" class="wl-goal" id={g.id}>
-                {g.label}
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
-              </a>
-            ))}
-          </div>
-          <p class="wl-notsure">
-            Not sure? <a href="/assessment-quiz" id="start-full-assessment">Start the full assessment →</a>
-          </p>
-          <p class="wl-hero__fineprint">Free consultation if you don't qualify. Cancel anytime.</p>
 
           <div class="wl-quote">
             <p>“I tried every diet app imaginable. Nothing stuck until my doctor started me on semaglutide through Freeley. The cravings just… stopped. I'm down 31 lbs and my A1C went from 6.4 to 5.6.”</p>

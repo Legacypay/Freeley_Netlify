@@ -353,20 +353,6 @@
 })();
 
 // =============================================
-// PLAN LADDER SELECT — single-select radio group, same active/inactive
-// class-swap pattern as the medication-toggle buttons above.
-// =============================================
-(function () {
-    const planButtons = document.querySelectorAll('.wl-plans .wl-plans__item');
-    planButtons.forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            planButtons.forEach(function (b) { b.classList.remove('is-selected'); });
-            btn.classList.add('is-selected');
-        });
-    });
-})();
-
-// =============================================
 // Swiper Inits
 // =============================================
 new Swiper(".patient-results .swiper", {
