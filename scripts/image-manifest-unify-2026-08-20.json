@@ -1,0 +1,68 @@
+[
+  {
+    "output": "public/assets/wl/slide-price-tirzepatide.webp",
+    "forceNew": true,
+    "editFrom": "public/assets/wl/slide-price-semaglutide.webp",
+    "width": 900,
+    "height": 1200,
+    "size": "1024x1536",
+    "prompt": "Change the large serif label text 'Semaglutide' to 'Tirzepatide'. Keep absolutely everything else pixel-identical: the same dark green glass vial with matte black cap and brushed silver metal band, the same white 'weight loss' pill badge, the word 'Compounded' above the name, the outlined '2 mL Vial • Multiple doses' pills, 'Rx Only' below, the same centered upright straight-on composition, the same soft natural product shadow, pure white background, and the small green 'Slide for details >>' caption at the bottom."
+  },
+  {
+    "output": "public/assets/l/slide-price-sermorelin.webp",
+    "forceNew": true,
+    "editFrom": "public/assets/l/slide-price-nad.webp",
+    "width": 900,
+    "height": 1200,
+    "size": "1024x1536",
+    "prompt": "Change the large serif label text 'NAD+' to 'Sermorelin'. Keep absolutely everything else pixel-identical: the same slim dark green glass vial with textured black cap and brushed silver band, the cream 'longevity' pill badge, the word 'Compounded' above the name, the outlined '2 mL Vial' and 'Multiple doses' pills, 'Rx Only' below, the same centered upright straight-on composition, the same soft product shadow, pure white background, and the small green italic 'Slide for details >>' caption at the bottom."
+  },
+  {
+    "output": "public/assets/l/slide-price-glutathione.webp",
+    "forceNew": true,
+    "editFrom": "public/assets/l/slide-price-nad.webp",
+    "width": 900,
+    "height": 1200,
+    "size": "1024x1536",
+    "prompt": "Change the large serif label text 'NAD+' to 'Glutathione'. Keep absolutely everything else pixel-identical: the same slim dark green glass vial with textured black cap and brushed silver band, the cream 'longevity' pill badge, the word 'Compounded' above the name, the outlined '2 mL Vial' and 'Multiple doses' pills, 'Rx Only' below, the same centered upright straight-on composition, the same soft product shadow, pure white background, and the small green italic 'Slide for details >>' caption at the bottom."
+  },
+  {
+    "output": "public/assets/sw/slide-price-olympus.webp",
+    "forceNew": true,
+    "editFrom": "public/assets/sw/slide-price-tadalafil.webp",
+    "width": 900,
+    "height": 1200,
+    "size": "1024x1536",
+    "prompt": "Recolor the teal troche tablet to a deep matte burgundy plum color (around #6E3B44). Keep absolutely everything else pixel-identical: the same embossed cursive 'Freeley' logo inside a circle on the top face and on the sides, the same large centered three-quarter-angle composition filling the frame, the same soft natural shadow, pure white background, and the small green 'Slide for details >>' caption at the bottom."
+  },
+  {
+    "output": "public/assets/l/Detox_&_Immunity.png",
+    "forceNew": true,
+    "width": 1024,
+    "height": 1302,
+    "size": "1024x1536",
+    "prompt": "Warm, realistic candid lifestyle stock photograph, no text or graphics: a healthy man and woman in their late 50s in a bright modern home kitchen preparing a fresh green smoothie with citrus fruits, berries and leafy greens, both smiling naturally, soft window daylight, muted earthy tones, shallow depth of field. Natural photography in the exact same editorial stock-photo style as a doctor-and-patient consultation photo — absolutely no studio gradient backgrounds, no cutout look, no CGI."
+  },
+  {
+    "output": "public/assets/l/glutathione-immunity.jpg",
+    "width": 1200,
+    "height": 896,
+    "size": "1536x1024",
+    "prompt": "Warm, realistic candid lifestyle stock photograph, no text or graphics: a fit woman in her late 50s with silver-streaked hair drinking a fresh green detox smoothie on a sunlit patio after light morning exercise, glowing healthy skin, citrus fruits and greens on the table beside her, soft golden morning light, muted earthy tones. Natural editorial stock-photo style — no studio gradients, no cutout look, no CGI."
+  },
+  {
+    "output": "public/assets/howItsWork/Progress Dashboard.png",
+    "size": "1536x1024",
+    "prompt": "Redraw this health-app progress chart mockup as a COMPLETE, well-framed card: one rounded white card, vertically and horizontally centered with generous even cream margin on all sides, containing a full line chart of a gently declining green weight curve with x-axis labels 'Dec', 'Feb', 'Apr' — the entire curve fully visible inside the card, nothing cropped at any edge. Same warm cream background color, same minimal flat style, same green line color, same sans-serif labels. No other elements, no text outside the card."
+  },
+  {
+    "output": "public/assets/howItsWork/Smart Reminders.png",
+    "size": "1536x1024",
+    "prompt": "Redraw this health-app reminders mockup as a COMPLETE, well-framed composition: three stacked rounded reminder rows vertically centered with even cream margin on all sides — first row an orange calendar icon with 'Refill medication' and 'Apr 10', second row a green pill icon with 'Take dose' and 'Today 8:00 PM', third row a blue drop icon with 'Lab check-in' and 'May 2'. Same warm cream background, same minimal flat style, same dark green sans-serif text, nothing cropped at any edge."
+  },
+  {
+    "output": "public/assets/howItsWork/Document Vault.png",
+    "size": "1536x1024",
+    "prompt": "Redraw this health-app document vault mockup as a COMPLETE, well-framed composition: three stacked rounded outlined document rows vertically centered with even cream margin on all sides — 'Prescription', 'Lab Results', and 'Physician Notes', each with the same dark green document icon on the left. Same warm cream background, same minimal outlined flat style, same dark green sans-serif text, nothing cropped at any edge."
+  }
+]
