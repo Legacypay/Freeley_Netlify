@@ -54,8 +54,8 @@
             // Brello-style slides — see tadalafil's comment above.
             images: [
                 "/assets/sw/slide-price-olympus.webp",
-                "/assets/sw/slide-included.webp",
-                "/assets/sw/slide-benefits.webp",
+                "/assets/sw/slide-included-olympus.webp",
+                "/assets/sw/slide-benefits-olympus.webp",
                 "/assets/shared/slide-journey.webp",
                 "/assets/shared/slide-hub.webp"
             ],
