@@ -1,0 +1,12 @@
+[
+  {
+    "output": "public/assets/wl/slide-included-tirzepatide.webp",
+    "editFrom": "public/assets/wl/slide-included.webp",
+    "width": 900,
+    "height": 1200,
+    "size": "1024x1536",
+    "fit": "contain",
+    "background": "#ffffff",
+    "prompt": "One change only: on the vial's label, change the product name 'Semaglutide' to 'Tirzepatide'. Keep absolutely everything else pixel-identical: the complete serif 'What's Included' heading with the gold underline fully visible with margin above it, all four checklist items and their exact text, the dark green vial with black cap, silver band, 'weight loss' badge, 'Compounded', '2mL Vial · Multiple doses', 'Rx Only', the layout and the white background."
+  }
+]

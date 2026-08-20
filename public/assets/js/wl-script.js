@@ -49,7 +49,7 @@
             // Brello-style slides — see semaglutide's comment above.
             images: [
                 "/assets/wl/slide-price-tirzepatide.webp",
-                "/assets/wl/slide-included.webp",
+                "/assets/wl/slide-included-tirzepatide.webp",
                 "/assets/wl/slide-telehealth.webp",
                 "/assets/wl/slide-shipping.webp",
                 "/assets/shared/slide-journey.webp",
