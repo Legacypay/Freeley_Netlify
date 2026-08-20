@@ -127,10 +127,26 @@ const benefits = [
 
 // Plan-details popup sections (see src/components/ProductInfoModal.astro) —
 // `included`/`benefits` above feed this, not the photo carousel.
-const productInfoSections = [
-  { id: 'included', label: 'Included', eyebrow: "What's Included", items: included, image: '/assets/sw/tadalafil-card-included.webp', imageAlt: 'Tadalafil dissolving troches' },
-  { id: 'benefits', label: 'Benefits', eyebrow: 'Why Tadalafil Troches', items: benefits, image: '/assets/sw/tadalafil-card-benefits.webp', imageAlt: 'Tadalafil dissolving troches' },
-];
+//
+// Keyed by medication (bug fix 2026-08-20): this used to be one flat array
+// always showing Tadalafil's photo, even after the toggle switched to
+// Olympus — the modal never read `currentMedication`. Now each medication
+// gets its own modal instance (rendered below, one per key, sw-script.js's
+// switchMedication() shows/hides the matching .pim-wrap). Olympus has no
+// dedicated -card-*.webp photography yet, so its sections simply omit
+// `image`/`imageAlt` — ProductInfoModal already falls back to the plain
+// checklist layout when `image` is unset, which beats showing Tadalafil's
+// troches under Olympus's name.
+const productInfoSectionsByMedication = {
+  tadalafil: [
+    { id: 'included', label: 'Included', eyebrow: "What's Included", items: included, image: '/assets/sw/tadalafil-card-included.webp', imageAlt: 'Tadalafil dissolving troches' },
+    { id: 'benefits', label: 'Benefits', eyebrow: 'Why Tadalafil Troches', items: benefits, image: '/assets/sw/tadalafil-card-benefits.webp', imageAlt: 'Tadalafil dissolving troches' },
+  ],
+  olympus: [
+    { id: 'included', label: 'Included', eyebrow: "What's Included", items: included },
+    { id: 'benefits', label: 'Benefits', eyebrow: 'Why Olympus Troches', items: benefits },
+  ],
+};
 
 const press = [
   { src: '/assets/brands/bloomberg.svg', name: 'Bloomberg' },
@@ -272,14 +288,18 @@ const faqs = [
       @media (min-width: 560px) { .wl-goals { grid-template-columns: repeat(3, 1fr); } }
       /* !important: beats global.css's a:not([class*="btn"]) rule (0,3,1
          specificity), same trap as .wl-notsure — this is an <a> too. */
-      .wl-goal { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 13px 18px; font-family: var(--font-sans); font-size: 15px; font-weight: 600; color: var(--gold) !important; cursor: pointer; transition: border-color .15s, transform .15s; }
+      /* #8a6a1f, not var(--gold) — the token (#c39a4e) is ~2.6:1 on white,
+         under WCAG AA's 4.5:1 floor for 15px text. This darker gold holds
+         the same family at ~5:1 so the pill reads as clickable. */
+      .wl-goal { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 13px 18px; font-family: var(--font-sans); font-size: 15px; font-weight: 600; color: #8a6a1f !important; cursor: pointer; transition: border-color .15s, transform .15s; }
       .wl-goal:hover { border-color: var(--brand); }
       @media (hover: hover) and (prefers-reduced-motion: no-preference) { .wl-goal:hover { transform: translateY(-2px); } }
-      .wl-goal svg { flex: none; color: var(--gold); }
+      .wl-goal svg { flex: none; color: #8a6a1f; }
       .wl-notsure { font-size: 14px; color: var(--muted); margin: 0 0 6px; }
       /* !important: beats global.css's a:not([class*="btn"]) rule (0,3,1
-         specificity) which would otherwise force this link blue. */
-      .wl-notsure button, .wl-notsure a { background: none; border: none; padding: 0; font: inherit; font-weight: 600; color: var(--gold) !important; cursor: pointer; text-decoration: none; }
+         specificity) which would otherwise force this link blue. Same
+         contrast fix as .wl-goal above. */
+      .wl-notsure button, .wl-notsure a { background: none; border: none; padding: 0; font: inherit; font-weight: 600; color: #8a6a1f !important; cursor: pointer; text-decoration: none; }
       .wl-notsure button:hover, .wl-notsure a:hover { text-decoration: underline; }
       .wl-hero__fineprint { font-family: var(--font-condensed); font-size: 12.5px; color: var(--muted); margin: 0 0 26px; }
 
@@ -739,11 +759,15 @@ const faqs = [
           </div>
           <div id="thumbnailsContainerSW"></div>
           <p class="wl-foot" style="margin-top:14px;">Packaging and troche design shown are representative and may change. Your actual medication's appearance and labeling may differ.</p>
-          <ProductInfoModal
-            sections={productInfoSections}
-            idSuffix="SW"
-            triggerLabel="What's Included & Why Tadalafil Troches"
-          />
+          {Object.entries(productInfoSectionsByMedication).map(([medication, sections]) => (
+            <div class="pim-wrap" data-medication={medication} style={medication === 'tadalafil' ? undefined : 'display:none'}>
+              <ProductInfoModal
+                sections={sections}
+                idSuffix={`SW-${medication}`}
+                triggerLabel="What's Included & Why This Product"
+              />
+            </div>
+          ))}
         </div>
 
         <div>
