@@ -33,6 +33,13 @@ import ProductInfoModal from '../components/ProductInfoModal.astro';
 
 const ASSESSMENT = '/assessment-quiz';
 
+// Hair-goal doors — each id is a quiz-modal trigger hl-script.js binds.
+const goals = [
+  { id: 'start-assessment1', label: 'Crown', meta: 'Thinning at the top' },
+  { id: 'start-assessment2', label: 'Hairline', meta: 'A receding hairline', best: true },
+  { id: 'start-assessment3', label: 'All over', meta: 'Overall thinning' },
+];
+
 const trustPoints = [
   'Board-Certified Physicians',
   '503A Licensed Pharmacy',
@@ -307,9 +314,26 @@ const faqs = [
       .wl-badgeline img { width: 16px; height: auto; }
       .wl-badgeline span { font-family: var(--font-condensed); font-size: 11.5px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--brand); }
 
-      .wl-quote { border-left: 2px solid var(--line); padding-left: 18px; margin: 30px 0 0; max-width: 48ch; }
-      .wl-quote p { font-family: var(--font-serif); font-size: 1.08rem; line-height: 1.5; font-style: italic; color: var(--ink); margin: 0 0 8px; }
-      .wl-quote span { font-family: var(--font-condensed); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+      /* Hair-goal doors — card style: label + supporting line + a green
+         arrow badge, so each door reads as more than a plain button. */
+      .wl-goals { display: grid; gap: 10px; grid-template-columns: 1fr; margin: 22px 0 4px; }
+      @media (min-width: 460px) { .wl-goals { grid-template-columns: repeat(3, 1fr); } }
+      .wl-goal { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; position: relative; background: #fff; border: 2px solid var(--line); border-radius: 16px; padding: 15px 40px 14px 16px; font-family: var(--font-sans); cursor: pointer; transition: border-color .15s, box-shadow .15s, transform .15s; text-decoration: none !important; }
+      .wl-goal:hover { border-color: var(--green); box-shadow: 0 10px 24px rgba(18,60,44,.10); }
+      @media (hover: hover) and (prefers-reduced-motion: no-preference) { .wl-goal:hover { transform: translateY(-2px); } }
+      .wl-goal__label { font-size: 15px; font-weight: 700; color: var(--ink) !important; }
+      .wl-goal__meta { font-family: var(--font-condensed); font-size: 11.5px; color: var(--muted) !important; }
+      .wl-goal__arw { position: absolute; right: 14px; top: 15px; width: 22px; height: 22px; border-radius: 999px; background: var(--green); display: grid; place-items: center; }
+      .wl-goal__arw svg { width: 12px; height: 12px; color: #fff; }
+      .wl-goal--best { border-color: var(--gold); }
+      .wl-goal__tag { position: absolute; top: -9px; left: 14px; background: var(--gold); color: var(--green-deep) !important; font-family: var(--font-condensed); font-size: 9.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; }
+
+      .wl-chat { display: flex; gap: 12px; margin: 22px 0 0; max-width: 420px; }
+      .wl-chat__avatar { width: 40px; height: 40px; border-radius: 999px; object-fit: cover; flex-shrink: 0; margin-top: 2px; }
+      .wl-chat__bubble { position: relative; background: #fff; border: 1px solid var(--line); border-radius: 4px 16px 16px 16px; padding: 14px 16px; box-shadow: 0 4px 14px rgba(0,0,0,.05); }
+      .wl-chat__bubble::before { content: ''; position: absolute; left: -7px; top: 14px; width: 12px; height: 12px; background: #fff; border-left: 1px solid var(--line); border-bottom: 1px solid var(--line); transform: rotate(45deg); }
+      .wl-chat__bubble p { font-family: var(--font-sans); font-size: .96rem; line-height: 1.48; color: var(--ink); margin: 0 0 8px; }
+      .wl-chat__bubble span { font-family: var(--font-condensed); font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 
       .wl-hero__from { font-size: 1rem; margin: 0 0 8px; }
       .wl-hero__from .wl-price { font-size: 1.7rem; }
@@ -671,9 +695,23 @@ const faqs = [
             <span class="wl-hero__qual">no membership fee, cancel anytime</span>
           </div>
 
-          <div class="wl-quote">
-            <p>“Around month two the shedding slowed down. By month six, the crown I'd been hiding under a cap was filling back in — my barber was the first to ask what changed.”</p>
-            <span>Verified Freeley patient</span>
+          <p class="wl-eyebrow" style="margin:26px 0 12px;">Where are you losing hair?</p>
+          <div class="wl-goals">
+            {goals.map((g) => (
+              <a href="/assessment-quiz" class={g.best ? 'wl-goal wl-goal--best' : 'wl-goal'} id={g.id}>
+                {g.best && <span class="wl-goal__tag">Most chosen</span>}
+                <span class="wl-goal__label">{g.label}</span>
+                <span class="wl-goal__meta">{g.meta}</span>
+                <span class="wl-goal__arw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg></span>
+              </a>
+            ))}
+          </div>
+          <div class="wl-chat">
+            <img class="wl-chat__avatar" src="/assets/brand/testimonial_2.png" alt="" loading="lazy" />
+            <div class="wl-chat__bubble">
+              <p>“Around month two the shedding slowed down. By month six, the crown I'd been hiding under a cap was filling back in — my barber was the first to ask what changed.”</p>
+              <span>Verified Freeley patient</span>
+            </div>
           </div>
         </div>
       </div>
@@ -730,7 +768,7 @@ const faqs = [
           </div>
           <div class="right">
             <a href="/assessment-quiz" class="wl-btn wl-btn--light" id="start-assessment4">
-              Check if I qualify <span class="wl-arw">→</span>
+              Start my hair regrowth plan <span class="wl-arw">→</span>
             </a>
           </div>
         </div>
@@ -912,7 +950,7 @@ const faqs = [
           </div>
 
           <a href="/assessment-quiz" class="wl-btn" id="start-assessment5" style="width:100%;">
-            Start Your Assessment <span class="wl-arw">→</span>
+            Get my regrowth prescription <span class="wl-arw">→</span>
           </a>
           <p class="wl-foot">Compounded medications are not FDA-approved and are not equivalent to the brand-name drug.</p>
         </div>
@@ -1060,7 +1098,7 @@ const faqs = [
       Feel better,<br /><em>starting today.</em>
       <Fragment slot="subheading">Personalized care for every part of you, from weight to skin, sleep to sexual health.</Fragment>
       <a href="/assessment-quiz" class="wl-btn wl-btn--light" id="start-assessment6" slot="cta">
-        Start Your Assessment <span class="wl-arw">→</span>
+        Start your hair regrowth journey <span class="wl-arw">→</span>
       </a>
     </FinalCta>
 
@@ -1079,11 +1117,19 @@ const faqs = [
       var t = document.querySelector('.wl-journey__timeline');
       if (!t || !matchMedia('(prefers-reduced-motion: no-preference)').matches) return;
       t.classList.add('is-armed');
-      new IntersectionObserver(function (entries) {
-        var seen = entries[0].isIntersecting;
-        if (seen) t.classList.add('is-live');
-        t.classList.toggle('is-idle', !seen);
-      }, { threshold: 0.25 }).observe(t);
+      // WebKit (iOS/macOS Safari) can collapse is-armed + is-live into one
+      // frame when the section is already near/in view at load — it paints
+      // straight to the finished keyframe and the draw never visibly runs.
+      // Forcing a layout read + waiting a frame guarantees the armed
+      // (undrawn) state is painted before the observer can fire.
+      void t.offsetHeight;
+      requestAnimationFrame(function () {
+        new IntersectionObserver(function (entries) {
+          var seen = entries[0].isIntersecting;
+          if (seen) t.classList.add('is-live');
+          t.classList.toggle('is-idle', !seen);
+        }, { threshold: 0.25 }).observe(t);
+      });
     })();
 
     /* Plan ladder: clicking a card selects it (single-select, like a radio
