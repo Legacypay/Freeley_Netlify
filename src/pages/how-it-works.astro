@@ -532,7 +532,10 @@ const safetyCards = [
     // page (see markup above), just no Swiper instance for it anymore.
     new Swiper('.wl-safety-swiper', {
       slidesPerView: 'auto',
-      spaceBetween: 20,
+      spaceBetween: 48,
+      // Only 3 cards — on any viewport wide enough to fit all of them,
+      // center the group instead of pinning it to the left edge.
+      centerInsufficientSlides: true,
       rewind: true,
       autoplay: { delay: 4800, pauseOnMouseEnter: true, disableOnInteraction: false },
       pagination: { el: '.wl-safety-swiper .swiper-pagination', clickable: true },
