@@ -3,6 +3,12 @@
  *
  * Maps Freeley's product keys to MDI offering/compound IDs.
  *
+ * ⚠️ OFFERING CHANGES REQUIRE MDI MEDICAL REVIEW FIRST (2026-08-21 go-live):
+ * Any addition or edit to an offering must be submitted to MDI and approved
+ * by their medical review (typically 5–7 business days) BEFORE the new
+ * offering_id / questionnaire_id is wired in here. Code follows approval,
+ * never the other way around. See docs/MDI_GO_LIVE_OPERATIONS.md §5.
+ *
  * UPDATED 2026-05-06: MDI rebuilt all offerings as Direct-to-Pharmacy (DTP)
  * compounds tied to Strive Pharmacy on 2026-04-21. All original 4/3/26
  * offerings are now INACTIVE. Semaglutide and Tirzepatide are now dose-tiered.

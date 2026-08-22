@@ -56,7 +56,7 @@
 ### Common Patterns
 - Price is always computed server-side from `../../pricing.json` (repo root) in both payment-creation functions — the client never sends a dollar amount, preventing price tampering.
 - MDI product/questionnaire/offering IDs are centralized in `lib/products.js`; functions never hardcode them.
-- Sandbox vs. live MDI environment is controlled by `MDI_LIVE_MODE` env var (`submitQuiz.js`, `retryPendingCases.js`), defaulting to sandbox.
+- Sandbox vs. live MDI environment is decided in one place: `resolveMdiEnvironment({ isTest })` in `lib/mdi-client.js` — live only when `MDI_LIVE_MODE=true` AND the submission isn't a test. `submitQuiz.js`/`savePendingCase.js` accept an optional boolean `is_test` in the body (validated in `lib/validate-quiz.js`) that forces sandbox, and stamp `environment` + `is_test` on both the `mdi-orders` record and any queued `pending-mdi-cases` record. `retryPendingCases.js` honors the stamped `environment` (legacy records without one default to sandbox) and never re-reads `MDI_LIVE_MODE`. `mdiWebhook.js`'s `sendPatientEmail` skips test/sandbox orders. MDI bills every live encounter — see `docs/MDI_GO_LIVE_OPERATIONS.md`.
 - Conversion tracking (Meta CAPI + GA4) is fired server-side post-payment (primarily from `stripeWebhook.js` and `create-authnet-transaction.js`), never trusting client-only pixels, and strips medical content down to a generic "Telehealth Medical Consultation" label for HIPAA safety.
 
 ## Dependencies
