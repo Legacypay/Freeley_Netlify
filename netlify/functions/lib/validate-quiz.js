@@ -118,6 +118,11 @@ function validateQuizSubmission(data) {
     return { ok: false, error: 'social_history must be an object' };
   }
 
+  // Optional test marker — routes the voucher to MDI sandbox (never billed).
+  if (data.is_test != null && typeof data.is_test !== 'boolean') {
+    return { ok: false, error: 'is_test must be a boolean' };
+  }
+
   return { ok: true, value: data };
 }
 

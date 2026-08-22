@@ -14,20 +14,14 @@
  */
 
 const { getStore } = require('@netlify/blobs');
-const { mdiRequest, CORS_HEADERS } = require('./lib/mdi-client');
+const { mdiRequest, resolveMdiEnvironment, CORS_HEADERS } = require('./lib/mdi-client');
 const { PRODUCTS, resolveProductKey } = require('./lib/products');
 const { encryptRecord } = require('./lib/phi-crypto');
 const { validateQuizSubmission } = require('./lib/validate-quiz');
 
 // MDI Partner ID — from the partner portal URL
 const MDI_PARTNER_ID = process.env.MDI_PARTNER_ID || 'f81508d1-3c53-4849-a636-1e9050a68e00';
-
-// MDI Environment IDs — discovered from portal Test Bench "Create Voucher" form.
-// The portal sends environment_id to route vouchers to sandbox vs. live.
-// While not in the documented PostPartnerVoucherRequest schema, the portal
-// clearly uses it and it appears to be required for sandbox/demo voucher creation.
-const MDI_SANDBOX_ENV_ID = '6ab0181e-d52a-488f-a161-d64d576b2eba';
-const MDI_LIVE_ENV_ID = 'b374c499-638d-4e72-b844-4c68fcda2eff';
+const MDI_PORTAL_URL = 'https://partners.mdintegrations.com/partner/' + MDI_PARTNER_ID;
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
@@ -50,6 +44,10 @@ exports.handler = async (event) => {
       return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ error: 'Invalid submission. Please check your inputs and try again.' }) };
     }
     const { patient: patientData, product: productKey, dose, quiz_answers, allergies, current_medications, medical_conditions } = data;
+    // Test submissions are forced to sandbox regardless of MDI_LIVE_MODE —
+    // MDI bills every live encounter not tagged "test case" in the portal.
+    const isTest = data.is_test === true;
+    const TAG = isTest ? '[SUBMIT QUIZ][TEST CASE]' : '[SUBMIT QUIZ]';
 
     // Resolve product key — handles legacy 'semaglutide'/'tirzepatide' keys
     // and dose-tiered lookups (e.g., semaglutide + dose 0.4 → semaglutide-s2)
@@ -73,12 +71,11 @@ exports.handler = async (event) => {
       return { statusCode: 500, headers: CORS_HEADERS, body: JSON.stringify({ error: 'Product configuration error. Please contact support.' }) };
     }
 
-    console.log('[SUBMIT QUIZ] Creating voucher: ' + patientData.email + ' | product: ' + resolvedKey + (productKey !== resolvedKey ? ' (from: ' + productKey + ', dose: ' + dose + ')' : ''));
+    console.log(TAG + ' Creating voucher: ' + patientData.email + ' | product: ' + resolvedKey + (productKey !== resolvedKey ? ' (from: ' + productKey + ', dose: ' + dose + ')' : ''));
 
     // ── Sandbox vs. Live ──
-    // Defaults to SANDBOX while partner status is "Integrating".
-    // Set MDI_LIVE_MODE=true in Netlify env vars once partner is activated.
-    const isDemo = process.env.MDI_LIVE_MODE !== 'true';
+    // Sandbox unless MDI_LIVE_MODE=true in Netlify env vars; tests always sandbox.
+    const env = resolveMdiEnvironment({ isTest });
 
     // ── Build voucher payload ──
     // The /v1/partner/vouchers endpoint is the documented public API.
@@ -87,25 +84,20 @@ exports.handler = async (event) => {
     //
     // For partners in "Integrating" status, the /v1/ endpoint returns 422
     // "Can't create live voucher under the current partner status" regardless of
-    // demo flag. This appears to be a deliberate restriction — API voucher creation
-    // requires "Active" partner status. During integration testing, vouchers can
-    // only be created via the portal's Test Bench UI.
+    // environment. Partner went "Active" on 2026-08-21.
     //
     // The payload below matches the portal's minimal working format:
     // questionnaire_id + environment_id + hold_status (discovered via network intercept).
-    // Once the partner status changes to "Active", this should work without the 422.
-    const environmentId = isDemo ? MDI_SANDBOX_ENV_ID : MDI_LIVE_ENV_ID;
-
     const voucherPayload = {
       questionnaire_id: product.questionnaire_id,
-      environment_id: environmentId,
+      environment_id: env.id,
       hold_status: false,
       // Include offering_id so clinicians know which specific product/dose was ordered
       offering_id: product.offering_id || undefined
     };
 
-    console.log('[SUBMIT QUIZ] Submitting to MDI /v1/partner/vouchers | partner: ' + MDI_PARTNER_ID + ' | demo: ' + isDemo + ' | env: ' + environmentId + ' | questionnaire: ' + product.questionnaire_id);
-    console.log('[SUBMIT QUIZ] Full payload:', JSON.stringify(voucherPayload, null, 2));
+    console.log(TAG + ' Submitting to MDI /v1/partner/vouchers | partner: ' + MDI_PARTNER_ID + ' | env: ' + env.name + ' (' + env.id + ') | questionnaire: ' + product.questionnaire_id);
+    console.log(TAG + ' Full payload:', JSON.stringify(voucherPayload, null, 2));
 
     const result = await mdiRequest(
       'POST',
@@ -118,8 +110,13 @@ exports.handler = async (event) => {
     const voucherId = result.id;
     const patientId = result.patient_id || null;
     const onboardingUrl = 'https://patient.mdintegrations.com?token=' + voucherId;
-    console.log('[SUBMIT QUIZ] Voucher created: ' + voucherId + ' | Patient: ' + (patientId || 'pending-onboarding') + ' | Onboarding: ' + onboardingUrl);
-    console.log('[SUBMIT QUIZ] Full MDI response:', JSON.stringify(result, null, 2));
+    console.log(TAG + ' Voucher created: ' + voucherId + ' | Patient: ' + (patientId || 'pending-onboarding') + ' | Onboarding: ' + onboardingUrl);
+    console.log(TAG + ' Full MDI response:', JSON.stringify(result, null, 2));
+    if (env.name === 'live') {
+      // Loud on purpose: every live voucher is a billable MDI encounter. If this
+      // was manual QA, tag it "test case" in the portal immediately.
+      console.warn('[SUBMIT QUIZ] ⚠️ LIVE VOUCHER CREATED (billable): ' + voucherId + ' — portal: ' + MDI_PORTAL_URL);
+    }
 
     // ── Persist order↔encounter link for support lookups ──
     try {
@@ -138,10 +135,11 @@ exports.handler = async (event) => {
         questionnaire_id: product.questionnaire_id,
         category: product.category,
         onboarding_url: onboardingUrl,
-        environment: isDemo ? 'sandbox' : 'live',
+        environment: env.name,
+        is_test: isTest,
         created_at: new Date().toISOString()
       });
-      console.log('[SUBMIT QUIZ] Order record saved: ' + voucherId);
+      console.log(TAG + ' Order record saved: ' + voucherId);
     } catch (storeErr) {
       // Non-critical — log but don't fail the response
       console.warn('[SUBMIT QUIZ] Failed to save order record (non-critical):', storeErr.message);
@@ -154,7 +152,7 @@ exports.handler = async (event) => {
         await fetch(WEBHOOK_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: patientData.email, phone: patientData.phone_number, timestamp: new Date().toISOString(), source: 'Freeley_Quiz_MDI_Submission', product: resolvedKey, original_product: productKey !== resolvedKey ? productKey : undefined, dose: dose || undefined, mdi_patient_id: patientId, mdi_voucher_id: voucherId })
+          body: JSON.stringify({ email: patientData.email, phone: patientData.phone_number, timestamp: new Date().toISOString(), source: 'Freeley_Quiz_MDI_Submission', product: resolvedKey, original_product: productKey !== resolvedKey ? productKey : undefined, dose: dose || undefined, mdi_patient_id: patientId, mdi_voucher_id: voucherId, environment: env.name, is_test: isTest })
         });
       } catch (e) {
         console.warn('[SUBMIT QUIZ] N8N webhook failed (non-critical):', e.message);
@@ -186,6 +184,9 @@ exports.handler = async (event) => {
         const data = JSON.parse(event.body);
         const retryStore = getStore('pending-mdi-cases');
         const retryKey = 'quiz-' + Date.now() + '-' + (data.patient?.email || 'unknown').replace(/[^a-zA-Z0-9]/g, '_');
+        // Stamp the environment at queue time so retryPendingCases never
+        // silently promotes a sandbox/test submission to live later.
+        const retryEnv = resolveMdiEnvironment({ isTest: data.is_test === true });
         const retryRecord = {
           patient: data.patient,
           product: data.product,
@@ -194,6 +195,8 @@ exports.handler = async (event) => {
           allergies: data.allergies || null,
           current_medications: data.current_medications || null,
           medical_conditions: data.medical_conditions || null,
+          environment: retryEnv.name,
+          is_test: data.is_test === true,
           status: 'pending',
           retry_count: 0,
           original_error: error.message,
