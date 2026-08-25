@@ -99,7 +99,7 @@ const navItems = [
     // single component's own script.
     import { signOut } from '../lib/hub/auth';
     import { setText } from '../lib/hub/dom';
-    import { loadOverviewCases, refreshCaseStatus, loadMedicalRecords, loadBillingHistory } from '../lib/hub/dashboard';
+    import { loadOverviewCases, refreshCaseStatus, refreshOrders, loadMedicalRecords, loadBillingHistory } from '../lib/hub/dashboard';
     // supabase.ts's onAuthStateChange fires its FIRST callback (with any
     // already-persisted session — the normal case on a repeat visit/hard
     // refresh) asynchronously, and can resolve fast enough (no network
@@ -161,7 +161,10 @@ const navItems = [
         panel.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
       }
 
-      if (panelId === 'treatments') refreshCaseStatus();
+      if (panelId === 'treatments') {
+        refreshCaseStatus();
+        refreshOrders();
+      }
       if (panelId === 'records' && !recordsLoaded) {
         recordsLoaded = true;
         loadMedicalRecords();

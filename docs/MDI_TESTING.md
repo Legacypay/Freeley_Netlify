@@ -231,3 +231,47 @@ customers would get demo vouchers.
 3. Add `MDI_ALLOW_LIVE_ORDERS=true` in Netlify (production context) and redeploy.
 4. Watch the first `[SUBMIT QUIZ] … mode: LIVE (live)` log line.
 5. Emergency stop: set `MDI_FORCE_TEST=true` (no code change needed).
+
+## Order & shipment tracking (added 2026-08-25)
+
+MDI's Partner **Orders** API is the only structured source of shipment/tracking
+data — the order webhook payloads carry no `patient_id` and only an unstructured
+`order_details` free-text field (e.g. `"Tracking Number: 101010"`), which is
+deliberately **not** parsed. The six order events below are treated purely as a
+signal to re-fetch `GET /v1/partner/patients/{patient_id}/orders?per_page=50`
+and cache the result on the `mdi-orders` blob record (`orders` field).
+
+| Webhook event | Handled in `mdiWebhook.js` by |
+|---|---|
+| `case_order_created` | `refreshPatientOrders` + `updateOrderStatus` + internal notify |
+| `case_order_updated` | same as above |
+| `case_order_prescription_created` | records `prescription_status`/`case_order_id` only (no email — earlier lifecycle stage than a shipment) |
+| `case_order_prescription_updated` | same as above |
+| `order_status_changed` | `refreshPatientOrders` + `updateOrderStatus` + internal notify |
+| `order_tracking_number_changed` | as above, **plus** the `order_shipped` patient email |
+
+`refreshPatientOrders(order)` resolves the patient from `order.patient_id`
+(backfilled earlier by `case_created`/`patient_created`), maps each MDI order
+down to the fields the hub needs, and drops `billing`/card details — they aren't
+needed and don't belong in blob storage. It fails warn-and-continue like every
+other helper in that file: an order refresh that can't reach MDI must never make
+the webhook 500 and trigger an MDI retry.
+
+PHI rule is unchanged: `notifyInternalWebhook` for these events carries only
+`case_id`/`order_status` — **never** the tracking number, carrier, address or
+patient email. Tracking detail reaches the patient through their own inbox and
+the hub, not Slack. `sendPatientEmail`'s existing test/sandbox short-circuit
+covers the new `order_shipped` email too.
+
+### `getOrders.js` (new function)
+
+`POST /.netlify/functions/getOrders`, Supabase-authenticated like `caseStatus.js`.
+Body `{ patient_id?, case_id?, voucher_id? }` → resolves `patient_id` from the
+`mdi-orders` blob, tries the live MDI order list, and falls back to the cached
+`orders` blob field when the live call fails. Always 200 with
+`{ has_orders, orders[], last_updated }` — "no orders yet" is a normal pending
+state, never a 404/500. `tracking` is `null` (not `{}`) until MDI sets it.
+An **unrecognised** MDI order status maps to a generic "Processing" bucket that
+echoes the raw status in `message`; it is never silently relabelled as
+Shipped/Delivered (unlike `caseStatus.js`, which safely defaults to `created`).
+Unit tests: `tests/unit/get-orders.test.js` (`npm run test:unit`).

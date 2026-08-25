@@ -14,6 +14,7 @@
 
 const { mdiRequest, CORS_HEADERS } = require('./lib/mdi-client');
 const { verifySupabaseToken } = require('./lib/verify-supabase-token');
+const { resolveOwnedOrder } = require('./lib/mdi-order-ownership');
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
@@ -37,6 +38,19 @@ exports.handler = async (event) => {
 
     if (!case_id) {
       return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ error: 'case_id is required.' }) };
+    }
+
+    // ── Ownership check ──────────────────────────────────────────
+    // patient_id/case_id are client-supplied and therefore untrusted — without
+    // this, any authenticated patient could pass another patient's case_id and
+    // read their clinician assignment, prescriptions and clinical notes. Only
+    // proceed once an mdi-orders record for this case_id exists whose `email`
+    // matches the verified Supabase session (see lib/mdi-order-ownership.js).
+    // Never distinguishable from "no records yet" to avoid an enumeration oracle.
+    const owned = await resolveOwnedOrder({ patient_id, case_id }, user.email, '[ENCOUNTER DETAILS]');
+    if (!owned) {
+      console.warn(`[ENCOUNTER DETAILS] case_id ${case_id} not owned by the authenticated user — refusing`);
+      return { statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify({ records: [] }) };
     }
 
     console.log(`[ENCOUNTER DETAILS] Fetching case=${case_id}, patient=${patient_id || 'N/A'}`);

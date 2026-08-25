@@ -23,7 +23,7 @@
 
 const { mdiRequest, CORS_HEADERS } = require('./lib/mdi-client');
 const { verifySupabaseToken } = require('./lib/verify-supabase-token');
-const { getStore } = require('@netlify/blobs');
+const { resolveOwnedOrder } = require('./lib/mdi-order-ownership');
 
 // Map MDI internal statuses to patient-friendly messages
 const STATUS_MAP = {
@@ -111,102 +111,23 @@ exports.handler = async (event) => {
     // ── Step 2: Parse and validate request ──────────────────────
     const { patient_id, case_id, voucher_id } = JSON.parse(event.body);
 
-    let resolvedPatientId = patient_id;
-    let resolvedCaseId = case_id;
-    let resolvedEmail = null; // MDI patient email (may differ from Supabase email)
+    // ── Step 2b: Resolve identifiers from an OWNED blob record ──
+    // patient_id/case_id/voucher_id are client-supplied and therefore untrusted
+    // — without this check, any authenticated patient could pass another
+    // patient's identifiers and read their case status/clinician/offerings.
+    // resolveOwnedOrder only trusts identifiers backed by an mdi-orders record
+    // whose `email` matches the verified Supabase session (lib/mdi-order-ownership.js).
+    // This runs even when case_id/patient_id are supplied directly (not just when
+    // resolving from voucher_id) — a direct client-supplied case_id must never
+    // be trusted on its own.
+    const ownedOrder = await resolveOwnedOrder({ voucher_id, patient_id, case_id }, user.email, '[CASE STATUS]');
 
-    // ── Step 2b: If case_id missing, resolve from blob store ───
-    if (!resolvedCaseId && (voucher_id || resolvedPatientId)) {
-      console.log(`[CASE STATUS] No case_id — resolving from blobs (voucher=${voucher_id || 'N/A'}, patient=${resolvedPatientId || 'N/A'})`);
-      try {
-        const store = getStore('mdi-orders');
-
-        // Fast path: direct voucher_id lookup
-        if (voucher_id) {
-          try {
-            const order = await store.get(voucher_id, { type: 'json' });
-            if (order) {
-              console.log(`[CASE STATUS] Found order by voucher_id: case_id=${order.case_id || 'none'}, status=${order.status}`);
-              resolvedCaseId = order.case_id || null;
-              resolvedPatientId = resolvedPatientId || order.patient_id;
-              resolvedEmail = order.email || null;
-
-              // If no case_id in the blob yet (webhook hasn't fired), return what we have
-              if (!resolvedCaseId) {
-                return {
-                  statusCode: 200,
-                  headers: CORS_HEADERS,
-                  body: JSON.stringify({
-                    status: order.status || 'submitted',
-                    title: 'Submitted for Review',
-                    message: 'Your information has been submitted. A licensed physician will review your case shortly.',
-                    icon: '📝',
-                    case_id: null,
-                    patient_id: resolvedPatientId,
-                    patient_email: resolvedEmail,
-                    voucher_id: voucher_id,
-                    clinician: null,
-                    offerings: [],
-                    last_updated: order.updated_at || order.created_at || null
-                  })
-                };
-              }
-            }
-          } catch (e) {
-            console.warn(`[CASE STATUS] Direct voucher lookup failed: ${e.message}`);
-          }
-        }
-
-        // Fallback: scan by patient_id
-        if (!resolvedCaseId && resolvedPatientId) {
-          try {
-            const { blobs } = await store.list();
-            if (blobs && blobs.length > 0) {
-              for (const blob of blobs) {
-                try {
-                  const order = await store.get(blob.key, { type: 'json' });
-                  if (order && order.patient_id === resolvedPatientId) {
-                    console.log(`[CASE STATUS] Found order by patient_id: ${blob.key}, case_id=${order.case_id || 'none'}`);
-                    resolvedCaseId = order.case_id || null;
-                    resolvedEmail = resolvedEmail || order.email || null;
-                    if (!resolvedCaseId) {
-                      return {
-                        statusCode: 200,
-                        headers: CORS_HEADERS,
-                        body: JSON.stringify({
-                          status: order.status || 'submitted',
-                          title: 'Submitted for Review',
-                          message: 'Your information has been submitted. A licensed physician will review your case shortly.',
-                          icon: '📝',
-                          case_id: null,
-                          patient_id: resolvedPatientId,
-                          patient_email: resolvedEmail,
-                          voucher_id: blob.key,
-                          clinician: null,
-                          offerings: [],
-                          last_updated: order.updated_at || order.created_at || null
-                        })
-                      };
-                    }
-                    break;
-                  }
-                } catch { /* skip */ }
-              }
-            }
-          } catch (e) {
-            console.warn(`[CASE STATUS] Blob scan failed: ${e.message}`);
-          }
-        }
-      } catch (blobErr) {
-        console.warn(`[CASE STATUS] Blob store access failed: ${blobErr.message}`);
-        // Continue — we might still have case_id from the original request
-      }
-    }
-
-    // If we still don't have a case_id, return a "submitted/pending" status
-    // rather than an error — the case may not have been created by MDI yet
-    if (!resolvedCaseId) {
-      console.log(`[CASE STATUS] No case_id resolved — returning pending status`);
+    // No owned record = voucher not redeemed yet, patient not created by MDI
+    // yet, or the caller supplied an identifier that isn't theirs. All three are
+    // handled identically — a normal pending state, not an error, and never
+    // distinguishable from "that's not your case" to avoid an enumeration oracle.
+    if (!ownedOrder) {
+      console.log('[CASE STATUS] No owned order resolved — returning pending status');
       return {
         statusCode: 200,
         headers: CORS_HEADERS,
@@ -216,12 +137,38 @@ exports.handler = async (event) => {
           message: 'Your information has been submitted. A licensed physician will review your case shortly.',
           icon: '📝',
           case_id: null,
-          patient_id: resolvedPatientId || null,
-          patient_email: resolvedEmail,
+          patient_id: null,
+          patient_email: null,
           voucher_id: voucher_id || null,
           clinician: null,
           offerings: [],
           last_updated: new Date().toISOString()
+        })
+      };
+    }
+
+    const resolvedPatientId = ownedOrder.patient_id || null;
+    const resolvedCaseId = ownedOrder.case_id || null;
+    const resolvedEmail = ownedOrder.email || null;
+
+    // Owned record exists but MDI hasn't fired the case_created webhook yet.
+    if (!resolvedCaseId) {
+      console.log('[CASE STATUS] Owned order has no case_id yet — returning pending status');
+      return {
+        statusCode: 200,
+        headers: CORS_HEADERS,
+        body: JSON.stringify({
+          status: ownedOrder.status || 'submitted',
+          title: 'Submitted for Review',
+          message: 'Your information has been submitted. A licensed physician will review your case shortly.',
+          icon: '📝',
+          case_id: null,
+          patient_id: resolvedPatientId,
+          patient_email: resolvedEmail,
+          voucher_id: voucher_id || null,
+          clinician: null,
+          offerings: [],
+          last_updated: ownedOrder.updated_at || ownedOrder.created_at || null
         })
       };
     }

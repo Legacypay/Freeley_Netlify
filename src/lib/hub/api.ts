@@ -22,6 +22,9 @@ export const getCases = (email: string) => authFetch('patientCases', { email });
 export const getCaseStatus = (body: { patient_id?: string; case_id?: string; voucher_id?: string }) =>
   authFetch('caseStatus', body);
 
+export const getOrders = (body: { patient_id?: string; case_id?: string; voucher_id?: string }) =>
+  authFetch('getOrders', body);
+
 export const getMessages = (body: {
   patient_id: string;
   channel: string;

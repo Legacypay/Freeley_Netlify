@@ -16,6 +16,12 @@
  *   - case_processing    → Prescription being processed by DoseSpot
  *   - case_completed     → Prescription confirmed by pharmacy
  *   - offering_submitted → Prescription verified and order being fulfilled
+ *   - case_order_created → Pharmacy order created for the case
+ *   - case_order_updated → Pharmacy order changed (items, amounts, status)
+ *   - case_order_prescription_created → Prescription attached to the pharmacy order
+ *   - case_order_prescription_updated → Prescription on the pharmacy order changed
+ *   - order_status_changed → Order moved between pending/received/ready/fulfilled
+ *   - order_tracking_number_changed → Carrier/tracking number set or changed (shipment)
  *   - voucher_used       → Patient used a voucher
  *   - patient_created    → Patient record created
  *   - patient_modified   → Patient record updated
@@ -25,6 +31,10 @@
  * email_action payloads. N8N routes these to your ESP (SendGrid, Postmark, etc.).
  *
  * Order status is tracked in Netlify Blobs (mdi-orders store, keyed by voucher_id).
+ * The order/shipment events above carry no patient_id and only an unstructured
+ * `order_details` free-text field, so they are treated purely as a signal to
+ * re-fetch the real structured order list from MDI's Partner Orders API
+ * (see refreshPatientOrders) and cache it on the order record for getOrders.js.
  *
  * PHI: internal notifications (notifyInternalWebhook, → n8n → Slack per the MDI
  * partner object's slack_channel_id) intentionally carry only case_id/patient_id
@@ -34,7 +44,7 @@
  * cases/ ..." — i.e. case_id is explicitly the safe identifier to share.
  */
 
-const { verifyWebhookSignature } = require('./lib/mdi-client');
+const { verifyWebhookSignature, mdiRequest } = require('./lib/mdi-client');
 const { tagTestCase } = require('./lib/mdi-tags');
 const { getStore } = require('@netlify/blobs');
 
@@ -215,6 +225,122 @@ exports.handler = async (event) => {
             directions: o.directions
           })),
           action: 'order_fulfillment_started'
+        });
+        break;
+      }
+
+      // ── Pharmacy order created / updated ────────────────────
+      // These carry no patient_id and only free-text order_details, so we use
+      // them as a trigger to pull the real structured order list from MDI.
+      case 'case_order_created':
+      case 'case_order_updated': {
+        console.log(`[MDI WEBHOOK] 📦 ${event_type}: case=${case_id}, order_status=${payload.order_status || 'N/A'}`);
+
+        const orders = await refreshPatientOrders(order);
+
+        await updateOrderStatus(order, payload.order_status || order?.status || 'ordered', {
+          case_id,
+          case_order_id: payload.case_order_id || order?.case_order_id || null,
+          [`${event_type}_at`]: new Date().toISOString(),
+          ...(orders ? { orders } : {})
+        });
+
+        // Report honestly when the refresh failed — otherwise Slack sees
+        // "synced" while the cached order list is actually stale.
+        await notifyInternalWebhook(event_type, {
+          case_id,
+          metadata,
+          order_status: payload.order_status || null,
+          action: orders ? 'pharmacy_order_synced' : 'pharmacy_order_refresh_failed_stale_cache'
+        });
+        break;
+      }
+
+      // ── Prescription attached to the pharmacy order ─────────
+      // Earlier lifecycle stage than a shipment — record it, no patient email.
+      case 'case_order_prescription_created':
+      case 'case_order_prescription_updated': {
+        console.log(`[MDI WEBHOOK] 💊 ${event_type}: case=${case_id}, prescription_status=${payload.prescription_status || 'N/A'}`);
+
+        await updateOrderStatus(order, order?.status || 'processing', {
+          case_id,
+          case_order_id: payload.case_order_id || order?.case_order_id || null,
+          prescription_status: payload.prescription_status || null,
+          [`${event_type}_at`]: new Date().toISOString()
+        });
+
+        await notifyInternalWebhook(event_type, {
+          case_id,
+          metadata,
+          prescription_status: payload.prescription_status || null,
+          action: 'prescription_status_recorded'
+        });
+        break;
+      }
+
+      // ── Order status moved (pending → received → ready → fulfilled) ──
+      case 'order_status_changed': {
+        console.log(`[MDI WEBHOOK] 🔁 Order STATUS CHANGED: case=${case_id}, order_status=${payload.order_status || 'N/A'}`);
+
+        const orders = await refreshPatientOrders(order);
+
+        await updateOrderStatus(order, payload.order_status || order?.status || 'ordered', {
+          case_id,
+          order_status_changed_at: new Date().toISOString(),
+          ...(orders ? { orders } : {})
+        });
+
+        await notifyInternalWebhook('order_status_changed', {
+          case_id,
+          metadata,
+          order_status: payload.order_status || null,
+          action: orders ? 'order_status_synced' : 'order_status_refresh_failed_stale_cache'
+        });
+        break;
+      }
+
+      // ── Tracking number set/changed → the order actually shipped ──
+      case 'order_tracking_number_changed': {
+        console.log(`[MDI WEBHOOK] 🚚 Order TRACKING CHANGED: case=${case_id}`);
+
+        const orders = await refreshPatientOrders(order);
+        const alreadyEmailed = Boolean(order?.order_shipped_email_sent_at);
+
+        await updateOrderStatus(order, payload.order_status || 'shipped', {
+          case_id,
+          shipped_at: new Date().toISOString(),
+          ...(orders ? { orders } : {}),
+          // MDI can fire this event more than once for the same order (a carrier
+          // correction, a webhook redelivery); only ever email the patient once,
+          // mirroring the test_tagged_at once-only guard used elsewhere in this file.
+          ...(alreadyEmailed ? {} : { order_shipped_email_sent_at: new Date().toISOString() })
+        });
+
+        if (!alreadyEmailed) {
+          // Patient's own inbox — safe to point them at the hub for tracking detail.
+          await sendPatientEmail(order, 'order_shipped', {
+            subject: 'Your order has shipped!',
+            template: 'order_shipped',
+            data: {
+              first_name: order?.first_name || 'there',
+              product: order?.product_key || 'your treatment',
+              case_id,
+              portal_url: 'https://freeley.com/hub'
+            }
+          });
+        } else {
+          console.log(`[MDI WEBHOOK] Skipping duplicate order_shipped email for case ${case_id} — already sent`);
+        }
+
+        // NOTE: tracking number / carrier are deliberately NOT sent here — the
+        // internal notification lands in Slack and must stay opaque-ID-only.
+        await notifyInternalWebhook('order_tracking_number_changed', {
+          case_id,
+          metadata,
+          order_status: payload.order_status || null,
+          action: alreadyEmailed
+            ? 'order_shipped_email_skipped_duplicate'
+            : (orders ? 'order_shipped_email_sent' : 'order_shipped_email_sent_refresh_failed_stale_cache')
         });
         break;
       }
@@ -437,8 +563,78 @@ async function maybeTagTestCase(order, caseId) {
 
 
 // ═══════════════════════════════════════════════════════════════
+// Helper: Re-fetch the real order list from MDI's Partner Orders API
+// ═══════════════════════════════════════════════════════════════
+// The order/shipment webhook events carry no patient_id and only an
+// unstructured order_details string ("Tracking Number: 101010"), so the only
+// reliable source of structured tracking data is the API itself. The order
+// record already has patient_id backfilled by this point (case_created /
+// patient_created fired earlier), so we use that.
+//
+// Returns the mapped order list, or null if it could not be fetched — callers
+// spread it into updateOrderStatus's extraFields only when non-null so a
+// failure never wipes a previously cached list. Billing/card details are
+// dropped: the hub doesn't need them, and they don't belong in blob storage.
+
+async function refreshPatientOrders(order) {
+  const patientId = order?.patient_id;
+  if (!patientId) {
+    console.warn('[MDI WEBHOOK] Cannot refresh orders — no patient_id on the order record');
+    return null;
+  }
+
+  try {
+    const response = await mdiRequest('GET', `/v1/partner/patients/${patientId}/orders?per_page=50`);
+    const data = (response && Array.isArray(response.data)) ? response.data : [];
+
+    const orders = data.map(o => ({
+      id: o.id || null,
+      order_number: o.order_number || null,
+      status: o.status || null,
+      payment_status: o.payment_status || null,
+      total_amount: o.total_amount != null ? o.total_amount : null,
+      case_id: o.case_id || null,
+      case_order_id: o.case_order_id || null,
+      tracking: o.tracking
+        ? {
+            number: o.tracking.number || null,
+            company: o.tracking.company || null,
+            link: o.tracking.link || null
+          }
+        : null,
+      products: (o.products || []).map(p => ({
+        name: p.name || null,
+        image_url: p.image_url || null,
+        amount: p.amount != null ? p.amount : 1
+      })),
+      order_created_at: o.order_created_at || o.created_at || null,
+      cancelled_at: o.cancelled_at || null,
+      updated_at: o.updated_at || null
+    }));
+
+    console.log(`[MDI WEBHOOK] 🔄 Refreshed ${orders.length} order(s) for patient ${patientId}`);
+    return orders;
+  } catch (err) {
+    console.warn(`[MDI WEBHOOK] Order refresh failed (non-critical): ${err.message}`);
+    return null;
+  }
+}
+
+
+// ═══════════════════════════════════════════════════════════════
 // Helper: Update order status in Netlify Blobs
 // ═══════════════════════════════════════════════════════════════
+
+// Optimistic-concurrency write: order/shipment events (case_order_created,
+// order_status_changed, order_tracking_number_changed, ...) can plausibly
+// arrive for the same voucher within milliseconds of each other. A plain
+// read-modify-write would let the slower of two concurrent webhook
+// invocations silently clobber the faster one's status_history entry / cached
+// orders list. We re-read the blob (with its etag) at write time — not the
+// possibly-stale `order` snapshot the caller looked up earlier in this
+// request — and retry with a fresh read if another writer won the race
+// (`setJSON`'s `onlyIfMatch` returns `{modified:false}` rather than throwing).
+const UPDATE_ORDER_STATUS_MAX_ATTEMPTS = 3;
 
 async function updateOrderStatus(order, status, extraFields = {}) {
   if (!order || !order._voucher_id) {
@@ -446,26 +642,43 @@ async function updateOrderStatus(order, status, extraFields = {}) {
     return;
   }
 
-  try {
-    const store = getStore('mdi-orders');
-    const updated = {
-      ...order,
-      status,
-      ...extraFields,
-      updated_at: new Date().toISOString(),
-      status_history: [
-        ...(order.status_history || []),
-        { status, timestamp: new Date().toISOString() }
-      ]
-    };
-    // Remove internal lookup key before persisting
-    delete updated._voucher_id;
+  const voucherId = order._voucher_id;
+  const store = getStore('mdi-orders');
 
-    await store.setJSON(order._voucher_id, updated);
-    console.log(`[MDI WEBHOOK] Order ${order._voucher_id} status updated: ${status}`);
-  } catch (err) {
-    console.warn(`[MDI WEBHOOK] Failed to update order status (non-critical): ${err.message}`);
+  for (let attempt = 1; attempt <= UPDATE_ORDER_STATUS_MAX_ATTEMPTS; attempt++) {
+    try {
+      const current = await store.getWithMetadata(voucherId, { type: 'json' });
+      const base = current?.data || order; // key vanished mid-request — fall back to the caller's snapshot
+
+      const updated = {
+        ...base,
+        status,
+        ...extraFields,
+        updated_at: new Date().toISOString(),
+        status_history: [
+          ...(base.status_history || []),
+          { status, timestamp: new Date().toISOString() }
+        ]
+      };
+      delete updated._voucher_id;
+
+      const result = await store.setJSON(
+        voucherId,
+        updated,
+        current?.etag ? { onlyIfMatch: current.etag } : undefined
+      );
+
+      if (result.modified !== false) {
+        console.log(`[MDI WEBHOOK] Order ${voucherId} status updated: ${status}` + (attempt > 1 ? ` (attempt ${attempt})` : ''));
+        return;
+      }
+      console.warn(`[MDI WEBHOOK] Order ${voucherId} write conflict on attempt ${attempt} — re-reading and retrying`);
+    } catch (err) {
+      console.warn(`[MDI WEBHOOK] Failed to update order status (non-critical): ${err.message}`);
+      return;
+    }
   }
+  console.warn(`[MDI WEBHOOK] Order ${voucherId} status update abandoned after ${UPDATE_ORDER_STATUS_MAX_ATTEMPTS} conflicting writes — a concurrent webhook won`);
 }
 
 

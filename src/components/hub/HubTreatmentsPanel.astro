@@ -44,6 +44,31 @@
       <p>No active treatments found. <a href="/assessment-quiz" style="color:var(--brand); font-weight:700;">Take the quiz</a> to get started.</p>
     </div>
   </div>
+
+  <div class="hub-card">
+    <div class="hub-card__head">
+      <div>
+        <span class="hub-eyebrow hub-card__kicker">Fulfillment</span>
+        <h3>Orders &amp; Shipment</h3>
+      </div>
+      <!-- Lives in the card head rather than inside #mdi-order-card so it
+           stays reachable while the empty state is showing. -->
+      <button type="button" class="hub-btn hub-btn--outline hub-btn--sm" id="mdi-order-refresh" title="Refresh"><span class="hub-btn__ic"><i class="ri-refresh-line" aria-hidden="true"></i></span> Refresh</button>
+    </div>
+
+    <div id="mdi-order-card" class="hub-orders">
+      <div id="mdi-order-list"></div>
+      <div class="hub-status__pills">
+        <div class="hub-status__pill" id="mdi-order-updated"></div>
+      </div>
+    </div>
+
+    <div id="mdi-order-empty" class="hub-empty hub-empty--dashed">
+      <i class="ri-truck-line"></i>
+      <p>No orders yet.</p>
+      <p>Your prescription ships once a physician approves your treatment.</p>
+    </div>
+  </div>
 </div>
 
 <style>
@@ -63,11 +88,36 @@
   .hub-status__clinician-role { font-size: 12px; color: var(--muted); font-family: var(--font-condensed); letter-spacing: .03em; }
   .hub-status__pills { margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap; }
   .hub-status__pill { font-family: var(--font-condensed); font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; background: #fff; border: 1px solid var(--line); padding: 4px 12px; border-radius: 999px; color: var(--muted); }
+  .hub-orders { display: none; }
+</style>
+
+<style is:global>
+  /* Order rows are injected by refreshOrders() via innerHTML, so they can
+     never carry Astro's scoping attribute (it's only stamped on build-time
+     markup) — same reason HubBillingPanel/HubChatWidget go global. Anything
+     already global (.hub-btn, .hub-badge in styles/hub.css) is reused as-is. */
+  .hub-order { border: 1px solid var(--line); border-radius: 16px; padding: 20px; background: #fff; }
+  .hub-order + .hub-order { margin-top: 14px; }
+  .hub-order__row { display: flex; align-items: center; gap: 14px; }
+  .hub-order__icon { font-size: 20px; line-height: 1; width: 44px; height: 44px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: var(--cream); border: 1px solid var(--line); border-radius: 12px; }
+  .hub-order__title { font-family: var(--font-serif); font-weight: 600; font-size: 16px; color: var(--ink); }
+  .hub-order__number { font-family: var(--font-condensed); font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
+  .hub-order__badge { margin-left: auto; flex-shrink: 0; }
+  .hub-order__msg { font-size: 13.5px; color: var(--ink); line-height: 1.6; margin-top: 14px; }
+  .hub-order__products { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+  .hub-order__product { display: flex; align-items: center; gap: 9px; background: var(--cream); border: 1px solid var(--line); border-radius: 999px; padding: 4px 14px 4px 4px; font-size: 13px; color: var(--ink); }
+  .hub-order__product img { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; background: #fff; flex-shrink: 0; }
+  .hub-order__tracking { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); }
+  .hub-order__carrier { font-family: var(--font-condensed); font-size: 12.5px; letter-spacing: .03em; color: var(--muted); }
+  .hub-order__meta { margin-top: 12px; font-size: 12.5px; color: var(--muted); }
 </style>
 
 <script>
-  import { refreshCaseStatus } from '../../lib/hub/dashboard';
+  import { refreshCaseStatus, refreshOrders } from '../../lib/hub/dashboard';
 
   const refreshBtn = document.getElementById('hubRefreshStatus');
   if (refreshBtn) refreshBtn.addEventListener('click', () => refreshCaseStatus());
+
+  const orderRefreshBtn = document.getElementById('mdi-order-refresh');
+  if (orderRefreshBtn) orderRefreshBtn.addEventListener('click', () => refreshOrders());
 </script>

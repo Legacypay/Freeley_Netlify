@@ -2,7 +2,7 @@
 // inline in hub.astro's big script, plus the old public/hub-tabs.js).
 import { setText, escapeHtml } from './dom';
 import { PRODUCT_NAMES, PRODUCT_IMG } from './products';
-import { getCases, getCaseStatus, getMessages, getEncounterDetails, getBillingHistory } from './api';
+import { getCases, getCaseStatus, getOrders, getMessages, getEncounterDetails, getBillingHistory } from './api';
 
 export async function refreshCaseStatus(): Promise<void> {
   const patientId = sessionStorage.getItem('freeley_patient_id');
@@ -79,6 +79,142 @@ function updateOverviewFromCaseStatus(data: any, product: string | null): void {
   setText('overview-product-desc', data.title || 'Under Review');
   setText('overview-updated', data.message || '');
   setText('overview-status-badge', data.title || 'Active');
+}
+
+// Orders & Shipment card, sibling of the case-status card above and driven
+// by the same sessionStorage identifiers. An empty `orders` array is a normal
+// state (voucher not redeemed / nothing shipped yet), not an error — it shows
+// the empty state, same as a failed request.
+export async function refreshOrders(): Promise<void> {
+  const patientId = sessionStorage.getItem('freeley_patient_id');
+  const caseId = sessionStorage.getItem('freeley_case_id');
+  const voucherId = sessionStorage.getItem('freeley_voucher_id');
+  const orderCard = document.getElementById('mdi-order-card');
+  const orderList = document.getElementById('mdi-order-list');
+  const orderEmpty = document.getElementById('mdi-order-empty');
+  const orderUpdated = document.getElementById('mdi-order-updated');
+
+  if (!patientId && !voucherId) {
+    if (orderCard) orderCard.style.display = 'none';
+    if (orderEmpty) orderEmpty.style.display = 'block';
+    return;
+  }
+
+  try {
+    const reqBody: Record<string, string> = {};
+    if (patientId) reqBody.patient_id = patientId;
+    if (caseId) reqBody.case_id = caseId;
+    if (voucherId) reqBody.voucher_id = voucherId;
+
+    const res = await getOrders(reqBody);
+    const data = await res.json();
+    // A 401 here means the Supabase session went stale — same fallback as a
+    // missing case in refreshCaseStatus(): drop back to the empty state.
+    if (!res.ok) {
+      if (orderCard) orderCard.style.display = 'none';
+      if (orderEmpty) orderEmpty.style.display = 'block';
+      return;
+    }
+
+    const orders = Array.isArray(data.orders) ? data.orders : [];
+    if (!data.has_orders || !orders.length) {
+      if (orderCard) orderCard.style.display = 'none';
+      if (orderEmpty) orderEmpty.style.display = 'block';
+      return;
+    }
+
+    let html = '';
+    orders.forEach((order: any) => {
+      const statusRaw = order.status || '';
+      // getOrders normalises MDI's open-string status to a fixed set:
+      // pending|received|processing|ready|shipped|delivered|cancelled|failed.
+      // Everything not called out here keeps the neutral in-progress badge.
+      const statusClass =
+        statusRaw === 'shipped' || statusRaw === 'delivered'
+          ? ' hub-badge--ok'
+          : statusRaw === 'cancelled' || statusRaw === 'failed'
+            ? ' hub-badge--bad'
+            : '';
+      const statusLabel = statusRaw.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase());
+
+      html += '<div class="hub-order">';
+      html += '<div class="hub-order__row"><div class="hub-order__icon">' + escapeHtml(order.icon || '📦') + '</div>';
+      html += '<div><div class="hub-order__title">' + escapeHtml(order.title || 'Order Update') + '</div>';
+      html +=
+        '<div class="hub-order__number">' +
+        escapeHtml(order.order_number ? 'Order ' + order.order_number : 'Order') +
+        '</div></div>';
+      if (statusLabel)
+        html += '<span class="hub-badge hub-order__badge' + statusClass + '">' + escapeHtml(statusLabel) + '</span>';
+      html += '</div>';
+
+      if (order.message) html += '<div class="hub-order__msg">' + escapeHtml(order.message) + '</div>';
+
+      const products = Array.isArray(order.products) ? order.products : [];
+      if (products.length) {
+        html += '<div class="hub-order__products">';
+        products.forEach((p: any) => {
+          // The order's own product name is already a display name from MDI,
+          // not one of PRODUCT_NAMES' internal keys, so it renders as-is.
+          html +=
+            '<div class="hub-order__product"><img src="' +
+            escapeHtml(p.image_url || '/assets/brand/semag_transparent.png') +
+            '" alt="" loading="lazy" decoding="async" /><span>' +
+            escapeHtml(p.name || 'Treatment') +
+            (Number(p.amount) > 1 ? ' &times;' + escapeHtml(String(p.amount)) : '') +
+            '</span></div>';
+        });
+        html += '</div>';
+      }
+
+      const tracking = order.tracking;
+      if (tracking && (tracking.number || tracking.link)) {
+        html += '<div class="hub-order__tracking">';
+        if (tracking.number)
+          html +=
+            '<span class="hub-order__carrier">' +
+            escapeHtml((tracking.company ? tracking.company + ' ' : '') + tracking.number) +
+            '</span>';
+        if (tracking.link)
+          html +=
+            '<a class="hub-btn hub-btn--outline hub-btn--sm" href="' +
+            escapeHtml(tracking.link) +
+            '" target="_blank" rel="noopener noreferrer"><span class="hub-btn__ic"><i class="ri-truck-line" aria-hidden="true"></i></span> Track package</a>';
+        html += '</div>';
+      }
+
+      const orderedAt = order.ordered_at || order.updated_at;
+      if (orderedAt) {
+        const d = new Date(orderedAt);
+        html +=
+          '<div class="hub-order__meta">Ordered ' +
+          d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) +
+          (order.total_amount != null ? ' - $' + Number(order.total_amount).toFixed(2) : '') +
+          '</div>';
+      }
+
+      html += '</div>';
+    });
+
+    if (orderList) orderList.innerHTML = html;
+    if (orderCard) orderCard.style.display = 'block';
+    if (orderEmpty) orderEmpty.style.display = 'none';
+
+    if (orderUpdated) {
+      if (data.last_updated) {
+        const d = new Date(data.last_updated);
+        orderUpdated.textContent =
+          'Updated ' + d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        orderUpdated.style.display = 'block';
+      } else {
+        orderUpdated.style.display = 'none';
+      }
+    }
+  } catch (e) {
+    console.warn('[Hub] getOrders call failed:', e);
+    if (orderCard) orderCard.style.display = 'none';
+    if (orderEmpty) orderEmpty.style.display = 'block';
+  }
 }
 
 export async function loadLatestProviderMessage(): Promise<void> {
