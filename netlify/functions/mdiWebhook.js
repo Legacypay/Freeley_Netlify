@@ -22,9 +22,17 @@
  * email_action payloads. N8N routes these to your ESP (SendGrid, Postmark, etc.).
  *
  * Order status is tracked in Netlify Blobs (mdi-orders store, keyed by voucher_id).
+ *
+ * PHI: internal notifications (notifyInternalWebhook, → n8n → Slack per the MDI
+ * partner object's slack_channel_id) intentionally carry only case_id/patient_id
+ * (opaque UUIDs) — never patient_email or message content. Per MD Integrations'
+ * go-live guidance (2026-08-21): "Do not share any patient-identifiable
+ * information [in Slack]. The encounter ID is what comes in the URL after
+ * cases/ ..." — i.e. case_id is explicitly the safe identifier to share.
  */
 
 const { verifyWebhookSignature } = require('./lib/mdi-client');
+const { tagTestCase } = require('./lib/mdi-tags');
 const { getStore } = require('@netlify/blobs');
 
 exports.handler = async (event) => {
@@ -58,7 +66,19 @@ exports.handler = async (event) => {
     // ── Step 3: Look up order record (best-effort) ────────────
     // Order records are keyed by voucher_id in the mdi-orders blob store.
     // We search by patient_id or case_id from the webhook metadata.
-    const order = await lookupOrder(patient_id, case_id, metadata);
+    const order = await lookupOrder(patient_id, case_id, metadata, payload.voucher_id || payload.partner_voucher_id);
+
+    // ── Step 3a: Backfill patient_id / case_id on the order record ──
+    // Freshly created vouchers have neither (patient is created at onboarding), so
+    // later lookups by patient_id/case_id would fail. Persist them on first sight.
+    await backfillOrderIds(order, patient_id, case_id);
+
+    // ── Step 3b: Tag test orders as "test-case" in MDI ────────
+    // Test orders that run the full flow (MDI_TEST_FULL_FLOW=true) create a real
+    // encounter; MDI asks partners to tag those so they are not billed. The tag can
+    // only be attached once a case_id exists, so we do it here, once, on any event
+    // carrying a case_id. Mutates `order` so later updateOrderStatus() persists it.
+    await maybeTagTestCase(order, case_id);
 
     // ── Step 4: Handle each event type ────────────────────────
     switch (event_type) {
@@ -89,7 +109,6 @@ exports.handler = async (event) => {
 
         await notifyInternalWebhook('case_approved', {
           case_id,
-          patient_email: order?.email,
           metadata,
           action: 'case_approved_email_sent'
         });
@@ -120,7 +139,6 @@ exports.handler = async (event) => {
 
         await notifyInternalWebhook('case_waiting', {
           case_id,
-          patient_email: order?.email,
           metadata,
           action: 'patient_info_requested_email_sent'
         });
@@ -138,7 +156,6 @@ exports.handler = async (event) => {
 
         await notifyInternalWebhook('case_processing', {
           case_id,
-          patient_email: order?.email,
           metadata,
           action: 'update_order_status'
         });
@@ -167,7 +184,6 @@ exports.handler = async (event) => {
 
         await notifyInternalWebhook('case_completed', {
           case_id,
-          patient_email: order?.email,
           metadata,
           action: 'prescription_ready_email_sent'
         });
@@ -192,7 +208,6 @@ exports.handler = async (event) => {
 
         await notifyInternalWebhook('offering_submitted', {
           case_id,
-          patient_email: order?.email,
           metadata,
           offerings: offerings.map(o => ({
             id: o.case_offering_id,
@@ -238,9 +253,8 @@ exports.handler = async (event) => {
           await notifyInternalWebhook('message_from_clinician', {
             patient_id,
             case_id,
-            patient_email: order?.email,
             sender_type: senderType,
-            message_preview: messagePreview,
+            // NOTE: message_preview is intentionally omitted too — message content is PHI.
             action: 'clinician_message_email_sent'
           });
         } else {
@@ -265,7 +279,6 @@ exports.handler = async (event) => {
         await notifyInternalWebhook(event_type, {
           case_id,
           patient_id,
-          patient_email: order?.email,
           metadata,
           action: 'case_status_updated'
         });
@@ -308,9 +321,22 @@ exports.handler = async (event) => {
 // gives us case_id and/or patient_id, so we iterate to find a match.
 // This is O(n) over orders but the store is small (hundreds, not millions).
 
-async function lookupOrder(patientId, caseId, metadata) {
+async function lookupOrder(patientId, caseId, metadata, voucherId) {
   try {
     const store = getStore('mdi-orders');
+
+    // Fastest path: the event carries the voucher id, which is our blob key.
+    if (voucherId) {
+      try {
+        const order = await store.get(voucherId, { type: 'json' });
+        if (order) {
+          console.log(`[MDI WEBHOOK] Order found by voucher_id: ${voucherId}`);
+          order._voucher_id = voucherId;
+          return order;
+        }
+      } catch { /* not found, continue search */ }
+    }
+
     const { blobs } = await store.list();
 
     if (!blobs || blobs.length === 0) {
@@ -318,8 +344,8 @@ async function lookupOrder(patientId, caseId, metadata) {
       return null;
     }
 
-    // Check if metadata contains voucher_id directly (fastest path)
-    const metaVoucherId = metadata?.voucher_id || metadata?.voucher_token;
+    // Check if metadata contains voucher_id directly (metadata may be a string per docs)
+    const metaVoucherId = metadata && typeof metadata === 'object' ? (metadata.voucher_id || metadata.voucher_token) : null;
     if (metaVoucherId) {
       try {
         const order = await store.get(metaVoucherId, { type: 'json' });
@@ -358,6 +384,55 @@ async function lookupOrder(patientId, caseId, metadata) {
   } catch (err) {
     console.warn(`[MDI WEBHOOK] Order lookup failed (non-critical): ${err.message}`);
     return null;
+  }
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// Helper: Persist patient_id / case_id on first sight
+// ═══════════════════════════════════════════════════════════════
+
+async function backfillOrderIds(order, patientId, caseId) {
+  if (!order || !order._voucher_id) return;
+  const changes = {};
+  if (patientId && !order.patient_id) changes.patient_id = patientId;
+  if (caseId && !order.case_id) changes.case_id = caseId;
+  if (Object.keys(changes).length === 0) return;
+  Object.assign(order, changes);
+  try {
+    const store = getStore('mdi-orders');
+    const persisted = { ...order };
+    delete persisted._voucher_id;
+    await store.setJSON(order._voucher_id, persisted);
+    console.log(`[MDI WEBHOOK] Order ${order._voucher_id} backfilled: ${Object.keys(changes).join(', ')}`);
+  } catch (err) {
+    console.warn(`[MDI WEBHOOK] Backfill failed (non-critical): ${err.message}`);
+  }
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// Helper: Attach the "test-case" tag to test orders (once)
+// ═══════════════════════════════════════════════════════════════
+
+async function maybeTagTestCase(order, caseId) {
+  if (!order || !order._voucher_id || !caseId) return;
+  if (order.is_test !== true || order.demo === true) return; // demo vouchers never create a case
+  if (order.test_tagged_at) return;                          // already tagged
+
+  try {
+    await tagTestCase(caseId, 'Freeley test order (' + (order.test_reason || 'test') + ') — voucher ' + order._voucher_id);
+    order.test_tagged_at = new Date().toISOString();
+    order.case_id = order.case_id || caseId;
+
+    const store = getStore('mdi-orders');
+    const persisted = { ...order };
+    delete persisted._voucher_id;
+    await store.setJSON(order._voucher_id, persisted);
+    console.log(`[MDI WEBHOOK] 🏷️ Test-case tag recorded for order ${order._voucher_id} / case ${caseId}`);
+  } catch (err) {
+    // Non-critical: the "TEST CASE |" metadata on the voucher is the first line of defence.
+    console.warn(`[MDI WEBHOOK] Failed to tag test case ${caseId} (non-critical): ${err.message}`);
   }
 }
 

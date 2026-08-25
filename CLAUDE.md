@@ -32,7 +32,7 @@ npx playwright test tests/e2e/checkout-and-waitlist.spec.ts
 npx playwright test -g "some test name"
 ```
 
-`npm test` is an unconfigured stub (`exit 1`) — there is no unit test suite. `npm run build` is the primary regression check for `src/` changes (Astro/TypeScript errors surface there).
+`npm test` / `npm run test:unit` runs the small `node --test` suite in `tests/unit/` (currently the MDI voucher/tag helpers in `netlify/functions/lib/`). `npm run build` is the primary regression check for `src/` changes (Astro/TypeScript errors surface there). `npm run mdi:verify` probes the MDI environment with a non-billable demo voucher (see `docs/MDI_TESTING.md`).
 
 ## Architecture
 

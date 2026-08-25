@@ -18,16 +18,10 @@ const { mdiRequest, CORS_HEADERS } = require('./lib/mdi-client');
 const { PRODUCTS, resolveProductKey } = require('./lib/products');
 const { encryptRecord } = require('./lib/phi-crypto');
 const { validateQuizSubmission } = require('./lib/validate-quiz');
+const { resolveTestMode, buildVoucherPayload, parseVoucherResponse, demoMismatch } = require('./lib/mdi-voucher');
 
 // MDI Partner ID — from the partner portal URL
 const MDI_PARTNER_ID = process.env.MDI_PARTNER_ID || 'f81508d1-3c53-4849-a636-1e9050a68e00';
-
-// MDI Environment IDs — discovered from portal Test Bench "Create Voucher" form.
-// The portal sends environment_id to route vouchers to sandbox vs. live.
-// While not in the documented PostPartnerVoucherRequest schema, the portal
-// clearly uses it and it appears to be required for sandbox/demo voucher creation.
-const MDI_SANDBOX_ENV_ID = '6ab0181e-d52a-488f-a161-d64d576b2eba';
-const MDI_LIVE_ENV_ID = 'b374c499-638d-4e72-b844-4c68fcda2eff';
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
@@ -75,36 +69,21 @@ exports.handler = async (event) => {
 
     console.log('[SUBMIT QUIZ] Creating voucher: ' + patientData.email + ' | product: ' + resolvedKey + (productKey !== resolvedKey ? ' (from: ' + productKey + ', dose: ' + dose + ')' : ''));
 
-    // ── Sandbox vs. Live ──
-    // Defaults to SANDBOX while partner status is "Integrating".
-    // Set MDI_LIVE_MODE=true in Netlify env vars once partner is activated.
-    const isDemo = process.env.MDI_LIVE_MODE !== 'true';
+    // ── Test vs. Live ──
+    // SAFE BY DEFAULT: vouchers are test vouchers (demo:true + "TEST CASE" metadata)
+    // unless MDI_LIVE_MODE=true AND MDI_ALLOW_LIVE_ORDERS=true. MDI bills every
+    // un-tagged live encounter — see lib/mdi-voucher.js and docs/MDI_TESTING.md.
+    const testMode = resolveTestMode({ email: patientData.email });
 
-    // ── Build voucher payload ──
-    // The /v1/partner/vouchers endpoint is the documented public API.
-    // The portal's Test Bench uses /web/partners/{id}/vouchers (session auth only —
-    // returns 401 with OAuth2 Bearer tokens, confirmed 2026-05-11).
-    //
-    // For partners in "Integrating" status, the /v1/ endpoint returns 422
-    // "Can't create live voucher under the current partner status" regardless of
-    // demo flag. This appears to be a deliberate restriction — API voucher creation
-    // requires "Active" partner status. During integration testing, vouchers can
-    // only be created via the portal's Test Bench UI.
-    //
-    // The payload below matches the portal's minimal working format:
-    // questionnaire_id + environment_id + hold_status (discovered via network intercept).
-    // Once the partner status changes to "Active", this should work without the 422.
-    const environmentId = isDemo ? MDI_SANDBOX_ENV_ID : MDI_LIVE_ENV_ID;
+    // ── Build voucher payload (documented PostPartnerVoucherRequest schema) ──
+    // /v1/partner/vouchers requires "Active" partner status (422 otherwise).
+    const voucherPayload = buildVoucherPayload({
+      product,
+      testMode,
+      metadata: 'freeley:' + resolvedKey + (dose ? ':' + dose : '')
+    });
 
-    const voucherPayload = {
-      questionnaire_id: product.questionnaire_id,
-      environment_id: environmentId,
-      hold_status: false,
-      // Include offering_id so clinicians know which specific product/dose was ordered
-      offering_id: product.offering_id || undefined
-    };
-
-    console.log('[SUBMIT QUIZ] Submitting to MDI /v1/partner/vouchers | partner: ' + MDI_PARTNER_ID + ' | demo: ' + isDemo + ' | env: ' + environmentId + ' | questionnaire: ' + product.questionnaire_id);
+    console.log('[SUBMIT QUIZ] Submitting to MDI /v1/partner/vouchers | partner: ' + MDI_PARTNER_ID + ' | mode: ' + (testMode.isTest ? 'TEST' : 'LIVE') + ' (' + testMode.reason + ') | demo: ' + testMode.demo + ' | env: ' + (voucherPayload.environment_id || 'n/a') + ' | questionnaire: ' + product.questionnaire_id);
     console.log('[SUBMIT QUIZ] Full payload:', JSON.stringify(voucherPayload, null, 2));
 
     const result = await mdiRequest(
@@ -113,13 +92,33 @@ exports.handler = async (event) => {
       voucherPayload
     );
 
-    // result.id is the VOUCHER token. Patient creates their account during onboarding.
-    // patient_id may be null if we sent patient_id: null (patient created at onboarding).
-    const voucherId = result.id;
-    const patientId = result.patient_id || null;
-    const onboardingUrl = 'https://patient.mdintegrations.com?token=' + voucherId;
-    console.log('[SUBMIT QUIZ] Voucher created: ' + voucherId + ' | Patient: ' + (patientId || 'pending-onboarding') + ' | Onboarding: ' + onboardingUrl);
-    console.log('[SUBMIT QUIZ] Full MDI response:', JSON.stringify(result, null, 2));
+    // Docs return partner_voucher_id + onboarding_url. Patient creates their account
+    // during onboarding, so patient_id is normally null at this point.
+    const parsed = parseVoucherResponse(result);
+    const voucherId = parsed.voucherId;
+    const patientId = parsed.patientId;
+    const onboardingUrl = parsed.onboardingUrl;
+    if (!voucherId) {
+      // MDI answered 2xx, so a voucher very likely EXISTS — we just can't read its id.
+      // Must NOT go to the retry queue (would create duplicate, possibly billable, vouchers).
+      console.error('[SUBMIT QUIZ] 🚨 MDI 2xx response had no voucher id — voucher may be orphaned:', JSON.stringify(result).slice(0, 500));
+      try {
+        await getStore('mdi-orphaned-vouchers').setJSON('orphan-' + Date.now(), { email: patientData.email, product_key: resolvedKey, payload: voucherPayload, response: result, created_at: new Date().toISOString() });
+      } catch (e) { console.error('[SUBMIT QUIZ] Failed to record orphaned voucher:', e.message); }
+      await alertOps('mdi_voucher_orphaned', { email: patientData.email, product: resolvedKey, response_keys: Object.keys(result || {}) });
+      throw Object.assign(new Error('MDI voucher response missing id'), { statusCode: 422, nonRetryable: true });
+    }
+    console.log('[SUBMIT QUIZ] Voucher created: ' + voucherId + ' | demo: ' + parsed.demo + ' | env: ' + parsed.environmentId + ' | Patient: ' + (patientId || 'pending-onboarding') + ' | Onboarding: ' + onboardingUrl);
+    if (process.env.MDI_DEBUG_LOG_RESPONSES === 'true') {
+      console.log('[SUBMIT QUIZ] Full MDI response:', JSON.stringify(result, null, 2));
+    }
+
+    // Requested demo:true but MDI did not echo it → treat as a possible billable encounter.
+    const mismatch = demoMismatch(testMode, parsed);
+    if (mismatch) {
+      console.error('[SUBMIT QUIZ] 🚨 DEMO MISMATCH: requested demo:true, MDI echoed demo:' + parsed.demo + ' for voucher ' + voucherId + ' — verify/tag in the MDI portal');
+      await alertOps('mdi_demo_mismatch', { voucher_id: voucherId, email: patientData.email, product: resolvedKey, echoed_demo: parsed.demo, onboarding_url: onboardingUrl });
+    }
 
     // ── Persist order↔encounter link for support lookups ──
     try {
@@ -138,7 +137,14 @@ exports.handler = async (event) => {
         questionnaire_id: product.questionnaire_id,
         category: product.category,
         onboarding_url: onboardingUrl,
-        environment: isDemo ? 'sandbox' : 'live',
+        environment: testMode.liveMode ? 'live' : 'sandbox',
+        environment_id: parsed.environmentId,
+        is_test: testMode.isTest,
+        test_reason: testMode.isTest ? testMode.reason : undefined,
+        demo: parsed.demo,
+        demo_mismatch: mismatch || undefined,
+        mdi_metadata: voucherPayload.metadata,
+        case_id: parsed.caseId,
         created_at: new Date().toISOString()
       });
       console.log('[SUBMIT QUIZ] Order record saved: ' + voucherId);
@@ -154,7 +160,7 @@ exports.handler = async (event) => {
         await fetch(WEBHOOK_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: patientData.email, phone: patientData.phone_number, timestamp: new Date().toISOString(), source: 'Freeley_Quiz_MDI_Submission', product: resolvedKey, original_product: productKey !== resolvedKey ? productKey : undefined, dose: dose || undefined, mdi_patient_id: patientId, mdi_voucher_id: voucherId })
+          body: JSON.stringify({ email: patientData.email, phone: patientData.phone_number, timestamp: new Date().toISOString(), source: 'Freeley_Quiz_MDI_Submission', product: resolvedKey, original_product: productKey !== resolvedKey ? productKey : undefined, dose: dose || undefined, mdi_patient_id: patientId, mdi_voucher_id: voucherId, is_test: testMode.isTest, demo: parsed.demo })
         });
       } catch (e) {
         console.warn('[SUBMIT QUIZ] N8N webhook failed (non-critical):', e.message);
@@ -164,7 +170,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 200,
       headers: CORS_HEADERS,
-      body: JSON.stringify({ success: true, message: 'Your information has been submitted to a licensed physician for review.', patient_id: patientId, voucher_id: voucherId, onboarding_url: onboardingUrl, product: resolvedKey, estimated_review: '24-48 hours' })
+      body: JSON.stringify({ success: true, message: 'Your information has been submitted to a licensed physician for review.', patient_id: patientId, voucher_id: voucherId, onboarding_url: onboardingUrl, product: resolvedKey, estimated_review: '24-48 hours', is_test: testMode.isTest, demo: parsed.demo })
     };
 
   } catch (error) {
@@ -172,16 +178,19 @@ exports.handler = async (event) => {
     const statusCode = error.statusCode || 500;
 
     // ── Partner status detection ──
-    // MDI returns 422 when the partner is still in "Integrating" status.
-    // The /v1/partner/vouchers endpoint requires "Active" partner status.
+    // MDI confirmed Freeley went live/Active on 2026-08-21 ("Congratulations on going
+    // live!"), so this branch should be dead in normal operation. Left in as a defensive
+    // check in case the partner is ever moved back to "Integrating" (e.g. suspended) —
+    // /v1/partner/vouchers returns 422 for that specific state regardless of demo flag.
     if (statusCode === 422 && error.message && error.message.includes('partner status')) {
-      console.error('[SUBMIT QUIZ] ⚠️  Partner is still in "Integrating" status. Contact MDI to activate for live voucher creation.');
-      return { statusCode: 503, headers: CORS_HEADERS, body: JSON.stringify({ error: 'Our telehealth service is being activated. Please try again shortly or contact support.', internal_note: 'MDI partner status is "Integrating" — needs activation for live API voucher creation' }) };
+      console.error('[SUBMIT QUIZ] ⚠️  MDI reports partner status is not Active (was expecting Active since 2026-08-21). Contact MDI.');
+      return { statusCode: 503, headers: CORS_HEADERS, body: JSON.stringify({ error: 'Our telehealth service is being activated. Please try again shortly or contact support.', internal_note: 'MDI partner status is not "Active" — contact MDI, this should not happen post go-live' }) };
     }
 
     // ── Queue for retry on transient failures (5xx, network errors) ──
     // Don't retry 4xx (client errors like bad payload) — those won't self-heal.
-    if (statusCode >= 500 || statusCode === 0) {
+    // Never retry when MDI already created something we couldn't parse (nonRetryable).
+    if (!error.nonRetryable && (statusCode >= 500 || statusCode === 0)) {
       try {
         const data = JSON.parse(event.body);
         const retryStore = getStore('pending-mdi-cases');
@@ -209,3 +218,18 @@ exports.handler = async (event) => {
     return { statusCode, headers: CORS_HEADERS, body: JSON.stringify({ error: 'Unable to submit your information. Please try again or contact support.' }) };
   }
 };
+
+/** Best-effort ops alert via the n8n webhook (never throws). */
+async function alertOps(eventType, data) {
+  const webhookUrl = process.env.N8N_WEBHOOK_URL;
+  if (!webhookUrl) return;
+  try {
+    await fetch(webhookUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ source: 'submit_quiz', event_type: eventType, severity: 'critical', timestamp: new Date().toISOString(), ...data })
+    });
+  } catch (e) {
+    console.warn('[SUBMIT QUIZ] Ops alert failed (non-critical):', e.message);
+  }
+}

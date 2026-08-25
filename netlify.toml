@@ -28,6 +28,11 @@
 [functions."retryPendingCases"]
   schedule = "*/15 * * * *"
 
+# Alert the team about MDI cases flagged is_additional_approval_needed (doctor
+# requested a treatment/titration change — see MDI's go-live guidance)
+[functions."checkAdditionalApprovals"]
+  schedule = "0 * * * *"
+
 # Ping Supabase daily so the free-tier project never auto-pauses (7-day idle limit)
 [functions."keepSupabaseAlive"]
   schedule = "@daily"
@@ -40,6 +45,20 @@
 #   MDI_BASE_URL               - API base URL (default: https://api.mdintegrations.com)
 #   MDI_WEBHOOK_SECRET         - Secret for verifying incoming MDI webhooks
 #   MDI_DEFAULT_PHARMACY_ID    - Default 503A compounding pharmacy ID
+#   MDI_LIVE_MODE              - "true" once partner is Active (sends live environment_id)
+#   MDI_ALLOW_LIVE_ORDERS      - "true" to permit un-tagged LIVE vouchers. Unset = every voucher
+#                                is a TEST voucher (demo:true + "TEST CASE" metadata). See docs/MDI_TESTING.md
+#   MDI_FORCE_TEST             - "true" = kill switch, force test mode
+#   MDI_TEST_EMAIL_PATTERNS    - comma-separated email substrings that are always test orders
+#   MDI_TEST_FULL_FLOW         - "true" = test orders create a real (tagged) case instead of a demo voucher
+#   MDI_SEND_ENVIRONMENT_ID    - "false" to stop sending the undocumented environment_id field
+#   MDI_DEBUG_LOG_RESPONSES    - "true" to log full MDI voucher responses (may contain PHI — keep off)
+#   MDI_PARTNER_ID             - Partner ID (logging only, not sent to MDI's API — used by submitQuiz.js)
+#   MDI_SANDBOX_ENV_ID         - MDI environment_id sent for sandbox/test vouchers
+#   MDI_LIVE_ENV_ID            - MDI environment_id sent for live vouchers
+#   MDI_TEST_TAG_KEY/NAME/COLOR - override the "test-case" MDI tag definition (lib/mdi-tags.js)
+#   MDI_APPROVAL_CHECK_STATUSES - comma-separated case statuses checkAdditionalApprovals.js scans
+#                                 (default: "Assigned,Waiting")
 #   N8N_WEBHOOK_URL            - Your n8n/Make/Zapier webhook for notifications
 
 # ── REDIRECTS ──────────────────────────────────────────────────

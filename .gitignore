@@ -27,3 +27,8 @@ env
 
 # Internal-only — contains real drug costs/margins, never for public repo
 Freeley-Pricing-Sheet.pdf
+
+# Playwright test artifacts / netlify-cli edge functions lockfile
+test-results/
+playwright-report/
+deno.lock

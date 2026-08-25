@@ -4,14 +4,17 @@
   "description": "",
   "main": "dummy.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node --test \"tests/unit/**/*.test.js\"",
     "build:mobile": "mkdir -p www && rsync -a --exclude='.git' --exclude='node_modules' --exclude='.venv' --exclude='www' --exclude='ios' --exclude='android' ./ www/ && npx cap sync",
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "dev:netlify": "netlify dev"
+    "dev:netlify": "netlify dev",
+    "test:unit": "node --test \"tests/unit/**/*.test.js\"",
+    "mdi:verify": "npx -y netlify-cli dev:exec node scripts/mdi-verify-env.js",
+    "test:mdi": "playwright test --config=playwright.functions.config.ts"
   },
   "keywords": [],
   "author": "",

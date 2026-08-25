@@ -15,6 +15,8 @@ const { getStore } = require('@netlify/blobs');
 const { mdiRequest } = require('./lib/mdi-client');
 const { PRODUCTS, resolveProductKey } = require('./lib/products');
 const { encryptRecord, decryptRecord } = require('./lib/phi-crypto');
+const { resolveTestMode, buildVoucherPayload, parseVoucherResponse, demoMismatch } = require('./lib/mdi-voucher');
+const { sweepUntaggedTestOrders } = require('./lib/mdi-tags');
 
 const MAX_RETRIES = 10;
 
@@ -24,13 +26,22 @@ exports.handler = async (event) => {
     'Access-Control-Allow-Origin': 'https://freeley.com'
   };
 
+  // ── Safety net: tag full-flow test orders whose case now exists ──
+  // (webhook tagging can miss when the order record lacks patient_id/case_id)
+  let tagSweep = null;
+  try {
+    tagSweep = await sweepUntaggedTestOrders();
+  } catch (e) {
+    console.warn('[RETRY MDI] Test-case tag sweep failed (non-critical):', e.message);
+  }
+
   try {
     const store = getStore('pending-mdi-cases');
     const { blobs } = await store.list();
 
     if (!blobs || blobs.length === 0) {
       console.log('[RETRY MDI] No pending cases found.');
-      return { statusCode: 200, headers, body: JSON.stringify({ message: 'No pending cases', count: 0 }) };
+      return { statusCode: 200, headers, body: JSON.stringify({ message: 'No pending cases', count: 0, tag_sweep: tagSweep }) };
     }
 
     console.log(`[RETRY MDI] Found ${blobs.length} pending case(s). Processing...`);
@@ -86,38 +97,54 @@ exports.handler = async (event) => {
 
         const product = PRODUCTS[resolvedKey];
 
-        // Build voucher payload — uses /v1/partner/vouchers (public API)
-        // Defaults to SANDBOX while partner is "Integrating".
-        // Set MDI_LIVE_MODE=true once partner is activated.
-        const isDemo = process.env.MDI_LIVE_MODE !== 'true';
-        const MDI_SANDBOX_ENV_ID = '6ab0181e-d52a-488f-a161-d64d576b2eba';
-        const MDI_LIVE_ENV_ID = 'b374c499-638d-4e72-b844-4c68fcda2eff';
-        const environmentId = isDemo ? MDI_SANDBOX_ENV_ID : MDI_LIVE_ENV_ID;
-        const voucherPayload = {
-          questionnaire_id: product.questionnaire_id,
-          environment_id: environmentId,
-          hold_status: false,
-          offering_id: product.offering_id || undefined
-        };
+        // Build voucher payload — same test/live decision as submitQuiz.js.
+        // SAFE BY DEFAULT: demo:true + "TEST CASE" metadata unless
+        // MDI_LIVE_MODE=true AND MDI_ALLOW_LIVE_ORDERS=true (see lib/mdi-voucher.js).
+        const testMode = resolveTestMode({ email: patientData.email });
+        const voucherPayload = buildVoucherPayload({
+          product,
+          testMode,
+          metadata: 'freeley:' + resolvedKey + (dose ? ':' + dose : '') + ' | retry'
+        });
 
-        console.log(`[RETRY MDI] Submitting voucher for ${key} | demo: ${isDemo} | env: ${environmentId}`);
+        console.log(`[RETRY MDI] Submitting voucher for ${key} | mode: ${testMode.isTest ? 'TEST' : 'LIVE'} (${testMode.reason}) | demo: ${testMode.demo} | env: ${voucherPayload.environment_id || 'n/a'}`);
         const result = await mdiRequest('POST', '/v1/partner/vouchers', voucherPayload);
+        const parsed = parseVoucherResponse(result);
+        if (!parsed.voucherId) {
+          // 2xx without an id: the voucher probably exists. Do NOT retry (duplicates) —
+          // park the record as orphaned for manual reconciliation.
+          console.error(`[RETRY MDI] 🚨 MDI 2xx response had no voucher id for ${key} — marking orphaned:`, JSON.stringify(result).slice(0, 300));
+          record.status = 'orphaned';
+          record.orphaned_at = new Date().toISOString();
+          record.mdi_raw_response = result;
+          await store.setJSON(key, encryptRecord(record));
+          await alertTeam(key, record, 'orphaned');
+          results.push({ key, status: 'orphaned' });
+          continue;
+        }
+
+        const mismatch = demoMismatch(testMode, parsed);
+        if (mismatch) {
+          console.error(`[RETRY MDI] 🚨 DEMO MISMATCH: requested demo:true, MDI echoed demo:${parsed.demo} for voucher ${parsed.voucherId}`);
+        }
 
         // ── Success! Mark as completed ─────────────────────────
         record.status = 'completed';
         record.completed_at = new Date().toISOString();
-        record.mdi_patient_id = result.patient_id;
-        record.mdi_case_id = result.id;
+        record.mdi_patient_id = parsed.patientId;
+        record.mdi_case_id = parsed.voucherId;
+        record.is_test = testMode.isTest;
+        record.demo_mismatch = mismatch || undefined;
         await store.setJSON(key, encryptRecord(record));
 
-        console.log(`[RETRY MDI] ✅ SUCCESS: ${key} → Patient: ${result.patient_id}, Case: ${result.id} (retry #${record.retry_count})`);
+        console.log(`[RETRY MDI] ✅ SUCCESS: ${key} → Patient: ${parsed.patientId}, Voucher: ${parsed.voucherId} (retry #${record.retry_count})`);
 
         // Store order↔encounter link for support lookups
         try {
           const orderStore = getStore('mdi-orders');
-          await orderStore.setJSON(result.id, {
-            voucher_id: result.id,
-            patient_id: result.patient_id,
+          await orderStore.setJSON(parsed.voucherId, {
+            voucher_id: parsed.voucherId,
+            patient_id: parsed.patientId,
             email: patientData.email,
             first_name: patientData.first_name,
             last_name: patientData.last_name,
@@ -125,8 +152,17 @@ exports.handler = async (event) => {
             original_product_key: productKey !== resolvedKey ? productKey : undefined,
             dose: dose || null,
             offering_id: product.offering_id,
+            questionnaire_id: product.questionnaire_id,
             category: product.category,
-            environment: isDemo ? 'sandbox' : 'live',
+            onboarding_url: parsed.onboardingUrl,
+            environment: testMode.liveMode ? 'live' : 'sandbox',
+            environment_id: parsed.environmentId,
+            is_test: testMode.isTest,
+            test_reason: testMode.isTest ? testMode.reason : undefined,
+            demo: parsed.demo,
+            demo_mismatch: mismatch || undefined,
+            mdi_metadata: voucherPayload.metadata,
+            case_id: parsed.caseId,
             created_at: new Date().toISOString(),
             retry_count: record.retry_count,
             source: 'retry'
@@ -136,8 +172,8 @@ exports.handler = async (event) => {
         }
 
         // Notify team of successful recovery
-        await alertTeam(key, record, 'recovered');
-        results.push({ key, status: 'completed', case_id: result.id });
+        await alertTeam(key, record, mismatch ? 'demo_mismatch' : 'recovered');
+        results.push({ key, status: 'completed', voucher_id: parsed.voucherId, is_test: testMode.isTest, demo: parsed.demo });
 
       } catch (mdiError) {
         // ── Failed — increment retry count ─────────────────────
@@ -154,7 +190,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 200,
       headers,
-      body: JSON.stringify({ processed: results.length, results })
+      body: JSON.stringify({ processed: results.length, results, tag_sweep: tagSweep })
     };
 
   } catch (error) {
@@ -175,9 +211,13 @@ async function alertTeam(paymentIntentId, record, status) {
   if (!webhookUrl) return;
 
   const emoji = status === 'recovered' ? '✅' : '🚨';
-  const message = status === 'recovered'
-    ? `Pending case RECOVERED successfully after ${record.retry_count} retries`
-    : `Pending case PERMANENTLY FAILED after ${MAX_RETRIES} retries — manual intervention required`;
+  const messages = {
+    recovered: `Pending case RECOVERED successfully after ${record.retry_count} retries`,
+    permanently_failed: `Pending case PERMANENTLY FAILED after ${MAX_RETRIES} retries — manual intervention required`,
+    orphaned: 'MDI returned 2xx without a voucher id — voucher may exist unrecorded. Reconcile manually in the MDI portal.',
+    demo_mismatch: 'Requested demo:true but MDI did not echo it — possible BILLABLE encounter. Verify/tag in the MDI portal.'
+  };
+  const message = messages[status] || `Pending case status: ${status}`;
 
   try {
     await fetch(webhookUrl, {
