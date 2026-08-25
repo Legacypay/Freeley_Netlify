@@ -324,18 +324,16 @@ const press = [
       .hero__from .price { font-size: 1.6rem; }
       .hero__proof { display: flex; align-items: center; gap: 14px; margin-top: 26px; }
       .avatars { display: flex; }
-      /* ponytail: stylized avatar placeholders — swap for real patient photos when available. */
       .avatars span {
         width: 36px; height: 36px; border-radius: 999px; margin-left: -12px;
         border: 2px solid var(--cream); box-shadow: 0 2px 6px rgba(0,0,0,.14);
-        background-repeat: no-repeat; background-position: center 5px; background-size: 24px;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffffff'%3E%3Ccircle cx='12' cy='8.5' r='3.6'/%3E%3Cpath d='M4.5 21c0-4 3.6-6 7.5-6s7.5 2 7.5 6z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat; background-position: center; background-size: cover;
       }
       .avatars span:first-child { margin-left: 0; }
-      .avatars span:nth-child(1) { background-color: #c2a98a; }
-      .avatars span:nth-child(2) { background-color: #9fb193; }
-      .avatars span:nth-child(3) { background-color: #cbb197; }
-      .avatars span:nth-child(4) { background-color: #8fa791; }
+      .avatars span:nth-child(1) { background-image: url(/assets/brand/testimonial_1.png); }
+      .avatars span:nth-child(2) { background-image: url(/assets/brand/testimonial_2.png); }
+      .avatars span:nth-child(3) { background-image: url(/assets/brand/testimonial_3.png); }
+      .avatars span:nth-child(4) { background-image: url(/assets/brand/testimonial_4.png); }
       .hero__count b { display: block; font-size: 15px; }
       .hero__count span { font-size: 13px; color: var(--muted); }
       .hero__rating { display: flex; align-items: center; gap: 10px; margin-top: 18px; font-size: 14px; font-weight: 600; }

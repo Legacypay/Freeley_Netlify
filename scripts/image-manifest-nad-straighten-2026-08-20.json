@@ -1,0 +1,7 @@
+[
+  {
+    "output": "public/assets/l/slide-price-nad.webp",
+    "prompt": "Edit this product card image: the medication vial is currently tilted/leaning at an angle — straighten it so it stands perfectly upright and centered, dead-on studio angle, symmetrical, not leaning in any direction (matching how the vial stands in the brand's other longevity product cards). Keep EVERYTHING else pixel-identical to the source: the vial's own shape, cap, label design and all its text (including 'NAD+', 'longevity', 'Compounded', '2 mL Vial', 'Multiple doses', 'Rx Only'), the golden price seal badge and its text, the soft shadow beneath the vial, the small italic 'Slide for details >>' text at the bottom center, the flat pale cream background, the colors, lighting, framing and composition. Do NOT add, remove, move or restyle any text, objects, badges or watermarks — only correct the vial's tilt to upright.",
+    "size": "1024x1536"
+  }
+]

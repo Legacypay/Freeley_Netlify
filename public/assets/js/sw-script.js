@@ -54,8 +54,8 @@
             // Brello-style slides — see tadalafil's comment above.
             images: [
                 "/assets/sw/slide-price-olympus.webp",
-                "/assets/sw/slide-included.webp",
-                "/assets/sw/slide-benefits.webp",
+                "/assets/sw/slide-included-olympus.webp",
+                "/assets/sw/slide-benefits-olympus.webp",
                 "/assets/shared/slide-journey.webp",
                 "/assets/shared/slide-hub.webp"
             ],
@@ -254,6 +254,15 @@
         const dots = document.querySelectorAll("#dotContainerSW .dot-indicator");
         dots.forEach((d, i) => {
             d.classList.toggle("active", i === 0);
+        });
+
+        // Bug fix 2026-08-20: the "Plan Details & Shipping" popup used to be
+        // one static modal, always showing the first medication's photo
+        // regardless of the toggle. sexual-wellness.astro now renders one
+        // .pim-wrap per medication (hidden by default) — show the one that
+        // matches, hide the rest.
+        document.querySelectorAll(".pim-wrap[data-medication]").forEach((wrap) => {
+            wrap.style.display = wrap.getAttribute("data-medication") === medication ? "" : "none";
         });
     }
 

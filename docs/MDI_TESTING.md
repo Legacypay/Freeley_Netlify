@@ -1,5 +1,13 @@
 # MDI test mode & "test case" tagging
 
+> **2026-08-25:** this document and `docs/MDI_GO_LIVE_OPERATIONS.md` were
+> written independently by two separate sessions reading the same MDI go-live
+> message, then reconciled in code the same day (merge of `mdiWebhook.js`,
+> `submitQuiz.js`, `retryPendingCases.js`). This doc is the detailed reference
+> for the test/live decision and env vars; the other doc is the operational
+> checklist against MDI's original message, with inline notes on what this
+> reconciliation resolved.
+
 MD Integrations bills every live encounter that is not tagged as a test case
 (go-live email, 2026-08-21: *"If you submit any test orders, please be sure to tag
 them as 'test case'. Otherwise, they will be treated as real encounters and you

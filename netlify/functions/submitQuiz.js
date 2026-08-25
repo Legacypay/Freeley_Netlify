@@ -22,6 +22,7 @@ const { resolveTestMode, buildVoucherPayload, parseVoucherResponse, demoMismatch
 
 // MDI Partner ID — from the partner portal URL
 const MDI_PARTNER_ID = process.env.MDI_PARTNER_ID || 'f81508d1-3c53-4849-a636-1e9050a68e00';
+const MDI_PORTAL_URL = 'https://partners.mdintegrations.com/partner/' + MDI_PARTNER_ID;
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
@@ -44,6 +45,10 @@ exports.handler = async (event) => {
       return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ error: 'Invalid submission. Please check your inputs and try again.' }) };
     }
     const { patient: patientData, product: productKey, dose, quiz_answers, allergies, current_medications, medical_conditions } = data;
+    // Explicit caller-supplied test marker (validated boolean in lib/validate-quiz.js).
+    // Not the only test signal — see lib/mdi-voucher.js's resolveTestMode for the full
+    // safe-by-default decision (MDI_LIVE_MODE/MDI_ALLOW_LIVE_ORDERS/email patterns).
+    const explicitTest = data.is_test === true;
 
     // Resolve product key — handles legacy 'semaglutide'/'tirzepatide' keys
     // and dose-tiered lookups (e.g., semaglutide + dose 0.4 → semaglutide-s2)
@@ -71,12 +76,14 @@ exports.handler = async (event) => {
 
     // ── Test vs. Live ──
     // SAFE BY DEFAULT: vouchers are test vouchers (demo:true + "TEST CASE" metadata)
-    // unless MDI_LIVE_MODE=true AND MDI_ALLOW_LIVE_ORDERS=true. MDI bills every
-    // un-tagged live encounter — see lib/mdi-voucher.js and docs/MDI_TESTING.md.
-    const testMode = resolveTestMode({ email: patientData.email });
+    // unless MDI_LIVE_MODE=true AND MDI_ALLOW_LIVE_ORDERS=true. A caller can also force
+    // test mode explicitly via `is_test: true` in the body. MDI bills every un-tagged
+    // live encounter — see lib/mdi-voucher.js and docs/MDI_TESTING.md.
+    const testMode = resolveTestMode({ email: patientData.email, explicitTest });
 
     // ── Build voucher payload (documented PostPartnerVoucherRequest schema) ──
-    // /v1/partner/vouchers requires "Active" partner status (422 otherwise).
+    // /v1/partner/vouchers requires "Active" partner status (422 otherwise;
+    // MDI confirmed Freeley went Active/live on 2026-08-21).
     const voucherPayload = buildVoucherPayload({
       product,
       testMode,
@@ -111,6 +118,11 @@ exports.handler = async (event) => {
     console.log('[SUBMIT QUIZ] Voucher created: ' + voucherId + ' | demo: ' + parsed.demo + ' | env: ' + parsed.environmentId + ' | Patient: ' + (patientId || 'pending-onboarding') + ' | Onboarding: ' + onboardingUrl);
     if (process.env.MDI_DEBUG_LOG_RESPONSES === 'true') {
       console.log('[SUBMIT QUIZ] Full MDI response:', JSON.stringify(result, null, 2));
+    }
+    if (!testMode.isTest) {
+      // Loud on purpose: every live voucher is a billable MDI encounter. If this
+      // was manual QA, tag it "test case" in the portal immediately.
+      console.warn('[SUBMIT QUIZ] ⚠️ LIVE VOUCHER CREATED (billable): ' + voucherId + ' — portal: ' + MDI_PORTAL_URL);
     }
 
     // Requested demo:true but MDI did not echo it → treat as a possible billable encounter.
@@ -160,7 +172,7 @@ exports.handler = async (event) => {
         await fetch(WEBHOOK_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: patientData.email, phone: patientData.phone_number, timestamp: new Date().toISOString(), source: 'Freeley_Quiz_MDI_Submission', product: resolvedKey, original_product: productKey !== resolvedKey ? productKey : undefined, dose: dose || undefined, mdi_patient_id: patientId, mdi_voucher_id: voucherId, is_test: testMode.isTest, demo: parsed.demo })
+          body: JSON.stringify({ email: patientData.email, phone: patientData.phone_number, timestamp: new Date().toISOString(), source: 'Freeley_Quiz_MDI_Submission', product: resolvedKey, original_product: productKey !== resolvedKey ? productKey : undefined, dose: dose || undefined, mdi_patient_id: patientId, mdi_voucher_id: voucherId, environment: testMode.liveMode ? 'live' : 'sandbox', is_test: testMode.isTest, demo: parsed.demo })
         });
       } catch (e) {
         console.warn('[SUBMIT QUIZ] N8N webhook failed (non-critical):', e.message);
@@ -195,6 +207,10 @@ exports.handler = async (event) => {
         const data = JSON.parse(event.body);
         const retryStore = getStore('pending-mdi-cases');
         const retryKey = 'quiz-' + Date.now() + '-' + (data.patient?.email || 'unknown').replace(/[^a-zA-Z0-9]/g, '_');
+        // Stamp the test/live decision at queue time so retryPendingCases.js can honor
+        // it instead of re-resolving from (possibly since-changed) env vars — a record
+        // queued as test must never be silently promoted to a billable live encounter.
+        const retryTestMode = resolveTestMode({ email: data.patient?.email, explicitTest: data.is_test === true });
         const retryRecord = {
           patient: data.patient,
           product: data.product,
@@ -203,6 +219,8 @@ exports.handler = async (event) => {
           allergies: data.allergies || null,
           current_medications: data.current_medications || null,
           medical_conditions: data.medical_conditions || null,
+          environment: retryTestMode.liveMode ? 'live' : 'sandbox',
+          is_test: retryTestMode.isTest,
           status: 'pending',
           retry_count: 0,
           original_error: error.message,

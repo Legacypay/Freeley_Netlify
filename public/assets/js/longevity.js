@@ -54,7 +54,7 @@
             // Brello-style slides — see sermorelin's comment above.
             images: [
                 "/assets/l/slide-price-nad.webp",
-                "/assets/l/slide-included.webp",
+                "/assets/l/slide-included-nad.webp",
                 "/assets/l/slide-benefits.webp",
                 "/assets/shared/slide-journey.webp",
                 "/assets/shared/slide-hub.webp"
@@ -79,7 +79,7 @@
             // Brello-style slides — see sermorelin's comment above.
             images: [
                 "/assets/l/slide-price-glutathione.webp",
-                "/assets/l/slide-included.webp",
+                "/assets/l/slide-included-glutathione.webp",
                 "/assets/l/slide-benefits.webp",
                 "/assets/shared/slide-journey.webp",
                 "/assets/shared/slide-hub.webp"
@@ -283,6 +283,15 @@
         dots.forEach((d, i) => {
             d.classList.toggle("active", i === 0);
         });
+
+        // Bug fix 2026-08-20: the "Plan Details & Shipping" popup used to be
+        // one static modal, always showing the first medication's photo
+        // regardless of the toggle. longevity.astro now renders one
+        // .pim-wrap per medication (hidden by default) — show the one that
+        // matches, hide the rest.
+        document.querySelectorAll(".pim-wrap[data-medication]").forEach((wrap) => {
+            wrap.style.display = wrap.getAttribute("data-medication") === medication ? "" : "none";
+        });
     }
 
     // =============================================
@@ -341,20 +350,6 @@
 
     init();
 
-})();
-
-// =============================================
-// PLAN LADDER SELECT — single-select radio group, same active/inactive
-// class-swap pattern as the medication-toggle buttons above.
-// =============================================
-(function () {
-    const planButtons = document.querySelectorAll('.wl-plans .wl-plans__item');
-    planButtons.forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            planButtons.forEach(function (b) { b.classList.remove('is-selected'); });
-            btn.classList.add('is-selected');
-        });
-    });
 })();
 
 // =============================================

@@ -1,0 +1,18 @@
+[
+  {
+    "output": "public/assets/sw/slide-included-olympus.webp",
+    "editFrom": "public/assets/sw/slide-included.webp",
+    "width": 900,
+    "height": 1200,
+    "size": "1024x1536",
+    "prompt": "Two changes only: recolor the teal troche tablet to a deep matte burgundy plum color (around #6E3B44), and change the first checklist item title 'Tadalafil Troches' to 'Olympus Troches'. Keep absolutely everything else pixel-identical: the serif 'What's Included' heading with the gold underline, all other checklist items and their exact text, the checkmark icons, the layout, the embossed Freeley logo on the troche, the pure white background."
+  },
+  {
+    "output": "public/assets/sw/slide-benefits-olympus.webp",
+    "editFrom": "public/assets/sw/slide-benefits.webp",
+    "width": 900,
+    "height": 1200,
+    "size": "1024x1536",
+    "prompt": "Two changes only: recolor the teal troche tablet to a deep matte burgundy plum color (around #6E3B44), and change the serif heading 'Why Tadalafil Troches' to 'Why Olympus Troches'. Keep absolutely everything else pixel-identical: the gold underline, all four gold-star benefit items and their exact text, the layout, the embossed Freeley logo on the troche, the pure white background."
+  }
+]

@@ -9,7 +9,10 @@
  *
  * MDI sends webhooks for these events:
  *   - case_waiting       → Clinician needs more info from patient
- *   - case_approved      → Clinician approved the case
+ *   - case_approved      → ACTION REQUIRED: clinician is requesting a treatment/dose
+ *                          change (titration). Team must review in the portal and
+ *                          move the encounter back to "Assigned" to proceed.
+ *                          (Per MDI go-live guidance 2026-08-21 — NOT a final approval.)
  *   - case_processing    → Prescription being processed by DoseSpot
  *   - case_completed     → Prescription confirmed by pharmacy
  *   - offering_submitted → Prescription verified and order being fulfilled
@@ -83,34 +86,30 @@ exports.handler = async (event) => {
     // ── Step 4: Handle each event type ────────────────────────
     switch (event_type) {
 
-      // ── Case approved by clinician ──────────────────────────
+      // ── Case "Approved" = clinician requests a treatment change ──
+      // Per MDI (2026-08-21): Approved status means the doctor is requesting
+      // a change in treatment or titration. Someone on our team must review
+      // the encounter and move it back to "Assigned" for it to proceed.
       case 'case_approved': {
-        console.log(`[MDI WEBHOOK] ✅ Case APPROVED: ${case_id}`);
-        // NOTE: Payment charge is NOT triggered here (sandbox mode).
-        // When going live, uncomment the charge logic below.
-        // await chargePatient(order);
+        console.warn(`[MDI WEBHOOK] ⚠️ Case APPROVED (ACTION REQUIRED — review & move back to Assigned): ${case_id}`);
 
-        // Update order status
         await updateOrderStatus(order, 'approved', {
           case_id,
           approved_at: new Date().toISOString()
         });
 
-        // Send approval confirmation email
-        await sendPatientEmail(order, 'case_approved', {
-          subject: 'Great news! Your prescription has been approved',
-          template: 'case_approved',
-          data: {
-            first_name: order?.first_name || 'there',
-            product: order?.product_key || 'your treatment',
-            case_id
-          }
-        });
+        // Patient email intentionally PAUSED: it read "your prescription has
+        // been approved", which is wrong if the doctor is actually asking for a
+        // dose change. Re-enable once MDI confirms what this event means.
+        // await sendPatientEmail(order, 'case_approved', { subject: 'Great news! Your prescription has been approved', template: 'case_approved', data: { first_name: order?.first_name || 'there', product: order?.product_key || 'your treatment', case_id } });
 
         await notifyInternalWebhook('case_approved', {
           case_id,
           metadata,
-          action: 'case_approved_email_sent'
+          severity: 'high',
+          action: 'ACTION_REQUIRED_review_and_move_to_assigned',
+          message: 'MDI clinician is requesting a treatment/dose change. Review the encounter in the portal and move it back to Assigned.',
+          encounter_url: case_id ? `https://app.mdintegrations.com/tabs/cases/${case_id}` : undefined
         });
         break;
       }
@@ -481,6 +480,11 @@ async function sendPatientEmail(order, emailType, emailPayload) {
   const patientEmail = order?.email;
   if (!patientEmail) {
     console.warn(`[MDI WEBHOOK] Cannot send ${emailType} email — no patient email found`);
+    return;
+  }
+  // Test/sandbox orders never email a real inbox (single choke point for all events).
+  if (order.is_test || order.environment === 'sandbox') {
+    console.log(`[MDI WEBHOOK] Skipping ${emailType} email — test/sandbox order (${order.environment || 'unknown env'})`);
     return;
   }
 

@@ -55,7 +55,9 @@ function testEmailPatterns() {
 
 /**
  * Decide whether an order must be treated as a test order.
- * @param {{ email?: string }} [opts]
+ * @param {{ email?: string, explicitTest?: boolean }} [opts] explicitTest: caller-supplied
+ *   `is_test: true` (e.g. the request body, validated in lib/validate-quiz.js) — an even
+ *   more direct signal than email-pattern matching, checked right after the kill switch.
  * @returns {{ isTest: boolean, reason: string, demo: boolean, fullFlow: boolean, liveMode: boolean }}
  */
 function resolveTestMode(opts = {}) {
@@ -65,11 +67,14 @@ function resolveTestMode(opts = {}) {
   const fullFlow = flag('MDI_TEST_FULL_FLOW');
   const email = String(opts.email || '').toLowerCase();
   const emailMatch = email ? testEmailPatterns().find(p => email.includes(p)) : undefined;
+  const explicitTest = opts.explicitTest === true;
 
   let isTest = true;
   let reason;
   if (forceTest) {
     reason = 'MDI_FORCE_TEST';
+  } else if (explicitTest) {
+    reason = 'explicit-is_test-flag';
   } else if (emailMatch) {
     reason = 'test-email:' + emailMatch;
   } else if (!liveMode) {

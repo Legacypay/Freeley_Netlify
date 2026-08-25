@@ -193,23 +193,79 @@ const faqs = [
       .wl-steps-row .step span { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 999px; background: var(--green); color: #fff; font-size: 12px; }
 
       /* ── Savings calculator ───────────────────────────────────── */
-      .wl-calc-panel { background: var(--card); border-radius: 28px; padding: 40px 32px; }
+      .wl-calc-panel {
+        position: relative; overflow: hidden; border-radius: 28px; padding: 40px 32px;
+        background: radial-gradient(120% 140% at 8% -10%, rgba(15,107,69,.10) 0%, rgba(15,107,69,0) 46%), var(--card);
+      }
       @media (min-width: 700px) { .wl-calc-panel { padding: 48px; } }
-      .wl-calc-grid { display: grid; gap: 40px; grid-template-columns: 1fr; }
+      .wl-calc-grid { position: relative; display: grid; gap: 40px; grid-template-columns: 1fr; }
       @media (min-width: 900px) { .wl-calc-grid { grid-template-columns: 1fr 1fr; align-items: center; } }
+
+      /* Active-treatment chip: icon + label swap with the select. */
+      .wl-calc-chip { display: inline-flex; align-items: center; gap: 10px; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 8px 16px 8px 8px; margin: 28px 0 22px; }
+      .wl-calc-chip__icon { flex: none; width: 30px; height: 30px; border-radius: 999px; background: var(--green); display: grid; place-items: center; }
+      .wl-calc-chip__icon svg { width: 16px; height: 16px; color: #fff; }
+      .wl-calc-chip__icon svg[hidden] { display: none; }
+      .wl-calc-chip__label { font-family: var(--font-sans); font-size: 13px; font-weight: 700; color: var(--ink); }
+
       .wl-calc-form label { display: block; font-family: var(--font-condensed); font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
       .wl-calc-form .field { margin-bottom: 16px; }
       .wl-calc-select { width: 100%; font-family: var(--font-sans); border: 1px solid var(--line); border-radius: 999px; padding: 14px 22px; font-size: 14px; font-weight: 500; color: var(--ink); background: #fff; cursor: pointer; }
       .wl-calc-select:focus { outline: 2px solid var(--brand); outline-offset: 2px; }
-      .wl-calc-card { position: relative; overflow: hidden; background: #fff; border-radius: 22px; padding: 34px 30px; }
-      .wl-calc-card__bg { position: absolute; inset: 0; opacity: .35; pointer-events: none; display: grid; place-items: center; }
-      .wl-calc-card__bg svg { width: 70%; height: auto; }
+
+      .wl-calc-card { position: relative; background: #fff; border-radius: 22px; padding: 34px 34px 30px; box-shadow: 0 30px 60px -28px rgba(18,60,44,.35); }
       .wl-calc-card__body { position: relative; z-index: 1; }
-      .wl-calc-badge { display: inline-block; font-family: var(--font-condensed); font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); background: rgba(15,107,69,.08); border-radius: 999px; padding: 6px 14px; margin-bottom: 14px; }
-      .wl-calc-total { font-family: var(--font-serif); font-size: 2.6rem; font-weight: 600; color: var(--gold); line-height: 1; }
-      .wl-calc-duration { font-size: 13.5px; color: var(--muted); margin: 8px 0 22px; }
-      .wl-calc-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-top: 1px solid var(--line); font-size: 14px; }
-      .wl-calc-row span:last-child { font-weight: 600; color: var(--green); }
+      .wl-calc-card__top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+      .wl-calc-badge { display: inline-block; font-family: var(--font-condensed); font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--brand); background: rgba(15,107,69,.08); border-radius: 999px; padding: 6px 14px; }
+      .wl-calc-pct { display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-sans); font-size: 12.5px; font-weight: 700; color: #fff; background: var(--brand); border-radius: 999px; padding: 5px 12px; white-space: nowrap; }
+      .wl-calc-total { font-family: var(--font-serif); font-size: 2.9rem; font-weight: 600; color: var(--gold); line-height: 1; }
+      .wl-calc-duration { font-size: 13.5px; color: var(--muted); margin: 8px 0 4px; }
+
+      /* Savings-over-time chart: cumulative curve from the same monthly-
+         savings math — the trend line is mathematically straight (fixed
+         savings every month), so the stroke between real data points is
+         drawn with a gentle wave instead of straight segments; the points
+         themselves (and what a click reveals) stay exactly on the real
+         numbers. Redrawn with a stroke "draw-in" animation on every
+         recalculation. */
+      .wl-calc-chart { position: relative; margin: 8px 0 18px; }
+      .wl-calc-chart svg { display: block; width: 100%; height: 84px; overflow: visible; }
+      .wl-calc-chart__grid { stroke: var(--line); stroke-width: 1; }
+      .wl-calc-chart__area { fill: url(#wlCalcSavingsFill); opacity: 0; transition: opacity .5s ease .1s; }
+      .wl-calc-chart__area.is-in { opacity: 1; }
+      .wl-calc-chart__line { fill: none; stroke: var(--brand); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+      .wl-calc-chart__hit { fill: transparent; cursor: pointer; }
+      .wl-calc-chart__dot { stroke: #fff; stroke-width: 2; fill: var(--brand); pointer-events: none; transition: r .15s ease; opacity: 0; transform: scale(0); transform-box: fill-box; transform-origin: center; transition: opacity .3s ease, transform .3s ease, r .15s ease; }
+      .wl-calc-chart__dot.is-in { opacity: 1; transform: scale(1); }
+      .wl-calc-chart__hit:hover + .wl-calc-chart__dot { r: 6; }
+      .wl-calc-chart__labels { display: flex; justify-content: space-between; margin-top: 4px; }
+      .wl-calc-chart__labels span { font-family: var(--font-condensed); font-size: 10.5px; color: var(--muted); }
+      .wl-calc-chart__tooltip {
+        position: absolute; transform: translate(-50%, calc(-100% - 12px));
+        background: var(--green-deep); color: #fff; border-radius: 10px; padding: 7px 11px;
+        font-family: var(--font-sans); font-size: 12px; font-weight: 600; white-space: nowrap;
+        pointer-events: none; box-shadow: 0 8px 18px rgba(13,49,34,.28);
+        transition: left .3s cubic-bezier(.22,.61,.36,1), top .3s cubic-bezier(.22,.61,.36,1);
+      }
+      .wl-calc-chart__tooltip b { display: block; font-family: var(--font-condensed); font-size: 9.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.65); margin-bottom: 1px; }
+      .wl-calc-chart__tooltip::after {
+        content: ''; position: absolute; left: 50%; top: 100%; transform: translateX(-50%);
+        border: 5px solid transparent; border-top-color: var(--green-deep);
+      }
+
+      .wl-calc-compare { display: flex; flex-direction: column; gap: 12px; margin: 18px 0 20px; padding-top: 18px; border-top: 1px solid var(--line); }
+      .wl-calc-compare__row { display: grid; grid-template-columns: 78px 1fr 78px; align-items: center; gap: 10px; }
+      .wl-calc-compare__label { font-family: var(--font-condensed); font-size: 11.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+      .wl-calc-compare__track { position: relative; height: 9px; border-radius: 999px; background: #f1ede3; overflow: hidden; }
+      .wl-calc-compare__fill { position: absolute; inset: 0; border-radius: 999px; transition: width .5s cubic-bezier(.22,.61,.36,1); }
+      .wl-calc-compare__fill--theirs { background: #cbb9a0; }
+      .wl-calc-compare__fill--freeley { background: var(--brand); }
+      .wl-calc-compare__value { font-family: var(--font-sans); font-size: 13px; font-weight: 700; color: var(--ink); text-align: right; }
+
+      .wl-calc-savingsrow { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+      .wl-calc-savingsrow__label { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--ink); font-weight: 600; }
+      .wl-calc-tick { flex: none; width: 20px; height: 20px; border-radius: 999px; background: var(--brand); display: grid; place-items: center; }
+      .wl-calc-savingsrow__value { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 600; color: var(--brand); }
 
       /* ── Freeley Promise ──────────────────────────────────────── */
       .wl-promise-grid { display: grid; gap: 28px; grid-template-columns: 1fr; }
@@ -387,7 +443,18 @@ const faqs = [
             <div>
               <span class="wl-eyebrow">Savings Calculator</span>
               <h2 class="wl-serif" style="margin:14px 0 12px; font-size:clamp(2rem,3.8vw,2.7rem); line-height:1.1;">See how much <br /><em>you'll save</em></h2>
-              <form class="wl-calc-form" style="margin-top:28px;">
+
+              <div class="wl-calc-chip">
+                <span class="wl-calc-chip__icon">
+                  <svg id="wlCalcIconGLP1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2l4 4-2 2-4-4 2-2z" /><path d="M15 5 6 14l-3 6 6-3 9-9-3-3z" /><path d="M9 11l2 2" /></svg>
+                  <svg id="wlCalcIconSexual" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" hidden><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8z" /></svg>
+                  <svg id="wlCalcIconHair" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" hidden><path d="M12 2c-4 5-6 8-6 11a6 6 0 0 0 12 0c0-3-2-6-6-11z" /></svg>
+                  <svg id="wlCalcIconLongevity" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" hidden><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" /><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 11 13 11 13" /></svg>
+                </span>
+                <span class="wl-calc-chip__label" id="wlCalcChipLabel">GLP-1 Weight Loss</span>
+              </div>
+
+              <form class="wl-calc-form">
                 <div class="field">
                   <label for="treatmentSelect">Treatment</label>
                   <select class="wl-calc-select" id="treatmentSelect">
@@ -416,18 +483,61 @@ const faqs = [
             </div>
 
             <div class="wl-calc-card">
-              <div class="wl-calc-card__bg" aria-hidden="true">
-                <svg viewBox="0 0 382 382" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M191 0.5C296.206 0.5 381.5 85.7938 381.5 191C381.5 296.206 296.206 381.5 191 381.5C85.7938 381.5 0.5 296.206 0.5 191C0.5 85.7938 85.7938 0.5 191 0.5ZM184.382 59.7871C182.45 59.8463 180.887 59.9753 179.632 60.2656C178.371 60.5574 177.385 61.0202 176.643 61.7734C175.901 62.5261 175.449 63.5212 175.166 64.7871C174.919 65.8901 174.794 67.2278 174.727 68.8389L174.701 69.5469C174.544 73.0961 174.623 76.5744 174.623 80.0156C174.623 82.5801 174.617 84.4602 174.46 85.9121C174.303 87.3569 174.001 88.3152 173.452 89.0635C172.901 89.8144 172.058 90.4114 170.699 91.0469C169.336 91.6843 167.516 92.3337 165.05 93.2217L165.048 93.2227C153.078 97.5682 143.366 103.822 136.447 112.279C129.525 120.74 125.425 131.376 124.634 144.438C123.92 156.014 126.577 165.728 131.804 173.976C137.026 182.216 144.796 188.965 154.271 194.65V194.651C165.939 201.667 178.838 205.791 191.112 211.186V211.187C195.89 213.301 200.48 215.715 204.438 218.975V218.976C210.25 223.748 212.586 230.086 211.786 235.951C211.011 241.633 207.286 246.934 200.791 249.989L200.153 250.278C194.64 252.686 188.97 253.773 183.14 253.773C181.042 253.773 178.939 253.618 176.828 253.384H176.827C164.222 251.817 152.259 248.53 141.005 242.669L141.003 242.668C138.574 241.414 136.666 240.648 135.115 240.647C133.718 240.647 132.634 241.25 131.738 242.438C130.867 243.592 130.159 245.314 129.45 247.599C127.482 253.819 125.75 260.116 124.021 266.402L124.021 266.405C122.887 270.627 122.471 273.415 123.489 275.645C124.507 277.873 126.899 279.414 130.886 281.368L130.888 281.369C141.171 286.352 152.232 288.877 163.41 290.688C165.599 291.042 167.221 291.323 168.442 291.684C169.659 292.042 170.411 292.462 170.909 293.052C171.409 293.643 171.709 294.47 171.881 295.765C172.01 296.738 172.062 297.936 172.088 299.438L172.107 301.046C172.107 305.128 172.108 309.294 172.187 313.382H172.186C172.186 316.049 172.833 318.252 174.242 319.8C175.657 321.354 177.769 322.17 180.532 322.212V322.213C183.37 322.292 186.207 322.292 189.035 322.292C192.265 322.292 195.493 322.213 198.715 322.135H198.719C201.278 322.054 203.308 321.318 204.693 319.879C206.078 318.44 206.748 316.372 206.748 313.774C206.826 308.136 207.064 302.53 206.827 296.854L206.826 296.848C206.673 294.055 207.212 292.028 208.391 290.522C209.575 289.01 211.463 287.951 214.161 287.219L214.162 287.218C226.912 283.733 237.849 276.839 246.249 266.616C269.49 238.377 260.587 196.914 227.95 178.694L227.947 178.693L226.978 178.165C216.941 172.747 206.406 168.543 195.908 164.207H195.909C189.715 161.62 183.714 158.655 178.502 154.454L178.5 154.452L178.03 154.067C173.268 150.052 171.383 144.934 172.051 140.195C172.74 135.302 176.166 130.719 182.16 128.105C185.538 126.647 189.084 126.181 192.761 125.946L192.76 125.945C194.331 125.867 195.968 125.79 197.523 125.79C209.868 125.79 221.662 128.445 232.911 133.913C235.13 135.022 236.943 135.615 238.475 135.615C239.896 135.615 240.997 135.045 241.909 133.916C242.684 132.957 243.326 131.592 243.949 129.839L244.216 129.063L244.218 129.056C246.421 122.053 248.389 114.888 250.43 107.823L250.431 107.824C251.162 105.346 251.099 103.223 250.211 101.446C249.325 99.675 247.66 98.3314 245.356 97.3213C237.147 93.6902 228.695 91.0832 219.768 89.6611H219.767C216.867 89.2074 214.732 88.8727 213.138 88.4453C211.546 88.0184 210.577 87.519 209.947 86.792C209.318 86.0654 208.967 85.0392 208.779 83.4111C208.638 82.1881 208.595 80.6732 208.573 78.7607L208.557 76.7109C208.537 72.7727 208.522 69.7418 208.279 67.4307C208.037 65.1255 207.561 63.4361 206.539 62.25C205.506 61.0509 203.99 60.4507 201.885 60.1377C199.784 59.8254 197.004 59.7871 193.358 59.7871H184.382Z" fill="var(--brand)" />
-                </svg>
-              </div>
               <div class="wl-calc-card__body">
-                <span class="wl-calc-badge">Your Estimated Savings</span>
+                <div class="wl-calc-card__top">
+                  <span class="wl-calc-badge">Your Estimated Savings</span>
+                  <span class="wl-calc-pct" id="savingsPctDisplay">Save 82%</span>
+                </div>
                 <div class="wl-calc-total" id="totalSavingsDisplay">$2,177.13</div>
                 <p class="wl-calc-duration" id="durationLabel">Over 3 months</p>
-                <div class="wl-calc-row"><span>Their price</span><span id="theirPriceDisplay">$1000/mo</span></div>
-                <div class="wl-calc-row"><span>Freeley price</span><span id="freeleyPriceDisplay">$274.29/mo</span></div>
-                <div class="wl-calc-row"><span>Monthly savings</span><span id="monthlySavingsDisplay">$725.71/mo</span></div>
+
+                <div class="wl-calc-chart">
+                  <svg viewBox="0 0 300 84" preserveAspectRatio="none">
+                    <defs>
+                      <linearGradient id="wlCalcSavingsFill" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#0f6b45" stop-opacity="0.22" />
+                        <stop offset="100%" stop-color="#0f6b45" stop-opacity="0" />
+                      </linearGradient>
+                    </defs>
+                    <line class="wl-calc-chart__grid" x1="0" y1="74" x2="300" y2="74" />
+                    <path class="wl-calc-chart__area" id="wlCalcArea" d="" />
+                    <path class="wl-calc-chart__line" id="wlCalcLine" d="" />
+                    <g id="wlCalcPoints"></g>
+                  </svg>
+                  <div class="wl-calc-chart__tooltip" id="wlCalcTooltip" style="left:100%; top:0;">
+                    <b id="wlCalcTooltipMonth">Month 6</b>
+                    <span id="wlCalcTooltipValue">$0.00</span> saved
+                  </div>
+                  <div class="wl-calc-chart__labels">
+                    <span>Month 0</span>
+                    <span id="wlCalcMonthEndLabel">Month 6</span>
+                  </div>
+                </div>
+
+                <div class="wl-calc-compare">
+                  <div class="wl-calc-compare__row">
+                    <span class="wl-calc-compare__label">Their price</span>
+                    <span class="wl-calc-compare__track"><span class="wl-calc-compare__fill wl-calc-compare__fill--theirs" id="wlCalcTheirBar"></span></span>
+                    <span class="wl-calc-compare__value" id="theirPriceDisplay">$1000/mo</span>
+                  </div>
+                  <div class="wl-calc-compare__row">
+                    <span class="wl-calc-compare__label">Freeley</span>
+                    <span class="wl-calc-compare__track"><span class="wl-calc-compare__fill wl-calc-compare__fill--freeley" id="wlCalcFreeleyBar"></span></span>
+                    <span class="wl-calc-compare__value" id="freeleyPriceDisplay">$274.29/mo</span>
+                  </div>
+                </div>
+
+                <div class="wl-calc-savingsrow">
+                  <span class="wl-calc-savingsrow__label">
+                    <span class="wl-calc-tick"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg></span>
+                    Monthly savings
+                  </span>
+                  <span class="wl-calc-savingsrow__value" id="monthlySavingsDisplay">$725.71/mo</span>
+                </div>
+
+                <a href="/assessment-quiz" class="wl-btn js-start-quiz" style="width:100%; margin-top:22px;">
+                  Start My Assessment <span class="wl-arw"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg></span>
+                </a>
               </div>
             </div>
           </div>
@@ -503,8 +613,9 @@ const faqs = [
   <QuizModal />
 
   <script is:inline>
-    // ===================== SAVINGS CALCULATOR (verbatim behavior) =====================
+    // ===================== SAVINGS CALCULATOR =====================
     document.addEventListener('DOMContentLoaded', function () {
+      const SVG_NS = 'http://www.w3.org/2000/svg';
       const treatmentSelect = document.getElementById('treatmentSelect');
       const compareSelect = document.getElementById('compareSelect');
       const durationSelect = document.getElementById('durationSelect');
@@ -513,6 +624,28 @@ const faqs = [
       const theirPriceDisplay = document.getElementById('theirPriceDisplay');
       const freeleyPriceDisplay = document.getElementById('freeleyPriceDisplay');
       const monthlySavingsDisplay = document.getElementById('monthlySavingsDisplay');
+      const savingsPctDisplay = document.getElementById('savingsPctDisplay');
+      const chipLabel = document.getElementById('wlCalcChipLabel');
+      const monthEndLabel = document.getElementById('wlCalcMonthEndLabel');
+      const theirBar = document.getElementById('wlCalcTheirBar');
+      const freeleyBar = document.getElementById('wlCalcFreeleyBar');
+      const areaPath = document.getElementById('wlCalcArea');
+      const linePath = document.getElementById('wlCalcLine');
+      const pointsGroup = document.getElementById('wlCalcPoints');
+      const tooltip = document.getElementById('wlCalcTooltip');
+      const tooltipMonth = document.getElementById('wlCalcTooltipMonth');
+      const tooltipValue = document.getElementById('wlCalcTooltipValue');
+      const chipIcons = {
+        '179': document.getElementById('wlCalcIconGLP1'),
+        '59': document.getElementById('wlCalcIconSexual'),
+        '49': document.getElementById('wlCalcIconHair'),
+        '79': document.getElementById('wlCalcIconLongevity'),
+      };
+      const chipLabels = {
+        '179': 'GLP-1 Weight Loss', '59': 'Sexual Wellness', '49': 'Hair Loss', '79': 'Longevity & Peptides',
+      };
+
+      let activeMonth = null; // null = default to the last month (the running total)
 
       function animateNumber(element, target, prefix = '$', suffix = '') {
         const start = 0;
@@ -534,24 +667,121 @@ const faqs = [
         requestAnimationFrame(update);
       }
 
+      // Draws an SVG <path> stroke left-to-right via stroke-dasharray, so
+      // every recalculation redraws the line instead of just popping in.
+      function drawIn(path) {
+        const len = path.getTotalLength();
+        path.style.transition = 'none';
+        path.style.strokeDasharray = len;
+        path.style.strokeDashoffset = len;
+        path.getBoundingClientRect(); // force reflow
+        path.style.transition = 'stroke-dashoffset .6s cubic-bezier(.22,.61,.36,1)';
+        path.style.strokeDashoffset = '0';
+      }
+
+      function updateTooltip(pts, idx) {
+        const p = pts[idx];
+        tooltipMonth.textContent = idx === 0 ? 'Today' : 'Month ' + idx;
+        const leftPct = Math.min(90, Math.max(10, p.x / 300 * 100));
+        tooltip.style.left = leftPct + '%';
+        tooltip.style.top = p.y + 'px';
+        animateNumber(tooltipValue, p.cum, '$', '');
+      }
+
       function updateCalculator() {
         const freeleyMonthly = parseFloat(treatmentSelect.value);
         const comparePrice = parseFloat(compareSelect.options[compareSelect.selectedIndex].dataset.price);
-        const months = parseInt(durationSelect.value);
+        const months = parseInt(durationSelect.value, 10);
 
         const monthlySavings = comparePrice - freeleyMonthly;
         const totalSavings = monthlySavings * months;
+        const savingsPct = Math.round((monthlySavings / comparePrice) * 100);
+        const maxPrice = Math.max(comparePrice, freeleyMonthly);
 
         animateNumber(totalSavingsDisplay, totalSavings, '$', '');
         durationLabel.textContent = `Over ${months} months`;
         theirPriceDisplay.textContent = `$${comparePrice.toFixed(2)}/mo`;
         freeleyPriceDisplay.textContent = `$${freeleyMonthly.toFixed(2)}/mo`;
         animateNumber(monthlySavingsDisplay, monthlySavings, '$', '/mo');
+        savingsPctDisplay.textContent = `Save ${savingsPct}%`;
+        monthEndLabel.textContent = `Month ${months}`;
+        theirBar.style.width = Math.round((comparePrice / maxPrice) * 100) + '%';
+        freeleyBar.style.width = Math.round((freeleyMonthly / maxPrice) * 100) + '%';
+
+        Object.entries(chipIcons).forEach(([val, el]) => { el.hidden = val !== treatmentSelect.value; });
+        chipLabel.textContent = chipLabels[treatmentSelect.value];
+
+        // Cumulative savings curve — the trend is mathematically a
+        // straight line (fixed savings every month), so connecting the
+        // real data points with a gentle wave (instead of straight
+        // segments) reads far less flat. Every point stays exactly on
+        // its real value; only the stroke between them undulates.
+        const w = 300, topPad = 8, bottomY = 74;
+        const pts = [];
+        for (let i = 0; i <= months; i++) {
+          const cum = monthlySavings * i;
+          const x = (i / months) * w;
+          const y = totalSavings > 0 ? (bottomY - (cum / totalSavings) * (bottomY - topPad)) : bottomY;
+          pts.push({ x, y, cum, month: i });
+        }
+        const waveAmp = 7;
+        let line = 'M' + pts[0].x.toFixed(1) + ',' + pts[0].y.toFixed(1);
+        for (let s = 0; s < pts.length - 1; s++) {
+          const sp1 = pts[s], sp2 = pts[s + 1];
+          const wave = (s % 2 === 0 ? -1 : 1) * waveAmp;
+          const cx1 = sp1.x + (sp2.x - sp1.x) * 0.35, cy1 = sp1.y + wave;
+          const cx2 = sp1.x + (sp2.x - sp1.x) * 0.65, cy2 = sp2.y + wave;
+          line += ` C${cx1.toFixed(1)},${cy1.toFixed(1)} ${cx2.toFixed(1)},${cy2.toFixed(1)} ${sp2.x.toFixed(1)},${sp2.y.toFixed(1)}`;
+        }
+        const area = line + ` L${pts[pts.length - 1].x.toFixed(1)},${bottomY} L0,${bottomY} Z`;
+
+        linePath.setAttribute('d', line);
+        areaPath.setAttribute('d', area);
+        drawIn(linePath);
+        areaPath.classList.remove('is-in');
+        void areaPath.getBoundingClientRect();
+        areaPath.classList.add('is-in');
+
+        // Clamp the active month (switching duration can leave a stale
+        // index) and default to the last point — the running total.
+        if (activeMonth === null || activeMonth > months) activeMonth = months;
+
+        pointsGroup.innerHTML = '';
+        pts.forEach((p) => {
+          const isActive = p.month === activeMonth;
+          const hit = document.createElementNS(SVG_NS, 'circle');
+          hit.setAttribute('class', 'wl-calc-chart__hit');
+          hit.setAttribute('r', '10');
+          hit.setAttribute('cx', p.x.toFixed(1));
+          hit.setAttribute('cy', p.y.toFixed(1));
+          hit.addEventListener('click', () => {
+            activeMonth = p.month;
+            updateTooltip(pts, activeMonth);
+            pointsGroup.querySelectorAll('.wl-calc-chart__dot').forEach((d, i) => {
+              const active = i === activeMonth;
+              d.setAttribute('r', active ? '6' : '3.5');
+              d.setAttribute('fill', active ? '#c39a4e' : '#0f6b45');
+            });
+          });
+
+          const dot = document.createElementNS(SVG_NS, 'circle');
+          dot.setAttribute('class', 'wl-calc-chart__dot');
+          dot.setAttribute('r', isActive ? '6' : '3.5');
+          dot.setAttribute('cx', p.x.toFixed(1));
+          dot.setAttribute('cy', p.y.toFixed(1));
+          dot.setAttribute('fill', isActive ? '#c39a4e' : '#0f6b45');
+
+          pointsGroup.appendChild(hit);
+          pointsGroup.appendChild(dot);
+          requestAnimationFrame(() => dot.classList.add('is-in'));
+        });
+
+        updateTooltip(pts, activeMonth);
       }
 
       treatmentSelect.addEventListener('change', updateCalculator);
       compareSelect.addEventListener('change', updateCalculator);
-      durationSelect.addEventListener('change', updateCalculator);
+      durationSelect.addEventListener('change', () => { activeMonth = null; updateCalculator(); });
 
       updateCalculator();
 

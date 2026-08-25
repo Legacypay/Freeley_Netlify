@@ -1,0 +1,9 @@
+[
+  {
+    "output": "public/assets/hl/slide-included-ivy.webp",
+    "size": "1024x1536",
+    "fit": "contain",
+    "background": "#ffffff",
+    "prompt": "Fix one typo only: the first checklist item's subtitle reads 'Clinically proven DHT lockers' — change 'lockers' to 'blockers' so it reads 'Clinically proven DHT blockers'. Keep absolutely everything else pixel-identical, including the complete 'What's Included' heading fully visible with clear margin above it."
+  }
+]

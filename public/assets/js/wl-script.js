@@ -49,7 +49,7 @@
             // Brello-style slides — see semaglutide's comment above.
             images: [
                 "/assets/wl/slide-price-tirzepatide.webp",
-                "/assets/wl/slide-included.webp",
+                "/assets/wl/slide-included-tirzepatide.webp",
                 "/assets/wl/slide-telehealth.webp",
                 "/assets/wl/slide-shipping.webp",
                 "/assets/shared/slide-journey.webp",
@@ -243,6 +243,15 @@
         const dots = document.querySelectorAll("#dotContainer .dot-indicator");
         dots.forEach((d, i) => {
             d.classList.toggle("active", i === 0);
+        });
+
+        // Bug fix 2026-08-20: the "Plan Details & Shipping" popup used to be
+        // one static modal, always showing the first medication's photo
+        // regardless of the toggle. weight-loss.astro now renders one
+        // .pim-wrap per medication (hidden by default) — show the one that
+        // matches, hide the rest.
+        document.querySelectorAll(".pim-wrap[data-medication]").forEach((wrap) => {
+            wrap.style.display = wrap.getAttribute("data-medication") === medication ? "" : "none";
         });
     }
 

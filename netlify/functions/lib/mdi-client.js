@@ -13,6 +13,22 @@
 
 const BASE_URL = process.env.MDI_BASE_URL || 'https://api.mdintegrations.com';
 
+// ── MDI Environment IDs ──────────────────────────────────────
+// Discovered from the portal Test Bench "Create Voucher" form. The portal sends
+// environment_id to route vouchers to sandbox vs. live. Not in the documented
+// PostPartnerVoucherRequest schema, but required in practice. Not secrets —
+// overridable via Netlify env vars, same convention as lib/products.js IDs.
+const MDI_SANDBOX_ENV_ID = process.env.MDI_SANDBOX_ENV_ID || '6ab0181e-d52a-488f-a161-d64d576b2eba';
+const MDI_LIVE_ENV_ID = process.env.MDI_LIVE_ENV_ID || 'b374c499-638d-4e72-b844-4c68fcda2eff';
+
+// Single decision point for sandbox vs. live voucher routing.
+// Live only when MDI_LIVE_MODE=true AND the submission is not a test —
+// MDI bills every live encounter, so test orders must never reach live.
+function resolveMdiEnvironment({ isTest = false } = {}) {
+  const live = process.env.MDI_LIVE_MODE === 'true' && !isTest;
+  return { id: live ? MDI_LIVE_ENV_ID : MDI_SANDBOX_ENV_ID, name: live ? 'live' : 'sandbox' };
+}
+
 // ── Token Cache ──────────────────────────────────────────────
 let cachedToken = null;
 let tokenExpiresAt = 0;
@@ -128,4 +144,4 @@ const CORS_HEADERS = {
   'Access-Control-Allow-Methods': 'POST, GET, OPTIONS'
 };
 
-module.exports = { getAccessToken, mdiRequest, verifyWebhookSignature, getCorsHeaders, CORS_HEADERS, BASE_URL };
+module.exports = { getAccessToken, mdiRequest, verifyWebhookSignature, getCorsHeaders, resolveMdiEnvironment, CORS_HEADERS, BASE_URL, MDI_SANDBOX_ENV_ID, MDI_LIVE_ENV_ID };

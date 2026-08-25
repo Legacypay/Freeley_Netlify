@@ -11,7 +11,7 @@
 
 const { getStore } = require('@netlify/blobs');
 const { encryptRecord } = require('./lib/phi-crypto');
-const { getCorsHeaders } = require('./lib/mdi-client');
+const { getCorsHeaders, resolveMdiEnvironment } = require('./lib/mdi-client');
 const { validateQuizSubmission } = require('./lib/validate-quiz');
 
 exports.handler = async (event) => {
@@ -47,8 +47,13 @@ exports.handler = async (event) => {
 
     // ── Save to Netlify Blobs (PHI encrypted at rest) ─────────
     const store = getStore('pending-mdi-cases');
+    // Stamp the environment now — retryPendingCases honors it instead of
+    // re-reading MDI_LIVE_MODE, so a queued test never gets promoted to live.
+    const isTest = data.is_test === true;
     const record = {
       ...data,
+      environment: resolveMdiEnvironment({ isTest }).name,
+      is_test: isTest,
       created_at: new Date().toISOString(),
       retry_count: 0,
       status: 'pending'

@@ -100,7 +100,22 @@ exports.handler = async (event) => {
         // Build voucher payload — same test/live decision as submitQuiz.js.
         // SAFE BY DEFAULT: demo:true + "TEST CASE" metadata unless
         // MDI_LIVE_MODE=true AND MDI_ALLOW_LIVE_ORDERS=true (see lib/mdi-voucher.js).
-        const testMode = resolveTestMode({ email: patientData.email });
+        //
+        // Honor the is_test/environment stamped on the record at queue time —
+        // never silently promote a record that was queued as test/sandbox to a
+        // billable live encounter just because MDI_LIVE_MODE/MDI_ALLOW_LIVE_ORDERS
+        // changed since it was queued. Legacy records with no stamp (undefined)
+        // default to TEST — the safe direction. Only a record explicitly stamped
+        // `is_test: false` (i.e. genuinely resolved live at submit time) gets a
+        // fresh resolveTestMode() re-check, which itself still requires both live
+        // flags to still be on.
+        const stampedIsTest = record.is_test;
+        const testMode = stampedIsTest === false
+          ? resolveTestMode({ email: patientData.email })
+          : resolveTestMode({ email: patientData.email, explicitTest: true });
+        if (stampedIsTest == null) {
+          console.warn(`[RETRY MDI] ${key} has no is_test stamp — defaulting to TEST`);
+        }
         const voucherPayload = buildVoucherPayload({
           product,
           testMode,
@@ -229,7 +244,6 @@ async function alertTeam(paymentIntentId, record, status) {
         severity: status === 'recovered' ? 'info' : 'critical',
         timestamp: new Date().toISOString(),
         payment_intent_id: paymentIntentId,
-        patient_email: record.patient?.email || 'unknown',
         product: record.product || 'unknown',
         mdi_case_id: record.mdi_case_id || null,
         retry_count: record.retry_count,

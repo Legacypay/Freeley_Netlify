@@ -38,12 +38,10 @@ import ProductInfoModal from '../components/ProductInfoModal.astro';
 const ASSESSMENT = '/assessment-quiz';
 
 // Duration doors — each id is a quiz-modal trigger sw-script.js binds.
-// ⚠️ The old page's eyebrow above these read "WHAT'S YOUR WEIGHT LOSS
-// GOAL?" — a copy-paste from /weight-loss. Rewritten to match the doors.
 const goals = [
-  { id: 'start-assessment1', label: 'Under 6 months' },
-  { id: 'start-assessment2', label: '6–12 months' },
-  { id: 'start-assessment3', label: 'Over a year' },
+  { id: 'start-assessment1', label: 'Under 6 months', meta: 'Recently started' },
+  { id: 'start-assessment2', label: '6–12 months', meta: 'Been a while', best: true },
+  { id: 'start-assessment3', label: 'Over a year', meta: 'Long-standing' },
 ];
 
 const trustPoints = [
@@ -127,10 +125,26 @@ const benefits = [
 
 // Plan-details popup sections (see src/components/ProductInfoModal.astro) —
 // `included`/`benefits` above feed this, not the photo carousel.
-const productInfoSections = [
-  { id: 'included', label: 'Included', eyebrow: "What's Included", items: included, image: '/assets/sw/tadalafil-card-included.webp', imageAlt: 'Tadalafil dissolving troches' },
-  { id: 'benefits', label: 'Benefits', eyebrow: 'Why Tadalafil Troches', items: benefits, image: '/assets/sw/tadalafil-card-benefits.webp', imageAlt: 'Tadalafil dissolving troches' },
-];
+//
+// Keyed by medication (bug fix 2026-08-20): this used to be one flat array
+// always showing Tadalafil's photo, even after the toggle switched to
+// Olympus — the modal never read `currentMedication`. Now each medication
+// gets its own modal instance (rendered below, one per key, sw-script.js's
+// switchMedication() shows/hides the matching .pim-wrap). Olympus has no
+// dedicated -card-*.webp photography yet, so its sections simply omit
+// `image`/`imageAlt` — ProductInfoModal already falls back to the plain
+// checklist layout when `image` is unset, which beats showing Tadalafil's
+// troches under Olympus's name.
+const productInfoSectionsByMedication = {
+  tadalafil: [
+    { id: 'included', label: 'Included', eyebrow: "What's Included", items: included, image: '/assets/sw/tadalafil-card-included.webp', imageAlt: 'Tadalafil dissolving troches' },
+    { id: 'benefits', label: 'Benefits', eyebrow: 'Why Tadalafil Troches', items: benefits, image: '/assets/sw/tadalafil-card-benefits.webp', imageAlt: 'Tadalafil dissolving troches' },
+  ],
+  olympus: [
+    { id: 'included', label: 'Included', eyebrow: "What's Included", items: included },
+    { id: 'benefits', label: 'Benefits', eyebrow: 'Why Olympus Troches', items: benefits },
+  ],
+};
 
 const press = [
   { src: '/assets/brands/bloomberg.svg', name: 'Bloomberg' },
@@ -267,21 +281,26 @@ const faqs = [
       .wl-badgeline img { width: 16px; height: auto; }
       .wl-badgeline span { font-family: var(--font-condensed); font-size: 11.5px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--brand); }
 
-      /* Duration doors */
-      .wl-goals { display: grid; gap: 10px; grid-template-columns: 1fr; margin: 0 0 14px; }
-      @media (min-width: 560px) { .wl-goals { grid-template-columns: repeat(3, 1fr); } }
-      /* !important: beats global.css's a:not([class*="btn"]) rule (0,3,1
-         specificity), same trap as .wl-notsure — this is an <a> too. */
-      .wl-goal { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 13px 18px; font-family: var(--font-sans); font-size: 15px; font-weight: 600; color: var(--gold) !important; cursor: pointer; transition: border-color .15s, transform .15s; }
-      .wl-goal:hover { border-color: var(--brand); }
+      /* Duration doors — card style: label + supporting line + a green
+         arrow badge, so each door reads as more than a plain button. */
+      .wl-goals { display: grid; gap: 10px; grid-template-columns: 1fr; margin: 22px 0 4px; }
+      @media (min-width: 460px) { .wl-goals { grid-template-columns: repeat(3, 1fr); } }
+      .wl-goal { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; position: relative; background: #fff; border: 2px solid var(--line); border-radius: 16px; padding: 15px 40px 14px 16px; font-family: var(--font-sans); cursor: pointer; transition: border-color .15s, box-shadow .15s, transform .15s; text-decoration: none !important; }
+      .wl-goal:hover { border-color: var(--green); box-shadow: 0 10px 24px rgba(18,60,44,.10); }
       @media (hover: hover) and (prefers-reduced-motion: no-preference) { .wl-goal:hover { transform: translateY(-2px); } }
-      .wl-goal svg { flex: none; color: var(--gold); }
-      .wl-notsure { font-size: 14px; color: var(--muted); margin: 0 0 6px; }
-      /* !important: beats global.css's a:not([class*="btn"]) rule (0,3,1
-         specificity) which would otherwise force this link blue. */
-      .wl-notsure button, .wl-notsure a { background: none; border: none; padding: 0; font: inherit; font-weight: 600; color: var(--gold) !important; cursor: pointer; text-decoration: none; }
-      .wl-notsure button:hover, .wl-notsure a:hover { text-decoration: underline; }
-      .wl-hero__fineprint { font-family: var(--font-condensed); font-size: 12.5px; color: var(--muted); margin: 0 0 26px; }
+      .wl-goal__label { font-size: 15px; font-weight: 700; color: var(--ink) !important; }
+      .wl-goal__meta { font-family: var(--font-condensed); font-size: 11.5px; color: var(--muted) !important; }
+      .wl-goal__arw { position: absolute; right: 14px; top: 15px; width: 22px; height: 22px; border-radius: 999px; background: var(--green); display: grid; place-items: center; }
+      .wl-goal__arw svg { width: 12px; height: 12px; color: #fff; }
+      .wl-goal--best { border-color: var(--gold); }
+      .wl-goal__tag { position: absolute; top: -9px; left: 14px; background: var(--gold); color: var(--green-deep) !important; font-family: var(--font-condensed); font-size: 9.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; }
+
+      .wl-chat { display: flex; gap: 12px; margin: 22px 0 0; max-width: 420px; }
+      .wl-chat__avatar { width: 40px; height: 40px; border-radius: 999px; object-fit: cover; flex-shrink: 0; margin-top: 2px; }
+      .wl-chat__bubble { position: relative; background: #fff; border: 1px solid var(--line); border-radius: 4px 16px 16px 16px; padding: 14px 16px; box-shadow: 0 4px 14px rgba(0,0,0,.05); }
+      .wl-chat__bubble::before { content: ''; position: absolute; left: -7px; top: 14px; width: 12px; height: 12px; background: #fff; border-left: 1px solid var(--line); border-bottom: 1px solid var(--line); transform: rotate(45deg); }
+      .wl-chat__bubble p { font-family: var(--font-sans); font-size: .96rem; line-height: 1.48; color: var(--ink); margin: 0 0 8px; }
+      .wl-chat__bubble span { font-family: var(--font-condensed); font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 
       .wl-hero__from { font-size: 1rem; margin: 0 0 8px; }
       .wl-hero__from .wl-price { font-size: 1.7rem; }
@@ -605,16 +624,21 @@ const faqs = [
           <p class="wl-eyebrow" style="margin:26px 0 12px;">How long has this been going on?</p>
           <div class="wl-goals">
             {goals.map((g) => (
-              <a href="/assessment-quiz" class="wl-goal" id={g.id}>
-                {g.label}
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+              <a href="/assessment-quiz" class={g.best ? 'wl-goal wl-goal--best' : 'wl-goal'} id={g.id}>
+                {g.best && <span class="wl-goal__tag">Most chosen</span>}
+                <span class="wl-goal__label">{g.label}</span>
+                <span class="wl-goal__meta">{g.meta}</span>
+                <span class="wl-goal__arw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg></span>
               </a>
             ))}
           </div>
-          <p class="wl-notsure">
-            Not sure? <a href="/assessment-quiz" id="start-full-assessment">Start the full assessment →</a>
-          </p>
-          <p class="wl-hero__fineprint">Free consultation if you don't qualify. Cancel anytime.</p>
+          <div class="wl-chat">
+            <img class="wl-chat__avatar" src="/assets/brand/testimonial_4.png" alt="" loading="lazy" />
+            <div class="wl-chat__bubble">
+              <p>“The troche dissolves in a few minutes and it's there when the moment is. No pharmacy counter, no awkward conversations — just confidence back where it belongs.”</p>
+              <span>Verified Freeley patient</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -670,7 +694,7 @@ const faqs = [
           </div>
           <div class="right">
             <a href="/assessment-quiz" class="wl-btn wl-btn--light" id="start-assessment4">
-              Check if I qualify <span class="wl-arw">→</span>
+              Start my treatment plan <span class="wl-arw">→</span>
             </a>
           </div>
         </div>
@@ -739,11 +763,15 @@ const faqs = [
           </div>
           <div id="thumbnailsContainerSW"></div>
           <p class="wl-foot" style="margin-top:14px;">Packaging and troche design shown are representative and may change. Your actual medication's appearance and labeling may differ.</p>
-          <ProductInfoModal
-            sections={productInfoSections}
-            idSuffix="SW"
-            triggerLabel="What's Included & Why Tadalafil Troches"
-          />
+          {Object.entries(productInfoSectionsByMedication).map(([medication, sections]) => (
+            <div class="pim-wrap" data-medication={medication} style={medication === 'tadalafil' ? undefined : 'display:none'}>
+              <ProductInfoModal
+                sections={sections}
+                idSuffix={`SW-${medication}`}
+                triggerLabel="What's Included & Why This Product"
+              />
+            </div>
+          ))}
         </div>
 
         <div>
@@ -774,7 +802,7 @@ const faqs = [
           </div>
 
           <a href="/assessment-quiz" class="wl-btn" id="start-assessment5" style="width:100%;">
-            Start Your Assessment <span class="wl-arw">→</span>
+            Get my prescription <span class="wl-arw">→</span>
           </a>
           <p class="wl-foot">Compounded medications are not FDA-approved and are not equivalent to the brand-name drug.</p>
         </div>
@@ -947,7 +975,7 @@ const faqs = [
       <Fragment slot="subheading">Personalized care for every part of you, from weight to skin, sleep to sexual health.</Fragment>
       <Fragment slot="cta">
         <a href="/assessment-quiz" class="wl-btn wl-btn--light" id="start-assessment6">
-          Start Your Assessment <span class="wl-arw">→</span>
+          Start your treatment journey <span class="wl-arw">→</span>
         </a>
       </Fragment>
     </FinalCta>
@@ -967,11 +995,19 @@ const faqs = [
       var t = document.querySelector('.wl-journey__timeline');
       if (!t || !matchMedia('(prefers-reduced-motion: no-preference)').matches) return;
       t.classList.add('is-armed');
-      new IntersectionObserver(function (entries) {
-        var seen = entries[0].isIntersecting;
-        if (seen) t.classList.add('is-live');
-        t.classList.toggle('is-idle', !seen);
-      }, { threshold: 0.25 }).observe(t);
+      // WebKit (iOS/macOS Safari) can collapse is-armed + is-live into one
+      // frame when the section is already near/in view at load — it paints
+      // straight to the finished keyframe and the draw never visibly runs.
+      // Forcing a layout read + waiting a frame guarantees the armed
+      // (undrawn) state is painted before the observer can fire.
+      void t.offsetHeight;
+      requestAnimationFrame(function () {
+        new IntersectionObserver(function (entries) {
+          var seen = entries[0].isIntersecting;
+          if (seen) t.classList.add('is-live');
+          t.classList.toggle('is-idle', !seen);
+        }, { threshold: 0.25 }).observe(t);
+      });
     })();
   </script>
 </Layout>
