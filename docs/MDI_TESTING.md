@@ -275,3 +275,40 @@ An **unrecognised** MDI order status maps to a generic "Processing" bucket that
 echoes the raw status in `message`; it is never silently relabelled as
 Shipped/Delivered (unlike `caseStatus.js`, which safely defaults to `created`).
 Unit tests: `tests/unit/get-orders.test.js` (`npm run test:unit`).
+
+### Ownership check (2026-08-25)
+
+`caseStatus.js`, `getOrders.js`, `getEncounterDetails.js`, and `patientCases.js`
+each accept a client-supplied `patient_id`/`case_id`/`voucher_id`/`email` —
+untrusted input from any authenticated patient's browser. All four now resolve
+through `lib/mdi-order-ownership.js`'s `resolveOwnedOrder()`, which only trusts
+an identifier backed by an `mdi-orders` blob record whose `email` matches the
+verified Supabase session. A request for an identifier that isn't the caller's
+own gets the same graceful "nothing to show yet" response as one that doesn't
+exist yet — never a 403, never distinguishable, so this can't be used to probe
+which voucher/case/patient ids are real. `patientCases.js`'s email-search mode
+specifically stopped trusting the client-supplied `email` field and always
+searches MDI under the authenticated session's own email instead.
+
+### End-to-end test against the real sandbox API (2026-08-25)
+
+`tests/functions/mdi-order-tracking.spec.ts` (`npm run test:mdi`, real network,
+real Sandbox credentials, nothing billed) is the closest thing this repo has to
+"go look in the MDI dashboard": it creates a real Sandbox patient + case via
+`POST /v1/partner/patients` / `POST /v1/partner/cases` (the plain partner
+endpoints, not the flaky `/v1/partner/tests/vouchers/:id` onboarding-bypass
+helper — that one 500s unconditionally for this partner/questionnaire as of
+this writing, tried with MDI's own documented example payload verbatim across
+two states; not a payload-shape problem, worth raising with MDI if this ever
+needs to run against a fully-scripted onboarding), auto-assigns a clinician via
+the real `POST /v1/partner/cases/:id/assigned`, then fires real HMAC-signed
+webhook events (computed with the actual `MDI_WEBHOOK_SECRET`, including a
+redelivery) at the locally-running `mdiWebhook.js` over HTTP, and asserts
+against MDI's own `GET` endpoints afterward — including that the "test-case"
+tag actually landed on the real case. `MDI_WEBHOOK_SECRET` has no local `.env`
+entry (cloud-only project setting); the spec fetches it once via the
+already-authenticated `netlify-cli` session (`netlify env:get ... --context dev`)
+rather than hardcoding it. Does **not** exercise `getOrders.js`/`caseStatus.js`
+over HTTP — those require a real Supabase access token and this repo has no
+automated way to provision a confirmed test user; their ownership/resolution
+logic is covered by mocked-auth, real-logic unit tests instead (see above).
