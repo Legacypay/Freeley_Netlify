@@ -223,6 +223,8 @@ exports.handler = async (event) => {
           status: 'paid',
           gateway: 'authorize_net',
           gatewayTransactionId: String(transactionId),
+          productName: `${treatmentName} - ${months}mo`,
+          treatment,
           billing
         });
         if (orderId) console.log(`[AUTHNET] funnel_orders recorded: ${orderId}`);

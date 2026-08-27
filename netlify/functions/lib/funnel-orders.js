@@ -58,7 +58,9 @@ async function saveFunnelOrder(order) {
     p_city: b.city || null,
     p_us_state: b.state || null,
     p_zip: b.zip || null,
-    p_date_of_birth: b.dateOfBirth || null
+    p_date_of_birth: b.dateOfBirth || null,
+    p_product_name: order.productName || null,
+    p_treatment: order.treatment || null
   });
   if (error) {
     console.error('[FUNNEL ORDERS] save_funnel_order failed:', error.message);
@@ -67,4 +69,21 @@ async function saveFunnelOrder(order) {
   return data || null;
 }
 
-module.exports = { saveFunnelOrder };
+/**
+ * Purchases for the Hub's Billing tab. `email` MUST be the verified Supabase
+ * session email — the SQL function filters strictly by it, so passing a
+ * client-supplied value here would let one patient read another's orders.
+ * @returns {Promise<Array<object>>} newest first; [] on any failure
+ */
+async function getFunnelOrdersForEmail(email) {
+  const supabase = getClient();
+  if (!supabase || !email) return [];
+  const { data, error } = await supabase.rpc('get_funnel_orders_for_email', { p_email: email });
+  if (error) {
+    console.error('[FUNNEL ORDERS] get_funnel_orders_for_email failed:', error.message);
+    return [];
+  }
+  return Array.isArray(data) ? data : [];
+}
+
+module.exports = { saveFunnelOrder, getFunnelOrdersForEmail };

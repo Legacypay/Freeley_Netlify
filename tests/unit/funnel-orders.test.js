@@ -53,7 +53,8 @@ test('calls save_funnel_order with the exact SQL parameter names', async () => {
   assert.equal(rpcCalls[0].name, 'save_funnel_order');
   assert.deepEqual(Object.keys(rpcCalls[0].params).sort(), [
     'p_address', 'p_amount_cents', 'p_city', 'p_date_of_birth', 'p_first_name', 'p_gateway',
-    'p_gateway_transaction_id', 'p_last_name', 'p_lead_id', 'p_plan_months', 'p_status', 'p_us_state', 'p_zip'
+    'p_gateway_transaction_id', 'p_last_name', 'p_lead_id', 'p_plan_months', 'p_product_name',
+    'p_status', 'p_treatment', 'p_us_state', 'p_zip'
   ]);
   assert.equal(rpcCalls[0].params.p_amount_cents, 22500);
   assert.equal(rpcCalls[0].params.p_gateway_transaction_id, '80058673597');
@@ -73,6 +74,25 @@ test('returns null (does not throw) when the RPC errors', async () => {
   const { saveFunnelOrder } = fresh();
   const id = await saveFunnelOrder({ planMonths: 1, amountCents: 8900, status: 'paid', gateway: 'authorize_net', gatewayTransactionId: 't' });
   assert.equal(id, null);
+});
+
+test('getFunnelOrdersForEmail calls the lookup RPC with the email and returns rows', async () => {
+  rpcResult = { data: [{ id: 'o1', amount_cents: 8900, status: 'paid' }], error: null };
+  const { getFunnelOrdersForEmail } = fresh();
+  const rows = await getFunnelOrdersForEmail('a@b.co');
+  assert.equal(rpcCalls[0].name, 'get_funnel_orders_for_email');
+  assert.deepEqual(rpcCalls[0].params, { p_email: 'a@b.co' });
+  assert.equal(rows.length, 1);
+});
+
+test('getFunnelOrdersForEmail returns [] on error, empty email, or missing env', async () => {
+  rpcResult = { data: null, error: { message: 'boom' } };
+  let { getFunnelOrdersForEmail } = fresh();
+  assert.deepEqual(await getFunnelOrdersForEmail('a@b.co'), []);
+  assert.deepEqual(await getFunnelOrdersForEmail(''), []);
+  delete process.env.PUBLIC_SUPABASE_ANON_KEY;
+  ({ getFunnelOrdersForEmail } = fresh());
+  assert.deepEqual(await getFunnelOrdersForEmail('a@b.co'), []);
 });
 
 test('returns null (does not throw) when Supabase env is not configured', async () => {
