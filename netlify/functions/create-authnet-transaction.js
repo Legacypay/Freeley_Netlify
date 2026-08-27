@@ -11,7 +11,9 @@
  *   treatment, plan_months, compound,        // → server computes the price
  *   opaqueData: { dataDescriptor, dataValue },// from Accept.js
  *   attribution: { attr_* },                  // for server-side conversion
- *   email, firstName, lastName, phone, zip    // for billTo + conversion
+ *   email, firstName, lastName, phone, zip,   // for billTo + conversion
+ *   lead_id?, address?, city?, state?,        // for the funnel_orders record
+ *   date_of_birth?                            //   (Supabase, see lib/funnel-orders.js)
  * }
  *
  * Returns: { approved:true, transactionId, amount } on success,
@@ -28,6 +30,7 @@
 
 const { allow } = require('./lib/rate-limit');
 const { fireConversion } = require('./lib/conversion-tracker');
+const { saveFunnelOrder } = require('./lib/funnel-orders');
 
 // Single source of truth for pricing — shared with the frontend display.
 const pricingData = require('../../pricing.json');
@@ -87,6 +90,16 @@ exports.handler = async (event) => {
     const firstName = (body.firstName || '').trim();
     const lastName = (body.lastName || '').trim();
     const zip = (body.zip || '').trim();
+    // Only for the funnel_orders record — not sent to Authorize.Net.
+    const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const leadId = UUID_RE.test(String(body.lead_id || '')) ? body.lead_id : null;
+    const billing = {
+      firstName, lastName, zip,
+      address: String(body.address || '').trim().slice(0, 200) || null,
+      city: String(body.city || '').trim().slice(0, 100) || null,
+      state: String(body.state || '').trim().slice(0, 2).toUpperCase() || null,
+      dateOfBirth: /^\d{4}-\d{2}-\d{2}$/.test(String(body.date_of_birth || '')) ? body.date_of_birth : null
+    };
 
     // ── Validate the Accept.js token ──
     if (!opaqueData || !opaqueData.dataDescriptor || !opaqueData.dataValue) {
@@ -197,6 +210,25 @@ exports.handler = async (event) => {
         console.log('[AUTHNET] Conversion dispatched:', JSON.stringify(conversionResult));
       } catch (convErr) {
         console.warn('[AUTHNET] Conversion firing failed (non-blocking):', convErr.message);
+      }
+
+      // Record the purchase in Supabase (funnel_orders). Non-blocking for the
+      // same reason as the conversion above: the money already moved, and
+      // Authorize.Net holds the authoritative transaction record regardless.
+      try {
+        const orderId = await saveFunnelOrder({
+          leadId,
+          planMonths: months,
+          amountCents: Math.round(Number(amountStr) * 100),
+          status: 'paid',
+          gateway: 'authorize_net',
+          gatewayTransactionId: String(transactionId),
+          billing
+        });
+        if (orderId) console.log(`[AUTHNET] funnel_orders recorded: ${orderId}`);
+        else console.warn(`[AUTHNET] ⚠️ funnel_orders NOT recorded for transId=${transactionId} — ops: reconcile manually from the Authorize.Net dashboard`);
+      } catch (orderErr) {
+        console.warn('[AUTHNET] funnel_orders save threw (non-blocking):', orderErr.message);
       }
 
       return {

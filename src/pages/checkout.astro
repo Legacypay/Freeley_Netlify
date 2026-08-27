@@ -1395,6 +1395,17 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
                     .value.trim(),
                   phone: document.getElementById("pt-phone").value.trim(),
                   zip: document.getElementById("an-zip").value.trim(),
+                  // For the funnel_orders record (Supabase). lead_id is the
+                  // quiz's session id = funnel_leads.id; absent on a direct
+                  // visit, which the server tolerates.
+                  lead_id:
+                    sessionStorage.getItem("freeley_quiz_session_id") ||
+                    undefined,
+                  address: document.getElementById("pt-address").value.trim(),
+                  city: document.getElementById("pt-city").value.trim(),
+                  state: document.getElementById("pt-state").value.trim(),
+                  date_of_birth:
+                    document.getElementById("pt-dob").value || undefined,
                 }),
               },
             );
