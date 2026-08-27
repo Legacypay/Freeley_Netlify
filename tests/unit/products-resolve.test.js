@@ -44,6 +44,19 @@ test('hair-loss female with no DOB → hair-women-45plus (conservative default)'
   );
 });
 
+test('hair-loss with undeclared sex never gets the finasteride (hair-men) product', () => {
+  // hair-men contains finasteride — teratogenic, contraindicated for anyone
+  // who could be a woman of childbearing age. Only an EXPLICIT male
+  // declaration may route there; "Prefer not to say" (checkout's <select>
+  // value "9"), a missing field, or garbage input must fall back to the
+  // conservative non-finasteride default, same as unknown age.
+  assert.notEqual(resolveProductKey('hair-loss', { sex: '9' }), 'hair-men');
+  assert.equal(resolveProductKey('hair-loss', { sex: '9' }), 'hair-women-45plus');
+  assert.notEqual(resolveProductKey('hair-loss', {}), 'hair-men');
+  assert.notEqual(resolveProductKey('hair-loss', { sex: '' }), 'hair-men');
+  assert.notEqual(resolveProductKey('hair-loss', { sex: 'nonbinary' }), 'hair-men');
+});
+
 test('hair-loss never resolves to the FDA-held or duplicate offerings', () => {
   const cases = [
     {},

@@ -613,10 +613,10 @@ function computeAge(dateOfBirth) {
  * uses "1"=Male, "2"=Female, "9"=Prefer not to say; the quiz stores free text
  * ("Male"/"Female"/"Woman"). Anything else falls through to male.
  */
-function isFemale(sex) {
+function isDeclaredMale(sex) {
   if (sex == null) return false;
   const s = String(sex).trim().toLowerCase();
-  return s.startsWith('f') || s === 'woman' || s === '2';
+  return s.startsWith('m') || s === '1';
 }
 
 // Compound aliases that are not themselves PRODUCTS keys.
@@ -665,7 +665,13 @@ function resolveProductKey(productKey, ctxOrDose) {
   // Never resolves to 'hair-topical' (_hold: GHK-Cu FDA/LegitScript) or
   // 'hair-biotin-fin-min' (near-duplicate of hair-men, not in the live branding).
   if (productKey === 'hair-loss') {
-    if (!isFemale(ctx.sex)) return 'hair-men';
+    // Cedar (hair-men) contains finasteride — teratogenic, contraindicated for
+    // anyone who could be a woman of childbearing age. Only route there on an
+    // EXPLICIT male declaration. "Prefer not to say" (checkout's <select>
+    // value "9"), a missing field, or any other unrecognized value is treated
+    // the same conservative way as an unknown age below — safety-first
+    // default, not a guess. MDI's physician still reviews before prescribing.
+    if (isDeclaredMale(ctx.sex)) return 'hair-men';
     const age = computeAge(ctx.dateOfBirth);
     // Age unknown → the 45+ formula, the conservative default (no spironolactone).
     return age != null && age < 45 ? 'hair-women-under45' : 'hair-women-45plus';
