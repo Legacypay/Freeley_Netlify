@@ -1,5 +1,17 @@
 ---
 import '../styles/tailwind.css';
+
+// Authorize.Net Accept.js needs the API Login ID + Public Client Key
+// client-side to tokenize the card (see netlify/functions/create-authnet-transaction.js
+// for the matching server-side Transaction Key). Read here in frontmatter
+// (build-time/SSR, not bundled to the client) and passed into the page's
+// inline script via define:vars below — never hardcoded.
+const AUTHNET_LOGIN_ID = process.env.AUTHNET_API_LOGIN_ID || '';
+const AUTHNET_CLIENT_KEY = process.env.AUTHNET_CLIENT_KEY || '';
+const AUTHNET_ENV = (process.env.AUTHNET_ENV || 'production').toLowerCase();
+const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
+  ? 'https://jstest.authorize.net/v1/Accept.js'
+  : 'https://js.authorize.net/v1/Accept.js';
 ---
 
 <!doctype html>
@@ -21,6 +33,10 @@ import '../styles/tailwind.css';
     <link rel="stylesheet" href="/global.css" />
     <link rel="stylesheet" href="/style/style.css" />
     <link rel="stylesheet" href="/style/checkoutstyle.css" />
+    <!-- Authorize.Net Accept.js — tokenizes the card in-browser; the raw card
+         number/CVC never touch our server (see processPayment() below and
+         netlify/functions/create-authnet-transaction.js). -->
+    <script src={ACCEPT_JS_SRC} charset="utf-8"></script>
 </head>
 
 <body class="_palette _canvas">
@@ -816,7 +832,7 @@ import '../styles/tailwind.css';
         </div>
     </div>
 
-    <script is:inline>
+    <script is:inline define:vars={{ AUTHNET_LOGIN_ID, AUTHNET_CLIENT_KEY }}>
         // ═══════════════════════════════════════════════════════
         // PRODUCT DATA – loaded from sessionStorage
         // ═══════════════════════════════════════════════════════
@@ -824,6 +840,7 @@ import '../styles/tailwind.css';
         let selectedProducts = [];
         let selectedPlanMonths = 3; // Default: 3 Months
         let productTotalPrice = 0;
+        let selectedCompound = null; // set by setCheckoutCompound(), sent to the charge
 
         /**
          * Load products from sessionStorage (set by quiz)
@@ -1274,7 +1291,12 @@ import '../styles/tailwind.css';
       }
 
       /**
-       * Process payment (demo)
+       * Charge the card via Authorize.Net Accept.js (real payment).
+       * 1. Tokenize the raw card fields in-browser (Accept.dispatchData) —
+       *    the card number/CVC never touch our server, only the resulting
+       *    opaque token does.
+       * 2. POST the token to create-authnet-transaction.js, which recomputes
+       *    the price from pricing.json server-side and charges the card.
        */
       async function processPayment() {
         const btn = document.getElementById("checkout-btn");
@@ -1285,35 +1307,129 @@ import '../styles/tailwind.css';
           return;
         }
 
+        function resetButton() {
+          btn.disabled = false;
+          btn.style.opacity = "1";
+          spinner.style.display = "none";
+        }
+
+        function showError(message) {
+          errorEl.textContent =
+            message || "Something went wrong. Please try again.";
+          errorEl.style.display = "block";
+          resetButton();
+        }
+
+        if (typeof Accept === "undefined") {
+          showError(
+            "Payment system failed to load. Please refresh and try again.",
+          );
+          return;
+        }
+
         btn.disabled = true;
         btn.style.opacity = "0.7";
         spinner.style.display = "block";
         errorEl.style.display = "none";
 
-        try {
-          await new Promise((resolve) => setTimeout(resolve, 2000));
+        const expDigits = document
+          .getElementById("an-exp")
+          .value.replace(/\D/g, ""); // "MMYY"
 
-          const orderData = {
-            transactionId: "TXN-" + Date.now(),
-            amount: productTotalPrice.toFixed(2),
-            products: selectedProducts.map((p) => p.name),
-            planMonths: selectedPlanMonths,
-            timestamp: new Date().toISOString(),
-          };
+        const secureData = {
+          authData: {
+            clientKey: AUTHNET_CLIENT_KEY,
+            apiLoginID: AUTHNET_LOGIN_ID,
+          },
+          cardData: {
+            cardNumber: document
+              .getElementById("an-card-number")
+              .value.replace(/\s+/g, ""),
+            month: expDigits.slice(0, 2),
+            year: "20" + expDigits.slice(2, 4),
+            cardCode: document.getElementById("an-cvc").value.trim(),
+          },
+        };
 
-          sessionStorage.setItem(
-            "freeley_transaction",
-            JSON.stringify(orderData),
-          );
-          window.location.href =
-            "/?payment=success&pi=" + orderData.transactionId;
-        } catch (err) {
-          errorEl.textContent = "Something went wrong. Please try again.";
-          errorEl.style.display = "block";
-          btn.disabled = false;
-          btn.style.opacity = "1";
-          spinner.style.display = "none";
-        }
+        Accept.dispatchData(secureData, async function (tokenResponse) {
+          if (
+            !tokenResponse ||
+            !tokenResponse.messages ||
+            tokenResponse.messages.resultCode !== "Ok"
+          ) {
+            const msg =
+              tokenResponse &&
+              tokenResponse.messages &&
+              tokenResponse.messages.message &&
+              tokenResponse.messages.message[0] &&
+              tokenResponse.messages.message[0].text;
+            showError(msg || "Your card details could not be validated.");
+            return;
+          }
+
+          try {
+            const primary = selectedProducts[0] || {};
+            const attribution =
+              window.FreeleyAttribution &&
+              window.FreeleyAttribution.flatten
+                ? window.FreeleyAttribution.flatten()
+                : {};
+
+            const resp = await fetch(
+              "/.netlify/functions/create-authnet-transaction",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  treatment: primary.id || "hair-loss",
+                  plan_months: selectedPlanMonths,
+                  compound: selectedCompound,
+                  opaqueData: tokenResponse.opaqueData,
+                  attribution: attribution,
+                  email: document.getElementById("pt-email").value.trim(),
+                  firstName: document
+                    .getElementById("pt-first-name")
+                    .value.trim(),
+                  lastName: document
+                    .getElementById("pt-last-name")
+                    .value.trim(),
+                  phone: document.getElementById("pt-phone").value.trim(),
+                  zip: document.getElementById("an-zip").value.trim(),
+                }),
+              },
+            );
+
+            const result = await resp.json();
+
+            if (!result || !result.approved) {
+              showError(
+                (result && result.error) ||
+                  "Your card was declined. Please check your details or try another card.",
+              );
+              return;
+            }
+
+            const orderData = {
+              transactionId: result.transactionId,
+              amount: result.amount,
+              products: selectedProducts.map((p) => p.name),
+              planMonths: selectedPlanMonths,
+              timestamp: new Date().toISOString(),
+            };
+
+            sessionStorage.setItem(
+              "freeley_transaction",
+              JSON.stringify(orderData),
+            );
+            window.location.href =
+              "/?payment=success&pi=" + orderData.transactionId;
+          } catch (err) {
+            console.error("[CHECKOUT] Payment error:", err);
+            showError(
+              "Unable to process payment. Please try again or contact support.",
+            );
+          }
+        });
       }
 
       // ═══════════════════════════════════════════════════════
@@ -1392,7 +1508,7 @@ import '../styles/tailwind.css';
       // Expose functions globally for inline onclick
       window.selectPlan = selectPlan;
       window.setCheckoutCompound = function (type) {
-        console.log("Compound selected:", type);
+        selectedCompound = type;
       };
       window.loadProductFromQuiz = loadProductsFromSession;
     </script>

@@ -43,6 +43,12 @@ const ENDPOINTS = {
 
 exports.handler = async (event) => {
   const ALLOWED_ORIGINS = ['https://freeley.com', 'https://www.freeley.com'];
+  // `netlify dev`/`netlify functions:serve` set NETLIFY_DEV=true — never in
+  // production — so local testing (astro dev on a different port than the
+  // functions server) can reach this function without a temporary edit.
+  if (process.env.NETLIFY_DEV === 'true') {
+    ALLOWED_ORIGINS.push('http://localhost:4321', 'http://localhost:8888');
+  }
   const reqOrigin = (event.headers && event.headers.origin) || '';
   const corsOrigin = ALLOWED_ORIGINS.includes(reqOrigin) ? reqOrigin : ALLOWED_ORIGINS[0];
   const headers = {
