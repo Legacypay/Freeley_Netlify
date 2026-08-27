@@ -1409,6 +1409,13 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
               return;
             }
 
+            // ── Card approved → create the MDI case for physician review ──
+            // Best-effort: the charge already went through, so nothing below is
+            // allowed to trap the patient on this page. submitQuiz.js queues its
+            // own retry on a transient MDI failure; savePendingCase.js is the
+            // safety net for when the browser can't reach submitQuiz at all.
+            await submitToMDI(result.transactionId, primary);
+
             const orderData = {
               transactionId: result.transactionId,
               amount: result.amount,
@@ -1430,6 +1437,103 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
             );
           }
         });
+      }
+
+      /**
+       * Send the clinical intake to MD Integrations after a successful charge.
+       *
+       * NEVER throws — the card has already been charged by the time this runs,
+       * so a failure here must not block the success redirect. Ordered fallback:
+       *   1. submitQuiz.js  → creates the MDI voucher/case (self-queues its own
+       *      retry on a transient MDI 5xx).
+       *   2. savePendingCase.js → if the browser couldn't get a success out of
+       *      submitQuiz at all, park the PHI-encrypted submission for
+       *      retryPendingCases.js so the payment isn't orphaned.
+       */
+      async function submitToMDI(transactionId, primary) {
+        const val = (id) => {
+          const el = document.getElementById(id);
+          return el ? el.value.trim() : "";
+        };
+
+        let quizData = null;
+        let quizAnswers = null;
+        try {
+          quizData = JSON.parse(
+            sessionStorage.getItem("freeley_quiz_data") || "null",
+          );
+        } catch (e) {}
+        try {
+          quizAnswers = JSON.parse(
+            sessionStorage.getItem("quiz_answers") || "null",
+          );
+        } catch (e) {}
+
+        // No real quiz session (direct hit on /checkout, demo/QA run) means there
+        // is no clinical data to submit — skip MDI rather than send garbage to a
+        // physician. The payment stands either way.
+        if (!quizData || !quizData.email) {
+          console.warn(
+            "[CHECKOUT] No quiz data in session — skipping MDI case creation.",
+          );
+          return;
+        }
+
+        const mdiBody = {
+          patient: {
+            first_name: val("pt-first-name"),
+            last_name: val("pt-last-name"),
+            email: val("pt-email"),
+            phone_number: val("pt-phone") || undefined,
+            date_of_birth: val("pt-dob") || undefined,
+            gender: val("pt-gender") || undefined,
+            address: val("pt-address") || undefined,
+            city: val("pt-city") || undefined,
+            state: val("pt-state") || undefined,
+            zip_code: val("pt-zip") || undefined,
+          },
+          product: primary.id || "hair-loss",
+          compound: selectedCompound || undefined,
+          quiz_answers: quizAnswers || undefined,
+          allergies: quizData.allergies || undefined,
+          current_medications: quizData.medications || undefined,
+          medical_conditions: quizData.conditions || undefined,
+        };
+
+        try {
+          const mdiResp = await fetch("/.netlify/functions/submitQuiz", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(mdiBody),
+          });
+          const mdiResult = await mdiResp.json();
+          if (!mdiResp.ok || !mdiResult.success) {
+            throw new Error("submitQuiz did not succeed");
+          }
+          console.log("[CHECKOUT] MDI case created:", mdiResult.voucher_id);
+        } catch (mdiErr) {
+          console.error(
+            "[CHECKOUT] MDI submission failed after successful payment — queueing for retry:",
+            mdiErr,
+          );
+          try {
+            await fetch("/.netlify/functions/savePendingCase", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                payment_intent_id: transactionId,
+                ...mdiBody,
+              }),
+            });
+          } catch (saveErr) {
+            // Non-fatal to the customer: the charge succeeded and Authorize.Net
+            // holds the transaction record regardless. Ops needs this log line.
+            console.error(
+              "[CHECKOUT] savePendingCase ALSO failed — this payment has no MDI record anywhere:",
+              saveErr,
+            );
+          }
+        }
       }
 
       // ═══════════════════════════════════════════════════════

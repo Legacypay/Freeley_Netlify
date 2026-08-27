@@ -44,15 +44,22 @@ exports.handler = async (event) => {
       console.warn('[SUBMIT QUIZ] Validation failed:', v.error);
       return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ error: 'Invalid submission. Please check your inputs and try again.' }) };
     }
-    const { patient: patientData, product: productKey, dose, quiz_answers, allergies, current_medications, medical_conditions } = data;
+    const { patient: patientData, product: productKey, dose, compound, quiz_answers, allergies, current_medications, medical_conditions } = data;
     // Explicit caller-supplied test marker (validated boolean in lib/validate-quiz.js).
     // Not the only test signal — see lib/mdi-voucher.js's resolveTestMode for the full
     // safe-by-default decision (MDI_LIVE_MODE/MDI_ALLOW_LIVE_ORDERS/email patterns).
     const explicitTest = data.is_test === true;
 
-    // Resolve product key — handles legacy 'semaglutide'/'tirzepatide' keys
-    // and dose-tiered lookups (e.g., semaglutide + dose 0.4 → semaglutide-s2)
-    const resolvedKey = resolveProductKey(productKey, dose);
+    // Resolve product key — handles legacy 'semaglutide'/'tirzepatide' keys,
+    // dose-tiered lookups (e.g., semaglutide + dose 0.4 → semaglutide-s2) and the
+    // coarse per-vertical keys the checkout sends ('hair-loss', 'longevity', …),
+    // which need the compound / sex / age context to pick a specific offering.
+    const resolvedKey = resolveProductKey(productKey, {
+      dose,
+      compound,
+      sex: patientData.gender,
+      dateOfBirth: patientData.date_of_birth
+    });
 
     if (!resolvedKey || !PRODUCTS[resolvedKey]) {
       return { statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({ error: 'Invalid product: "' + productKey + '". Valid options: ' + Object.keys(PRODUCTS).join(', ') }) };
@@ -215,6 +222,7 @@ exports.handler = async (event) => {
           patient: data.patient,
           product: data.product,
           dose: data.dose || null,
+          compound: data.compound || null,
           quiz_answers: data.quiz_answers || null,
           allergies: data.allergies || null,
           current_medications: data.current_medications || null,

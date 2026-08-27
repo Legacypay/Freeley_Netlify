@@ -104,6 +104,12 @@ function validateQuizSubmission(data) {
     return { ok: false, error: 'dose has invalid type' };
   }
 
+  // Optional compound/plan-tier hint — narrows a coarse vertical key
+  // ('hair-loss', 'longevity', …) to a specific offering in lib/products.js.
+  if (data.compound != null && (typeof data.compound !== 'string' || data.compound.length > 100)) {
+    return { ok: false, error: 'compound is invalid or too long' };
+  }
+
   const qaErr = validateQuizAnswers(data.quiz_answers);
   if (qaErr) return { ok: false, error: qaErr };
 

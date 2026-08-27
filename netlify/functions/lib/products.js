@@ -590,12 +590,56 @@ const TIRZEPATIDE_TIERS = {
   14: 'tirzepatide-t6'
 };
 
+// ── Vertical-key resolution helpers ──────────────────────────
+// The checkout/quiz flow sends coarse treatment keys ('weight-loss',
+// 'hair-loss', 'longevity', 'sexual-wellness' — pricing.json's vocabulary)
+// plus whatever clinical context it has. These map that onto a specific
+// PRODUCTS key so MDI gets a real offering/questionnaire.
+
+/** Whole years between dateOfBirth and today; null when missing/unparseable. */
+function computeAge(dateOfBirth) {
+  if (!dateOfBirth) return null;
+  const dob = new Date(dateOfBirth);
+  if (isNaN(dob.getTime())) return null;
+  const now = new Date();
+  let age = now.getFullYear() - dob.getFullYear();
+  const monthDelta = now.getMonth() - dob.getMonth();
+  if (monthDelta < 0 || (monthDelta === 0 && now.getDate() < dob.getDate())) age--;
+  return age >= 0 && age < 130 ? age : null;
+}
+
 /**
- * Resolve a product key, handling legacy single-key lookups for dose-tiered products.
- * If 'semaglutide' or 'tirzepatide' is passed without a tier, returns the starting tier.
- * If a dose is provided, returns the matching tier.
+ * Female only when we can positively tell. checkout.astro's `pt-gender` select
+ * uses "1"=Male, "2"=Female, "9"=Prefer not to say; the quiz stores free text
+ * ("Male"/"Female"/"Woman"). Anything else falls through to male.
  */
-function resolveProductKey(productKey, dose) {
+function isFemale(sex) {
+  if (sex == null) return false;
+  const s = String(sex).trim().toLowerCase();
+  return s.startsWith('f') || s === 'woman' || s === '2';
+}
+
+// Compound aliases that are not themselves PRODUCTS keys.
+const LONGEVITY_COMPOUND_ALIASES = {
+  'nad': 'nad-plus',
+  'nad+': 'nad-plus',
+  'sermorelin': 'sermorelin-injectable',
+  'sermorelin-oral': 'sermorelin-troche',
+  'glutathione': 'glutathione-troche'
+};
+
+/**
+ * Resolve a product key, handling legacy single-key lookups for dose-tiered products
+ * and the coarse per-vertical keys the checkout sends.
+ *
+ * Second argument accepts either a bare dose (legacy call sites) or a context
+ * object { dose, compound, sex, dateOfBirth }.
+ */
+function resolveProductKey(productKey, ctxOrDose) {
+  const ctx = (ctxOrDose && typeof ctxOrDose === 'object') ? ctxOrDose : { dose: ctxOrDose };
+  const dose = ctx.dose;
+  const compound = ctx.compound == null ? '' : String(ctx.compound).trim().toLowerCase();
+
   // Direct match — return as-is
   if (PRODUCTS[productKey]) return productKey;
 
@@ -609,6 +653,43 @@ function resolveProductKey(productKey, dose) {
   if (productKey === 'tirzepatide') {
     if (dose && TIRZEPATIDE_TIERS[dose]) return TIRZEPATIDE_TIERS[dose];
     return 'tirzepatide-t1'; // Default starting dose
+  }
+
+  // ── Vertical: weight loss → the compound's dose tier ──
+  if (productKey === 'weight-loss') {
+    const molecule = (compound === 'tirzepatide' || compound === 'tirz') ? 'tirzepatide' : 'semaglutide';
+    return resolveProductKey(molecule, { dose });
+  }
+
+  // ── Vertical: hair loss → Cedar (men) / Ivy (women 45+) / Willow (women <45) ──
+  // Never resolves to 'hair-topical' (_hold: GHK-Cu FDA/LegitScript) or
+  // 'hair-biotin-fin-min' (near-duplicate of hair-men, not in the live branding).
+  if (productKey === 'hair-loss') {
+    if (!isFemale(ctx.sex)) return 'hair-men';
+    const age = computeAge(ctx.dateOfBirth);
+    // Age unknown → the 45+ formula, the conservative default (no spironolactone).
+    return age != null && age < 45 ? 'hair-women-under45' : 'hair-women-45plus';
+  }
+
+  // ── Vertical: longevity ──
+  if (productKey === 'longevity') {
+    if (PRODUCTS[compound] && PRODUCTS[compound].category === 'longevity') return compound;
+    if (LONGEVITY_COMPOUND_ALIASES[compound]) return LONGEVITY_COMPOUND_ALIASES[compound];
+    // ASSUMPTION(business): checkout has no longevity compound picker yet, so the
+    // compound is usually missing and only the standard/premium plan tier is known.
+    // Mapping premium → NAD+ and standard/missing → injectable Sermorelin.
+    // CLIENT TO CONFIRM which offering an un-specified longevity order should create.
+    return compound === 'premium' ? 'nad-plus' : 'sermorelin-injectable';
+  }
+
+  // ── Vertical: sexual wellness / ED ──
+  if (productKey === 'sexual-wellness' || productKey === 'ed') {
+    if (PRODUCTS[compound] && PRODUCTS[compound].category === 'sexual-wellness') return compound;
+    // ASSUMPTION(business): mirrors create-authnet-transaction.js's premiumCompounds
+    // split (olympus/olympus-plus/olympus-peak/olympus-max are the premium tier).
+    // Premium → Olympus, standard/missing → daily Tadalafil.
+    // CLIENT TO CONFIRM the intended default for an un-specified ED order.
+    return compound === 'premium' ? 'olympus' : 'tadalafil-daily';
   }
 
   return null; // Unknown product
@@ -631,4 +712,4 @@ function getPharmacyId(productKey) {
   return PHARMACIES[product.category] || PHARMACIES.default;
 }
 
-module.exports = { PRODUCTS, PHARMACIES, QUESTIONNAIRE_IDS, getPharmacyId, resolveProductKey, SEMAGLUTIDE_TIERS, TIRZEPATIDE_TIERS };
+module.exports = { PRODUCTS, PHARMACIES, QUESTIONNAIRE_IDS, getPharmacyId, resolveProductKey, computeAge, SEMAGLUTIDE_TIERS, TIRZEPATIDE_TIERS };

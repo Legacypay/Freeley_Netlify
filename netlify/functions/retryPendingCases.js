@@ -82,10 +82,17 @@ exports.handler = async (event) => {
 
       // ── Attempt MDI submission ───────────────────────────────
       try {
-        const { patient: patientData, product: productKey, dose, quiz_answers, allergies, current_medications, medical_conditions } = record;
+        const { patient: patientData, product: productKey, dose, compound, quiz_answers, allergies, current_medications, medical_conditions } = record;
 
-        // Resolve product key — handles legacy 'semaglutide'/'tirzepatide' keys
-        const resolvedKey = resolveProductKey(productKey, dose);
+        // Resolve product key — handles legacy 'semaglutide'/'tirzepatide' keys and
+        // the coarse per-vertical keys ('hair-loss', 'longevity', …), which need the
+        // compound / sex / age context stamped on the record at queue time.
+        const resolvedKey = resolveProductKey(productKey, {
+          dose,
+          compound,
+          sex: patientData && patientData.gender,
+          dateOfBirth: patientData && patientData.date_of_birth
+        });
 
         if (!patientData || !resolvedKey || !PRODUCTS[resolvedKey]) {
           console.error(`[RETRY MDI] Invalid record for ${key}: missing patient or product (key: ${productKey}, resolved: ${resolvedKey})`);
