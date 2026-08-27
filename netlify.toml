@@ -225,6 +225,22 @@
   to = "/assessment-quiz"
   status = 200
 
+# Where the quiz above sends the patient when they click "Proceed to
+# Checkout" (public/quiz-scripts/asw.js → window.location.href = '/checkout?…').
+# Letting the quiz through but not its destination meant every patient who
+# qualified landed on the coming-soon page instead of paying (caught on the
+# 2026-08-27 end-to-end run). Same rule for the legacy-flow /hub redirect
+# target after a successful payment.
+[[redirects]]
+  from = "/checkout"
+  to = "/checkout"
+  status = 200
+
+[[redirects]]
+  from = "/hub"
+  to = "/hub"
+  status = 200
+
 # Redesigned routes, live behind the gate on request (2026-08-03): partner
 # pharmacies + the 4 legal pages, all now on the real .wl- design system.
 [[redirects]]
