@@ -83,7 +83,6 @@ exports.handler = async (event) => {
             severity: 'critical',
             timestamp: new Date().toISOString(),
             payment_intent_id,
-            patient_email: data.patient?.email || 'unknown',
             product: data.product || 'unknown',
             message: 'Patient PAID but MDI case creation FAILED. Queued for auto-retry. Manual intervention may be needed.'
           })

@@ -1505,6 +1505,7 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(mdiBody),
+            signal: AbortSignal.timeout(8000),
           });
           const mdiResult = await mdiResp.json();
           if (!mdiResp.ok || !mdiResult.success) {
@@ -1517,14 +1518,23 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
             mdiErr,
           );
           try {
-            await fetch("/.netlify/functions/savePendingCase", {
+            const saveResp = await fetch("/.netlify/functions/savePendingCase", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
                 payment_intent_id: transactionId,
                 ...mdiBody,
               }),
+              signal: AbortSignal.timeout(8000),
             });
+            // savePendingCase runs the SAME validateQuizSubmission as submitQuiz —
+            // if that's *why* submitQuiz just failed (bad email, oversized
+            // narrative field, etc.), this call fails the identical way and a
+            // 4xx never throws on its own. Without this check the payment goes
+            // through with zero MDI trace anywhere and zero log line about it.
+            if (!saveResp.ok) {
+              throw new Error("savePendingCase responded " + saveResp.status);
+            }
           } catch (saveErr) {
             // Non-fatal to the customer: the charge succeeded and Authorize.Net
             // holds the transaction record regardless. Ops needs this log line.
