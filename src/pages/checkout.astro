@@ -826,8 +826,16 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
               "freeley_transaction",
               JSON.stringify(orderData),
             );
-            window.location.href =
-              "/?payment=success&pi=" + orderData.transactionId;
+            // Send the patient straight to MDI's branded patient site to
+            // complete the medical intake. Fallback (no quiz session, MDI
+            // down): the homepage confirmation banner, which the waitlist
+            // gate lets through via its ?payment= allow rule.
+            if (onboardingUrl && /^https:\/\//.test(onboardingUrl)) {
+              window.location.href = onboardingUrl;
+            } else {
+              window.location.href =
+                "/?payment=success&pi=" + orderData.transactionId;
+            }
           } catch (err) {
             console.error("[CHECKOUT] Payment error:", err);
             showError(
