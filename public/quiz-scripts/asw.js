@@ -314,18 +314,10 @@ function getGroup1ActionHTML(product) {
     `;
   }
 
-  // approvalNote is false - show button only
-  return `
-    <a href="javascript:void(0);" class="cta--global my-3 bg--green text-center d-none">
-      <span>Start your Assessment</span> &nbsp; &nbsp; 
-      <span class="arrow--right">
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M10.8242 4.44922L15.3767 9.00172L10.8242 13.5542" stroke="#FAF8F4" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
-          <path d="M2.625 9H15.2475" stroke="#FAF8F4" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
-        </svg>
-      </span>
-    </a>
-  `;
+  // approvalNote is false — nothing extra to render (the old markup shipped
+  // a dead 'Start your Assessment' anchor hidden by Bootstrap's d-none, which
+  // the Tailwind build no longer defines).
+  return '';
 }
 
 function getGroup1TestimonialHTML(product) {
@@ -353,18 +345,10 @@ function getGroup2ActionHTML(product) {
     `;
   }
 
-  // approvalNote is false - show button only
-  return `
-    <a href="javascript:void(0);" class="cta--global my-3 bg--green text-center d-none">
-      <span>Start your Assessment</span> &nbsp; &nbsp; 
-      <span class="arrow--right">
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M10.8242 4.44922L15.3767 9.00172L10.8242 13.5542" stroke="#FAF8F4" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
-          <path d="M2.625 9H15.2475" stroke="#FAF8F4" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
-        </svg>
-      </span>
-    </a>
-  `;
+  // approvalNote is false — nothing extra to render (the old markup shipped
+  // a dead 'Start your Assessment' anchor hidden by Bootstrap's d-none, which
+  // the Tailwind build no longer defines).
+  return '';
 }
 
 function getGroup2TestimonialHTML(product) {
