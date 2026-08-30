@@ -31,6 +31,7 @@
 const { allow } = require('./lib/rate-limit');
 const { fireConversion } = require('./lib/conversion-tracker');
 const { saveFunnelOrder } = require('./lib/funnel-orders');
+const { ensureHubAccount } = require('./lib/hub-account');
 const { findPromo, discountCents } = require('./lib/promos');
 
 // Single source of truth for pricing — shared with the frontend display.
@@ -265,6 +266,17 @@ exports.handler = async (event) => {
         else console.warn(`[AUTHNET] ⚠️ funnel_orders NOT recorded for transId=${transactionId} — ops: reconcile manually from the Authorize.Net dashboard`);
       } catch (orderErr) {
         console.warn('[AUTHNET] funnel_orders save threw (non-blocking):', orderErr.message);
+      }
+
+      // Create (or link) the patient's Hub login and email them a magic
+      // sign-in link — MDI onboarding creates only the MDI-side account, so
+      // this is where the Freeley Hub account comes from. Non-blocking like
+      // everything else after the charge.
+      try {
+        const hub = await ensureHubAccount(email);
+        console.log('[AUTHNET] Hub magic link ' + (hub.sent ? 'sent' : 'NOT sent: ' + hub.reason));
+      } catch (hubErr) {
+        console.warn('[AUTHNET] Hub account creation failed (non-blocking):', hubErr.message);
       }
 
       return {

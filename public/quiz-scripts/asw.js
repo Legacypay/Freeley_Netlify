@@ -323,7 +323,7 @@ function getGroup1ActionHTML(product) {
 function getGroup1TestimonialHTML(product) {
   if (!product || !product.testimonial) return '';
   return `
-    <div class="testimonial-box">
+    <div class="testimonial-box" style="margin-top:22px">
       <p>${product.testimonial.text}</p>
       <span>${product.testimonial.author}</span>
     </div>
@@ -374,20 +374,20 @@ function getGroup2TestimonialHTML(product) {
     ];
   }
 
-  let colClass = 'col-md-4';
-  if (reasons.length === 1) colClass = 'col-md-12';
-  else if (reasons.length === 2) colClass = 'col-md-6';
-
+  // Inline styles on purpose: this HTML is JS-injected, and Tailwind only
+  // generates classes that appear in scanned source files — the old Bootstrap
+  // grid classes here (row/g-3/col-md-*) silently stopped existing after the
+  // Tailwind migration, collapsing the boxes with zero spacing.
   return `
-    <div class="row g-3 m-0">
-      <p class="text-14-inter col-md-12 mb-0"><em>${title}</em></p>
-      ${reasons.map(reason => `
-        <div class="${colClass} mt-0">
-          <div class="testimonial-box">
+    <div style="margin-top:22px">
+      <p class="text-14-inter" style="margin:0 0 12px"><em>${title}</em></p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
+        ${reasons.map(reason => `
+          <div class="testimonial-box" style="height:100%;margin:0">
             <div class="small">${reason}</div>
           </div>
-        </div>
-      `).join('')}
+        `).join('')}
+      </div>
     </div>
   `;
 }
