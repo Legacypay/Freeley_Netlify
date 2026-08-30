@@ -31,10 +31,11 @@
 const { allow } = require('./lib/rate-limit');
 const { fireConversion } = require('./lib/conversion-tracker');
 const { saveFunnelOrder } = require('./lib/funnel-orders');
+const { findPromo, discountCents } = require('./lib/promos');
 
 // Single source of truth for pricing — shared with the frontend display.
 const pricingData = require('../../pricing.json');
-const { treatment_names: TREATMENT_NAMES, _meta, ...categories } = pricingData;
+const { treatment_names: TREATMENT_NAMES, _meta, promos: _promos, ...categories } = pricingData;
 const PRICING = categories;
 
 // Authorize.Net endpoints. Production credentials → api.authorize.net.
@@ -114,10 +115,11 @@ exports.handler = async (event) => {
     if (treatment === 'weight-loss') {
       compoundKey = (compound === 'tirzepatide' || compound === 'tirz') ? 'tirzepatide' : 'semaglutide';
     } else if (treatment === 'longevity') {
-      compoundKey = (compound === 'nad' || compound === 'nad+') ? 'premium' : 'standard';
+      // 'nad' / 'nad+' (legacy) or 'nad-plus' (catalog key the checkout picker sends)
+      compoundKey = String(compound || '').toLowerCase().startsWith('nad') ? 'premium' : 'standard';
     } else if (treatment === 'sexual-wellness' || treatment === 'ed') {
-      const premiumCompounds = ['olympus', 'olympus-plus', 'olympus-peak', 'olympus-max'];
-      compoundKey = premiumCompounds.includes(String(compound || '').toLowerCase()) ? 'premium' : 'standard';
+      // olympus / olympus-plus / olympus-peak / olympus-max are the premium troches
+      compoundKey = String(compound || '').toLowerCase().startsWith('olympus') ? 'premium' : 'standard';
     }
     const priceTier = PRICING[treatment][compoundKey] || PRICING[treatment]['default'];
     if (!priceTier) {
@@ -128,13 +130,26 @@ exports.handler = async (event) => {
     if (!monthlyPrice) {
       return { statusCode: 400, headers, body: JSON.stringify({ approved: false, error: 'Invalid plan duration' }) };
     }
-    const amountStr = (monthlyPrice * months).toFixed(2); // dollars, 2dp — Authorize.Net wants dollars not cents
+    // Promo code (optional): re-derived here from pricing.json, never trusted
+    // from the client. An unknown/retired code is rejected rather than silently
+    // charged full price — the patient consented to the discounted total.
+    let promo = null;
+    if (body.promo_code) {
+      promo = findPromo(body.promo_code);
+      if (!promo) {
+        return { statusCode: 400, headers, body: JSON.stringify({ approved: false, error: 'That promo code is no longer valid. Remove it and try again.' }) };
+      }
+    }
+    const subtotalCents = Math.round(monthlyPrice * months * 100);
+    const promoCents = discountCents(promo, subtotalCents);
+    const amountStr = ((subtotalCents - promoCents) / 100).toFixed(2); // dollars, 2dp — Authorize.Net wants dollars not cents
+    if (promo) console.log(`[AUTHNET] Promo ${promo.code}: -$${(promoCents / 100).toFixed(2)} on $${(subtotalCents / 100).toFixed(2)}`);
     const treatmentName = TREATMENT_NAMES[treatment] || treatment;
 
     // ── Build the Authorize.Net request ──
     // refId/invoiceNumber must be <= 20 chars. Use a short time-based ref.
     const refId = ('F' + Date.now().toString(36)).slice(0, 20);
-    const description = `${treatmentName} - ${months}mo`.slice(0, 255);
+    const description = `${treatmentName} - ${months}mo${promo ? ' (' + promo.code + ')' : ''}`.slice(0, 255);
 
     const authNetRequest = {
       createTransactionRequest: {
@@ -212,6 +227,24 @@ exports.handler = async (event) => {
         console.warn('[AUTHNET] Conversion firing failed (non-blocking):', convErr.message);
       }
 
+      // Save the card as an Authorize.Net Customer Profile (CIM) so the Hub
+      // can show "Visa ending in 1111" and future charges can reuse it. Accept.js
+      // tokens are one-shot, so this is the ONLY moment the card can be kept.
+      // Non-blocking: the charge already went through.
+      const card = {
+        brand: txn.accountType || null,
+        last4: (txn.accountNumber || '').replace(/[^0-9]/g, '').slice(-4) || null,
+        customerProfileId: null,
+        paymentProfileId: null
+      };
+      try {
+        const profile = await createCustomerProfileFromTransaction(endpoint, API_LOGIN_ID, TRANSACTION_KEY, transactionId, email);
+        Object.assign(card, profile);
+        console.log(`[AUTHNET] Customer profile ${card.customerProfileId ? 'saved: ' + card.customerProfileId : 'NOT saved'}`);
+      } catch (cimErr) {
+        console.warn('[AUTHNET] Customer profile save failed (non-blocking):', cimErr.message);
+      }
+
       // Record the purchase in Supabase (funnel_orders). Non-blocking for the
       // same reason as the conversion above: the money already moved, and
       // Authorize.Net holds the authoritative transaction record regardless.
@@ -223,9 +256,10 @@ exports.handler = async (event) => {
           status: 'paid',
           gateway: 'authorize_net',
           gatewayTransactionId: String(transactionId),
-          productName: `${treatmentName} - ${months}mo`,
+          productName: `${treatmentName} - ${months}mo${promo ? ' (' + promo.code + ')' : ''}`,
           treatment,
-          billing
+          billing,
+          card
         });
         if (orderId) console.log(`[AUTHNET] funnel_orders recorded: ${orderId}`);
         else console.warn(`[AUTHNET] ⚠️ funnel_orders NOT recorded for transId=${transactionId} — ops: reconcile manually from the Authorize.Net dashboard`);
@@ -274,3 +308,44 @@ exports.handler = async (event) => {
     return { statusCode: 500, headers, body: JSON.stringify({ approved: false, error: 'Unable to process payment. Please try again or contact support.' }) };
   }
 };
+
+/**
+ * Turns a just-approved transaction into a stored CIM customer + payment
+ * profile. Returns { customerProfileId, paymentProfileId } (nulls on failure).
+ * Authorize.Net rejects a second profile for the same email (E00039) but names
+ * the existing id in the message — reuse it and attach this card to it.
+ */
+async function createCustomerProfileFromTransaction(endpoint, loginId, transactionKey, transId, email) {
+  const auth = { name: loginId, transactionKey };
+  const post = async (payload) => {
+    const r = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    return JSON.parse((await r.text()).replace(/^﻿/, '').trim());
+  };
+  const res = await post({
+    createCustomerProfileFromTransactionRequest: {
+      merchantAuthentication: auth,
+      transId: String(transId),
+      customer: email ? { email } : undefined
+    }
+  });
+  if (res.messages && res.messages.resultCode === 'Ok') {
+    return {
+      customerProfileId: res.customerProfileId || null,
+      paymentProfileId: (res.customerPaymentProfileIdList && res.customerPaymentProfileIdList[0]) || null
+    };
+  }
+  const msg = (res.messages && res.messages.message && res.messages.message[0]) || {};
+  const dup = msg.code === 'E00039' && String(msg.text || '').match(/ID (\d+)/);
+  if (!dup) throw new Error(`${msg.code || '?'}: ${msg.text || 'unknown'}`);
+  const add = await post({
+    createCustomerProfileFromTransactionRequest: {
+      merchantAuthentication: auth,
+      transId: String(transId),
+      customerProfileId: dup[1]
+    }
+  });
+  return {
+    customerProfileId: dup[1],
+    paymentProfileId: (add.customerPaymentProfileIdList && add.customerPaymentProfileIdList[0]) || null
+  };
+}

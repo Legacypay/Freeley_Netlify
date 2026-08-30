@@ -106,3 +106,11 @@ export async function accessToken(): Promise<string> {
     return '';
   }
 }
+
+// Completes the reset flow: the recovery link already established a session
+// (PASSWORD_RECOVERY event), this just sets the new password on it.
+export async function updatePassword(password: string): Promise<AuthResult> {
+  const res = await supabase.auth.updateUser({ password });
+  if (res.error) return { success: false, message: supabaseErrorMessage(res.error.message) };
+  return { success: true };
+}

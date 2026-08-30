@@ -32,3 +32,21 @@ Freeley-Pricing-Sheet.pdf
 test-results/
 playwright-report/
 deno.lock
+
+# Local agent & IDE caches/tools
+.claude/
+.atl/
+.codegraph/
+.impeccable/
+.playwright-mcp/
+.vscode/mcp.json
+.mcp.json
+skills-lock.json
+
+# Scratch and screenshot files
+Captura de pantalla*
+brello-ref-*.png
+claude.txt
+[0-9].jpeg
+10.jpeg
+

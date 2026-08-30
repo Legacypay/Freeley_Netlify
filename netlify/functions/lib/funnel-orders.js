@@ -36,6 +36,7 @@ function getClient() {
  * @param {string}      order.gateway           e.g. 'authorize_net'
  * @param {string}      order.gatewayTransactionId
  * @param {object}      [order.billing]         { firstName, lastName, address, city, state, zip, dateOfBirth }
+ * @param {object}      [order.card]            { brand, last4, customerProfileId, paymentProfileId } — gateway refs + masked display only, never PAN
  * @returns {Promise<string|null>} the funnel_orders.id, or null if not recorded
  */
 async function saveFunnelOrder(order) {
@@ -45,6 +46,7 @@ async function saveFunnelOrder(order) {
     return null;
   }
   const b = order.billing || {};
+  const c = order.card || {};
   const { data, error } = await supabase.rpc('save_funnel_order', {
     p_lead_id: order.leadId || null,
     p_plan_months: order.planMonths,
@@ -60,7 +62,11 @@ async function saveFunnelOrder(order) {
     p_zip: b.zip || null,
     p_date_of_birth: b.dateOfBirth || null,
     p_product_name: order.productName || null,
-    p_treatment: order.treatment || null
+    p_treatment: order.treatment || null,
+    p_card_brand: c.brand || null,
+    p_card_last4: c.last4 || null,
+    p_customer_profile_id: c.customerProfileId ? String(c.customerProfileId) : null,
+    p_payment_profile_id: c.paymentProfileId ? String(c.paymentProfileId) : null
   });
   if (error) {
     console.error('[FUNNEL ORDERS] save_funnel_order failed:', error.message);

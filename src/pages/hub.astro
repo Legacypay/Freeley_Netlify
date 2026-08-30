@@ -179,9 +179,27 @@ const navItems = [
       link.addEventListener('click', () => switchPanel(link.dataset.panel!));
     });
 
+    // ── Password recovery ────────────────────────────────────────────
+    // The reset-email link lands here with a recovery session in the URL
+    // hash. Supabase fires PASSWORD_RECOVERY (and, before it, a normal
+    // session event that would otherwise open the dashboard with the OLD
+    // password still set). Detect the recovery hash synchronously so the
+    // dashboard stays hidden until the new password is saved.
+    let recoveryPending = /type=recovery/.test(window.location.hash);
+    let pendingUser: { email: string; displayName: string | null } | null = null;
+    if (recoveryPending) {
+      window.dispatchEvent(new CustomEvent('hub:recovery'));
+      window.addEventListener('hub:recovery-done', () => {
+        recoveryPending = false;
+        history.replaceState(null, '', window.location.pathname);
+        if (pendingUser) showDashboard(pendingUser.email, pendingUser.displayName);
+      });
+    }
+
     // ── Sign-in → show dashboard ─────────────────────────────────────
     let dashboardShown = false;
     function showDashboard(email: string, displayName: string | null) {
+      if (recoveryPending) { pendingUser = { email, displayName }; return; }
       if (dashboardShown) return; // the explicit getSession() check below and a
       dashboardShown = true;      // genuine hub:auth event can both fire; only act once
       authScreen.style.display = 'none';

@@ -431,13 +431,8 @@ export async function loadBillingHistory(): Promise<void> {
           ' ending in ' +
           escapeHtml(String(pm.last4)) +
           '</div>';
-        mhtml +=
-          '<div class="hub-pm__exp">Expires ' +
-          pm.exp_month +
-          '/' +
-          pm.exp_year +
-          (pm.is_default ? ' - Default' : '') +
-          '</div></div></div>';
+        const exp = pm.exp_month && pm.exp_year ? 'Expires ' + pm.exp_month + '/' + pm.exp_year : 'Saved at checkout';
+        mhtml += '<div class="hub-pm__exp">' + exp + (pm.is_default ? ' - Default' : '') + '</div></div></div>';
       });
       if (methodsEl) {
         methodsEl.innerHTML = mhtml;

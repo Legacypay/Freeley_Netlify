@@ -6,9 +6,9 @@
  *   charge is recorded there by create-authnet-transaction.js), plus any
  *   legacy Stripe charges if STRIPE_SECRET_KEY is still set — Stripe was the
  *   original processor and old customers may have history there.
- * - payment_methods: Authorize.Net never stores the card (Accept.js tokenizes
- *   it one-time in the browser), so this is only ever populated from legacy
- *   Stripe customers. Empty is the normal state for Authorize.Net patients.
+ * - payment_methods: the card brand/last4 + CIM profile ids recorded on each
+ *   funnel_orders row (create-authnet-transaction.js saves a Customer Profile
+ *   right after the charge), plus any legacy Stripe cards.
  *
  * Ownership: orders are looked up STRICTLY by the verified Supabase session
  * email. The `email` field the client sends is ignored (same IDOR posture as
@@ -65,8 +65,21 @@ exports.handler = async (event) => {
     }));
     console.log(`[BILLING] funnel_orders: ${charges.length} charge(s)`);
 
+    // Cards saved as Authorize.Net customer profiles at charge time (one
+    // entry per distinct card, newest first). No expiry: CIM masks it.
+    const seen = new Set();
+    let paymentMethods = orders
+      .filter(o => o.card_last4 && !seen.has(o.card_brand + o.card_last4) && seen.add(o.card_brand + o.card_last4))
+      .map((o, i) => ({
+        id: o.payment_profile_id || o.id,
+        brand: o.card_brand || 'card',
+        last4: o.card_last4,
+        exp_month: null,
+        exp_year: null,
+        is_default: i === 0
+      }));
+
     // ── Legacy Stripe history (only if Stripe is still configured) ──
-    let paymentMethods = [];
     const stripeKey = process.env.STRIPE_SECRET_KEY;
     if (stripeKey) {
       try {
@@ -75,14 +88,14 @@ exports.handler = async (event) => {
         const customer = customers.data && customers.data[0];
         if (customer) {
           const methods = await stripe.paymentMethods.list({ customer: customer.id, type: 'card', limit: 10 });
-          paymentMethods = (methods.data || []).map(pm => ({
+          paymentMethods = paymentMethods.concat((methods.data || []).map(pm => ({
             id: pm.id,
             brand: pm.card?.brand,
             last4: pm.card?.last4,
             exp_month: pm.card?.exp_month,
             exp_year: pm.card?.exp_year,
             is_default: pm.id === customer.invoice_settings?.default_payment_method
-          }));
+          })));
           const chargeList = await stripe.charges.list({ customer: customer.id, limit: 20 });
           for (const ch of chargeList.data || []) {
             charges.push({

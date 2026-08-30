@@ -28,6 +28,11 @@
       <button type="submit" class="hub-auth__submit" id="authBtn">Sign In to Hub</button>
     </form>
 
+    <form id="recoveryForm" style="display:none;">
+      <input type="password" class="hub-input" placeholder="New password (min 6 characters)" id="recoveryPassword" required minlength="6" autocomplete="new-password" />
+      <button type="submit" class="hub-auth__submit" id="recoveryBtn">Save new password</button>
+    </form>
+
     <div class="hub-auth__links">
       <span id="authToggleText">Don't have an account?</span> <button type="button" class="hub-textlink" id="authToggleLink">Create one</button><br />
       <span id="forgotLink">Forgot password? <button type="button" class="hub-textlink" id="forgotPasswordLink">Reset it here</button></span>
@@ -62,7 +67,7 @@
 </style>
 
 <script>
-  import { signUp, signIn, googleSignIn, resetPassword } from '../../lib/hub/auth';
+  import { signUp, signIn, googleSignIn, resetPassword, updatePassword } from '../../lib/hub/auth';
 
   let authMode: 'signin' | 'signup' = 'signin';
   const authToggleLink = document.getElementById('authToggleLink');
@@ -161,6 +166,30 @@
       const result = await googleSignIn();
       if (!result.success) setAuthError(result.message, false);
       googleBtn.disabled = false;
+    });
+  }
+
+  // Password-recovery link clicked in the email: hub.astro shows this screen
+  // and dispatches `hub:recovery`; swap the sign-in form for the new-password one.
+  const recoveryForm = document.getElementById('recoveryForm') as HTMLFormElement | null;
+  window.addEventListener('hub:recovery', () => {
+    if (authForm) authForm.style.display = 'none';
+    if (googleBtn) googleBtn.style.display = 'none';
+    (document.querySelector('.hub-auth__divider') as HTMLElement | null)?.style.setProperty('display', 'none');
+    (document.querySelector('.hub-auth__links') as HTMLElement | null)?.style.setProperty('display', 'none');
+    document.getElementById('authTitle')!.textContent = 'Choose a new password.';
+    document.getElementById('authSubtitle')!.textContent = 'Enter a new password for your Freeley Health Hub account.';
+    if (recoveryForm) recoveryForm.style.display = 'block';
+  });
+  if (recoveryForm) {
+    recoveryForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('recoveryBtn') as HTMLButtonElement;
+      btn.disabled = true;
+      const result = await updatePassword((document.getElementById('recoveryPassword') as HTMLInputElement).value);
+      btn.disabled = false;
+      if (!result.success) { setAuthError(result.message, false); return; }
+      window.dispatchEvent(new CustomEvent('hub:recovery-done'));
     });
   }
 

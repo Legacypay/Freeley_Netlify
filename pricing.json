@@ -21,6 +21,11 @@
   "hair-loss": {
     "default": { "1": 89, "3": 75, "6": 65, "12": 59, "24": 49 }
   },
+  "promos": {
+    "_note": "Promo codes, applied server-side to the plan total (monthly x months). type: percent (value = %) or amount (value = USD off). Set active:false to retire a code. Codes below are PLACEHOLDERS for the client to confirm/replace.",
+    "WELCOME10": { "type": "percent", "value": 10, "label": "10% off your first order", "active": true },
+    "FREELEY50": { "type": "amount", "value": 50, "label": "$50 off", "active": true }
+  },
   "_meta": {
     "currency": "USD",
     "updated": "2026-08-03",
