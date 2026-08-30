@@ -506,11 +506,16 @@ const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
             </div>
 
             <!-- Step 4 - Symptoms (Multi-select) - previously step 9 -->
+            <!-- Step 4 — DYNAMIC per-vertical questions. The .step-body below is
+                 placeholder markup only: asw.js's renderDynamicQuestion() replaces
+                 it with the question set for the goal(s) picked in step 1
+                 (VERTICAL_QUESTIONS). Back/Continue route through dynamicBack()/
+                 dynamicContinue(), which page through the queue before moving on. -->
             <div class="quiz-step" data-step="4">
                 <div class="step--content">
                     <div class="quiz-content">
                         <div class="quiz-header flex items-end flex-wrap gap-4">
-                            <div class="step-back" onclick="goToStep(3)">
+                            <div class="step-back" onclick="dynamicBack()">
                                 <span class="arrow-back"></span>&nbsp;Back
                             </div>
                             <div class="step-navigator">
@@ -557,7 +562,7 @@ const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
                             </div>
                         </div>
                         <div class="quiz-buttons">
-                            <button class="quiz-btn quiz-btn-primary" onclick="validateSelectionAndGo(4, 5)">
+                            <button class="quiz-btn quiz-btn-primary" onclick="dynamicContinue()">
                   Continue
                 </button>
                         </div>

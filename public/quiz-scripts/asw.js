@@ -31,15 +31,15 @@ const PRODUCTS = {
     image: '/assets/quiz/sexual-welness.png',
     price: '$99.00',
     duration: 'Month',
-    description: '',
+    description: 'Sildenafil + Tadalafil + Apomorphine compounded sublingual troche',
     benefits: [
       'Dissolves under the tongue (Sublingual)',
       'Sildenafil + Tadalafil + Apomorphine',
       'Physician consultation & fast shipping included'
     ],
     testimonial: {
-      text: '"Lost 22 lbs in 3 months. The physician check-ins kept me accountable and the injections were easier than I expected."',
-      author: 'Sarah M., verified patient - Lost 22 lbs'
+      text: '"Works within minutes and the sublingual format beats swallowing pills. It gave me my confidence back."',
+      author: 'Michael R., verified patient'
     },
     approvalNote: false
   },
@@ -78,6 +78,147 @@ const PRODUCTS = {
 };
 
 const DEFAULT_PRODUCT = PRODUCTS['weight loss'];
+
+// ============================================================
+// DYNAMIC VERTICAL QUESTIONS
+// ============================================================
+// Step 4 renders these one at a time based on the goal(s) picked in step 1
+// (primary selection's questions first; multiple goals chain their sets).
+// Answers are appended to quiz_answers, so the physician sees the real Q&A.
+const VERTICAL_QUESTIONS = {
+  'weight loss': [
+    { title: 'What is your<span class="highlight">&nbsp;weight loss goal?</span>', subtitle: 'Select one', multi: false, options: ['Lose 10–20 lbs', 'Lose 20–50 lbs', 'Lose 50+ lbs', 'Not sure — I want medical guidance'] },
+    { title: 'What have you<span class="highlight">&nbsp;tried before?</span>', subtitle: 'Select all that apply', multi: true, options: ['Diet & exercise', 'GLP-1 medication', 'Other prescription treatments', 'Nothing yet'] },
+    { title: 'What are you<span class="highlight">&nbsp;experiencing?</span>', subtitle: 'Select all symptoms that apply', multi: true, options: ['Fatigue & low energy', 'Cravings & appetite spikes', 'Poor sleep quality', 'Joint pain', 'None of these'] }
+  ],
+  'hair loss': [
+    { title: 'Where are you noticing<span class="highlight">&nbsp;hair loss?</span>', subtitle: 'Select all that apply', multi: true, options: ['Receding hairline', 'Thinning at the crown', 'Overall thinning', 'Patchy spots'] },
+    { title: 'How long has it been<span class="highlight">&nbsp;happening?</span>', subtitle: 'Select one', multi: false, options: ['Less than a year', '1–3 years', 'More than 3 years'] },
+    { title: 'Does hair loss run in<span class="highlight">&nbsp;your family?</span>', subtitle: 'Select one', multi: false, options: ['Yes', 'No', 'Not sure'] }
+  ],
+  'sexual wellness': [
+    { title: 'What best describes<span class="highlight">&nbsp;your concern?</span>', subtitle: 'Select all that apply', multi: true, options: ['Getting an erection', 'Maintaining an erection', 'Low desire', 'Performance anxiety'] },
+    { title: 'How often does<span class="highlight">&nbsp;it happen?</span>', subtitle: 'Select one', multi: false, options: ['Occasionally', 'About half the time', 'Most of the time'] },
+    { title: 'How long has this been<span class="highlight">&nbsp;going on?</span>', subtitle: 'Select one', multi: false, options: ['Less than 6 months', '6–24 months', 'Over 2 years'] }
+  ],
+  'longevity & performance': [
+    { title: 'What do you want to<span class="highlight">&nbsp;optimize?</span>', subtitle: 'Select all that apply', multi: true, options: ['Energy & focus', 'Muscle recovery', 'Sleep quality', 'Healthy aging', 'Immune support'] },
+    { title: 'How is your energy<span class="highlight">&nbsp;day to day?</span>', subtitle: 'Select one', multi: false, options: ['Great most days', 'Dips in the afternoon', 'Consistently low'] }
+  ]
+};
+
+let dynamicQueue = [];
+let dynamicIndex = 0;
+let dynamicAnswers = [];
+
+function buildDynamicQueue() {
+  dynamicQueue = [];
+  dynamicIndex = 0;
+  dynamicAnswers = [];
+  getSelectedProducts().forEach(key => {
+    (VERTICAL_QUESTIONS[key] || []).forEach(q => dynamicQueue.push(q));
+  });
+  if (dynamicQueue.length === 0) dynamicQueue = VERTICAL_QUESTIONS['weight loss'].slice();
+}
+
+function stripTitleHtml(html) {
+  const div = document.createElement('div');
+  div.innerHTML = html;
+  return div.textContent.replace(/\s+/g, ' ').trim();
+}
+
+function renderDynamicQuestion() {
+  const step = document.querySelector('.quiz-step[data-step="4"]');
+  if (!step) return;
+  const body = step.querySelector('.step-body');
+  const q = dynamicQueue[dynamicIndex];
+  if (!body || !q) return;
+  body.innerHTML = `
+    <h2 class="mb-6">${q.title}</h2>
+    <p class="mb-12">${q.subtitle}</p>
+    <div class="options grid grid-cols-1 md:grid-cols-3 text-center gap-2 mb-4" data-required="true"${q.multi ? ' data-multi-select="true"' : ''}>
+      ${q.options.map(o => `<div class="option--item" data-value="${o}"><div class="option--title">${o}</div></div>`).join('')}
+    </div>
+    <div class="error-message" id="step4Error">Please select an option</div>`;
+  // Restore the answer when the patient navigates back to this question
+  const prev = dynamicAnswers[dynamicIndex];
+  if (prev) {
+    body.querySelectorAll('.option--item').forEach(opt => {
+      if (prev.selected.includes(opt.dataset.value)) opt.classList.add('active');
+    });
+  }
+  bindOptionItems(body);
+  updateProgressLabel(4);
+}
+
+function dynamicContinue() {
+  const step = document.querySelector('.quiz-step[data-step="4"]');
+  if (!step) return;
+  const options = step.querySelector('.options');
+  if (!options) return;
+  const selected = Array.from(options.querySelectorAll('.option--item.active')).map(o => o.dataset.value);
+  if (selected.length === 0) {
+    const errorMsg = step.querySelector('.error-message');
+    if (errorMsg) errorMsg.classList.add('show');
+    options.querySelectorAll('.option--item').forEach(opt => {
+      opt.classList.add('required-error');
+      setTimeout(() => opt.classList.remove('required-error'), 1500);
+    });
+    return;
+  }
+  dynamicAnswers[dynamicIndex] = {
+    question: stripTitleHtml(dynamicQueue[dynamicIndex].title),
+    answer: selected.join(', '),
+    selected: selected
+  };
+  if (dynamicIndex < dynamicQueue.length - 1) {
+    dynamicIndex++;
+    renderDynamicQuestion();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } else {
+    goToStep(5);
+  }
+}
+
+function dynamicBack() {
+  if (dynamicIndex > 0) {
+    dynamicIndex--;
+    renderDynamicQuestion();
+  } else {
+    goToStep(3);
+  }
+}
+
+// ============================================================
+// DYNAMIC PROGRESS COUNTER
+// ============================================================
+// The old markup hardcoded "n/14" per step, counting the analyzing/result
+// screens as questions. Real question steps: 1-3, the dynamic block (step 4,
+// one entry per vertical question), then 5-11 — so the total varies with the
+// verticals picked in step 1. Before the queue exists (steps 1-3) assume a
+// typical 3-question set.
+function quizTotalQuestions() {
+  return 10 + (dynamicQueue.length || 3);
+}
+
+function quizPositionFor(stepNumber) {
+  const n = Number(stepNumber);
+  if (n <= 3) return n;
+  if (n === 4) return 4 + dynamicIndex;
+  return 3 + (dynamicQueue.length || 3) + (n - 4);
+}
+
+function updateProgressLabel(stepNumber) {
+  const step = document.querySelector(`.quiz-step[data-step="${stepNumber}"]`);
+  if (!step) return;
+  const label = step.querySelector('.current-step');
+  const bar = step.querySelector('.bar .progress');
+  if (!label || !bar) return;
+  const total = quizTotalQuestions();
+  const pos = Math.min(quizPositionFor(stepNumber), total);
+  label.textContent = pos + '/' + total;
+  bar.style.width = Math.round((pos / total) * 100) + '%';
+}
 
 // ============================================================
 // SUPABASE LEAD CAPTURE
@@ -365,10 +506,6 @@ function renderSelectedProduct() {
   const treatmentCard = resultStep.querySelector('.treatment-card');
   if (!treatmentCard) return;
 
-  // Clear existing content but keep the structure
-  const cardBody = treatmentCard.querySelector('.row.align-items-center.m-0.g-4');
-  if (!cardBody) return;
-
   // If single product, render normally
   if (products.length === 1) {
     renderSingleProductCard(resultStep, products[0]);
@@ -381,7 +518,11 @@ function renderSelectedProduct() {
 
 function renderSingleProductCard(resultStep, product) {
   const treatmentCard = resultStep.querySelector('.treatment-card');
-  const cardBody = treatmentCard.querySelector('.row.align-items-center.m-0.g-4');
+  // The result-card markup migrated from Bootstrap (.row.align-items-center)
+  // to Tailwind grid classes; query subelements from the card itself so this
+  // renderer can never silently no-op again (that stale selector left every
+  // vertical showing the placeholder default.png card).
+  const cardBody = treatmentCard;
 
   // Update product image
   const productImage = cardBody.querySelector('.product-image-box img');
@@ -439,16 +580,19 @@ function renderSingleProductCard(resultStep, product) {
 
 function renderMultipleProductCards(resultStep, products) {
   const treatmentCard = resultStep.querySelector('.treatment-card');
-  const cardBody = treatmentCard.querySelector('.row.align-items-center.m-0.g-4');
+  const gridEl = treatmentCard.querySelector('.grid');
+  if (!gridEl) return;
 
-  // Clear the card body
-  cardBody.innerHTML = '';
-
-  // Render each product as a separate card with the same layout
-  products.forEach((product, index) => {
-    const productCard = createProductCard(product, index, products.length);
-    cardBody.appendChild(productCard);
-  });
+  // Each product is a 6+6 column pair inside the existing 12-col grid; the
+  // grid clear destroys the original #actionContainer, so re-append one
+  // after the grid for renderGroupSpecificContent to fill.
+  gridEl.innerHTML = products.map((product, index) => createProductCard(product, index, products.length)).join('');
+  let actionContainer = treatmentCard.querySelector('#actionContainer');
+  if (!actionContainer) {
+    actionContainer = document.createElement('div');
+    actionContainer.id = 'actionContainer';
+    gridEl.insertAdjacentElement('afterend', actionContainer);
+  }
 
   // Render testimonials for the first product (or first product with testimonial)
   const productWithTestimonial = products.find(p => p.testimonial) || products[0];
@@ -468,22 +612,21 @@ function renderMultipleProductCards(resultStep, products) {
   if (summaryPrice) summaryPrice.textContent = `$${totalPrice.toFixed(2)}`;
 }
 
+// Returns an HTML string: a 6+6 column pair using the same Tailwind classes
+// as step 13's static markup (only classes already present in the build work
+// here — Tailwind never generates classes that appear only in JS strings).
 function createProductCard(product, index, total) {
-  const card = document.createElement('div');
-  card.className = 'row align-items-center m-0 g-3 product-card-item px-0';
-
-  // Check if product has approvalNote true
   const hasApprovalNote = product.approvalNote === true;
 
-  card.innerHTML = `
-    <div class="col-lg-6 m-0 px-0">
+  return `
+    <div class="md:col-span-6 px-0 pl-2">
       <div class="product-image-box">
         <span class="recommended-tag">${index === 0 ? 'Recommended Plan' : 'Additional Plan'}</span>
-        <img src="${product.image || '/assets/quiz/default.png'}" alt="${product.title}" class="img-fluid" />
+        <img src="${product.image || '/assets/quiz/default.png'}" alt="${product.title}" class="max-w-full h-auto" />
       </div>
     </div>
-    <div class="col-md-6 m-0 d-flex flex-column justify-content-start justify-content-md-center px-0 ps-2 ps-md-3 pt-3 pt-md-0">
-      <h3 class="product-title mb-4 text-start">${product.title || 'Treatment Plan'}</h3>
+    <div class="md:col-span-6 flex flex-col justify-start md:justify-center px-0 pl-2 md:pl-4 pt-4 md:pt-0">
+      <h3 class="product-title mb-6 text-left">${product.title || 'Treatment Plan'}</h3>
       <div class="text-14-inter mb-2 text-black">${product.description || ''}</div>
       <div class="price-row">
         <span class="price">${product.price || '$299.00'}</span>
@@ -509,21 +652,9 @@ function createProductCard(product, index, total) {
           </svg>
           Prescription subject to physician approval.
         </div>
-      ` : `
-        <a href="javascript:void(0);" class="cta--global my-3 bg--green text-center d-none">
-          <span>Start your Assessment</span> &nbsp; 
-          <span class="arrow--right">
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M10.8242 4.44922L15.3767 9.00172L10.8242 13.5542" stroke="#FAF8F4" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
-              <path d="M2.625 9H15.2475" stroke="#FAF8F4" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
-            </svg>
-          </span>
-        </a>
-      `}
+      ` : ''}
     </div>
   `;
-
-  return card;
 }
 
 // ============================================================
@@ -581,6 +712,8 @@ function goToStep(stepNumber) {
     targetStep.style.animation = 'none';
     targetStep.offsetHeight;
     targetStep.style.animation = '';
+
+    updateProgressLabel(stepNumber);
 
     // currentActive is already .slide-out (position: absolute, out of flow)
     // by now, so targetStep's offsetHeight is .quiz-card's real next height.
@@ -756,6 +889,11 @@ function validateStep3AndGo() {
 
   if (valid) {
     document.getElementById('step3Error').classList.remove('show');
+    // Step 4 is the dynamic per-vertical block: build the question queue from
+    // the goal(s) picked in step 1 and render the first question before
+    // sliding in.
+    buildDynamicQueue();
+    renderDynamicQuestion();
     goToStep(4);
   } else {
     document.getElementById('step3Error').classList.add('show');
@@ -921,7 +1059,6 @@ function convertToQuizAnswersArray(quizData) {
     { key: 'heightInInches', question: 'Height (inches)' },
     { key: 'goalWeight', question: 'Goal weight' },
     { key: 'state', question: 'Location' },
-    { key: 'symptoms', question: 'Experiencing symptoms' },
     { key: 'allergies', question: 'Known Allergies' },
     { key: 'medications', question: 'Current Medications' },
     { key: 'conditions', question: 'Medical Conditions' },
@@ -944,6 +1081,14 @@ function convertToQuizAnswersArray(quizData) {
         question: item.question,
         answer: String(value)
       });
+    }
+  });
+
+  // Per-vertical dynamic questions, each as its own Q&A entry so the
+  // physician reads the actual question asked, not a generic label.
+  (quizData.dynamicAnswers || []).forEach(a => {
+    if (a && a.question && a.answer) {
+      answers.push({ question: a.question, answer: a.answer });
     }
   });
 
@@ -980,7 +1125,12 @@ function collectAllQuizData() {
     heightInInches: heightInInches,
     goalWeight: goalWeight,
     state: state,
-    symptoms: getSelectedOptionsTexts(4),
+    // Flattened dynamic Q&A ("Question — answer") — feeds Supabase p_symptoms;
+    // fall back to the DOM read if the dynamic engine never ran.
+    symptoms: dynamicAnswers.length > 0
+      ? dynamicAnswers.map(a => a.question + ' — ' + a.answer)
+      : getSelectedOptionsTexts(4),
+    dynamicAnswers: dynamicAnswers.slice(),
     allergies: getTextareaValueByStep(5),
     medications: getTextareaValueByStep(6),
     conditions: getTextareaValueByStep(7),
@@ -1195,37 +1345,47 @@ function setupCheckout() {
 // same script across opens instead of re-adding the <script> tag each time,
 // since PRODUCTS/selectedProducts etc. below are top-level const/let — they'd
 // throw "already declared" if the script parsed twice in one page).
+function optionItemClickHandler() {
+  const parentOptions = this.closest('.options');
+  if (!parentOptions) return;
+
+  const isMultiSelect = parentOptions.dataset.multiSelect === 'true';
+
+  if (isMultiSelect) {
+    this.classList.toggle('active');
+    const selected = parentOptions.querySelectorAll('.option--item.active');
+    const errorMsg = parentOptions.closest('.step-body')?.querySelector('.error-message');
+    if (selected.length > 0 && errorMsg) {
+      errorMsg.classList.remove('show');
+    }
+  } else {
+    parentOptions.querySelectorAll('.option--item').forEach(opt => {
+      opt.classList.remove('active');
+    });
+    this.classList.add('active');
+    const errorMsg = parentOptions.closest('.step-body')?.querySelector('.error-message');
+    if (errorMsg) errorMsg.classList.remove('show');
+  }
+}
+
+// Also called by renderDynamicQuestion for its freshly injected options.
+function bindOptionItems(root) {
+  root.querySelectorAll('.option--item').forEach(item => {
+    item.addEventListener('click', optionItemClickHandler);
+  });
+}
+
 function initFreeleyQuiz() {
   // Explicit reset: a fresh iframe used to guarantee clean state on every
   // open. Now the script instance persists across reopens, so anything that
   // isn't naturally re-derived from the DOM/sessionStorage must be reset here.
   selectedProducts = [];
   isTransitioning = false;
+  dynamicQueue = [];
+  dynamicIndex = 0;
+  dynamicAnswers = [];
 
-  document.querySelectorAll('.option--item').forEach(item => {
-    item.addEventListener('click', function () {
-      const parentOptions = this.closest('.options');
-      if (!parentOptions) return;
-
-      const isMultiSelect = parentOptions.dataset.multiSelect === 'true';
-
-      if (isMultiSelect) {
-        this.classList.toggle('active');
-        const selected = parentOptions.querySelectorAll('.option--item.active');
-        const errorMsg = parentOptions.closest('.step-body')?.querySelector('.error-message');
-        if (selected.length > 0 && errorMsg) {
-          errorMsg.classList.remove('show');
-        }
-      } else {
-        parentOptions.querySelectorAll('.option--item').forEach(opt => {
-          opt.classList.remove('active');
-        });
-        this.classList.add('active');
-        const errorMsg = parentOptions.closest('.step-body')?.querySelector('.error-message');
-        if (errorMsg) errorMsg.classList.remove('show');
-      }
-    });
-  });
+  bindOptionItems(document);
 
   document.getElementById('heightFeet')?.addEventListener('input', function () {
     this.classList.remove('validation-error');
