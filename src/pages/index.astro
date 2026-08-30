@@ -887,6 +887,17 @@ const press = [
       .order-conf__inner { padding: 14px 28px; display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 14px; }
       .order-conf__inner strong { font-weight: 700; }
       #order-conf-onboarding { color: #fff; font-weight: 700; text-decoration: underline; }
+
+      /* Post-purchase medical-intake modal (shown over the confirmation banner
+         when the receipt carries MDI's onboardingUrl) */
+      .intake-modal { position: fixed; inset: 0; z-index: 300; display: grid; place-items: center; padding: 20px; }
+      .intake-modal__backdrop { position: absolute; inset: 0; background: rgba(18, 32, 26, .55); }
+      .intake-modal__card { position: relative; background: #fff; border-radius: 20px; max-width: 460px; width: 100%; padding: 36px 30px 30px; text-align: center; box-shadow: 0 24px 64px rgba(0, 0, 0, .28); }
+      .intake-modal__check { width: 54px; height: 54px; border-radius: 999px; background: var(--green); color: #fff; display: grid; place-items: center; margin: 0 auto 16px; font-size: 26px; font-weight: 700; }
+      .intake-modal__card h2 { margin: 0 0 10px; font-size: 1.7rem; }
+      .intake-modal__card p { margin: 0 0 22px; color: var(--muted, #5b6b62); font-size: 15px; line-height: 1.55; }
+      .intake-modal__card .pill { display: inline-flex; }
+      .intake-modal__later { display: block; margin: 14px auto 0; background: none; border: none; color: var(--muted, #5b6b62); font-size: 13px; text-decoration: underline; cursor: pointer; }
     </style>
   </head>
 
@@ -922,6 +933,21 @@ const press = [
         <strong>Order confirmed.</strong>
         <span>Thank you — transaction <span id="order-conf-id"></span>. Our team will reach out with next steps.</span>
         <a id="order-conf-onboarding" href="#" style="display:none" rel="noopener">Complete your medical intake <span class="arw">→</span></a>
+      </div>
+    </div>
+
+    <!-- Post-purchase intake modal: the primary "what now?" prompt after a
+         successful payment. Only appears when the freeley_transaction receipt
+         carries MDI's onboardingUrl; dismissing it leaves the banner above as
+         the persistent reminder. -->
+    <div id="intake-modal" class="intake-modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="intake-modal-title">
+      <div class="intake-modal__backdrop" data-intake-close></div>
+      <div class="intake-modal__card">
+        <div class="intake-modal__check" aria-hidden="true">✓</div>
+        <h2 id="intake-modal-title" class="serif">Your order is confirmed</h2>
+        <p>One step left: complete your medical intake so a licensed physician can review your case and approve your treatment.</p>
+        <a id="intake-modal-cta" class="pill" href="#" rel="noopener">Complete your medical intake <span class="arw">→</span></a>
+        <button type="button" class="intake-modal__later" data-intake-close>I'll do it later</button>
       </div>
     </div>
 
@@ -1275,13 +1301,31 @@ const press = [
         var data = null;
         try { data = raw ? JSON.parse(raw) : null; } catch (e) {}
         idEl.textContent = '#' + ((data && data.transactionId) || params.get('pi'));
+        var hasOnboarding = data && data.onboardingUrl && /^https:\/\//.test(data.onboardingUrl);
         var onboarding = document.getElementById('order-conf-onboarding');
-        if (onboarding && data && data.onboardingUrl && /^https:\/\//.test(data.onboardingUrl)) {
+        if (onboarding && hasOnboarding) {
           onboarding.href = data.onboardingUrl;
           onboarding.style.display = 'inline-block';
         }
         banner.style.display = 'block';
         banner.scrollIntoView({ block: 'start' });
+
+        /* Intake modal — the primary next-step prompt. Dismissing it (backdrop,
+           "later" button or Escape) leaves the banner as the reminder. */
+        var modal = document.getElementById('intake-modal');
+        var cta = document.getElementById('intake-modal-cta');
+        if (modal && cta && hasOnboarding) {
+          cta.href = data.onboardingUrl;
+          modal.style.display = 'grid';
+          var closeModal = function () { modal.style.display = 'none'; };
+          modal.querySelectorAll('[data-intake-close]').forEach(function (el) {
+            el.addEventListener('click', closeModal);
+          });
+          document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') closeModal();
+          });
+          cta.focus();
+        }
       })();
 
       (function () {
