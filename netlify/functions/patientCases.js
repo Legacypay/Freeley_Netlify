@@ -134,24 +134,24 @@ exports.handler = async (event) => {
         const voucherList = rawResponse.data || rawResponse.vouchers || (Array.isArray(rawResponse) ? rawResponse : []);
 
         for (const v of voucherList) {
-          // MDI voucher fields (from API response):
+          // MDI voucher fields (from API response), confirmed against a real
+          // production voucher's logged shape:
           //   id, status, case_id, partner_questionnaire_id,
-          //   payload.patient_id (the real location — confirmed against MDI's
-          //   own Postman docs: GET /v1/partner/vouchers nests it under
-          //   payload, there is no top-level `patient` object on this list
-          //   endpoint), metadata, pharmacy_name, created_at, updated_at.
-          // `v.patient` is kept as a fallback in case a differently-shaped
-          // response ever does nest a patient object, but payload.patient_id
-          // is the one MDI's docs actually show — reading only `v.patient`
-          // made patient_id (and therefore the Hub's messaging button)
-          // silently null for every real voucher.
+          //   patient: { patient_id, email, first_name, ... } — the nested
+          //   patient object's own id field is called `patient_id`, NOT
+          //   `id`/`uuid` (Postman's docs example was misleading — it showed
+          //   payload.patient_id on a differently-shaped sample). payload
+          //   itself carries offerings/hold_status/patient_auth, no
+          //   patient_id. Reading only `patientObj.id` made patient_id (and
+          //   therefore the Hub's messaging button) silently null for every
+          //   real voucher, even completed ones.
           const questionnaireId = v.partner_questionnaire_id || null;
           const patientObj = v.patient || {};
           const payload = v.payload || {};
 
           cases.push({
             case_id: v.case_id || null,
-            patient_id: patientObj.id || patientObj.uuid || payload.patient_id || null,
+            patient_id: patientObj.patient_id || patientObj.id || patientObj.uuid || payload.patient_id || null,
             patient_email: patientObj.email || payload.email || null,
             voucher_id: v.id || null,
             questionnaire_id: questionnaireId,
@@ -171,22 +171,6 @@ exports.handler = async (event) => {
           // Log first case for debugging
           const first = cases[0];
           console.log(`[PATIENT CASES] First: patient_id=${first.patient_id}, product=${first.product_name}, status=${first.status}`);
-          // TEMP DEBUG (remove once patient_id resolves correctly): the
-          // completed voucher we're testing against still comes back with
-          // patient_id null even after reading payload.patient_id. Log only
-          // the SHAPE (keys, 2 levels deep) rather than raw values — voucher
-          // payloads can carry PHI (diseases, dates of birth, etc.) and this
-          // is a shared production log stream.
-          const shapeOf = (obj, depth = 2) => {
-            if (!obj || typeof obj !== 'object') return typeof obj;
-            if (Array.isArray(obj)) return `array[${obj.length}]`;
-            if (depth <= 0) return '{...}';
-            const out = {};
-            for (const k of Object.keys(obj)) out[k] = shapeOf(obj[k], depth - 1);
-            return out;
-          };
-          const completedVoucher = voucherList.find((vv) => vv.status === 'completed') || voucherList[0];
-          console.log(`[PATIENT CASES] TEMP DEBUG voucher shape: ${JSON.stringify(shapeOf(completedVoucher))}`);
         } else {
           console.log(`[PATIENT CASES] No vouchers found via MDI API for authenticated email`);
         }
