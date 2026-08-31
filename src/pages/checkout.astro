@@ -1135,4 +1135,38 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
       }
       window.loadProductFromQuiz = loadProductsFromSession;
     </script>
+
+    {AUTHNET_ENV === 'sandbox' && (
+      <script is:inline>
+        // SANDBOX-ONLY demo prefill (for walkthrough recordings): fills every
+        // checkout field with test data + the official Authorize.Net sandbox
+        // test card, so a demo run is just consent-check → Checkout. Rendered
+        // ONLY when AUTHNET_ENV=sandbox — the build for a real-payments
+        // environment (AUTHNET_ENV=production) omits this block entirely, so
+        // reverting the env vars removes it with no code change.
+        (function () {
+          var fill = {
+            'pt-first-name': 'Samuel',
+            'pt-last-name': 'Aranguren',
+            'pt-dob': '1995-05-14',
+            'pt-gender': '1',
+            'pt-address': '123 Main St',
+            'pt-city': 'Miami',
+            'pt-state': 'FL',
+            'pt-zip': '33101',
+            'pt-email': 'samuel@ahimismito.com',
+            'pt-phone': '(305) 555-0142',
+            'an-card-name': 'Samuel Aranguren',
+            'an-card-number': '4111 1111 1111 1111',
+            'an-exp': '12/28',
+            'an-cvc': '123',
+            'an-zip': '33101'
+          };
+          for (var id in fill) {
+            var el = document.getElementById(id);
+            if (el && !el.value) el.value = fill[id];
+          }
+        })();
+      </script>
+    )}
 </Layout>
