@@ -1259,3 +1259,75 @@
      margin-bottom: 0;
      text-align: left;
  }
+ /* ── Tailwind utility shim (scoped) ─────────────────────────────────────
+    The quiz's redesigned markup (assessment-quiz.astro + asw.js renderers)
+    styles its layout with Tailwind utility classes. The standalone
+    /assessment-quiz page imports Tailwind so they work there — but
+    QuizModal.astro clones this markup into host pages, and index.astro /
+    compare.astro never load Tailwind, so every one of these classes was
+    inert there (Back button full-width, "Progress1/13" unspaced, result
+    grids collapsed, ...). This block replicates ONLY the utilities the quiz
+    actually uses, scoped under .quiz-popup so nothing leaks into host
+    pages. Values mirror Tailwind v4's scale (1 = 0.25rem; md: 768px,
+    lg: 1024px). On Tailwind pages these duplicate identical declarations,
+    so rendering is unchanged there. */
+ .quiz-popup .flex { display: flex; }
+ .quiz-popup .grid { display: grid; }
+ .quiz-popup .flex-1 { flex: 1 1 0%; }
+ .quiz-popup .flex-col { flex-direction: column; }
+ .quiz-popup .flex-wrap { flex-wrap: wrap; }
+ .quiz-popup .items-start { align-items: flex-start; }
+ .quiz-popup .items-center { align-items: center; }
+ .quiz-popup .items-end { align-items: flex-end; }
+ .quiz-popup .justify-start { justify-content: flex-start; }
+ .quiz-popup .justify-between { justify-content: space-between; }
+ .quiz-popup .justify-end { justify-content: flex-end; }
+ .quiz-popup .gap-2 { gap: 0.5rem; }
+ .quiz-popup .gap-4 { gap: 1rem; }
+ .quiz-popup .gap-6 { gap: 1.5rem; }
+ .quiz-popup .mb-0 { margin-bottom: 0; }
+ .quiz-popup .mb-2 { margin-bottom: 0.5rem; }
+ .quiz-popup .mb-4 { margin-bottom: 1rem; }
+ .quiz-popup .mb-6 { margin-bottom: 1.5rem; }
+ .quiz-popup .mb-12 { margin-bottom: 3rem; }
+ .quiz-popup .mt-0 { margin-top: 0; }
+ .quiz-popup .mt-3 { margin-top: 0.75rem; }
+ .quiz-popup .mt-4 { margin-top: 1rem; }
+ .quiz-popup .mt-6 { margin-top: 1.5rem; }
+ .quiz-popup .pl-2 { padding-left: 0.5rem; }
+ .quiz-popup .pt-4 { padding-top: 1rem; }
+ .quiz-popup .px-0 { padding-left: 0; padding-right: 0; }
+ .quiz-popup .w-full { width: 100%; }
+ .quiz-popup .h-full { height: 100%; }
+ .quiz-popup .h-auto { height: auto; }
+ .quiz-popup .max-w-full { max-width: 100%; }
+ .quiz-popup .relative { position: relative; }
+ .quiz-popup .z-1 { z-index: 1; }
+ .quiz-popup .italic { font-style: italic; }
+ .quiz-popup .text-left { text-align: left; }
+ .quiz-popup .text-center { text-align: center; }
+ .quiz-popup .text-black { color: #000; }
+ .quiz-popup .text-gray-500 { color: #6b7280; }
+ .quiz-popup .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+ .quiz-popup .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+ @media (min-width: 768px) {
+     .quiz-popup .md\:flex-row { flex-direction: row; }
+     .quiz-popup .md\:items-center { align-items: center; }
+     .quiz-popup .md\:justify-center { justify-content: center; }
+     .quiz-popup .md\:justify-end { justify-content: flex-end; }
+     .quiz-popup .md\:gap-12 { gap: 3rem; }
+     .quiz-popup .md\:pl-4 { padding-left: 1rem; }
+     .quiz-popup .md\:pt-0 { padding-top: 0; }
+     .quiz-popup .md\:w-1\/2 { width: 50%; }
+     .quiz-popup .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+     .quiz-popup .md\:grid-cols-12 { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+     .quiz-popup .md\:col-span-3 { grid-column: span 3 / span 3; }
+     .quiz-popup .md\:col-span-6 { grid-column: span 6 / span 6; }
+     .quiz-popup .md\:col-span-12 { grid-column: span 12 / span 12; }
+ }
+
+ @media (min-width: 1024px) {
+     .quiz-popup .lg\:mt-0 { margin-top: 0; }
+     .quiz-popup .lg\:w-1\/4 { width: 25%; }
+ }
