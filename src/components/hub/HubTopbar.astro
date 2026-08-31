@@ -25,9 +25,31 @@
         <div class="hub-profile__email" id="dashUserEmail">user@example.com</div>
         <div class="hub-profile__id">Patient ID: #FL-88291</div>
       </div>
+      <button type="button" class="hub-pwbtn" id="hubPwBtn" title="Set or change password" aria-label="Set or change password">
+        <i class="ri-key-2-line" aria-hidden="true"></i>
+      </button>
     </div>
   </div>
 </div>
+
+<dialog id="hubPwDialog" class="hub-pwdialog">
+  <form id="hubPwForm" novalidate>
+    <h3 class="hub-serif hub-pwdialog__title">Set your password</h3>
+    <p class="hub-pwdialog__intro" id="hubPwIntro" hidden>
+      You signed in with an email link. Set a password now so you can also log in
+      directly with your email and password next time.
+    </p>
+    <label class="hub-pwdialog__label" for="hubPwNew">New password</label>
+    <input type="password" id="hubPwNew" class="hub-pwdialog__input" minlength="6" autocomplete="new-password" required />
+    <label class="hub-pwdialog__label" for="hubPwConfirm">Confirm password</label>
+    <input type="password" id="hubPwConfirm" class="hub-pwdialog__input" minlength="6" autocomplete="new-password" required />
+    <div class="hub-pwdialog__error" id="hubPwError" hidden></div>
+    <div class="hub-pwdialog__actions">
+      <button type="button" class="hub-pwdialog__cancel" id="hubPwCancel">Later</button>
+      <button type="submit" class="hub-pwdialog__save" id="hubPwSave">Save password</button>
+    </div>
+  </form>
+</dialog>
 
 <style>
   /* Sticky chrome. The height is pinned to --hub-tb (set on .hub-page)
@@ -71,8 +93,80 @@
     .hub-topbar__brand { gap: 12px; }
     .hub-topbar__divider, .hub-topbar__kicker, .hub-topbar__title { display: none; }
     .hub-topbar__logo { height: 38px; }
-    .hub-profile { padding: 4px; gap: 0; background: none; border: none; }
+    .hub-profile { padding: 4px; gap: 6px; background: none; border: none; }
     .hub-profile > div:not(.hub-profile__avatar) { display: none; }
     .hub-profile__avatar { width: 36px; height: 36px; }
   }
+
+  /* Set/change-password affordance. Lives on the profile chip because that's
+     the only "my account" surface the portal has — there is no settings tab. */
+  .hub-pwbtn { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border: none; background: none; color: var(--muted); border-radius: 50%; font-size: 17px; cursor: pointer; padding: 0; flex-shrink: 0; }
+  .hub-pwbtn:hover { background: var(--cream); color: var(--green); }
+  .hub-pwdialog { border: 1px solid var(--line); border-radius: 16px; padding: 26px 28px; width: min(92vw, 380px); box-shadow: 0 18px 50px rgba(0,0,0,.18); }
+  .hub-pwdialog::backdrop { background: rgba(20, 30, 25, .45); }
+  .hub-pwdialog__title { margin: 0 0 6px; font-size: 21px; color: var(--ink); }
+  .hub-pwdialog__intro { margin: 0 0 14px; font-size: 13.5px; color: var(--muted); line-height: 1.5; }
+  .hub-pwdialog__label { display: block; font-size: 12.5px; font-weight: 600; color: var(--ink); margin: 12px 0 5px; }
+  .hub-pwdialog__input { width: 100%; box-sizing: border-box; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; font-size: 14px; font-family: inherit; }
+  .hub-pwdialog__input:focus { outline: 2px solid var(--green); outline-offset: 1px; border-color: transparent; }
+  .hub-pwdialog__error { margin-top: 12px; font-size: 13px; color: #b3261e; background: #fdecea; border-radius: 8px; padding: 8px 12px; }
+  .hub-pwdialog__actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
+  .hub-pwdialog__cancel { border: 1px solid var(--line); background: none; color: var(--muted); border-radius: 999px; padding: 9px 18px; font-size: 13.5px; cursor: pointer; font-family: inherit; }
+  .hub-pwdialog__cancel:hover { background: var(--cream); }
+  .hub-pwdialog__save { border: none; background: var(--green); color: #fff; border-radius: 999px; padding: 9px 20px; font-size: 13.5px; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .hub-pwdialog__save:disabled { opacity: .6; cursor: default; }
 </style>
+
+<script>
+  import { updatePassword } from '../../lib/hub/auth';
+  import { supabase } from '../../lib/hub/supabase';
+
+  const dlg = document.getElementById('hubPwDialog') as HTMLDialogElement | null;
+  const openBtn = document.getElementById('hubPwBtn');
+  const intro = document.getElementById('hubPwIntro');
+  const form = document.getElementById('hubPwForm') as HTMLFormElement | null;
+  const errEl = document.getElementById('hubPwError');
+
+  function openDialog(firstTime: boolean) {
+    if (!dlg) return;
+    if (intro) intro.hidden = !firstTime;
+    if (errEl) errEl.hidden = true;
+    form?.reset();
+    dlg.showModal();
+  }
+
+  openBtn?.addEventListener('click', () => openDialog(false));
+  document.getElementById('hubPwCancel')?.addEventListener('click', () => dlg?.close());
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const pw = (document.getElementById('hubPwNew') as HTMLInputElement).value;
+    const confirm = (document.getElementById('hubPwConfirm') as HTMLInputElement).value;
+    const show = (msg: string) => { if (errEl) { errEl.textContent = msg; errEl.hidden = false; } };
+    if (pw.length < 6) { show('Password must be at least 6 characters.'); return; }
+    if (pw !== confirm) { show('Passwords don’t match.'); return; }
+    const btn = document.getElementById('hubPwSave') as HTMLButtonElement;
+    btn.disabled = true;
+    const result = await updatePassword(pw);
+    if (!result.success) { btn.disabled = false; show(result.message); return; }
+    btn.textContent = '✓ Saved';
+    setTimeout(() => { dlg?.close(); btn.disabled = false; btn.textContent = 'Save password'; }, 900);
+  });
+
+  // First sign-in via magic link (the account checkout creates emails one):
+  // that session has no password behind it, so offer to set one. The JWT's
+  // amr claim records how THIS session authenticated — otp/magiclink means
+  // an email link, password/oauth means they already have a way back in.
+  window.addEventListener('hub:auth', async () => {
+    if (sessionStorage.getItem('hub-pw-prompted')) return;
+    sessionStorage.setItem('hub-pw-prompted', '1');
+    try {
+      const { data } = await supabase.auth.getSession();
+      const token = data?.session?.access_token;
+      if (!token) return;
+      const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+      const methods = (payload.amr || []).map((a: { method: string }) => a.method);
+      if (methods.includes('otp') || methods.includes('magiclink')) openDialog(true);
+    } catch { /* ponytail: heuristic only — a manual button press always works */ }
+  });
+</script>
