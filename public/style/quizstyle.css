@@ -4,6 +4,25 @@
      max-width: 750px;
      margin: 0 auto;
      padding: 20px;
+     /* Mirrors global.css's `body { font-family: "Playfair Display" }`:
+        on the standalone page every quiz element without an explicit
+        family inherits Playfair from <body>. Inside the modal the popup
+        inherits the HOST page's body font instead (Archivo on index.astro),
+        so the inheritance is re-rooted here. The faces themselves are
+        loaded at modal-open by QuizModal.astro (same Google Fonts URLs as
+        the standalone page's head). */
+     font-family: "Playfair Display", serif;
+ }
+
+ /* global.css's `p { font-family: Poppins; ... }`, ported. :where() keeps
+    specificity at zero — exactly like the (0,0,1) element rule it mirrors —
+    so classed rules (.quiz-subtitle's Inter, etc.) still win over it. */
+ :where(.quiz-popup p) {
+     font-family: Poppins, sans-serif;
+     font-weight: 400;
+     font-size: 14px;
+     line-height: 130%;
+     color: #17222A;
  }
 
  /* Ported from global.css (h2 / .highlight / :root gold): the standalone
