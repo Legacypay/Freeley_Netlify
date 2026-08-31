@@ -38,11 +38,19 @@ export function openMessaging(): void {
     if (el) el.textContent = clinSpecialty.textContent;
   }
   const clinPhoto = document.getElementById('mdi-clinician-photo') as HTMLImageElement | null;
-  if (clinPhoto && clinPhoto.src && !clinPhoto.src.endsWith('/')) {
+  // Read the raw attribute, not the `.src` property: HubTreatmentsPanel.astro
+  // renders the <img> with src="" until dashboard.ts fills in a real photo
+  // URL, but the DOM resolves an empty src="" against the current page —
+  // `.src` comes back as this very page's own URL (truthy, no trailing
+  // slash), so the old truthiness check passed even with no clinician photo
+  // and pointed the chat avatar at the HTML document itself, rendering as a
+  // broken image icon.
+  const clinPhotoSrc = clinPhoto ? clinPhoto.getAttribute('src') : null;
+  if (clinPhotoSrc) {
     const avatarImg = document.getElementById('chatAvatarImg') as HTMLImageElement | null;
     const avatarFallback = document.getElementById('chatAvatarFallback');
     if (avatarImg) {
-      avatarImg.src = clinPhoto.src;
+      avatarImg.src = clinPhotoSrc;
       avatarImg.style.display = 'block';
     }
     if (avatarFallback) avatarFallback.style.display = 'none';

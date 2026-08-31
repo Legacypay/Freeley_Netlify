@@ -4,6 +4,19 @@ import { setText, escapeHtml } from './dom';
 import { PRODUCT_NAMES, PRODUCT_IMG } from './products';
 import { getCases, getCaseStatus, getOrders, getMessages, getEncounterDetails, getBillingHistory } from './api';
 
+// Card brand -> logo, keyed by the brand string lowercased with non-letters
+// stripped so both gateways' casing matches: Authorize.Net's accountType is
+// "Visa"/"MasterCard"/"AmericanExpress"/"Discover" (create-authnet-transaction.js),
+// Stripe's card.brand is "visa"/"mastercard"/"amex"/"discover" (getBillingHistory.js's
+// legacy fallback). Same files checkout.astro's "we accept" strip uses.
+const CARD_BRAND_ICON: Record<string, string> = {
+  visa: '/assets/payment/visa.svg',
+  mastercard: '/assets/payment/mastercard.svg',
+  amex: '/assets/payment/amex.svg',
+  americanexpress: '/assets/payment/amex.svg',
+  discover: '/assets/payment/discover.svg',
+};
+
 export async function refreshCaseStatus(): Promise<void> {
   const patientId = sessionStorage.getItem('freeley_patient_id');
   const caseId = sessionStorage.getItem('freeley_case_id');
@@ -425,8 +438,17 @@ export async function loadBillingHistory(): Promise<void> {
       methods.forEach((pm: any) => {
         let brand = pm.brand || 'card';
         brand = brand.charAt(0).toUpperCase() + brand.slice(1);
+        // Same brand logos checkout.astro shows in its "we accept" strip
+        // (public/assets/payment/*.svg) — here picked by the card's actual
+        // brand instead of shown all together. Falls back to the generic
+        // icon for brands we don't have artwork for (JCB, Diners, ...) or an
+        // unrecognized string.
+        const cardIcon = CARD_BRAND_ICON[(pm.brand || '').toLowerCase().replace(/[^a-z]/g, '')];
+        const iconHtml = cardIcon
+          ? '<div class="hub-pm__cardicon"><img src="' + cardIcon + '" alt="' + escapeHtml(brand) + '" /></div>'
+          : '<i class="ri-bank-card-line"></i>';
         mhtml +=
-          '<div class="hub-pm"><i class="ri-bank-card-line"></i><div><div class="hub-pm__brand">' +
+          '<div class="hub-pm">' + iconHtml + '<div><div class="hub-pm__brand">' +
           escapeHtml(brand) +
           ' ending in ' +
           escapeHtml(String(pm.last4)) +
