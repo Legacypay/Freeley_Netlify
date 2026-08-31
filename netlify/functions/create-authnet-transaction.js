@@ -79,8 +79,13 @@ exports.handler = async (event) => {
   const TRANSACTION_KEY = process.env.AUTHNET_TRANSACTION_KEY;
   const AUTHNET_ENV = (process.env.AUTHNET_ENV || 'production').toLowerCase();
   const endpoint = ENDPOINTS[AUTHNET_ENV] || ENDPOINTS.production;
+  // AUTHNET_SIMULATE=true → approve without calling Authorize.Net at all.
+  // Temporary bypass while the sandbox Transaction Key is unavailable; the
+  // rest of the flow (funnel_orders, Hub account, MDI intake) still runs.
+  // Remove the env var + redeploy to restore real charging.
+  const SIMULATE = process.env.AUTHNET_SIMULATE === 'true';
 
-  if (!API_LOGIN_ID || !TRANSACTION_KEY) {
+  if (!SIMULATE && (!API_LOGIN_ID || !TRANSACTION_KEY)) {
     console.error('[AUTHNET] CRITICAL: AUTHNET_API_LOGIN_ID / AUTHNET_TRANSACTION_KEY not set');
     return { statusCode: 500, headers, body: JSON.stringify({ approved: false, error: 'Payment is not configured. Please contact support.' }) };
   }
@@ -103,8 +108,8 @@ exports.handler = async (event) => {
       dateOfBirth: /^\d{4}-\d{2}-\d{2}$/.test(String(body.date_of_birth || '')) ? body.date_of_birth : null
     };
 
-    // ── Validate the Accept.js token ──
-    if (!opaqueData || !opaqueData.dataDescriptor || !opaqueData.dataValue) {
+    // ── Validate the Accept.js token (not needed when simulating) ──
+    if (!SIMULATE && (!opaqueData || !opaqueData.dataDescriptor || !opaqueData.dataValue)) {
       return { statusCode: 400, headers, body: JSON.stringify({ approved: false, error: 'Missing payment token. Please re-enter your card details.' }) };
     }
 
@@ -146,6 +151,46 @@ exports.handler = async (event) => {
     const amountStr = ((subtotalCents - promoCents) / 100).toFixed(2); // dollars, 2dp — Authorize.Net wants dollars not cents
     if (promo) console.log(`[AUTHNET] Promo ${promo.code}: -$${(promoCents / 100).toFixed(2)} on $${(subtotalCents / 100).toFixed(2)}`);
     const treatmentName = TREATMENT_NAMES[treatment] || treatment;
+
+    // ── Simulated approval: no gateway call, no money moves ──
+    // Skips the conversion pixels (no fake purchases in Meta/GA4) and CIM
+    // (nothing to store), but still records the order and creates the Hub
+    // account so the post-payment flow stays testable end-to-end.
+    if (SIMULATE) {
+      const transactionId = 'SIM-' + Date.now();
+      console.warn(`[AUTHNET] 🧪 SIMULATED approval | ${transactionId} | $${amountStr} | ${treatmentName} ${months}mo — NO real charge`);
+
+      try {
+        const orderId = await saveFunnelOrder({
+          leadId,
+          planMonths: months,
+          amountCents: Math.round(Number(amountStr) * 100),
+          status: 'paid',
+          gateway: 'simulated',
+          gatewayTransactionId: transactionId,
+          productName: `${treatmentName} - ${months}mo${promo ? ' (' + promo.code + ')' : ''}`,
+          treatment,
+          billing,
+          card: { brand: null, last4: null, customerProfileId: null, paymentProfileId: null }
+        });
+        if (orderId) console.log(`[AUTHNET] funnel_orders recorded (simulated): ${orderId}`);
+      } catch (orderErr) {
+        console.warn('[AUTHNET] funnel_orders save threw (non-blocking):', orderErr.message);
+      }
+
+      try {
+        const hub = await ensureHubAccount(email);
+        console.log('[AUTHNET] Hub magic link ' + (hub.sent ? 'sent' : 'NOT sent: ' + hub.reason));
+      } catch (hubErr) {
+        console.warn('[AUTHNET] Hub account creation failed (non-blocking):', hubErr.message);
+      }
+
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ approved: true, simulated: true, transactionId, amount: amountStr })
+      };
+    }
 
     // ── Build the Authorize.Net request ──
     // refId/invoiceNumber must be <= 20 chars. Use a short time-based ref.

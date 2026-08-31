@@ -22,6 +22,10 @@ const { _meta: _pricingMeta, treatment_names: _tn, promos: _promos, ...PRICING }
 const AUTHNET_LOGIN_ID = process.env.AUTHNET_API_LOGIN_ID || '';
 const AUTHNET_CLIENT_KEY = process.env.AUTHNET_CLIENT_KEY || '';
 const AUTHNET_ENV = (process.env.AUTHNET_ENV || 'production').toLowerCase();
+// Baked at build time, like the keys above. When true the checkout skips
+// Accept.js tokenization entirely and the server approves without charging
+// (see create-authnet-transaction.js). Temporary, until sandbox creds return.
+const AUTHNET_SIMULATE = process.env.AUTHNET_SIMULATE === 'true';
 const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
   ? 'https://jstest.authorize.net/v1/Accept.js'
   : 'https://js.authorize.net/v1/Accept.js';
@@ -329,7 +333,7 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
   <Footer />
   <QuizModal />
 
-    <script is:inline define:vars={{ AUTHNET_LOGIN_ID, AUTHNET_CLIENT_KEY, PRICING }}>
+    <script is:inline define:vars={{ AUTHNET_LOGIN_ID, AUTHNET_CLIENT_KEY, AUTHNET_SIMULATE, PRICING }}>
         // ═══════════════════════════════════════════════════════
         // PRODUCT DATA – loaded from sessionStorage
         // ═══════════════════════════════════════════════════════
@@ -706,7 +710,7 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
           resetButton();
         }
 
-        if (typeof Accept === "undefined") {
+        if (!AUTHNET_SIMULATE && typeof Accept === "undefined") {
           showError(
             "Payment system failed to load. Please refresh and try again.",
           );
@@ -737,22 +741,9 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
           },
         };
 
-        Accept.dispatchData(secureData, async function (tokenResponse) {
-          if (
-            !tokenResponse ||
-            !tokenResponse.messages ||
-            tokenResponse.messages.resultCode !== "Ok"
-          ) {
-            const msg =
-              tokenResponse &&
-              tokenResponse.messages &&
-              tokenResponse.messages.message &&
-              tokenResponse.messages.message[0] &&
-              tokenResponse.messages.message[0].text;
-            showError(msg || "Your card details could not be validated.");
-            return;
-          }
-
+        // POSTs the (possibly null, in simulate mode) Accept.js token to the
+        // server, then runs the shared post-approval flow (MDI + redirect).
+        const submitCharge = async function (opaqueData) {
           try {
             const primary = selectedProducts[0] || {};
             const attribution =
@@ -771,7 +762,7 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
                   plan_months: selectedPlanMonths,
                   promo_code: appliedPromo ? appliedPromo.code : undefined,
                   compound: selectedCompound,
-                  opaqueData: tokenResponse.opaqueData,
+                  opaqueData: opaqueData,
                   attribution: attribution,
                   email: document.getElementById("pt-email").value.trim(),
                   firstName: document
@@ -849,6 +840,31 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
               "Unable to process payment. Please try again or contact support.",
             );
           }
+        };
+
+        // Simulate mode: skip tokenization entirely — the server approves
+        // without contacting Authorize.Net (AUTHNET_SIMULATE=true build).
+        if (AUTHNET_SIMULATE) {
+          submitCharge(null);
+          return;
+        }
+
+        Accept.dispatchData(secureData, function (tokenResponse) {
+          if (
+            !tokenResponse ||
+            !tokenResponse.messages ||
+            tokenResponse.messages.resultCode !== "Ok"
+          ) {
+            const msg =
+              tokenResponse &&
+              tokenResponse.messages &&
+              tokenResponse.messages.message &&
+              tokenResponse.messages.message[0] &&
+              tokenResponse.messages.message[0].text;
+            showError(msg || "Your card details could not be validated.");
+            return;
+          }
+          submitCharge(tokenResponse.opaqueData);
         });
       }
 
