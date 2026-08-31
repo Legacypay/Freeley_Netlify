@@ -19,7 +19,7 @@ function getPatientEmail(): string {
 export function openMessaging(): void {
   const patientId = sessionStorage.getItem('freeley_patient_id');
   if (!patientId) {
-    alert('Please complete your intake first. No active patient record found.');
+    showIntakePrompt();
     return;
   }
   if (!chatOverlay || !chatBody || !chatFooter) return;
@@ -61,6 +61,26 @@ export function openMessaging(): void {
   chatPollingTimer = setInterval(() => {
     if (chatIsOpen) loadMessages(true);
   }, 15000);
+}
+
+/** Friendly in-drawer prompt shown instead of the old blocking alert() when
+ * the patient has no MDI record yet (their medical intake isn't completed).
+ * dashboard.ts stashes the pending voucher's onboarding_url so the CTA can
+ * send them straight to MDI's intake. */
+function showIntakePrompt(): void {
+  if (!chatOverlay || !chatBody || !chatFooter) return;
+  chatOverlay.classList.add('is-open');
+  chatIsOpen = true;
+  document.body.style.overflow = 'hidden';
+  chatFooter.style.display = 'none';
+  const url = sessionStorage.getItem('freeley_onboarding_url');
+  chatBody.innerHTML =
+    '<div class="hub-chat-verify"><i class="ri-file-list-3-line"></i><h3>Complete your intake first</h3>' +
+    '<p>To talk with a doctor, please complete your medical intake. It only takes a few minutes, and your care team will review it right away.</p>' +
+    (url
+      ? '<a class="hub-btn hub-btn--sm" href="' + escapeHtml(url) + '" target="_blank" rel="noopener">Complete My Intake</a>'
+      : '<p style="font-size:12px;">You can find your intake link in the email we sent after checkout.</p>') +
+    '</div>';
 }
 
 function showChatUI(): void {

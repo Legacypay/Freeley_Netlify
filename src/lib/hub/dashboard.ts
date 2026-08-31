@@ -299,8 +299,16 @@ export async function loadOverviewCases(): Promise<void> {
     cases.sort((a: any, b: any) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
     const latest = cases[0];
 
-    if (latest.patient_id) sessionStorage.setItem('freeley_patient_id', latest.patient_id);
-    if (latest.patient_email) sessionStorage.setItem('freeley_patient_email', latest.patient_email);
+    // A just-purchased voucher has no patient until its MDI intake is
+    // completed — don't let it hide the patient identity that an older
+    // completed case carries (every voucher under this email is the same
+    // MDI patient, so any case's patient_id is valid for messaging).
+    const identity = cases.find((c: any) => c.patient_id) || latest;
+    if (identity.patient_id) sessionStorage.setItem('freeley_patient_id', identity.patient_id);
+    if (identity.patient_email) sessionStorage.setItem('freeley_patient_email', identity.patient_email);
+    // Newest not-yet-completed intake, for chat.ts's "Complete My Intake" CTA.
+    const pendingIntake = cases.find((c: any) => !c.patient_id && c.onboarding_url && !c.is_expired);
+    if (pendingIntake) sessionStorage.setItem('freeley_onboarding_url', pendingIntake.onboarding_url);
     if (latest.case_id || latest.id) sessionStorage.setItem('freeley_case_id', latest.case_id || latest.id);
     if (latest.voucher_id) sessionStorage.setItem('freeley_voucher_id', latest.voucher_id);
     if (latest.product_name) sessionStorage.setItem('freeley_product', latest.product_name);
