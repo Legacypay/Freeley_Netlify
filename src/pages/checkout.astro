@@ -2,6 +2,12 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+// Header's #start-assessment-header button falls back to navigating to
+// /assessment-quiz (losing the cart) whenever no #quizModal/#quiz--modal is
+// in the DOM — every other page pairs Header with this shared modal so the
+// button opens it in place instead. Checkout inherited the button when it
+// switched to shared site chrome but missed pairing it with the modal.
+import QuizModal from '../components/QuizModal.astro';
 // Same file the server charges from (netlify/functions/create-authnet-transaction.js).
 // Inlined via define:vars so what the patient SEES is exactly what gets charged.
 import pricingJson from '../../pricing.json';
@@ -321,6 +327,7 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
   </main>
 
   <Footer />
+  <QuizModal />
 
     <script is:inline define:vars={{ AUTHNET_LOGIN_ID, AUTHNET_CLIENT_KEY, PRICING }}>
         // ═══════════════════════════════════════════════════════
@@ -805,13 +812,20 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
             // allowed to trap the patient on this page. submitQuiz.js queues its
             // own retry on a transient MDI failure; savePendingCase.js is the
             // safety net for when the browser can't reach submitQuiz at all.
-            await submitToMDI(result.transactionId, primary);
+            const onboardingUrl = await submitToMDI(
+              result.transactionId,
+              primary,
+            );
 
             const orderData = {
               transactionId: result.transactionId,
               amount: result.amount,
               products: selectedProducts.map((p) => p.name),
               planMonths: selectedPlanMonths,
+              // MDI's branded patient-site link — the patient creates their
+              // account and completes the medical intake there. Read by the
+              // order-confirmation banner on index.astro.
+              onboardingUrl: onboardingUrl || undefined,
               timestamp: new Date().toISOString(),
             };
 
@@ -819,8 +833,16 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
               "freeley_transaction",
               JSON.stringify(orderData),
             );
-            window.location.href =
-              "/?payment=success&pi=" + orderData.transactionId;
+            // Send the patient straight to MDI's branded patient site to
+            // complete the medical intake. Fallback (no quiz session, MDI
+            // down): the homepage confirmation banner, which the waitlist
+            // gate lets through via its ?payment= allow rule.
+            if (onboardingUrl && /^https:\/\//.test(onboardingUrl)) {
+              window.location.href = onboardingUrl;
+            } else {
+              window.location.href =
+                "/?payment=success&pi=" + orderData.transactionId;
+            }
           } catch (err) {
             console.error("[CHECKOUT] Payment error:", err);
             showError(
@@ -840,6 +862,10 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
        *   2. savePendingCase.js → if the browser couldn't get a success out of
        *      submitQuiz at all, park the PHI-encrypted submission for
        *      retryPendingCases.js so the payment isn't orphaned.
+       *
+       * Returns MDI's onboarding_url (the branded patient site where the
+       * patient creates their account and finishes the medical intake), or
+       * null when MDI was skipped or unreachable.
        */
       async function submitToMDI(transactionId, primary) {
         const val = (id) => {
@@ -867,7 +893,7 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
           console.warn(
             "[CHECKOUT] No quiz data in session — skipping MDI case creation.",
           );
-          return;
+          return null;
         }
 
         const mdiBody = {
@@ -903,6 +929,7 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
             throw new Error("submitQuiz did not succeed");
           }
           console.log("[CHECKOUT] MDI case created:", mdiResult.voucher_id);
+          return mdiResult.onboarding_url || null;
         } catch (mdiErr) {
           console.error(
             "[CHECKOUT] MDI submission failed after successful payment — queueing for retry:",
@@ -935,6 +962,7 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
             );
           }
         }
+        return null;
       }
 
       // ═══════════════════════════════════════════════════════

@@ -236,6 +236,18 @@
   to = "/checkout"
   status = 200
 
+# Post-payment redirect target (checkout.astro → "/?payment=success&pi=…").
+# The homepage is normally gated, so without this rule a paying patient lands
+# on the coming-soon page instead of the order-confirmation banner + the MDI
+# "complete your medical intake" link (caught on the 2026-08-30 sandbox run).
+# Query-matched: only URLs carrying ?payment= bypass the gate; the bare "/"
+# still shows the waitlist.
+[[redirects]]
+  from = "/"
+  to = "/"
+  status = 200
+  query = { payment = ":payment" }
+
 [[redirects]]
   from = "/hub"
   to = "/hub"

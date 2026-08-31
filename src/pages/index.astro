@@ -886,6 +886,7 @@ const press = [
       .order-conf { background: var(--green); color: #fff; }
       .order-conf__inner { padding: 14px 28px; display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 14px; }
       .order-conf__inner strong { font-weight: 700; }
+      #order-conf-onboarding { color: #fff; font-weight: 700; text-decoration: underline; }
     </style>
   </head>
 
@@ -910,13 +911,17 @@ const press = [
       </nav>
     </header>
 
-    <!-- Order confirmation banner (shown when redirected from checkout.astro's
-         fake payment flow with ?payment=success&pi=TXN-...; populated from
-         sessionStorage's `freeley_transaction`, written by processPayment()). -->
+    <!-- Order confirmation banner (shown when redirected from checkout.astro
+         with ?payment=success&pi=...; populated from sessionStorage's
+         `freeley_transaction`, written after the Authorize.Net charge). When
+         MDI returned an onboarding_url (its branded patient site), the banner
+         also shows the "Complete your medical intake" CTA — that link is where
+         the patient creates their account and finishes the clinical intake. -->
     <div id="order-confirmation" class="order-conf" style="display:none" role="status">
       <div class="wrap order-conf__inner">
         <strong>Order confirmed.</strong>
         <span>Thank you — transaction <span id="order-conf-id"></span>. Our team will reach out with next steps.</span>
+        <a id="order-conf-onboarding" href="#" style="display:none" rel="noopener">Complete your medical intake <span class="arw">→</span></a>
       </div>
     </div>
 
@@ -1256,10 +1261,10 @@ const press = [
     </footer>
 
     <script is:inline>
-      /* Order confirmation banner: reads the ?payment=success&pi=TXN-... redirect
-         from checkout.astro's processPayment() and the matching sessionStorage
-         receipt it wrote, then reveals the banner. Does not touch the fake
-         payment mechanism itself, only reads what it already produced. */
+      /* Order confirmation banner: reads the ?payment=success&pi=... redirect
+         from checkout.astro and the matching sessionStorage receipt it wrote,
+         then reveals the banner. If the receipt carries MDI's onboardingUrl
+         (the branded patient site), surface it as the primary next step. */
       (function () {
         var params = new URLSearchParams(window.location.search);
         if (params.get('payment') !== 'success' || !params.get('pi')) return;
@@ -1270,6 +1275,11 @@ const press = [
         var data = null;
         try { data = raw ? JSON.parse(raw) : null; } catch (e) {}
         idEl.textContent = '#' + ((data && data.transactionId) || params.get('pi'));
+        var onboarding = document.getElementById('order-conf-onboarding');
+        if (onboarding && data && data.onboardingUrl && /^https:\/\//.test(data.onboardingUrl)) {
+          onboarding.href = data.onboardingUrl;
+          onboarding.style.display = 'inline-block';
+        }
         banner.style.display = 'block';
         banner.scrollIntoView({ block: 'start' });
       })();
