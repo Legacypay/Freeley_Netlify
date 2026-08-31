@@ -5,6 +5,33 @@
      margin: 0 auto;
      padding: 20px;
  }
+
+ /* Ported from global.css (h2 / .highlight / :root gold): the standalone
+    /assessment-quiz page loads global.css + style.css so it gets these for
+    free, but QuizModal.astro clones this markup into pages that load
+    NEITHER (index.astro, compare.astro) — there the title lost its serif
+    face and the gold "Is right for you" span rendered plain. Scoped under
+    .quiz-popup and declared BEFORE .quiz-hero-content h2 below so the
+    hero's larger font-size still wins on equal specificity. Same values as
+    global.css, so the standalone page renders identically. */
+ .quiz-popup h2 {
+     font-family: "Playfair Display", serif;
+     font-weight: 400;
+     font-size: 44px;
+     line-height: 130%;
+     letter-spacing: -2px;
+ }
+
+ @media (max-width: 767.98px) {
+     .quiz-popup h2 {
+         font-size: 34px;
+     }
+ }
+
+ .quiz-popup .highlight {
+     color: #C5984E; /* --primary-color-primary in style.css :root */
+     font-weight: 600;
+ }
  
  .quiz-card {
      background: #ffffff;

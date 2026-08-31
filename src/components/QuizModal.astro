@@ -217,7 +217,11 @@
     // (the /hub panels do exactly that) kept its real href and navigated
     // away instead of opening the modal. Delegation covers both.
     document.addEventListener('click', function (e) {
-      var a = e.target && e.target.closest && e.target.closest('a[href^="/assessment-quiz"]');
+      // Both forms: under /preview/* the preview-aware scripts (Header.astro,
+      // Layout.astro) rewrite nav hrefs to "/preview/assessment-quiz", which
+      // the bare prefix selector no longer matched — so on preview pages the
+      // nav CTA did a real navigation instead of opening this modal.
+      var a = e.target && e.target.closest && e.target.closest('a[href^="/assessment-quiz"], a[href^="/preview/assessment-quiz"]');
       if (!a) return;
       // Leave modified clicks alone so "open in new tab" still works.
       if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
