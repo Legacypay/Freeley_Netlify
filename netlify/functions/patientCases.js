@@ -171,6 +171,22 @@ exports.handler = async (event) => {
           // Log first case for debugging
           const first = cases[0];
           console.log(`[PATIENT CASES] First: patient_id=${first.patient_id}, product=${first.product_name}, status=${first.status}`);
+          // TEMP DEBUG (remove once patient_id resolves correctly): the
+          // completed voucher we're testing against still comes back with
+          // patient_id null even after reading payload.patient_id. Log only
+          // the SHAPE (keys, 2 levels deep) rather than raw values — voucher
+          // payloads can carry PHI (diseases, dates of birth, etc.) and this
+          // is a shared production log stream.
+          const shapeOf = (obj, depth = 2) => {
+            if (!obj || typeof obj !== 'object') return typeof obj;
+            if (Array.isArray(obj)) return `array[${obj.length}]`;
+            if (depth <= 0) return '{...}';
+            const out = {};
+            for (const k of Object.keys(obj)) out[k] = shapeOf(obj[k], depth - 1);
+            return out;
+          };
+          const completedVoucher = voucherList.find((vv) => vv.status === 'completed') || voucherList[0];
+          console.log(`[PATIENT CASES] TEMP DEBUG voucher shape: ${JSON.stringify(shapeOf(completedVoucher))}`);
         } else {
           console.log(`[PATIENT CASES] No vouchers found via MDI API for authenticated email`);
         }
