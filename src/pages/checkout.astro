@@ -2,6 +2,12 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+// Header's #start-assessment-header button falls back to navigating to
+// /assessment-quiz (losing the cart) whenever no #quizModal/#quiz--modal is
+// in the DOM — every other page pairs Header with this shared modal so the
+// button opens it in place instead. Checkout inherited the button when it
+// switched to shared site chrome but missed pairing it with the modal.
+import QuizModal from '../components/QuizModal.astro';
 // Same file the server charges from (netlify/functions/create-authnet-transaction.js).
 // Inlined via define:vars so what the patient SEES is exactly what gets charged.
 import pricingJson from '../../pricing.json';
@@ -321,6 +327,7 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
   </main>
 
   <Footer />
+  <QuizModal />
 
     <script is:inline define:vars={{ AUTHNET_LOGIN_ID, AUTHNET_CLIENT_KEY, PRICING }}>
         // ═══════════════════════════════════════════════════════
