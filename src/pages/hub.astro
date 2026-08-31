@@ -128,6 +128,18 @@ const navItems = [
         await signOut();
         dashboardScreen.style.display = 'none';
         authScreen.style.display = 'flex';
+        // Re-arm the sign-in flow: without this, a second sign-in on the same
+        // page load fired hub:auth into showDashboard's `if (dashboardShown)
+        // return` guard and the user stayed stuck on the login screen until a
+        // hard refresh re-initialized the module.
+        dashboardShown = false;
+        recordsLoaded = false;
+        billingLoaded = false;
+        // Drop the signed-out patient's cached identity so a different
+        // account signing in next doesn't inherit it.
+        ['freeley_patient_id', 'freeley_case_id', 'freeley_patient_email', 'freeley_voucher_id',
+         'freeley_product', 'freeley_product_category', 'freeley_patient_token', 'freeley_onboarding_url']
+          .forEach((k) => sessionStorage.removeItem(k));
         const loginEmail = document.getElementById('loginEmail') as HTMLInputElement | null;
         const loginPassword = document.getElementById('loginPassword') as HTMLInputElement | null;
         if (loginEmail) loginEmail.value = '';
