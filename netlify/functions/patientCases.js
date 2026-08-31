@@ -135,16 +135,24 @@ exports.handler = async (event) => {
 
         for (const v of voucherList) {
           // MDI voucher fields (from API response):
-          //   id, status, case_id, partner_questionnaire_id, 
-          //   patient (nested object with id, email, etc.),
-          //   metadata, pharmacy_name, created_at, updated_at
+          //   id, status, case_id, partner_questionnaire_id,
+          //   payload.patient_id (the real location — confirmed against MDI's
+          //   own Postman docs: GET /v1/partner/vouchers nests it under
+          //   payload, there is no top-level `patient` object on this list
+          //   endpoint), metadata, pharmacy_name, created_at, updated_at.
+          // `v.patient` is kept as a fallback in case a differently-shaped
+          // response ever does nest a patient object, but payload.patient_id
+          // is the one MDI's docs actually show — reading only `v.patient`
+          // made patient_id (and therefore the Hub's messaging button)
+          // silently null for every real voucher.
           const questionnaireId = v.partner_questionnaire_id || null;
           const patientObj = v.patient || {};
+          const payload = v.payload || {};
 
           cases.push({
             case_id: v.case_id || null,
-            patient_id: patientObj.id || patientObj.uuid || null,
-            patient_email: patientObj.email || null,
+            patient_id: patientObj.id || patientObj.uuid || payload.patient_id || null,
+            patient_email: patientObj.email || payload.email || null,
             voucher_id: v.id || null,
             questionnaire_id: questionnaireId,
             product_name: QUESTIONNAIRE_PRODUCT_MAP[questionnaireId] || null,
