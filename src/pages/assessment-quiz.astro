@@ -233,18 +233,11 @@ const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
                             </div>
                             <div class="consent-check">
                                 <input type="checkbox" id="consent-check-step2" />
-                                <label for="consent-check-step2">
-                    I agree to the
-                    <a href="/terms" target="_blank"
-                      >Terms of Service</a
-                    >,
-                    <a href="/privacy" target="_blank">Privacy Policy</a
-                    >, and
-                    <a href="/telehealth-consent" target="_blank"
-                      >Telehealth Consent</a
-                    >. I consent to be contacted by Freeley regarding my
-                    treatment match and health profile via email and SMS.
-                  </label>
+                                {/* Single line on purpose: Astro's compiler strips the
+                                    whitespace between text and a tag that starts on the
+                                    next line, which rendered "theTerms of Service,Privacy
+                                    Policy, andTelehealth Consent" with no spaces. */}
+                                <label for="consent-check-step2">I agree to the <a href="/terms" target="_blank">Terms of Service</a>, <a href="/privacy" target="_blank">Privacy Policy</a>, and <a href="/telehealth-consent" target="_blank">Telehealth Consent</a>. I consent to be contacted by Freeley regarding my treatment match and health profile via email and SMS.</label>
                             </div>
                             <div class="error-message" id="step2Error">
                                 Please fill in all fields and agree to continue
@@ -766,7 +759,7 @@ const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
             <div class="step-body">
                 <h2 class="mb-6">
                     Your
-                    <span class="highlight">lifestyle</span><br /> How active are you?
+                    <span class="highlight">&nbsp;lifestyle</span><br /> How active are you?
                 </h2>
                 <p class="mb-12">
                     Helps us tailor dosing and delivery to your routine.
@@ -1211,13 +1204,9 @@ const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
                   </div>
                   <div class="consent-check">
                     <input type="checkbox" id="consent-check" />
-                    <label for="consent-check">
-                      I agree to the
-                      <a href="javascript:void(0)">Terms of Service</a> and
-                      <a href="javascript:void(0)">Privacy Policy</a>. I
-                      understand this is a medical consultation and my
-                      information is protected by HIPAA.
-                    </label>
+                    {/* Single line on purpose — same Astro whitespace-stripping as the
+                        step-2 consent label above ("theTerms of Service") */}
+                    <label for="consent-check">I agree to the <a href="/terms" target="_blank">Terms of Service</a> and <a href="/privacy" target="_blank">Privacy Policy</a>. I understand this is a medical consultation and my information is protected by HIPAA.</label>
                   </div>
                   <div id="payment-errors" class="payment-errors"></div>
                   <div id="payment-success" class="payment-success">

@@ -708,7 +708,9 @@
  }
  
  .quiz-footer .footer-social {
-     gap: 0 !important;
+     /* Was `gap: 0 !important` — the five social icons rendered flush
+        against each other with no breathing room. */
+     gap: 12px;
  }
  
  @media (max-width: 767px) {
