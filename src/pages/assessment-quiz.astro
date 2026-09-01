@@ -159,8 +159,16 @@ const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
                                 What brings you
                                 <span class="highlight">&nbsp;to Freeley?</span>
                             </h2>
-                            <p class="mb-6">Select all that apply to you</p>
-                            <div class="options" data-required="true" data-multi-select="true">
+                            <p class="mb-6">Select the one that best fits you</p>
+                            <!-- Single-select by design (2026-09-01): one quiz run must resolve to exactly
+                                 one treatment. Checkout/payment and submitQuiz only ever charge and create
+                                 an MDI case for the FIRST selected product (create-authnet-transaction.js's
+                                 single `treatment`, submitToMDI's `selectedProducts[0]`), so a multi-select
+                                 here used to let a patient pick e.g. weight-loss + hair-loss, get billed and
+                                 onboarded for weight-loss only, with hair-loss shown as an unpriced, never-
+                                 fulfilled line item. Do not re-add data-multi-select="true" here without also
+                                 building real multi-product pricing/fulfillment. -->
+                            <div class="options" data-required="true">
                                 <div class="option--item" data-product="weight loss">
                                     <div class="option--title">Weight loss</div>
                                     <div class="option-details italic">
@@ -187,7 +195,7 @@ const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
                                 </div>
                             </div>
                             <div class="error-message">
-                                Please select at least one option to continue
+                                Please select an option to continue
                             </div>
                         </div>
                         <div class="quiz-buttons">
