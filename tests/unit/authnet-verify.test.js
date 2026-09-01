@@ -64,6 +64,11 @@ test('E00040 (record not found) is a definitive refusal', async () => {
   assert.deepEqual(r, { ok: false, reason: 'transaction-not-found' });
 });
 
+test('E00007 (auth failed / Transaction Details API disabled) fails CLOSED — forged ids must not pass', async () => {
+  const r = await verifyAuthnetTransaction('80058673597', { fetchImpl: gateway({ messages: { resultCode: 'Error', message: [{ code: 'E00007', text: 'User authentication failed due to invalid authentication values.' }] } }) });
+  assert.deepEqual(r, { ok: false, reason: 'gateway-auth-failed' });
+});
+
 test('gateway outage / garbage / other errors fail OPEN but flagged unverified', async () => {
   const down = async () => { throw new Error('ECONNRESET'); };
   assert.deepEqual(await verifyAuthnetTransaction('80058673597', { fetchImpl: down }), { ok: true, unverified: true, reason: 'ECONNRESET' });

@@ -68,6 +68,16 @@ async function verifyAuthnetTransaction(transactionId, opts = {}) {
     if (!json.messages || json.messages.resultCode !== 'Ok') {
       // E00040 = "The record cannot be found" → definitively not ours / not real.
       if (msg.code === 'E00040') return { ok: false, reason: 'transaction-not-found' };
+      // E00007 = auth failed: wrong credentials OR the Transaction Details API
+      // is disabled on this merchant account. Either way we CANNOT verify, and
+      // failing open here would let forged transaction ids through (that is
+      // exactly what a 2026-09-01 smoke test showed against sandbox). Charges
+      // use the same credentials, so a real credential problem already breaks
+      // checkout — refusing here costs no legitimate patient anything.
+      if (msg.code === 'E00007') {
+        console.error('[AUTHNET VERIFY] E00007 — credentials rejected or Transaction Details API disabled (Merchant Interface → Account → Security Settings → Transaction Details API). Refusing intake until fixed.');
+        return { ok: false, reason: 'gateway-auth-failed' };
+      }
       console.warn('[AUTHNET VERIFY] gateway error ' + (msg.code || '?') + ' ' + (msg.text || '') + ' — proceeding unverified');
       return { ok: true, unverified: true, reason: (msg.code || '?') + ': ' + (msg.text || 'unknown') };
     }
