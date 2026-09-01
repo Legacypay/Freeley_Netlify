@@ -12,7 +12,10 @@ import QuizModal from '../components/QuizModal.astro';
 // Inlined via define:vars so what the patient SEES is exactly what gets charged.
 import pricingJson from '../../pricing.json';
 // promos are deliberately NOT inlined — codes are validated server-side.
-const { _meta: _pricingMeta, treatment_names: _tn, promos: _promos, ...PRICING } = pricingJson as any;
+// `billing` is exposed to the client so the copy (plan cards, button, consent
+// clause) matches what the server will actually schedule — the server is the
+// authority (netlify/functions/lib/billing-model.js), this is only display.
+const { _meta: _pricingMeta, treatment_names: _tn, promos: _promos, billing: BILLING, ...PRICING } = pricingJson as any;
 
 // Authorize.Net Accept.js needs the API Login ID + Public Client Key
 // client-side to tokenize the card (see netlify/functions/create-authnet-transaction.js
@@ -192,7 +195,7 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
         <!-- Step 1 -->
         <section class="ck-step" aria-labelledby="ck-step1">
           <div class="ck-step__head"><span class="ck-step__num">1</span><h2 class="ck-step__title" id="ck-step1">Choose your plan</h2></div>
-          <p class="ck-step__hint">Longer plans lower your rate per day. Monthly through 12-month plans are subscriptions: you're billed today, then automatically at the same amount and cadence until you cancel. The 24-month plan is a single payment for the full term and does not auto-renew.</p>
+          <p class="ck-step__hint" id="plan-billing-hint">Longer plans lower your rate per day.</p>
 
           <div id="compoundSelector" class="ck-choices" hidden role="radiogroup" aria-label="Treatment"></div>
 
@@ -312,7 +315,7 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
 
           <label class="ck-consent">
             <input type="checkbox" id="consent-check" />
-            <span>I have read and agree to the <a href="/telehealth-consent" target="_blank" rel="noopener">Telehealth Consent</a>, understand that my treatment may be declined based on the clinician's medical judgment, and authorize Freeley to automatically charge my card the plan amount today and every renewal period thereafter until I cancel.</span>
+            <span>I have read and agree to the <a href="/telehealth-consent" target="_blank" rel="noopener">Telehealth Consent</a>, understand that my treatment may be declined based on the clinician's medical judgment, and <span id="consent-billing-clause">authorize Freeley to charge my card the plan amount today.</span></span>
           </label>
 
           <div id="payment-errors" role="alert" class="ck-error" style="margin: 0 0 12px"></div>
@@ -322,7 +325,7 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
             <span id="btn-text">Checkout</span>
           </button>
           <div id="checkout-spinner" class="ck-spinner">Processing your payment…</div>
-          <p class="ck-note">Your card is tokenized in your browser and never stored on our servers. Cancel your subscription anytime from your Hub account — no phone call needed.</p>
+          <p class="ck-note" id="checkout-footnote">Your card is tokenized in your browser and never stored on our servers.</p>
 
           <div class="ck-assure">
             <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 3h15v13H1zM16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Free overnight shipping</div>
@@ -338,7 +341,7 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
   <Footer />
   <QuizModal />
 
-    <script is:inline define:vars={{ AUTHNET_LOGIN_ID, AUTHNET_CLIENT_KEY, AUTHNET_SIMULATE, PRICING }}>
+    <script is:inline define:vars={{ AUTHNET_LOGIN_ID, AUTHNET_CLIENT_KEY, AUTHNET_SIMULATE, PRICING, BILLING }}>
         // ═══════════════════════════════════════════════════════
         // PRODUCT DATA – loaded from sessionStorage
         // ═══════════════════════════════════════════════════════
@@ -463,7 +466,58 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
         // netlify/functions/lib/authnet-arb.js). The 24-month plan is a single
         // payment for the whole term and the copy must never promise otherwise.
         const ARB_MAX_INTERVAL_MONTHS = 12;
-        function planRenews(months) { return months <= ARB_MAX_INTERVAL_MONTHS; }
+
+        // Mirror of netlify/functions/lib/billing-model.js — resolves the
+        // current treatment + compound to "subscription" or "one-time" from
+        // pricing.json's `billing` block. Display only; the server decides.
+        function normalizeCompound(compound) {
+          const c = String(compound || "").trim().toLowerCase();
+          if (!c) return "";
+          if (c === "semaglutide" || c === "sema") return "sema";
+          if (c === "tirzepatide" || c === "tirz") return "tirz";
+          if (c.startsWith("olympus")) return "olympus";
+          if (c.startsWith("nad")) return "nad-plus";
+          return c;
+        }
+        function currentBilling() {
+          const cfg = BILLING || {};
+          const oneTime = new Set(Array.isArray(cfg.one_time) ? cfg.one_time : []);
+          const subs = new Set(Array.isArray(cfg.subscription) ? cfg.subscription : []);
+          const primary = selectedProducts[0] || {};
+          const t = PRICING[primary.id] ? primary.id : "hair-loss";
+          const c = normalizeCompound(selectedCompound);
+          for (const id of c ? [`${t}:${c}`, t] : [t]) {
+            if (oneTime.has(id)) return "one-time";
+            if (subs.has(id)) return "subscription";
+          }
+          return cfg._default === "one-time" ? "one-time" : "subscription";
+        }
+        function planRenews(months) { return currentBilling() === "subscription" && months <= ARB_MAX_INTERVAL_MONTHS; }
+
+        // Keep the step-1 hint and the consent clause truthful for the
+        // product + plan on screen (auto-renewal must be disclosed before the
+        // charge; a one-time product must never be described as recurring).
+        function syncBillingCopy() {
+          const hint = document.getElementById("plan-billing-hint");
+          const clause = document.getElementById("consent-billing-clause");
+          const subscriptionProduct = currentBilling() === "subscription";
+          const renews = planRenews(selectedPlanMonths);
+          if (hint) {
+            hint.textContent = !subscriptionProduct
+              ? "Longer plans lower your rate per day. This treatment is a single payment for the plan length you choose — it does not auto-renew."
+              : "Longer plans lower your rate per day. Monthly through 12-month plans are subscriptions: you're billed today, then automatically at the same amount and cadence until you cancel. The 24-month plan is a single payment for the full term and does not auto-renew.";
+          }
+          const foot = document.getElementById("checkout-footnote");
+          if (foot) {
+            foot.textContent = "Your card is tokenized in your browser and never stored on our servers." +
+              (renews ? " Cancel your subscription anytime from your Hub account — no phone call needed." : "");
+          }
+          if (clause) {
+            clause.textContent = renews
+              ? "authorize Freeley to automatically charge my card the plan amount today and every renewal period thereafter until I cancel."
+              : "authorize Freeley to charge my card the plan amount today as a one-time payment.";
+          }
+        }
 
         /**
          * Render plan selector with collapsible cards (accordion behavior)
@@ -587,6 +641,7 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
         }
 
         productTotalPrice = grandTotal;
+        syncBillingCopy();
       }
 
       /**

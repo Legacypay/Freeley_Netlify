@@ -21,6 +21,12 @@
   "hair-loss": {
     "default": { "1": 89, "3": 75, "6": 65, "12": 59, "24": 49 }
   },
+  "billing": {
+    "_note": "Per-product billing model. Client said (2026-09-01) NOT every product is a subscription — some are a single payment. `_default` applies to everything not listed; `one_time` / `subscription` list product ids as `treatment` or `treatment:compound` (compound = the key checkout sends: sema, tirz, tadalafil-daily, olympus, sermorelin-injectable, nad-plus, glutathione-troche; hair-loss has no compound). A `treatment:compound` entry beats a `treatment` entry. Subscription plans auto-renew via Authorize.Net ARB at the plan's own cadence and full price; one-time plans are charged once for the full term. FILL `one_time` WITH THE CLIENT'S LIST BEFORE GOING LIVE.",
+    "_default": "subscription",
+    "one_time": [],
+    "subscription": []
+  },
   "promos": {
     "_note": "Promo codes, applied server-side to the plan total (monthly x months). type: percent (value = %) or amount (value = USD off). Set active:false to retire a code. Codes below are PLACEHOLDERS for the client to confirm/replace.",
     "WELCOME10": { "type": "percent", "value": 10, "label": "10% off your first order", "active": true },

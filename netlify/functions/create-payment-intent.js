@@ -14,7 +14,7 @@ const { allow } = require('./lib/rate-limit');
 
 // Single source of truth — shared with frontend (see pricing.json in repo root)
 const pricingData = require('../../pricing.json');
-const { treatment_names: TREATMENT_NAMES, _meta, ...categories } = pricingData;
+const { treatment_names: TREATMENT_NAMES, _meta, promos: _promos, billing: _billing, ...categories } = pricingData;
 const PRICING = categories;
 
 exports.handler = async (event) => {

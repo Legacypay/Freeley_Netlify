@@ -38,8 +38,12 @@ const { createArbSubscriptionFromProfile, ARB_MAX_INTERVAL_MONTHS } = require('.
 
 // Single source of truth for pricing — shared with the frontend display.
 const pricingData = require('../../pricing.json');
-const { treatment_names: TREATMENT_NAMES, _meta, promos: _promos, ...categories } = pricingData;
+// `billing` / `promos` / `_meta` / `treatment_names` are config blocks, not
+// verticals — they must never be spread into PRICING or "billing" would be
+// accepted as a treatment.
+const { treatment_names: TREATMENT_NAMES, _meta, promos: _promos, billing: _billing, ...categories } = pricingData;
 const PRICING = categories;
+const { billingModelFor, SUBSCRIPTION } = require('./lib/billing-model');
 
 // Authorize.Net endpoints + per-environment credentials: lib/authnet-config.js.
 const { resolveAuthnetConfig } = require('./lib/authnet-config');
@@ -312,9 +316,17 @@ exports.handler = async (event) => {
       // Authorize.Net caps a months-based interval at 12, so a plan longer
       // than that (the 24-month tier) cannot auto-renew through ARB at all —
       // it is a one-time charge for the whole term and checkout says so.
+      //
+      // Whether this PRODUCT is a subscription at all comes from
+      // pricing.json's `billing` block (lib/billing-model.js) — not every
+      // product is; one-time products are charged once for the full term
+      // and never get an ARB schedule.
       let authnetSubscriptionId = null;
       const renewalAmount = subtotalCents / 100;
-      if (months > ARB_MAX_INTERVAL_MONTHS) {
+      const billingModel = billingModelFor(treatment, compound);
+      if (billingModel !== SUBSCRIPTION) {
+        console.log(`[AUTHNET] ${treatment}${compound ? '/' + compound : ''} is a one-time product: no ARB schedule | transId=${transactionId}`);
+      } else if (months > ARB_MAX_INTERVAL_MONTHS) {
         console.log(`[AUTHNET] ${months}-month plan: one-time charge, no ARB schedule (ARB max interval is ${ARB_MAX_INTERVAL_MONTHS} months) | transId=${transactionId}`);
       } else if (card.customerProfileId && card.paymentProfileId) {
         const arb = await createArbSubscriptionFromProfile({
@@ -377,6 +389,7 @@ exports.handler = async (event) => {
           authCode: txn.authCode || null,
           accountLast4: (txn.accountNumber || '').replace(/[^0-9]/g, '').slice(-4) || null,
           cardBrand: txn.accountType || null,
+          billing: billingModel,
           subscriptionId: authnetSubscriptionId,
           renewalAmount: authnetSubscriptionId ? renewalAmount.toFixed(2) : null,
           renewalEveryMonths: authnetSubscriptionId ? months : null

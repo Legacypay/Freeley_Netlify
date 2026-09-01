@@ -136,12 +136,34 @@ fetch("https://apitest.authorize.net/xml/v1/request.api",{method:"POST",headers:
 
 ## Recurring billing / subscriptions (added 2026-09-02)
 
-Every checkout plan is a real Authorize.Net subscription (ARB — Automated
-Recurring Billing), not a one-time charge for the full term: "Pay Monthly"
-charges $89 every month until canceled; "Pay For 12 Months" charges $708
-every 12 months until canceled — same cadence as the plan's own label,
-forever. See `netlify/functions/lib/authnet-arb.js` for the implementation
-and its header for exactly what was/wasn't verified before shipping.
+**Not every product is a subscription** (client, 2026-09-01). Which ones are
+is configured in `pricing.json` → `billing`:
+
+```json
+"billing": {
+  "_default": "subscription",
+  "one_time":     ["longevity:glutathione-troche", "sexual-wellness"],   // examples
+  "subscription": ["sexual-wellness:olympus"]                             // examples
+}
+```
+
+Ids are `treatment` or `treatment:compound` (compound = the key checkout
+sends: `sema`, `tirz`, `tadalafil-daily`, `olympus`, `sermorelin-injectable`,
+`nad-plus`, `glutathione-troche`; `hair-loss` has no compound). A
+`treatment:compound` entry beats a `treatment` entry; anything unlisted gets
+`_default`. Resolved by `netlify/functions/lib/billing-model.js` on the server
+(the authority: it decides whether an ARB schedule is created) and mirrored in
+`src/pages/checkout.astro` for the copy (plan cards, button label, consent
+clause, footnote). **The `one_time` list ships empty until the client provides
+it — fill it before real charging is switched on.**
+
+For a **subscription** product every plan is a real Authorize.Net subscription
+(ARB — Automated Recurring Billing), not a one-time charge for the full term:
+"Pay Monthly" charges $89 every month until canceled; "Pay For 12 Months"
+charges $708 every 12 months until canceled — same cadence as the plan's own
+label, forever. For a **one-time** product the plan is charged once for the
+full term and nothing is scheduled. See `netlify/functions/lib/authnet-arb.js`
+for the implementation and its header for exactly what was verified.
 
 - **Sandbox does not have Recurring Billing enabled** — confirmed 2026-09-02
   (`ARBGetSubscriptionListRequest`/`ARBCreateSubscriptionRequest` both return
