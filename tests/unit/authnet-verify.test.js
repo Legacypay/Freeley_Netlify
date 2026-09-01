@@ -69,13 +69,19 @@ test('E00007 (auth failed / Transaction Details API disabled) fails CLOSED — f
   assert.deepEqual(r, { ok: false, reason: 'gateway-auth-failed' });
 });
 
-test('gateway outage / garbage / other errors fail OPEN but flagged unverified', async () => {
+test('any other gateway Error (e.g. E00011 Transaction Details API disabled) fails CLOSED', async () => {
+  for (const [code, text] of [['E00011', 'Access denied. You do not have permissions to call the Transaction Details API.'], ['E00001', 'An error occurred during processing.']]) {
+    const r = await verifyAuthnetTransaction('80058673597', { fetchImpl: gateway({ messages: { resultCode: 'Error', message: [{ code, text }] } }) });
+    assert.equal(r.ok, false, code);
+    assert.match(r.reason, new RegExp(code));
+  }
+});
+
+test('only a true outage (unreachable / garbage response) fails OPEN, flagged unverified', async () => {
   const down = async () => { throw new Error('ECONNRESET'); };
   assert.deepEqual(await verifyAuthnetTransaction('80058673597', { fetchImpl: down }), { ok: true, unverified: true, reason: 'ECONNRESET' });
   const garbage = async () => ({ text: async () => '<html>503</html>' });
   assert.equal((await verifyAuthnetTransaction('80058673597', { fetchImpl: garbage })).unverified, true);
-  const other = gateway({ messages: { resultCode: 'Error', message: [{ code: 'E00001', text: 'An error occurred during processing.' }] } });
-  assert.equal((await verifyAuthnetTransaction('80058673597', { fetchImpl: other })).unverified, true);
 });
 
 test('the request is a read-only getTransactionDetailsRequest for exactly that id', async () => {

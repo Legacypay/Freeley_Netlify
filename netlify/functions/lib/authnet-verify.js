@@ -8,11 +8,17 @@
  * transaction exists on OUR merchant account and was approved
  * (getTransactionDetailsRequest — read-only, no charge).
  *
- * Fail-closed on validity, fail-open on availability:
+ * Fail-closed whenever Authorize.Net ANSWERS, fail-open only when it doesn't:
  *   - transaction missing / declined / voided / refunded → { ok: false }
+ *   - any gateway Error (bad credentials E00007, Transaction Details API not
+ *     enabled E00011, …)                                → { ok: false }
  *   - Authorize.Net unreachable or returning garbage   → { ok: true, unverified: true }
  *     (an attacker cannot make Authorize.Net go down; a paying patient must not
- *     be blocked by a gateway hiccup — the warning is loud in the logs)
+ *     be blocked by a network hiccup — the warning is loud in the logs)
+ *   The Transaction Details API must be enabled on the merchant account
+ *   (Merchant Interface → Account → Security Settings). Verified enabled on
+ *   PRODUCTION on 2026-09-01 (unknown id → E00040); NOT enabled on the sandbox
+ *   account, so sandbox intake is refused until it is turned on there too.
  *   - 'SIM-…' ids are accepted only while AUTHNET_SIMULATE is actually in effect.
  */
 
@@ -75,11 +81,16 @@ async function verifyAuthnetTransaction(transactionId, opts = {}) {
       // use the same credentials, so a real credential problem already breaks
       // checkout — refusing here costs no legitimate patient anything.
       if (msg.code === 'E00007') {
-        console.error('[AUTHNET VERIFY] E00007 — credentials rejected or Transaction Details API disabled (Merchant Interface → Account → Security Settings → Transaction Details API). Refusing intake until fixed.');
+        console.error('[AUTHNET VERIFY] E00007 — credentials rejected. Refusing intake until fixed.');
         return { ok: false, reason: 'gateway-auth-failed' };
       }
-      console.warn('[AUTHNET VERIFY] gateway error ' + (msg.code || '?') + ' ' + (msg.text || '') + ' — proceeding unverified');
-      return { ok: true, unverified: true, reason: (msg.code || '?') + ': ' + (msg.text || 'unknown') };
+      // Any other gateway-level Error (e.g. E00011 "Access denied … Transaction
+      // Details API" when that API is disabled on the account) also means we
+      // could not confirm the charge. Authorize.Net answered, so this is not an
+      // outage — fail CLOSED. A 2026-09-01 smoke test showed the sandbox account
+      // answering this way and forged ids slipping through the old fail-open.
+      console.error('[AUTHNET VERIFY] gateway refused verification: ' + (msg.code || '?') + ' ' + (msg.text || '') + ' — refusing intake. If this is E00011, enable Merchant Interface → Account → Security Settings → Transaction Details API.');
+      return { ok: false, reason: (msg.code || '?') + ': ' + (msg.text || 'unknown') };
     }
     const t = json.transaction || {};
     const status = String(t.transactionStatus || '');
