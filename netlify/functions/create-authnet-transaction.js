@@ -180,7 +180,7 @@ exports.handler = async (event) => {
       }
 
       try {
-        const hub = await ensureHubAccount(email);
+        const hub = await ensureHubAccount(email, undefined, { firstName });
         console.log('[AUTHNET] Hub magic link ' + (hub.sent ? 'sent' : 'NOT sent: ' + hub.reason));
       } catch (hubErr) {
         console.warn('[AUTHNET] Hub account creation failed (non-blocking):', hubErr.message);
@@ -319,7 +319,7 @@ exports.handler = async (event) => {
       // this is where the Freeley Hub account comes from. Non-blocking like
       // everything else after the charge.
       try {
-        const hub = await ensureHubAccount(email);
+        const hub = await ensureHubAccount(email, undefined, { firstName });
         console.log('[AUTHNET] Hub magic link ' + (hub.sent ? 'sent' : 'NOT sent: ' + hub.reason));
       } catch (hubErr) {
         console.warn('[AUTHNET] Hub account creation failed (non-blocking):', hubErr.message);

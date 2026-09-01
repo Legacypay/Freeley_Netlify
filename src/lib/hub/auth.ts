@@ -4,13 +4,14 @@ import { supabase } from './supabase';
 
 export type AuthResult = { success: true; status?: string } | { success: false; message: string };
 
-// Where Google OAuth, the signup confirmation email and the password-reset
-// email send the user back to. Deliberately the CURRENT url instead of a
-// hardcoded '/hub': behind the coming-soon gate the page is served at
-// /preview/hub, and bare /hub is swallowed by the forced catch-all in
-// netlify.toml — so a hardcoded '/hub' returns from Google with a valid
-// session in the URL hash and drops the user on the waitlist page, which
-// has no hub script to consume it. Reads at call time, not module load.
+// Where the signup confirmation email and the password-reset email send the
+// user back to. Deliberately the CURRENT url instead of a hardcoded '/hub':
+// behind the coming-soon gate the page is served at /preview/hub, and bare
+// /hub is swallowed by the forced catch-all in netlify.toml — a hardcoded
+// '/hub' would drop a returning user on the waitlist page, which has no hub
+// script to consume the auth callback. Reads at call time, not module load.
+// (Google OAuth sign-in used this same helper before it was removed
+// 2026-09-01 — email/password is now the only sign-in method.)
 const returnUrl = () => window.location.origin + window.location.pathname;
 
 function supabaseErrorMessage(message?: string): string {
@@ -66,23 +67,6 @@ export async function signUp(email: string, password: string, name?: string): Pr
 export async function signIn(email: string, password: string): Promise<AuthResult> {
   try {
     const res = await supabase.auth.signInWithPassword({ email, password });
-    if (res.error) return { success: false, message: supabaseErrorMessage(res.error.message) };
-    return { success: true };
-  } catch (error: any) {
-    return { success: false, message: supabaseErrorMessage(error?.message) };
-  }
-}
-
-export async function googleSignIn(): Promise<AuthResult> {
-  try {
-    // Redirect flow (not a popup): the browser navigates to Google and back
-    // to this same /hub URL. There is nothing more to do on success here —
-    // the onAuthStateChange listener in supabase.ts picks up the restored
-    // session once the page reloads.
-    const res = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo: returnUrl() },
-    });
     if (res.error) return { success: false, message: supabaseErrorMessage(res.error.message) };
     return { success: true };
   } catch (error: any) {
