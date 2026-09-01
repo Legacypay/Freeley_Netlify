@@ -16,6 +16,7 @@
 
 const { mdiRequest, getAccessToken, getCorsHeaders, BASE_URL } = require('./lib/mdi-client');
 const { verifySupabaseToken } = require('./lib/verify-supabase-token');
+const { verifyPatientOwnership } = require('./lib/mdi-order-ownership');
 
 exports.handler = async (event) => {
   const cors = getCorsHeaders(event);
@@ -47,15 +48,19 @@ exports.handler = async (event) => {
     }
 
     // ── Step 2: Parse request ────────────────────────────────────
-    const { email: providedEmail, patient_id } = JSON.parse(event.body);
+    const { patient_id } = JSON.parse(event.body);
 
     const token = await getAccessToken();
 
-    // Resolve patient email — always prefer MDI lookup by patient_id (the MDI email
-    // may differ from the Supabase login email), fall back to provided email
+    // Resolve patient email — prefer MDI's record for a patient_id the caller OWNS
+    // (the MDI email may differ from the Supabase login email); otherwise the
+    // verified session email. A client-supplied email is never trusted: it would
+    // let any signed-in user trigger 2FA codes to (and enumerate) other patients.
     let email = null;
 
-    if (patient_id) {
+    if (patient_id && !(await verifyPatientOwnership(patient_id, user.email, '[MESSAGING CODE]'))) {
+      console.warn('[MESSAGING CODE] patient_id not owned by session user — ignoring it');
+    } else if (patient_id) {
       console.log(`[MESSAGING CODE] Looking up MDI patient email for ${patient_id}`);
       try {
         const patientRes = await fetch(`${BASE_URL}/v1/partner/patients/${patient_id}`, {
@@ -68,7 +73,7 @@ exports.handler = async (event) => {
         if (patientRes.ok) {
           const patientData = await patientRes.json();
           email = patientData.email;
-          console.log(`[MESSAGING CODE] Resolved patient email: ${email}`);
+          console.log(`[MESSAGING CODE] Resolved patient email from MDI record`);
         } else {
           console.warn(`[MESSAGING CODE] Patient lookup failed: ${patientRes.status}`);
         }
@@ -77,8 +82,8 @@ exports.handler = async (event) => {
       }
     }
 
-    // Fall back to provided email if MDI lookup didn't return one
-    if (!email) email = providedEmail;
+    // Fall back to the verified Supabase session email
+    if (!email) email = user.email;
 
     if (!email) {
       return {

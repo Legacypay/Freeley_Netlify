@@ -13,10 +13,12 @@
  */
 
 const { mdiRequest, CORS_HEADERS } = require('./lib/mdi-client');
+const { connectBlobs } = require('./lib/blobs');
 const { verifySupabaseToken } = require('./lib/verify-supabase-token');
 const { resolveOwnedOrder } = require('./lib/mdi-order-ownership');
 
 exports.handler = async (event) => {
+  connectBlobs(event);
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 204, headers: CORS_HEADERS, body: '' };
   }

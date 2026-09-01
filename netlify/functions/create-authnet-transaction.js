@@ -29,6 +29,7 @@
  */
 
 const { allow } = require('./lib/rate-limit');
+const { connectBlobs } = require('./lib/blobs');
 const { fireConversion } = require('./lib/conversion-tracker');
 const { saveFunnelOrder } = require('./lib/funnel-orders');
 const { ensureHubAccount } = require('./lib/hub-account');
@@ -39,14 +40,11 @@ const pricingData = require('../../pricing.json');
 const { treatment_names: TREATMENT_NAMES, _meta, promos: _promos, ...categories } = pricingData;
 const PRICING = categories;
 
-// Authorize.Net endpoints. Production credentials → api.authorize.net.
-// (A separate sandbox account would use apitest.authorize.net.)
-const ENDPOINTS = {
-  production: 'https://api.authorize.net/xml/v1/request.api',
-  sandbox: 'https://apitest.authorize.net/xml/v1/request.api'
-};
+// Authorize.Net endpoints + per-environment credentials: lib/authnet-config.js.
+const { resolveAuthnetConfig } = require('./lib/authnet-config');
 
 exports.handler = async (event) => {
+  connectBlobs(event);
   const ALLOWED_ORIGINS = ['https://freeley.com', 'https://www.freeley.com'];
   // `netlify dev`/`netlify functions:serve` set NETLIFY_DEV=true — never in
   // production — so local testing (astro dev on a different port than the
@@ -75,18 +73,21 @@ exports.handler = async (event) => {
     return { statusCode: 429, headers, body: JSON.stringify({ error: 'Too many requests. Please wait a moment and try again.' }) };
   }
 
-  const API_LOGIN_ID = process.env.AUTHNET_API_LOGIN_ID;
-  const TRANSACTION_KEY = process.env.AUTHNET_TRANSACTION_KEY;
-  const AUTHNET_ENV = (process.env.AUTHNET_ENV || 'production').toLowerCase();
-  const endpoint = ENDPOINTS[AUTHNET_ENV] || ENDPOINTS.production;
+  // Credentials + host are picked by AUTHNET_ENV (sandbox vs production) — see
+  // lib/authnet-config.js. Sandbox and live keys are never interchangeable.
+  const authnet = resolveAuthnetConfig();
+  const API_LOGIN_ID = authnet.apiLoginId;
+  const TRANSACTION_KEY = authnet.transactionKey;
+  const AUTHNET_ENV = authnet.mode;
+  const endpoint = authnet.endpoint;
   // AUTHNET_SIMULATE=true → approve without calling Authorize.Net at all.
   // Temporary bypass while the sandbox Transaction Key is unavailable; the
   // rest of the flow (funnel_orders, Hub account, MDI intake) still runs.
   // Remove the env var + redeploy to restore real charging.
-  const SIMULATE = process.env.AUTHNET_SIMULATE === 'true';
+  const SIMULATE = authnet.simulate;
 
   if (!SIMULATE && (!API_LOGIN_ID || !TRANSACTION_KEY)) {
-    console.error('[AUTHNET] CRITICAL: AUTHNET_API_LOGIN_ID / AUTHNET_TRANSACTION_KEY not set');
+    console.error('[AUTHNET] CRITICAL: Authorize.Net API Login ID / Transaction Key not set for AUTHNET_ENV=' + AUTHNET_ENV + ' (see lib/authnet-config.js)');
     return { statusCode: 500, headers, body: JSON.stringify({ approved: false, error: 'Payment is not configured. Please contact support.' }) };
   }
 
@@ -332,7 +333,8 @@ exports.handler = async (event) => {
           transactionId,
           amount: amountStr,
           authCode: txn.authCode || null,
-          accountLast4: (txn.accountNumber || '').replace(/[^0-9]/g, '').slice(-4) || null
+          accountLast4: (txn.accountNumber || '').replace(/[^0-9]/g, '').slice(-4) || null,
+          cardBrand: txn.accountType || null
         })
       };
     }

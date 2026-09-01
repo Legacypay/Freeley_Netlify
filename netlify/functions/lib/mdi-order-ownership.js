@@ -86,4 +86,32 @@ async function resolveOwnedOrder({ voucher_id, patient_id, case_id } = {}, userE
   return null;
 }
 
-module.exports = { resolveOwnedOrder, normalizeEmail };
+/**
+ * Ownership check for endpoints that act on an MDI `patient_id` directly
+ * (messaging). Two independent sources, either is sufficient:
+ *   1. an `mdi-orders` blob record for that patient_id whose email matches;
+ *   2. MDI's own patient record (GET /v1/partner/patients/:id) whose email
+ *      matches the authenticated session — covers patients whose voucher
+ *      predates the order store or was created outside the checkout.
+ * Returns true only on a positive match. Never throws.
+ */
+async function verifyPatientOwnership(patientId, userEmail, logTag = '[MDI OWNERSHIP]') {
+  const email = normalizeEmail(userEmail);
+  if (!email || !patientId || !/^[0-9a-f-]{36}$/i.test(String(patientId))) return false;
+
+  const owned = await resolveOwnedOrder({ patient_id: patientId }, email, logTag);
+  if (owned) return true;
+
+  try {
+    const { mdiRequest } = require('./mdi-client');
+    const p = await mdiRequest('GET', '/v1/partner/patients/' + encodeURIComponent(patientId));
+    const mdiEmail = normalizeEmail(p && (p.email || (p.data && p.data.email)));
+    if (mdiEmail && mdiEmail === email) return true;
+    console.warn(`${logTag} patient_id ${patientId} belongs to a different email — refusing`);
+  } catch (e) {
+    console.warn(`${logTag} MDI patient lookup failed (${e.statusCode || 'network'}) — refusing`);
+  }
+  return false;
+}
+
+module.exports = { resolveOwnedOrder, verifyPatientOwnership, normalizeEmail };

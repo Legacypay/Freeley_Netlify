@@ -15,9 +15,12 @@
  */
 
 const { getAccessToken, getCorsHeaders, BASE_URL } = require('./lib/mdi-client');
+const { connectBlobs } = require('./lib/blobs');
 const { verifySupabaseToken } = require('./lib/verify-supabase-token');
+const { verifyPatientOwnership } = require('./lib/mdi-order-ownership');
 
 exports.handler = async (event) => {
+  connectBlobs(event);
   const cors = getCorsHeaders(event);
 
   if (event.httpMethod === 'OPTIONS') {
@@ -62,6 +65,13 @@ exports.handler = async (event) => {
     }
 
     const sanitizedText = text.trim().slice(0, 5000);
+
+    // ── Step 2b: the patient_id is untrusted client input — it must belong
+    // to the signed-in user, otherwise anyone could post into another chart.
+    if (!(await verifyPatientOwnership(patient_id, user.email, '[SEND MESSAGE]'))) {
+      console.warn(`[SEND MESSAGE] Refusing: patient_id not owned by session user`);
+      return { statusCode: 403, headers: cors, body: JSON.stringify({ error: 'You can only message from your own account.' }) };
+    }
 
     // ── Step 3: Send message via MDI Partner API ─────────────────
     const partnerToken = await getAccessToken();

@@ -44,5 +44,5 @@ export const getEncounterDetails = (body: { case_id: string; patient_id: string 
 export const requestMessagingCode = (payload: Record<string, unknown>) =>
   authFetch('requestMessagingCode', payload);
 
-export const validateMessagingCode = (body: { email: string; verification_code: string }) =>
+export const validateMessagingCode = (body: { email: string; verification_code: string; patient_id?: string }) =>
   authFetch('validateMessagingCode', body);

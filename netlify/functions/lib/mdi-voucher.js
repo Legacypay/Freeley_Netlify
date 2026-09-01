@@ -104,7 +104,7 @@ function buildMetadata(isTest, metadata) {
  * Build the documented /v1/partner/vouchers request body.
  * @param {{ product: { questionnaire_id: string, offering_id?: string }, testMode: ReturnType<typeof resolveTestMode>, metadata?: string }} args
  */
-function buildVoucherPayload({ product, testMode, metadata }) {
+function buildVoucherPayload({ product, testMode, metadata, patientId, prefilledQuestions }) {
   if (!product || !product.questionnaire_id) {
     throw new Error('buildVoucherPayload: product.questionnaire_id is required');
   }
@@ -115,6 +115,20 @@ function buildVoucherPayload({ product, testMode, metadata }) {
   };
   if (product.offering_id) {
     payload.offerings = [{ id: product.offering_id }];
+  }
+  // Documented optional fields (Partners › Vouchers › Create voucher):
+  //   patient_id           — bind the voucher to an already-created MDI patient so
+  //                          onboarding does not ask for demographics again and we
+  //                          know the patient_id before any webhook arrives.
+  //   prefilled_questions  — pre-answered intake questions stored with the voucher
+  //                          (the funnel quiz answers + allergies/meds/conditions).
+  // Never sent on demo vouchers: MDI creates nothing for those, so binding a real
+  // patient to one would only clutter the record.
+  if (patientId && !testMode.demo) {
+    payload.patient_id = patientId;
+  }
+  if (Array.isArray(prefilledQuestions) && prefilledQuestions.length && !testMode.demo) {
+    payload.prefilled_questions = prefilledQuestions;
   }
   if (testMode.demo) {
     payload.demo = true;

@@ -45,10 +45,12 @@
  */
 
 const { verifyWebhookSignature, mdiRequest } = require('./lib/mdi-client');
+const { connectBlobs } = require('./lib/blobs');
 const { tagTestCase } = require('./lib/mdi-tags');
 const { getStore } = require('@netlify/blobs');
 
 exports.handler = async (event) => {
+  connectBlobs(event);
   // Only accept POST
   if (event.httpMethod !== 'POST') {
     return {
@@ -72,7 +74,10 @@ exports.handler = async (event) => {
 
     // ── Step 2: Parse the event ───────────────────────────────
     const payload = JSON.parse(rawBody);
-    const { event_type, case_id, patient_id, metadata, timestamp } = payload;
+    // Real deliveries (MDI webhook log, 2026-08-31) carry BOTH `encounter_id` and
+    // `case_id` for case events; older payloads only had encounter_id.
+    const { event_type, patient_id, metadata, timestamp } = payload;
+    const case_id = payload.case_id || payload.encounter_id || undefined;
 
     console.log(`[MDI WEBHOOK] Event: ${event_type} | Case: ${case_id || 'N/A'} | Patient: ${patient_id || 'N/A'}`);
 
@@ -128,28 +133,32 @@ exports.handler = async (event) => {
       case 'case_waiting': {
         console.log(`[MDI WEBHOOK] ⏳ Case WAITING: ${case_id}`);
 
-        // Update order status
+        // MDI can redeliver an event (retry, manual resend) — email the patient once.
+        const waitingAlreadyEmailed = Boolean(order?.case_waiting_email_sent_at);
         await updateOrderStatus(order, 'waiting', {
           case_id,
-          waiting_since: new Date().toISOString()
+          waiting_since: new Date().toISOString(),
+          ...(waitingAlreadyEmailed ? {} : { case_waiting_email_sent_at: new Date().toISOString() })
         });
 
-        // Send "action needed" email to patient
-        await sendPatientEmail(order, 'case_waiting', {
-          subject: 'Action needed — your clinician has a question',
-          template: 'case_waiting',
-          data: {
-            first_name: order?.first_name || 'there',
-            product: order?.product_key || 'your treatment',
-            case_id,
-            portal_url: 'https://freeley.com/hub'
-          }
-        });
+        if (!waitingAlreadyEmailed) {
+          // Send "action needed" email to patient
+          await sendPatientEmail(order, 'case_waiting', {
+            subject: 'Action needed — your clinician has a question',
+            template: 'case_waiting',
+            data: {
+              first_name: order?.first_name || 'there',
+              product: order?.product_key || 'your treatment',
+              case_id,
+              portal_url: 'https://freeley.com/hub'
+            }
+          });
+        }
 
         await notifyInternalWebhook('case_waiting', {
           case_id,
           metadata,
-          action: 'patient_info_requested_email_sent'
+          action: waitingAlreadyEmailed ? 'patient_info_requested_email_skipped_duplicate' : 'patient_info_requested_email_sent'
         });
         break;
       }
@@ -174,27 +183,30 @@ exports.handler = async (event) => {
       case 'case_completed': {
         console.log(`[MDI WEBHOOK] 🎉 Case COMPLETED: ${case_id}`);
 
-        // Update order status to completed
+        const completedAlreadyEmailed = Boolean(order?.case_completed_email_sent_at);
         await updateOrderStatus(order, 'completed', {
           case_id,
-          completed_at: new Date().toISOString()
+          completed_at: new Date().toISOString(),
+          ...(completedAlreadyEmailed ? {} : { case_completed_email_sent_at: new Date().toISOString() })
         });
 
-        // Send "prescription ready" email
-        await sendPatientEmail(order, 'case_completed', {
-          subject: 'Your prescription is ready and on its way!',
-          template: 'case_completed',
-          data: {
-            first_name: order?.first_name || 'there',
-            product: order?.product_key || 'your treatment',
-            case_id
-          }
-        });
+        if (!completedAlreadyEmailed) {
+          // Send "prescription ready" email
+          await sendPatientEmail(order, 'case_completed', {
+            subject: 'Your prescription is ready and on its way!',
+            template: 'case_completed',
+            data: {
+              first_name: order?.first_name || 'there',
+              product: order?.product_key || 'your treatment',
+              case_id
+            }
+          });
+        }
 
         await notifyInternalWebhook('case_completed', {
           case_id,
           metadata,
-          action: 'prescription_ready_email_sent'
+          action: completedAlreadyEmailed ? 'prescription_ready_email_skipped_duplicate' : 'prescription_ready_email_sent'
         });
         break;
       }
@@ -357,12 +369,18 @@ exports.handler = async (event) => {
       // patient→clinician messages. Filter by sender_type to avoid
       // notifying the patient about their own messages.
       case 'message_created': {
-        const senderType = payload.sender_type || payload.sender || 'unknown';
-        const messagePreview = (payload.message || payload.body || '').slice(0, 100);
-        console.log(`[MDI WEBHOOK] 💬 Message CREATED | Patient: ${patient_id} | Sender: ${senderType}`);
+        // Documented payload (Webhooks › Message › Message Created) and the real
+        // deliveries in MDI's webhook log: { patient_id, message_id, channel,
+        // user_type } — user_type is 'clinician' | 'patient' | 'system' | 'support'…
+        // The message body is NOT in the payload (PHI stays in MDI).
+        const senderType = String(payload.user_type || payload.sender_type || payload.sender || 'unknown').toLowerCase();
+        console.log(`[MDI WEBHOOK] 💬 Message CREATED | Patient: ${patient_id} | Sender: ${senderType} | Channel: ${payload.channel || 'n/a'}`);
 
-        // Only notify patient when a CLINICIAN sends a message
-        if (senderType === 'clinician' || senderType === 'provider' || senderType === 'doctor') {
+        // Only notify the patient about messages written by a human on MDI's side.
+        // 'system' is MDI's automated chat (welcome/status notes) and 'patient' is
+        // the patient's own message — neither deserves a "new message" email.
+        const HUMAN_SENDERS = ['clinician', 'provider', 'doctor', 'support', 'support_staff', 'medical_assistant', 'internal_support_staff'];
+        if (HUMAN_SENDERS.includes(senderType)) {
           // Send "new message from your clinician" email
           await sendPatientEmail(order, 'message_from_clinician', {
             subject: 'You have a new message from your clinician',
@@ -383,8 +401,8 @@ exports.handler = async (event) => {
             action: 'clinician_message_email_sent'
           });
         } else {
-          // Patient sent a message — log only, no notification needed
-          console.log(`[MDI WEBHOOK] 💬 Patient message logged (no outbound notification)`);
+          // Patient's own message or MDI system note — log only, no notification needed
+          console.log(`[MDI WEBHOOK] 💬 ${senderType} message logged (no outbound notification)`);
         }
         break;
       }

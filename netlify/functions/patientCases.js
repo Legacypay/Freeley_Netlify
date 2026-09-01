@@ -18,6 +18,7 @@
  */
 
 const { CORS_HEADERS, mdiRequest } = require('./lib/mdi-client');
+const { connectBlobs } = require('./lib/blobs');
 const { verifySupabaseToken } = require('./lib/verify-supabase-token');
 const { resolveOwnedOrder } = require('./lib/mdi-order-ownership');
 
@@ -60,6 +61,7 @@ const QUESTIONNAIRE_CATEGORY_MAP = {
 };
 
 exports.handler = async (event) => {
+  connectBlobs(event);
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 204, headers: CORS_HEADERS, body: '' };
   }
@@ -235,6 +237,8 @@ function orderToCase(order, voucherId) {
     patient_email: order.email || null,
     voucher_id: voucherId,
     questionnaire_id: order.questionnaire_id || null,
+    // The hub's dashboard picks the product image/name by product_key (dashboard.ts)
+    product_key: order.product_key || null,
     product_name: order.product_name || QUESTIONNAIRE_PRODUCT_MAP[order.questionnaire_id] || null,
     product_category: order.product_category || QUESTIONNAIRE_CATEGORY_MAP[order.questionnaire_id] || null,
     status: order.status || 'pending',

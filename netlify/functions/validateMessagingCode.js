@@ -17,8 +17,9 @@
  * Returns: { "access_token": "...", "patient_id": "...", "patient_name": "..." }
  */
 
-const { getAccessToken, getCorsHeaders, BASE_URL } = require('./lib/mdi-client');
+const { getAccessToken, getCorsHeaders, BASE_URL, mdiRequest } = require('./lib/mdi-client');
 const { verifySupabaseToken } = require('./lib/verify-supabase-token');
+const { verifyPatientOwnership } = require('./lib/mdi-order-ownership');
 
 // Cache patient tokens server-side (per cold-start instance)
 // Key: email, Value: { access_token, patient_id, expires_at }
@@ -54,7 +55,7 @@ exports.handler = async (event) => {
     }
 
     // ── Step 2: Parse request ────────────────────────────────────
-    const { email, verification_code } = JSON.parse(event.body);
+    const { email, verification_code, patient_id } = JSON.parse(event.body);
 
     if (!email || !verification_code) {
       return {
@@ -62,6 +63,26 @@ exports.handler = async (event) => {
         headers: cors,
         body: JSON.stringify({ error: 'Email and verification code are required.' })
       };
+    }
+
+    // The email being validated must be the session's own email, or the MDI
+    // email of a patient record this session owns (requestMessagingCode can
+    // resolve a different MDI email for an owned patient_id). Anything else is
+    // an attempt to validate a code for somebody else's chart.
+    const sessionEmail = String(user.email || '').toLowerCase().trim();
+    const requestedEmail = String(email).toLowerCase().trim();
+    let emailAllowed = requestedEmail === sessionEmail;
+    if (!emailAllowed && patient_id && await verifyPatientOwnership(patient_id, user.email, '[VALIDATE CODE]')) {
+      try {
+        const p = await mdiRequest('GET', '/v1/partner/patients/' + encodeURIComponent(patient_id));
+        emailAllowed = String(p && p.email || '').toLowerCase().trim() === requestedEmail;
+      } catch (e) {
+        console.warn('[VALIDATE CODE] MDI patient lookup failed:', e.message.slice(0, 120));
+      }
+    }
+    if (!emailAllowed) {
+      console.warn('[VALIDATE CODE] Refusing: email does not belong to the session user');
+      return { statusCode: 403, headers: cors, body: JSON.stringify({ error: 'You can only verify your own account.' }) };
     }
 
     // ── Step 3: Validate with Partner API first ──────────────────

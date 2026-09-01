@@ -38,6 +38,7 @@
  */
 
 const { mdiRequest } = require('./lib/mdi-client');
+const { connectBlobs } = require('./lib/blobs');
 const { getStore } = require('@netlify/blobs');
 
 const DEFAULT_STATUSES = ['Assigned', 'Waiting'];
@@ -50,7 +51,8 @@ function statusesToCheck() {
   return list.length ? list : DEFAULT_STATUSES;
 }
 
-exports.handler = async () => {
+exports.handler = async (event) => {
+  connectBlobs(event);
   const headers = { 'Content-Type': 'application/json' };
   const statuses = statusesToCheck();
   const store = getStore(ALERT_STORE);

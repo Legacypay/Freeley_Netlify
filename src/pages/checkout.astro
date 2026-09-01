@@ -19,9 +19,13 @@ const { _meta: _pricingMeta, treatment_names: _tn, promos: _promos, ...PRICING }
 // for the matching server-side Transaction Key). Read here in frontmatter
 // (build-time/SSR, not bundled to the client) and passed into the page's
 // inline script via define:vars below — never hardcoded.
-const AUTHNET_LOGIN_ID = process.env.AUTHNET_API_LOGIN_ID || '';
-const AUTHNET_CLIENT_KEY = process.env.AUTHNET_CLIENT_KEY || '';
-const AUTHNET_ENV = (process.env.AUTHNET_ENV || 'production').toLowerCase();
+// Per-environment credential pairs, same rule as netlify/functions/lib/authnet-config.js:
+// AUTHNET_ENV=sandbox → AUTHNET_SANDBOX_*, otherwise AUTHNET_LIVE_*, each falling
+// back to the un-prefixed AUTHNET_API_LOGIN_ID / AUTHNET_CLIENT_KEY. Keep in sync.
+const AUTHNET_ENV = (process.env.AUTHNET_ENV || 'production').trim().toLowerCase() === 'sandbox' ? 'sandbox' : 'production';
+const AUTHNET_PREFIX = AUTHNET_ENV === 'sandbox' ? 'AUTHNET_SANDBOX_' : 'AUTHNET_LIVE_';
+const AUTHNET_LOGIN_ID = (process.env[AUTHNET_PREFIX + 'API_LOGIN_ID'] || process.env.AUTHNET_API_LOGIN_ID || '').trim();
+const AUTHNET_CLIENT_KEY = (process.env[AUTHNET_PREFIX + 'CLIENT_KEY'] || process.env.AUTHNET_CLIENT_KEY || '').trim();
 // Baked at build time, like the keys above. When true the checkout skips
 // Accept.js tokenization entirely and the server approves without charging
 // (see create-authnet-transaction.js). Temporary, until sandbox creds return.
@@ -393,21 +397,19 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
                     }
                 }
 
-                // Rest of the function remains the same...
             } catch (e) {
-                console.log("No product data found, using defaults");
-                selectedProducts = [{
-                    id: "default",
-                    name: "Treatment Plan",
-                    description: "Personalized treatment",
-                    image: "/assets/quiz/hair-lose.png",
-                    price: 49.99,
-                    benefits: [],
-                }, ];
-                renderProducts();
-                renderPlanSelector();
-                updateTotals();
+                console.warn("[CHECKOUT] Could not read checkout_product_data:", e);
             }
+            // No usable product in the session (direct hit on /checkout, expired
+            // session, bookmark). Never fall back to a silent default: the old
+            // code rendered $0.00 while the charge call still sent
+            // treatment "hair-loss" / 3 months and billed $225. Show the empty
+            // state and keep the button disabled until a real product exists.
+            selectedProducts = [];
+            renderProducts();
+            renderPlanSelector();
+            updateTotals();
+            enableCheckout();
         }
 
         // ═══════════════════════════════════════════════════════
@@ -461,6 +463,10 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
         function renderPlanSelector() {
             const container = document.getElementById("plan-selector");
             if (!container) return;
+            if (!selectedProducts || selectedProducts.length === 0) {
+                container.innerHTML = "";
+                return;
+            }
 
             // Tiers come straight from pricing.json — the server charges
             // tier[months] * months and nothing else (no % discounts, no fee).
@@ -516,6 +522,16 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
        * Update subtotal and total
        */
       function updateTotals() {
+        if (!selectedProducts || selectedProducts.length === 0) {
+          // Empty state — show $0 honestly and never a default tier's price.
+          for (const id of ["totals-subtotal", "totals-total"]) {
+            const el = document.getElementById(id);
+            if (el) el.textContent = "$0.00";
+          }
+          const bt = document.getElementById("btn-text");
+          if (bt) bt.textContent = "Complete the assessment first";
+          return;
+        }
         // Mirrors create-authnet-transaction.js exactly: monthly tier price
         // × months. The $20 consultation is INCLUDED in that price (see the
         // fine print), never added on top.
@@ -571,7 +587,9 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
         const btn = document.getElementById("checkout-btn");
         const consent = document.getElementById("consent-check");
         if (btn && consent) {
-          btn.disabled = !consent.checked;
+          // A real product from the quiz is required — never let consent alone
+          // arm a charge for an empty cart (see loadProductsFromSession).
+          btn.disabled = !consent.checked || !selectedProducts || selectedProducts.length === 0;
         }
       }
 
@@ -745,7 +763,11 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
         // server, then runs the shared post-approval flow (MDI + redirect).
         const submitCharge = async function (opaqueData) {
           try {
-            const primary = selectedProducts[0] || {};
+            if (!selectedProducts || selectedProducts.length === 0 || !selectedProducts[0].id || selectedProducts[0].id === "default") {
+              showError("No treatment selected. Please complete the assessment first.");
+              return;
+            }
+            const primary = selectedProducts[0];
             const attribution =
               window.FreeleyAttribution &&
               window.FreeleyAttribution.flatten
@@ -758,7 +780,7 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                  treatment: primary.id || "hair-loss",
+                  treatment: primary.id,
                   plan_months: selectedPlanMonths,
                   promo_code: appliedPromo ? appliedPromo.code : undefined,
                   compound: selectedCompound,
@@ -804,7 +826,14 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
             // own retry on a transient MDI failure; savePendingCase.js is the
             // safety net for when the browser can't reach submitQuiz at all.
             const onboardingUrl = await submitToMDI(
-              result.transactionId,
+              {
+                transaction_id: String(result.transactionId),
+                amount: result.amount,
+                plan_months: selectedPlanMonths,
+                card_last4: result.accountLast4 || undefined,
+                card_brand: result.cardBrand || undefined,
+                simulated: result.simulated === true,
+              },
               primary,
             );
 
@@ -883,7 +912,8 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
        * patient creates their account and finishes the medical intake), or
        * null when MDI was skipped or unreachable.
        */
-      async function submitToMDI(transactionId, primary) {
+      async function submitToMDI(payment, primary) {
+        const transactionId = payment.transaction_id;
         const val = (id) => {
           const el = document.getElementById(id);
           return el ? el.value.trim() : "";
@@ -925,12 +955,15 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
             state: val("pt-state") || undefined,
             zip_code: val("pt-zip") || undefined,
           },
-          product: primary.id || "hair-loss",
+          product: primary.id,
           compound: selectedCompound || undefined,
           quiz_answers: quizAnswers || undefined,
           allergies: quizData.allergies || undefined,
           current_medications: quizData.medications || undefined,
           medical_conditions: quizData.conditions || undefined,
+          // Payment receipt: lets submitQuiz record a Patient Order on the MDI
+          // side and key its retry queue by transaction (no duplicate encounters).
+          payment: payment,
         };
 
         try {
@@ -938,9 +971,18 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(mdiBody),
-            signal: AbortSignal.timeout(8000),
+            // Patient-first now does up to 3 MDI calls (search/create patient,
+            // voucher, order) before answering — give it room.
+            signal: AbortSignal.timeout(20000),
           });
           const mdiResult = await mdiResp.json();
+          if (mdiResp.status === 202 && mdiResult && mdiResult.queued) {
+            // submitQuiz already parked the submission for retryPendingCases —
+            // do NOT also call savePendingCase (that would queue a second record
+            // and create two encounters for one charge).
+            console.warn("[CHECKOUT] MDI temporarily unavailable — submission queued server-side for retry.");
+            return null;
+          }
           if (!mdiResp.ok || !mdiResult.success) {
             throw new Error("submitQuiz did not succeed");
           }

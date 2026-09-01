@@ -239,7 +239,7 @@ async function submitVerificationCode(): Promise<void> {
   if (codeInput) codeInput.disabled = true;
 
   try {
-    const res = await validateMessagingCode({ email, verification_code: code });
+    const res = await validateMessagingCode({ email, verification_code: code, patient_id: sessionStorage.getItem('freeley_patient_id') || undefined });
     const data = await res.json().catch(() => ({}));
 
     if (!res.ok) {

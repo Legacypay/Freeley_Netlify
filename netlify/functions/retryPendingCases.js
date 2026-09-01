@@ -12,15 +12,18 @@
  */
 
 const { getStore } = require('@netlify/blobs');
+const { connectBlobs } = require('./lib/blobs');
 const { mdiRequest } = require('./lib/mdi-client');
 const { PRODUCTS, resolveProductKey } = require('./lib/products');
 const { encryptRecord, decryptRecord } = require('./lib/phi-crypto');
 const { resolveTestMode, buildVoucherPayload, parseVoucherResponse, demoMismatch } = require('./lib/mdi-voucher');
 const { sweepUntaggedTestOrders } = require('./lib/mdi-tags');
+const { ensureMdiPatient, buildPrefilledQuestions, createPatientOrder } = require('./lib/mdi-patient');
 
 const MAX_RETRIES = 10;
 
 exports.handler = async (event) => {
+  connectBlobs(event);
   const headers = {
     'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': 'https://freeley.com'
@@ -104,6 +107,18 @@ exports.handler = async (event) => {
 
         const product = PRODUCTS[resolvedKey];
 
+        // Same regulatory-hold guard as submitQuiz.js — a queued record must not
+        // sneak a held product (GHK-Cu / LegitScript) past the front door.
+        if (product._hold) {
+          console.error(`[RETRY MDI] Record ${key} resolves to held product ${resolvedKey} (${product._hold_reason || 'regulatory hold'}) — marking invalid`);
+          record.status = 'invalid';
+          record.invalid_reason = 'product_on_hold:' + resolvedKey;
+          await store.setJSON(key, encryptRecord(record));
+          await alertTeam(key, record, 'invalid');
+          results.push({ key, status: 'invalid' });
+          continue;
+        }
+
         // Build voucher payload — same test/live decision as submitQuiz.js.
         // SAFE BY DEFAULT: demo:true + "TEST CASE" metadata unless
         // MDI_LIVE_MODE=true AND MDI_ALLOW_LIVE_ORDERS=true (see lib/mdi-voucher.js).
@@ -123,10 +138,25 @@ exports.handler = async (event) => {
         if (stampedIsTest == null) {
           console.warn(`[RETRY MDI] ${key} has no is_test stamp — defaulting to TEST`);
         }
+        // Patient-first, same as submitQuiz.js: bind the voucher to a created/reused
+        // MDI patient and carry the quiz answers as prefilled_questions. Skipped on
+        // demo vouchers; any failure degrades to the voucher-only payload.
+        let mdiPatient = { patientId: null, skipped: 'demo-voucher' };
+        if (!testMode.demo) {
+          mdiPatient = await ensureMdiPatient(patientData, { allergies, current_medications, medical_conditions }, {
+            isSandbox: testMode.isTest || !testMode.liveMode,
+            metadata: (testMode.isTest ? 'TEST CASE | ' : '') + 'freeley:' + resolvedKey,
+            external_id: record.payment && record.payment.transaction_id ? 'freeley-txn:' + record.payment.transaction_id : undefined,
+            logTag: '[RETRY MDI]'
+          });
+        }
+        const prefilledQuestions = buildPrefilledQuestions(quiz_answers, { allergies, current_medications, medical_conditions });
         const voucherPayload = buildVoucherPayload({
           product,
           testMode,
-          metadata: 'freeley:' + resolvedKey + (dose ? ':' + dose : '') + ' | retry'
+          metadata: 'freeley:' + resolvedKey + (dose ? ':' + dose : '') + (record.payment && record.payment.transaction_id ? ' | txn:' + record.payment.transaction_id : '') + ' | retry',
+          patientId: mdiPatient.patientId,
+          prefilledQuestions
         });
 
         console.log(`[RETRY MDI] Submitting voucher for ${key} | mode: ${testMode.isTest ? 'TEST' : 'LIVE'} (${testMode.reason}) | demo: ${testMode.demo} | env: ${voucherPayload.environment_id || 'n/a'}`);
@@ -150,23 +180,34 @@ exports.handler = async (event) => {
           console.error(`[RETRY MDI] 🚨 DEMO MISMATCH: requested demo:true, MDI echoed demo:${parsed.demo} for voucher ${parsed.voucherId}`);
         }
 
+        const patientId = mdiPatient.patientId || parsed.patientId;
+        let mdiOrderId = null;
+        if (patientId && record.payment && !testMode.demo) {
+          mdiOrderId = await createPatientOrder(patientId, record.payment, { product, productKey: resolvedKey, caseId: parsed.caseId, isTest: testMode.isTest, logTag: '[RETRY MDI]' });
+        }
+
         // ── Success! Mark as completed ─────────────────────────
         record.status = 'completed';
         record.completed_at = new Date().toISOString();
-        record.mdi_patient_id = parsed.patientId;
+        record.mdi_patient_id = patientId;
+        record.mdi_order_id = mdiOrderId;
         record.mdi_case_id = parsed.voucherId;
         record.is_test = testMode.isTest;
         record.demo_mismatch = mismatch || undefined;
         await store.setJSON(key, encryptRecord(record));
 
-        console.log(`[RETRY MDI] ✅ SUCCESS: ${key} → Patient: ${parsed.patientId}, Voucher: ${parsed.voucherId} (retry #${record.retry_count})`);
+        console.log(`[RETRY MDI] ✅ SUCCESS: ${key} → Patient: ${patientId}, Voucher: ${parsed.voucherId} (retry #${record.retry_count})`);
 
         // Store order↔encounter link for support lookups
         try {
           const orderStore = getStore('mdi-orders');
           await orderStore.setJSON(parsed.voucherId, {
             voucher_id: parsed.voucherId,
-            patient_id: parsed.patientId,
+            patient_id: patientId,
+            mdi_patient_source: mdiPatient.patientId ? (mdiPatient.created ? 'created' : 'reused') : (mdiPatient.skipped || 'pending-onboarding'),
+            mdi_order_id: mdiOrderId,
+            prefilled_questions_count: prefilledQuestions.length,
+            payment: record.payment ? { transaction_id: record.payment.transaction_id, amount: record.payment.amount != null ? Number(record.payment.amount) : null, plan_months: record.payment.plan_months || null, card_last4: record.payment.card_last4 || null, card_brand: record.payment.card_brand || null, simulated: record.payment.simulated === true } : null,
             email: patientData.email,
             first_name: patientData.first_name,
             last_name: patientData.last_name,

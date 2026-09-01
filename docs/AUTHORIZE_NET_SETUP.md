@@ -102,3 +102,34 @@ If anything's wrong, just don't merge the branch — `main`/freeley.com stays on
 
 ## Note for the frontend redesign dev
 The handoff contract still describes the Stripe flow. Once this is merged, the payment section of that contract changes: the card form is Accept.js (ids `an-card-number`, `an-exp`, `an-cvc`, `an-zip`, `an-card-name`), and the server call is `create-authnet-transaction` returning `{ approved, transactionId, amount }`. Everything else (MDI submit, storage keys, success redirect, hub) is unchanged. I can update the contract doc when you're ready.
+
+## Per-environment credentials (added 2026-09-01)
+
+`netlify/functions/lib/authnet-config.js` (and the matching frontmatter block in
+`src/pages/checkout.astro`) pick the credential set from `AUTHNET_ENV`:
+
+| `AUTHNET_ENV` | Variables used | Host |
+|---|---|---|
+| `sandbox` | `AUTHNET_SANDBOX_API_LOGIN_ID`, `AUTHNET_SANDBOX_TRANSACTION_KEY`, `AUTHNET_SANDBOX_CLIENT_KEY`, `AUTHNET_SANDBOX_SIGNATURE_KEY` | `apitest.authorize.net`, Accept.js from `jstest.authorize.net` |
+| `production` | `AUTHNET_LIVE_API_LOGIN_ID`, `AUTHNET_LIVE_TRANSACTION_KEY`, `AUTHNET_LIVE_CLIENT_KEY`, `AUTHNET_LIVE_SIGNATURE_KEY` | `api.authorize.net`, Accept.js from `js.authorize.net` |
+
+Each prefixed variable falls back to the historical un-prefixed name
+(`AUTHNET_API_LOGIN_ID`, …). Switching from sandbox testing to real charging is
+therefore: set `AUTHNET_ENV=production`, make sure the four `AUTHNET_LIVE_*`
+values exist, **delete `AUTHNET_SIMULATE`**, redeploy.
+
+Sandbox and production credentials are separate accounts and are not
+interchangeable — Authorize.Net returns `E00007 User authentication failed`
+when a key is used against the wrong host. A Transaction Key is exactly 16
+characters; anything longer is a copy/paste of the wrong field (the 20-char
+values found in Netlify on 2026-09-01 were rejected with `E00003 … greater than
+the MaxLength value`). Quick check without charging anything:
+
+```bash
+# from the repo root, with the pair you want to verify
+AUTHNET_API_LOGIN_ID=<login> AUTHNET_TRANSACTION_KEY=<key> node -e '
+fetch("https://apitest.authorize.net/xml/v1/request.api",{method:"POST",headers:{"Content-Type":"application/json"},
+ body:JSON.stringify({authenticateTestRequest:{merchantAuthentication:{name:process.env.AUTHNET_API_LOGIN_ID,transactionKey:process.env.AUTHNET_TRANSACTION_KEY}}})})
+ .then(r=>r.text()).then(t=>console.log(JSON.parse(t.replace(/^\uFEFF/,"")).messages))'
+```
+(`Ok / I00001 Successful` = valid for that host; swap the URL to `api.authorize.net` for production.)

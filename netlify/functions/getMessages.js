@@ -17,9 +17,12 @@
  */
 
 const { getAccessToken, getCorsHeaders, BASE_URL } = require('./lib/mdi-client');
+const { connectBlobs } = require('./lib/blobs');
 const { verifySupabaseToken } = require('./lib/verify-supabase-token');
+const { verifyPatientOwnership } = require('./lib/mdi-order-ownership');
 
 exports.handler = async (event) => {
+  connectBlobs(event);
   const cors = getCorsHeaders(event);
 
   if (event.httpMethod === 'OPTIONS') {
@@ -63,6 +66,13 @@ exports.handler = async (event) => {
         headers: cors,
         body: JSON.stringify({ error: 'patient_id is required.' })
       };
+    }
+
+    // ── Step 2b: the patient_id is untrusted client input — it must belong
+    // to the signed-in user (same rule as caseStatus/getOrders/getEncounterDetails).
+    if (!(await verifyPatientOwnership(patient_id, user.email, '[GET MESSAGES]'))) {
+      console.warn(`[GET MESSAGES] Refusing: patient_id not owned by session user`);
+      return { statusCode: 403, headers: cors, body: JSON.stringify({ error: 'You can only view your own messages.' }) };
     }
 
     // ── Step 3: Fetch messages using Partner token ───────────────

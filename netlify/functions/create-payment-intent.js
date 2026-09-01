@@ -9,6 +9,7 @@
  */
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const { connectBlobs } = require('./lib/blobs');
 const { allow } = require('./lib/rate-limit');
 
 // Single source of truth — shared with frontend (see pricing.json in repo root)
@@ -17,6 +18,7 @@ const { treatment_names: TREATMENT_NAMES, _meta, ...categories } = pricingData;
 const PRICING = categories;
 
 exports.handler = async (event) => {
+  connectBlobs(event);
   // CORS headers — locked to production domain (was wildcard '*')
   const ALLOWED_ORIGINS = ['https://freeley.com', 'https://www.freeley.com'];
   const reqOrigin = (event.headers && event.headers.origin) || '';

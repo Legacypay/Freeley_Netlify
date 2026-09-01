@@ -129,7 +129,38 @@ function validateQuizSubmission(data) {
     return { ok: false, error: 'is_test must be a boolean' };
   }
 
+  // Optional payment receipt (checkout → submitQuiz after an approved charge).
+  // Only ever used to record a Patient Order on the MDI side and to key the
+  // retry queue — the server never trusts it for pricing.
+  const payErr = validatePayment(data.payment);
+  if (payErr) return { ok: false, error: payErr };
+
   return { ok: true, value: data };
+}
+
+function validatePayment(p) {
+  if (p == null) return null;
+  if (!isObject(p)) return 'payment must be an object';
+  if (!p.transaction_id || typeof p.transaction_id !== 'string' || p.transaction_id.length > 200) {
+    return 'payment.transaction_id is required';
+  }
+  if (p.amount != null) {
+    const n = Number(p.amount);
+    if (!Number.isFinite(n) || n < 0 || n > 100000) return 'payment.amount invalid';
+  }
+  if (p.plan_months != null && !(Number.isInteger(Number(p.plan_months)) && Number(p.plan_months) > 0 && Number(p.plan_months) <= 24)) {
+    return 'payment.plan_months invalid';
+  }
+  if (p.card_last4 != null && !(typeof p.card_last4 === 'string' && /^\d{0,4}$/.test(p.card_last4))) {
+    return 'payment.card_last4 invalid';
+  }
+  if (p.card_brand != null && !(typeof p.card_brand === 'string' && p.card_brand.length <= 40)) {
+    return 'payment.card_brand invalid';
+  }
+  if (p.simulated != null && typeof p.simulated !== 'boolean') {
+    return 'payment.simulated must be a boolean';
+  }
+  return null;
 }
 
 module.exports = { validateQuizSubmission };

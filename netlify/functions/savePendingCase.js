@@ -10,11 +10,13 @@
  */
 
 const { getStore } = require('@netlify/blobs');
+const { connectBlobs } = require('./lib/blobs');
 const { encryptRecord } = require('./lib/phi-crypto');
 const { getCorsHeaders, resolveMdiEnvironment } = require('./lib/mdi-client');
 const { validateQuizSubmission } = require('./lib/validate-quiz');
 
 exports.handler = async (event) => {
+  connectBlobs(event);
   const headers = { ...getCorsHeaders(event), 'Content-Type': 'application/json' };
 
   if (event.httpMethod === 'OPTIONS') {

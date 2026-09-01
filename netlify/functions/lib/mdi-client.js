@@ -120,7 +120,12 @@ function verifyWebhookSignature(payload, signature) {
   if (!secret) { console.error('[MDI] CRITICAL: MDI_WEBHOOK_SECRET not set — rejecting all webhooks for safety'); return false; }
   if (!signature) { console.error('[MDI] Missing webhook signature header'); return false; }
   const expected = crypto.createHmac('sha256', secret).update(payload).digest('hex');
-  return crypto.timingSafeEqual(Buffer.from(signature, 'utf8'), Buffer.from(expected, 'utf8'));
+  const provided = Buffer.from(String(signature).trim().toLowerCase(), 'utf8');
+  const wanted = Buffer.from(expected, 'utf8');
+  // timingSafeEqual throws on length mismatch — that RangeError used to escape as a
+  // 500 ("retry") instead of a 401 ("reject"), so a malformed signature retried forever.
+  if (provided.length !== wanted.length) return false;
+  return crypto.timingSafeEqual(provided, wanted);
 }
 
 // SECURITY: Restrict CORS to production domains only (was wildcard '*')

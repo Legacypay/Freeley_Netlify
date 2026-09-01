@@ -51,6 +51,19 @@
 [functions."keepSupabaseAlive"]
   schedule = "@daily"
 
+# ── Authorize.Net Environment Variables (lib/authnet-config.js) ──
+#   AUTHNET_ENV                      - "sandbox" | "production" — selects the credential set AND the host
+#   AUTHNET_SANDBOX_API_LOGIN_ID     - sandbox.authorize.net → Account → API Credentials & Keys
+#   AUTHNET_SANDBOX_TRANSACTION_KEY  - SECRET (16 chars). Sandbox and live keys are NOT interchangeable
+#   AUTHNET_SANDBOX_CLIENT_KEY       - Public Client Key for Accept.js (browser tokenization)
+#   AUTHNET_SANDBOX_SIGNATURE_KEY    - webhook Signature Key for the sandbox Merchant Interface
+#   AUTHNET_LIVE_API_LOGIN_ID / AUTHNET_LIVE_TRANSACTION_KEY / AUTHNET_LIVE_CLIENT_KEY / AUTHNET_LIVE_SIGNATURE_KEY
+#                                    - same four for the real merchant account (account.authorize.net)
+#   AUTHNET_API_LOGIN_ID / AUTHNET_TRANSACTION_KEY / AUTHNET_CLIENT_KEY / AUTHNET_SIGNATURE_KEY
+#                                    - legacy un-prefixed fallbacks, used when the prefixed one is unset
+#   AUTHNET_SIMULATE                 - "true" = approve checkout WITHOUT charging (no Authorize.Net call).
+#                                      Test-only bypass — must be deleted before real launch
+#
 # ── MD Integrations Environment Variables ──────────────────────
 # Set these in Netlify Dashboard > Site Settings > Environment Variables:
 #

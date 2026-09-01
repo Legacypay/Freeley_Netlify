@@ -41,15 +41,18 @@
  */
 
 const crypto = require('crypto');
+const { resolveAuthnetConfig } = require('./lib/authnet-config');
 
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: JSON.stringify({ error: 'Method Not Allowed' }) };
   }
 
-  const signatureKey = process.env.AUTHNET_SIGNATURE_KEY;
+  // Per-environment Signature Key (AUTHNET_SANDBOX_/AUTHNET_LIVE_SIGNATURE_KEY,
+  // falling back to AUTHNET_SIGNATURE_KEY) — see lib/authnet-config.js.
+  const signatureKey = resolveAuthnetConfig().signatureKey;
   if (!signatureKey) {
-    console.error('[AUTHNET WEBHOOK] CRITICAL: AUTHNET_SIGNATURE_KEY not set — rejecting all webhooks');
+    console.error('[AUTHNET WEBHOOK] CRITICAL: Authorize.Net Signature Key not set — rejecting all webhooks');
     return { statusCode: 500, body: JSON.stringify({ error: 'Webhook secret not configured' }) };
   }
 
