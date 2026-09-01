@@ -14,6 +14,8 @@ const { connectBlobs } = require('./lib/blobs');
 const { encryptRecord } = require('./lib/phi-crypto');
 const { getCorsHeaders, resolveMdiEnvironment } = require('./lib/mdi-client');
 const { validateQuizSubmission } = require('./lib/validate-quiz');
+const { allow } = require('./lib/rate-limit');
+const { verifyAuthnetTransaction } = require('./lib/authnet-verify');
 
 exports.handler = async (event) => {
   connectBlobs(event);
@@ -25,6 +27,11 @@ exports.handler = async (event) => {
 
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method Not Allowed' }) };
+  }
+
+  // Unauthenticated safety net — cap it like submitQuiz.
+  if (!(await allow(event, { key: 'save-pending-case', limit: 5, windowSec: 60 }))) {
+    return { statusCode: 429, headers, body: JSON.stringify({ error: 'Too many requests' }) };
   }
 
   try {
@@ -47,8 +54,24 @@ exports.handler = async (event) => {
       return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid submission.' }) };
     }
 
+    // ── Proof of payment (same rule as submitQuiz) ──
+    // Everything in this queue is later submitted to MDI by retryPendingCases,
+    // so an unverified entry would become a free encounter on the next tick.
+    const pay = await verifyAuthnetTransaction(payment_intent_id);
+    if (!pay.ok) {
+      console.warn('[PENDING CASE] Refusing: payment not verified (' + pay.reason + ')');
+      return { statusCode: 402, headers, body: JSON.stringify({ error: 'We could not confirm your payment.' }) };
+    }
+    if (pay.unverified) console.warn('[PENDING CASE] ⚠️ Payment could not be verified with the gateway (' + pay.reason + ') — queuing anyway');
+
     // ── Save to Netlify Blobs (PHI encrypted at rest) ─────────
     const store = getStore('pending-mdi-cases');
+    // The blob key is the transaction id: never let a second request overwrite
+    // (destroy) a paying patient's already-queued submission.
+    if (await store.get(payment_intent_id)) {
+      console.warn('[PENDING CASE] Already queued for this payment — not overwriting');
+      return { statusCode: 200, headers, body: JSON.stringify({ saved: true, payment_intent_id, already_queued: true }) };
+    }
     // Stamp the environment now — retryPendingCases honors it instead of
     // re-reading MDI_LIVE_MODE, so a queued test never gets promoted to live.
     const isTest = data.is_test === true;

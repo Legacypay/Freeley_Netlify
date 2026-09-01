@@ -1,6 +1,6 @@
 // Overview / Treatments / Records / Billing panel data-loading logic (was
 // inline in hub.astro's big script, plus the old public/hub-tabs.js).
-import { setText, escapeHtml } from './dom';
+import { setText, escapeHtml, safeHref } from './dom';
 import { PRODUCT_NAMES, PRODUCT_IMG } from './products';
 import { getCases, getCaseStatus, getOrders, getMessages, getEncounterDetails, getBillingHistory, cancelSubscription } from './api';
 
@@ -188,10 +188,10 @@ export async function refreshOrders(): Promise<void> {
             '<span class="hub-order__carrier">' +
             escapeHtml((tracking.company ? tracking.company + ' ' : '') + tracking.number) +
             '</span>';
-        if (tracking.link)
+        if (safeHref(tracking.link))
           html +=
             '<a class="hub-btn hub-btn--outline hub-btn--sm" href="' +
-            escapeHtml(tracking.link) +
+            safeHref(tracking.link) +
             '" target="_blank" rel="noopener noreferrer"><span class="hub-btn__ic"><i class="ri-truck-line" aria-hidden="true"></i></span> Track package</a>';
         html += '</div>';
       }
@@ -531,8 +531,8 @@ export async function loadBillingHistory(): Promise<void> {
         const chDate = new Date(ch.created).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         ihtml += '<tr><td class="hub-table__muted">' + chDate + '</td><td>' + escapeHtml(ch.description || 'Freeley Health') + '</td>';
         ihtml += '<td>$' + Number(ch.amount).toFixed(2) + '</td><td>';
-        ihtml += ch.receipt_url
-          ? '<a href="' + ch.receipt_url + '" target="_blank" rel="noopener" class="hub-receipt-link"><i class="ri-download-2-line"></i> PDF</a>'
+        ihtml += safeHref(ch.receipt_url)
+          ? '<a href="' + safeHref(ch.receipt_url) + '" target="_blank" rel="noopener" class="hub-receipt-link"><i class="ri-download-2-line"></i> PDF</a>'
           : '-';
         ihtml += '</td></tr>';
       });

@@ -10,6 +10,11 @@
  * quiz's `save_funnel_lead` — so no Supabase service-role key needs to exist
  * in the function environment.
  *
+ * READS and the cancel WRITE (Hub billing) are different: they run AS THE
+ * PATIENT. getMyFunnelOrders / cancelMySubscription forward the patient's own
+ * Supabase access token, and the RPCs (migration 0009) take the email from
+ * auth.jwt() — there is no email parameter anyone could point at someone else.
+ *
  * Best-effort by design: a Supabase outage must never fail a charge that
  * Authorize.Net already accepted. Callers should treat a null return as
  * "not recorded" and log it, nothing more.
@@ -25,6 +30,21 @@ function getClient() {
   if (!url || !key) return null;
   client = createClient(url, key, { auth: { persistSession: false } });
   return client;
+}
+
+/**
+ * A Supabase client that acts AS the signed-in patient: PostgREST evaluates
+ * auth.jwt() from this Authorization header, so the JWT-bound RPCs below can
+ * only ever see/update rows joined to that patient's own email.
+ */
+function getUserClient(accessToken) {
+  const url = process.env.PUBLIC_SUPABASE_URL;
+  const key = process.env.PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key || !accessToken) return null;
+  return createClient(url, key, {
+    auth: { persistSession: false, autoRefreshToken: false },
+    global: { headers: { Authorization: 'Bearer ' + accessToken } }
+  });
 }
 
 /**
@@ -79,42 +99,39 @@ async function saveFunnelOrder(order) {
 }
 
 /**
- * Purchases for the Hub's Billing tab. `email` MUST be the verified Supabase
- * session email — the SQL function filters strictly by it, so passing a
- * client-supplied value here would let one patient read another's orders.
+ * Purchases for the Hub's Billing tab, for the patient whose access token this
+ * is. The email is NOT a parameter anywhere — the RPC reads it from the JWT.
+ * @param {string} accessToken the verified Supabase access token from the request
  * @returns {Promise<Array<object>>} newest first; [] on any failure
  */
-async function getFunnelOrdersForEmail(email) {
-  const supabase = getClient();
-  if (!supabase || !email) return [];
-  const { data, error } = await supabase.rpc('get_funnel_orders_for_email', { p_email: email });
+async function getMyFunnelOrders(accessToken) {
+  const supabase = getUserClient(accessToken);
+  if (!supabase) return [];
+  const { data, error } = await supabase.rpc('get_my_funnel_orders');
   if (error) {
-    console.error('[FUNNEL ORDERS] get_funnel_orders_for_email failed:', error.message);
+    console.error('[FUNNEL ORDERS] get_my_funnel_orders failed:', error.message);
     return [];
   }
   return Array.isArray(data) ? data : [];
 }
 
 /**
- * Cancels the given subscription's recurring schedule in Authorize.Net AND
- * marks it canceled in Supabase — used by cancelSubscription.js. `email`
- * MUST be the verified Supabase session email (same rule as
- * getFunnelOrdersForEmail): the RPC only updates a row it can join back to
- * that email, so this can never cancel another patient's subscription.
+ * Marks one of the calling patient's OWN subscriptions canceled in Supabase
+ * (Authorize.Net is canceled separately by cancelSubscription.js). The RPC
+ * joins on the JWT's email, so it can never touch another patient's row.
  * @returns {Promise<boolean>} true only if a row was actually found and marked canceled
  */
-async function markSubscriptionCanceledForEmail(email, authnetSubscriptionId) {
-  const supabase = getClient();
-  if (!supabase || !email || !authnetSubscriptionId) return false;
-  const { data, error } = await supabase.rpc('cancel_subscription_for_email', {
-    p_email: email,
+async function cancelMySubscription(accessToken, authnetSubscriptionId) {
+  const supabase = getUserClient(accessToken);
+  if (!supabase || !authnetSubscriptionId) return false;
+  const { data, error } = await supabase.rpc('cancel_my_subscription', {
     p_authnet_subscription_id: String(authnetSubscriptionId)
   });
   if (error) {
-    console.error('[FUNNEL ORDERS] cancel_subscription_for_email failed:', error.message);
+    console.error('[FUNNEL ORDERS] cancel_my_subscription failed:', error.message);
     return false;
   }
   return data === true;
 }
 
-module.exports = { saveFunnelOrder, getFunnelOrdersForEmail, markSubscriptionCanceledForEmail };
+module.exports = { saveFunnelOrder, getMyFunnelOrders, cancelMySubscription };

@@ -21,6 +21,7 @@
 
 const { mdiRequest, getCorsHeaders, BASE_URL } = require('./lib/mdi-client');
 const { verifySupabaseToken } = require('./lib/verify-supabase-token');
+const { verifyPatientOwnership } = require('./lib/mdi-order-ownership');
 
 // Simple in-memory cache for patient tokens (per cold-start instance)
 // Key: patient_id, Value: { access_token, expires_at }
@@ -69,6 +70,17 @@ exports.handler = async (event) => {
       };
     }
 
+    // ── Step 2a: Ownership — this patient_id must belong to the signed-in
+    // user (order record or MDI patient email match). Without this, any
+    // signed-in patient could mint a live MDI token for someone else's record.
+    if (!(await verifyPatientOwnership(patient_id, user.email, '[PATIENT TOKEN]'))) {
+      return {
+        statusCode: 404, // same shape as "not found" — never an ownership oracle
+        headers: cors,
+        body: JSON.stringify({ error: 'Patient record not found.' })
+      };
+    }
+
     // ── Step 2b: Check cache ─────────────────────────────────────
     const cached = patientTokenCache[patient_id];
     if (cached && cached.expires_at > Date.now() + 60000) {
@@ -114,7 +126,10 @@ exports.handler = async (event) => {
       try {
         const url = new URL(authData.auth_link);
         const emailParam = url.searchParams.get('email');
-        if (emailParam) patientEmail = emailParam;
+        // Only accept it when it IS the verified user's email (case-insensitive):
+        // ownership was proven above, so a different address here is MDI data we
+        // must not act on.
+        if (emailParam && emailParam.trim().toLowerCase() === String(user.email || '').trim().toLowerCase()) patientEmail = emailParam.trim();
       } catch { /* use Supabase email */ }
     }
 

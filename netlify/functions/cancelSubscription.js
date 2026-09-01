@@ -10,7 +10,7 @@
  * rows (matched by the verified Supabase session email, never a client-
  * supplied one), enforced independently twice: once here by only looking up
  * the subscription id in that patient's own order list, and again inside the
- * cancel_subscription_for_email RPC itself (see supabase/migrations/0008).
+ * cancel_my_subscription RPC itself, which joins on the caller's JWT email (see supabase/migrations/0009).
  *
  * POST /.netlify/functions/cancelSubscription
  * Headers: { Authorization: 'Bearer <supabase-access-token>' }
@@ -19,7 +19,7 @@
 
 const { CORS_HEADERS } = require('./lib/mdi-client');
 const { verifySupabaseToken } = require('./lib/verify-supabase-token');
-const { getFunnelOrdersForEmail, markSubscriptionCanceledForEmail } = require('./lib/funnel-orders');
+const { getMyFunnelOrders, cancelMySubscription } = require('./lib/funnel-orders');
 const { cancelArbSubscription } = require('./lib/authnet-arb');
 
 exports.handler = async (event) => {
@@ -50,7 +50,7 @@ exports.handler = async (event) => {
 
     // Ownership check #1: the subscription id must belong to one of THIS
     // patient's own orders and still be active — never trust the id alone.
-    const orders = await getFunnelOrdersForEmail(email);
+    const orders = await getMyFunnelOrders(idToken);
     const owns = orders.some(o => o.authnet_subscription_id === subscriptionId && o.subscription_status === 'active');
     if (!owns) {
       console.warn(`[CANCEL SUBSCRIPTION] Refusing: subscription ${subscriptionId} not an active subscription owned by this session`);
@@ -66,7 +66,7 @@ exports.handler = async (event) => {
     }
 
     // Ownership check #2 (defense in depth) happens again inside this RPC.
-    const marked = await markSubscriptionCanceledForEmail(email, subscriptionId);
+    const marked = await cancelMySubscription(idToken, subscriptionId);
     if (!marked) {
       // The cancellation with Authorize.Net already succeeded — the patient
       // will not be charged again regardless. Only our own record is stale.

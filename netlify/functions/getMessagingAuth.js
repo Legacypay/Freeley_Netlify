@@ -27,6 +27,7 @@
 
 const { mdiRequest, getCorsHeaders } = require('./lib/mdi-client');
 const { verifySupabaseToken } = require('./lib/verify-supabase-token');
+const { verifyPatientOwnership } = require('./lib/mdi-order-ownership');
 
 exports.handler = async (event) => {
   const cors = getCorsHeaders(event);
@@ -69,6 +70,16 @@ exports.handler = async (event) => {
         statusCode: 400,
         headers: cors,
         body: JSON.stringify({ error: 'patient_id is required.' })
+      };
+    }
+
+    // ── Step 2b: Ownership — never hand out a login link for a patient_id
+    // the signed-in user doesn't own.
+    if (!(await verifyPatientOwnership(patient_id, user.email, '[MESSAGING AUTH]'))) {
+      return {
+        statusCode: 404,
+        headers: cors,
+        body: JSON.stringify({ error: 'Patient record not found.' })
       };
     }
 

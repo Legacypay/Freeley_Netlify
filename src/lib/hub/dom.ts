@@ -11,5 +11,12 @@ export function escapeHtml(str: unknown): string {
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/** Only http(s) URLs may become an href — blocks javascript:/data: links coming from API data. */
+export function safeHref(url: unknown): string {
+  const s = String(url || '').trim();
+  return /^https?:\/\//i.test(s) ? escapeHtml(s) : '';
 }

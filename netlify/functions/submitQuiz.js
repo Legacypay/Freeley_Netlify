@@ -21,6 +21,8 @@ const { encryptRecord } = require('./lib/phi-crypto');
 const { validateQuizSubmission } = require('./lib/validate-quiz');
 const { resolveTestMode, buildVoucherPayload, parseVoucherResponse, demoMismatch } = require('./lib/mdi-voucher');
 const { ensureMdiPatient, buildPrefilledQuestions, createPatientOrder } = require('./lib/mdi-patient');
+const { allow } = require('./lib/rate-limit');
+const { verifyAuthnetTransaction } = require('./lib/authnet-verify');
 
 // MDI Partner ID — from the partner portal URL
 const MDI_PARTNER_ID = process.env.MDI_PARTNER_ID || 'f81508d1-3c53-4849-a636-1e9050a68e00';
@@ -33,6 +35,12 @@ exports.handler = async (event) => {
   }
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, headers: CORS_HEADERS, body: JSON.stringify({ error: 'Method Not Allowed' }) };
+  }
+
+  // Unauthenticated by design (no Hub login exists yet at intake time), and
+  // every accepted call creates a real, billable MDI encounter — so cap it.
+  if (!(await allow(event, { key: 'submit-quiz', limit: 5, windowSec: 60 }))) {
+    return { statusCode: 429, headers: CORS_HEADERS, body: JSON.stringify({ error: 'Too many requests. Please wait a moment and try again.' }) };
   }
 
   try {
@@ -53,6 +61,17 @@ exports.handler = async (event) => {
     // Not the only test signal — see lib/mdi-voucher.js's resolveTestMode for the full
     // safe-by-default decision (MDI_LIVE_MODE/MDI_ALLOW_LIVE_ORDERS/email patterns).
     const explicitTest = data.is_test === true;
+
+    // ── Proof of payment ──
+    // A case is only ever created for a charge Authorize.Net actually approved
+    // on OUR account (read-only getTransactionDetails; see lib/authnet-verify.js).
+    // Without this, a direct POST could mint free prescriptions/encounters.
+    const pay = await verifyAuthnetTransaction(payment && payment.transaction_id);
+    if (!pay.ok) {
+      console.warn('[SUBMIT QUIZ] Refusing: payment not verified (' + pay.reason + ')');
+      return { statusCode: 402, headers: CORS_HEADERS, body: JSON.stringify({ error: 'We could not confirm your payment. If you were charged, contact support and we will complete your order.' }) };
+    }
+    if (pay.unverified) console.warn('[SUBMIT QUIZ] ⚠️ Payment could not be verified with the gateway (' + pay.reason + ') — proceeding; reconcile txn ' + payment.transaction_id + ' manually');
 
     // Resolve product key — handles legacy 'semaglutide'/'tirzepatide' keys,
     // dose-tiered lookups (e.g., semaglutide + dose 0.4 → semaglutide-s2) and the

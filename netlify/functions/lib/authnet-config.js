@@ -44,7 +44,11 @@ function resolveAuthnetConfig(env = process.env) {
     transactionKey: pick('TRANSACTION_KEY'),
     clientKey: pick('CLIENT_KEY'),
     signatureKey: pick('SIGNATURE_KEY'),
+    // AUTHNET_SIMULATE approves without charging — for dev/deploy-preview
+    // testing only. It is ignored on the production deploy context when the
+    // gateway mode is production, so it can never make live checkout free.
     simulate: String(env.AUTHNET_SIMULATE || '').trim().toLowerCase() === 'true'
+      && !(mode === 'production' && String(env.CONTEXT || '').toLowerCase() === 'production')
   };
 }
 

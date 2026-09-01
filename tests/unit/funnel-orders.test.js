@@ -1,8 +1,10 @@
 // Unit tests for netlify/functions/lib/funnel-orders.js — mocks
 // @supabase/supabase-js so no network is needed. Verifies the RPC contract
-// (param names must match the save_funnel_order SQL signature exactly) and
-// that every failure mode degrades to a null return, never a throw — a
-// Supabase problem must never fail a charge Authorize.Net already accepted.
+// (param names must match the SQL signatures exactly), that the Hub read /
+// cancel paths run AS THE PATIENT (their access token forwarded, no email
+// parameter anywhere), and that every failure mode degrades to a null/[]
+// return, never a throw — a Supabase problem must never fail a charge
+// Authorize.Net already accepted.
 const { test, beforeEach } = require('node:test');
 const assert = require('node:assert/strict');
 const path = require('path');
@@ -12,6 +14,7 @@ const libDir = path.join(__dirname, '..', '..', 'netlify', 'functions', 'lib');
 const modPath = path.join(libDir, 'funnel-orders.js');
 
 let rpcCalls = [];
+let clientOpts = [];
 let rpcResult = { data: 'order-uuid-1', error: null };
 let createClientThrows = false;
 
@@ -19,8 +22,9 @@ const originalLoad = Module._load;
 Module._load = function (request, parent, isMain) {
   if (request === '@supabase/supabase-js') {
     return {
-      createClient: () => {
+      createClient: (_url, _key, opts) => {
         if (createClientThrows) throw new Error('boom');
+        clientOpts.push(opts || {});
         return { rpc: async (name, params) => { rpcCalls.push({ name, params }); return rpcResult; } };
       }
     };
@@ -35,6 +39,7 @@ function fresh() {
 
 beforeEach(() => {
   rpcCalls = [];
+  clientOpts = [];
   rpcResult = { data: 'order-uuid-1', error: null };
   createClientThrows = false;
   process.env.PUBLIC_SUPABASE_URL = 'https://x.supabase.co';
@@ -90,25 +95,6 @@ test('returns null (does not throw) when the RPC errors', async () => {
   assert.equal(id, null);
 });
 
-test('getFunnelOrdersForEmail calls the lookup RPC with the email and returns rows', async () => {
-  rpcResult = { data: [{ id: 'o1', amount_cents: 8900, status: 'paid' }], error: null };
-  const { getFunnelOrdersForEmail } = fresh();
-  const rows = await getFunnelOrdersForEmail('a@b.co');
-  assert.equal(rpcCalls[0].name, 'get_funnel_orders_for_email');
-  assert.deepEqual(rpcCalls[0].params, { p_email: 'a@b.co' });
-  assert.equal(rows.length, 1);
-});
-
-test('getFunnelOrdersForEmail returns [] on error, empty email, or missing env', async () => {
-  rpcResult = { data: null, error: { message: 'boom' } };
-  let { getFunnelOrdersForEmail } = fresh();
-  assert.deepEqual(await getFunnelOrdersForEmail('a@b.co'), []);
-  assert.deepEqual(await getFunnelOrdersForEmail(''), []);
-  delete process.env.PUBLIC_SUPABASE_ANON_KEY;
-  ({ getFunnelOrdersForEmail } = fresh());
-  assert.deepEqual(await getFunnelOrdersForEmail('a@b.co'), []);
-});
-
 test('returns null (does not throw) when Supabase env is not configured', async () => {
   delete process.env.PUBLIC_SUPABASE_URL;
   const { saveFunnelOrder } = fresh();
@@ -117,20 +103,50 @@ test('returns null (does not throw) when Supabase env is not configured', async 
   assert.equal(rpcCalls.length, 0);
 });
 
-test('markSubscriptionCanceledForEmail calls the cancel RPC and returns its boolean', async () => {
+// ── Hub read / cancel: run AS the patient, never with an email parameter ────
+
+test('getMyFunnelOrders forwards the access token and calls the parameterless JWT-bound RPC', async () => {
+  rpcResult = { data: [{ id: 'o1', amount_cents: 8900, status: 'paid' }], error: null };
+  const { getMyFunnelOrders } = fresh();
+  const rows = await getMyFunnelOrders('jwt-abc');
+  assert.equal(rpcCalls[0].name, 'get_my_funnel_orders');
+  assert.equal(rpcCalls[0].params, undefined); // no email — the RPC reads auth.jwt()
+  assert.equal(clientOpts[0].global.headers.Authorization, 'Bearer jwt-abc');
+  assert.equal(rows.length, 1);
+});
+
+test('getMyFunnelOrders returns [] on error, missing token, or missing env — without calling the RPC when it cannot act as the user', async () => {
+  rpcResult = { data: null, error: { message: 'boom' } };
+  let { getMyFunnelOrders } = fresh();
+  assert.deepEqual(await getMyFunnelOrders('jwt'), []);
+  assert.deepEqual(await getMyFunnelOrders(''), []);
+  assert.equal(rpcCalls.length, 1); // only the first call reached the RPC
+  delete process.env.PUBLIC_SUPABASE_ANON_KEY;
+  ({ getMyFunnelOrders } = fresh());
+  assert.deepEqual(await getMyFunnelOrders('jwt'), []);
+});
+
+test('cancelMySubscription forwards the token, passes only the subscription id, returns the RPC boolean', async () => {
   rpcResult = { data: true, error: null };
-  const { markSubscriptionCanceledForEmail } = fresh();
-  const ok = await markSubscriptionCanceledForEmail('a@b.co', 'sub-123');
-  assert.equal(rpcCalls[0].name, 'cancel_subscription_for_email');
-  assert.deepEqual(rpcCalls[0].params, { p_email: 'a@b.co', p_authnet_subscription_id: 'sub-123' });
+  const { cancelMySubscription } = fresh();
+  const ok = await cancelMySubscription('jwt-abc', 'sub-123');
+  assert.equal(rpcCalls[0].name, 'cancel_my_subscription');
+  assert.deepEqual(rpcCalls[0].params, { p_authnet_subscription_id: 'sub-123' });
+  assert.equal(clientOpts[0].global.headers.Authorization, 'Bearer jwt-abc');
   assert.equal(ok, true);
 });
 
-test('markSubscriptionCanceledForEmail returns false without calling the RPC when args are missing, and on RPC error', async () => {
-  const { markSubscriptionCanceledForEmail } = fresh();
-  assert.equal(await markSubscriptionCanceledForEmail('', 'sub-123'), false);
-  assert.equal(await markSubscriptionCanceledForEmail('a@b.co', ''), false);
+test('cancelMySubscription returns false without calling the RPC when args are missing, and on RPC error', async () => {
+  const { cancelMySubscription } = fresh();
+  assert.equal(await cancelMySubscription('', 'sub-123'), false);
+  assert.equal(await cancelMySubscription('jwt', ''), false);
   assert.equal(rpcCalls.length, 0);
   rpcResult = { data: null, error: { message: 'boom' } };
-  assert.equal(await markSubscriptionCanceledForEmail('a@b.co', 'sub-123'), false);
+  assert.equal(await cancelMySubscription('jwt', 'sub-123'), false);
+});
+
+test('the email-parameter functions no longer exist', () => {
+  const m = fresh();
+  assert.equal(m.getFunnelOrdersForEmail, undefined);
+  assert.equal(m.markSubscriptionCanceledForEmail, undefined);
 });

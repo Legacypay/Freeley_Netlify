@@ -20,7 +20,7 @@
 
 const { CORS_HEADERS } = require('./lib/mdi-client');
 const { verifySupabaseToken } = require('./lib/verify-supabase-token');
-const { getFunnelOrdersForEmail } = require('./lib/funnel-orders');
+const { getMyFunnelOrders } = require('./lib/funnel-orders');
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
@@ -51,7 +51,9 @@ exports.handler = async (event) => {
     }
 
     // ── Authorize.Net-era purchases (Supabase funnel_orders) ──
-    const orders = await getFunnelOrdersForEmail(customerEmail);
+    // Runs AS this patient (their access token is forwarded); the RPC reads the
+    // email from auth.jwt() — no email parameter exists to point elsewhere.
+    const orders = await getMyFunnelOrders(idToken);
     const charges = orders.map(o => ({
       id: o.gateway_transaction_id || o.id,
       amount: (o.amount_cents || 0) / 100,

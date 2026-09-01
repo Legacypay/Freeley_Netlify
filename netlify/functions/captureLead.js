@@ -1,9 +1,17 @@
+const { allow } = require('./lib/rate-limit');
+
 exports.handler = async (event, context) => {
   if (event.httpMethod !== "POST") {
     return {
       statusCode: 405,
       body: JSON.stringify({ error: "Method Not Allowed" })
     };
+  }
+
+  // Unauthenticated by design (abandoned-cart capture), so cap it: 20/min/IP
+  // keeps a script from flooding the CRM webhook with junk leads.
+  if (!(await allow(event, { key: 'capture-lead', limit: 20, windowSec: 60 }))) {
+    return { statusCode: 429, body: JSON.stringify({ error: "Too many requests" }) };
   }
 
   try {
@@ -37,7 +45,9 @@ exports.handler = async (event, context) => {
         })
       });
       
-      console.log(`[LEAD CAPTURED] Email: ${email} | Phone: ${phone} | Webhook Status: ${response.status}`);
+      // Never log raw PII — a hashed tag is enough to correlate log lines.
+      const emailTag = require('crypto').createHash('sha256').update(String(email).toLowerCase()).digest('hex').slice(0, 10);
+      console.log(`[LEAD CAPTURED] email#${emailTag} | Webhook Status: ${response.status}`);
     } catch (e) {
       console.error("[WEBHOOK ERROR] Unable to reach n8n / Make endpoint:", e.message);
     }
@@ -47,7 +57,7 @@ exports.handler = async (event, context) => {
       statusCode: 200,
       body: JSON.stringify({
         message: "Lead securely captured and queued for webhook dispatch.",
-        captured: { email, phone, timestamp }
+        captured: { timestamp }
       })
     };
 
