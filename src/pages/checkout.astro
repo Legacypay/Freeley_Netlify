@@ -192,7 +192,7 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
         <!-- Step 1 -->
         <section class="ck-step" aria-labelledby="ck-step1">
           <div class="ck-step__head"><span class="ck-step__num">1</span><h2 class="ck-step__title" id="ck-step1">Choose your plan</h2></div>
-          <p class="ck-step__hint">Longer plans lower your rate per day. This is a subscription: you're billed today, then automatically at the same amount and cadence until you cancel.</p>
+          <p class="ck-step__hint">Longer plans lower your rate per day. Monthly through 12-month plans are subscriptions: you're billed today, then automatically at the same amount and cadence until you cancel. The 24-month plan is a single payment for the full term and does not auto-renew.</p>
 
           <div id="compoundSelector" class="ck-choices" hidden role="radiogroup" aria-label="Treatment"></div>
 
@@ -458,6 +458,13 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
             container.innerHTML = html;
         }
 
+        // Authorize.Net ARB caps a months-based interval at 12, so only plans
+        // up to 12 months auto-renew (mirrors ARB_MAX_INTERVAL_MONTHS in
+        // netlify/functions/lib/authnet-arb.js). The 24-month plan is a single
+        // payment for the whole term and the copy must never promise otherwise.
+        const ARB_MAX_INTERVAL_MONTHS = 12;
+        function planRenews(months) { return months <= ARB_MAX_INTERVAL_MONTHS; }
+
         /**
          * Render plan selector with collapsible cards (accordion behavior)
          */
@@ -499,7 +506,7 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
             <span class="ck-plan__radio" aria-hidden="true"></span>
             <div class="ck-plan__body">
               <div class="ck-plan__name">${option.label} ${savingTag ? `<span class="ck-plan__save">${savingTag}</span>` : ""}</div>
-              <div class="ck-plan__meta">$${totalPrice.toFixed(2)} today, then every ${option.months === 1 ? "month" : option.months + " months"} · $${perDay}/day</div>
+              <div class="ck-plan__meta">${planRenews(option.months) ? `$${totalPrice.toFixed(2)} today, then every ${option.months === 1 ? "month" : option.months + " months"}` : `$${totalPrice.toFixed(2)} one-time for ${option.months} months, no auto-renewal`} · $${perDay}/day</div>
             </div>
             <div class="ck-plan__price">${baseMonthlyPrice > discountedPrice ? `<s>$${baseMonthlyPrice}</s>` : ""}<b>$${discountedPrice}</b><small>/mo</small></div>
           </div>
@@ -562,16 +569,21 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
 
         if (subtotalEl) subtotalEl.textContent = `$${total.toFixed(2)}`;
         if (totalEl) totalEl.textContent = `$${grandTotal.toFixed(2)}`;
+        const renews = planRenews(selectedPlanMonths);
         if (btnText)
-          btnText.textContent = `Subscribe — $${grandTotal.toFixed(2)} today`;
+          btnText.textContent = renews
+            ? `Subscribe — $${grandTotal.toFixed(2)} today`
+            : `Pay $${grandTotal.toFixed(2)} once`;
         // The promo discount only ever applies to today's charge, never to
-        // future renewals (validatePromo.js has no concept of a recurring
-        // discount) — this note always quotes the FULL (undiscounted) total
-        // as what repeats, so it can never understate a future charge.
+        // future renewals (the server schedules renewals at the FULL plan
+        // price) — this note quotes the undiscounted total as what repeats,
+        // so it can never understate a future charge.
         const recurringNote = document.getElementById("totals-recurring-note");
         if (recurringNote) {
           const cadence = selectedPlanMonths === 1 ? "month" : `${selectedPlanMonths} months`;
-          recurringNote.textContent = `Then $${total.toFixed(2)} every ${cadence}, automatically, until you cancel.`;
+          recurringNote.textContent = renews
+            ? `Then $${total.toFixed(2)} every ${cadence}, automatically, until you cancel.`
+            : `One-time payment covering ${selectedPlanMonths} months. This plan does not renew automatically.`;
         }
 
         productTotalPrice = grandTotal;

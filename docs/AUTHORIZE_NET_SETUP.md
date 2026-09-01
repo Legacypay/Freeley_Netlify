@@ -149,14 +149,41 @@ and its header for exactly what was/wasn't verified before shipping.
   fine for ordinary charges). Enable it at sandbox.authorize.net if you want
   to exercise subscription creation/cancellation before trusting production.
 - **Production DOES have it enabled** (verified read-only, no charge).
-- The exact `ARBCreateSubscriptionFromCustomerProfileRequest` schema in
-  `lib/authnet-arb.js` follows Authorize.Net's long-stable public shape but
-  was not re-verified against a live sandbox response (blocked by the point
-  above). Add to the go-live checklist below: **do one real low-value
-  subscription** (any plan, your own card) and confirm in the Merchant
-  Interface → Recurring Billing that a subscription was actually created
-  with the right amount and interval — then cancel it from the Hub and
-  confirm it shows canceled there too — before trusting this at real volume.
+- **Request shape is verified (2026-09-02)** against the official XSD
+  (`https://api.authorize.net/xml/v1/schema/AnetApiSchema.xsd`) and against
+  Authorize.Net's own schema validator: the endpoint validates the body
+  *before* authenticating, so posting `lib/authnet-arb.js`'s exact body to
+  sandbox returns `E00007` (schema passed; ARB merely not enabled there),
+  while the root element the first version used
+  (`ARBCreateSubscriptionFromCustomerProfileRequest`) returns
+  `E00003 … element is not declared` — i.e. that first version could never
+  have created a subscription. The only create request is
+  `ARBCreateSubscriptionRequest` with `subscription.profile`; the JSON API is
+  **key-order-sensitive** (`E00003 … invalid child element` if, say, `billTo`
+  follows `profile`), and `tests/unit/authnet-arb.test.js` pins the order.
+- **Interval limits:** unit=months is 1–12, unit=days is 7–365
+  (documented business rule, not in the XSD). The **24-month plan therefore
+  cannot auto-renew via ARB**; `create-authnet-transaction.js` skips ARB for
+  it and checkout labels it a one-time payment for the full term. Options
+  if it should recur: drop the tier, or bill it as a 12-month subscription
+  at a 24-month-equivalent rate — a pricing decision, not a code one.
+- **Renewal amount = full plan price** (`pricing.json` monthly × months),
+  never the promo-discounted first charge — matches the checkout
+  disclosure ("Then $X every N months").
+- Billing runs after 2 a.m. PST on each scheduled date; a schedule that
+  starts on the 31st bills on the last day of shorter months. The start
+  date we send is today + one interval, clamped to a real calendar day.
+- Still on the go-live checklist: **do one real low-value subscription**
+  (any plan up to 12 months, your own card) and confirm in the Merchant
+  Interface → Recurring Billing that it exists with the right amount and
+  interval — then cancel it from the Hub and confirm it shows canceled there
+  too. That is the remaining piece no sandbox check can cover.
+- **Known gap:** renewal charges happen inside Authorize.Net only. Nothing
+  in this repo receives them yet — no new `funnel_orders` row, no Hub
+  billing-history entry, and no new MDI order/refill is created when a
+  renewal is charged. Closing that needs an Authorize.Net webhook receiver
+  (`net.authorize.payment.authcapture.created` carries the subscription id)
+  or a scheduled `ARBGetSubscriptionRequest` sweep.
 - Patients cancel from the Hub's Billing tab ("Active Plans" card) — see
   `netlify/functions/cancelSubscription.js` and
   `src/lib/hub/dashboard.ts`'s `loadBillingHistory()`.

@@ -34,7 +34,7 @@ const { fireConversion } = require('./lib/conversion-tracker');
 const { saveFunnelOrder } = require('./lib/funnel-orders');
 const { ensureHubAccount } = require('./lib/hub-account');
 const { findPromo, discountCents } = require('./lib/promos');
-const { createArbSubscriptionFromProfile } = require('./lib/authnet-arb');
+const { createArbSubscriptionFromProfile, ARB_MAX_INTERVAL_MONTHS } = require('./lib/authnet-arb');
 
 // Single source of truth for pricing — shared with the frontend display.
 const pricingData = require('../../pricing.json');
@@ -304,15 +304,25 @@ exports.handler = async (event) => {
       // block a payment that already succeeded — the patient still got their
       // treatment for this cycle regardless, and this is loud in the logs so
       // ops can build the missing schedule manually if it ever happens.
+      //
+      // Renewals charge the FULL plan price (subtotal), never the promo-
+      // discounted amount: promo codes are first-order-only and checkout
+      // discloses the undiscounted total as what repeats.
+      //
+      // Authorize.Net caps a months-based interval at 12, so a plan longer
+      // than that (the 24-month tier) cannot auto-renew through ARB at all —
+      // it is a one-time charge for the whole term and checkout says so.
       let authnetSubscriptionId = null;
-      if (card.customerProfileId && card.paymentProfileId) {
+      const renewalAmount = subtotalCents / 100;
+      if (months > ARB_MAX_INTERVAL_MONTHS) {
+        console.log(`[AUTHNET] ${months}-month plan: one-time charge, no ARB schedule (ARB max interval is ${ARB_MAX_INTERVAL_MONTHS} months) | transId=${transactionId}`);
+      } else if (card.customerProfileId && card.paymentProfileId) {
         const arb = await createArbSubscriptionFromProfile({
           customerProfileId: card.customerProfileId,
           customerPaymentProfileId: card.paymentProfileId,
           intervalMonths: months,
-          amount: Number(amountStr),
-          planLabel: description,
-          firstName, lastName, email
+          amount: renewalAmount,
+          planLabel: description
         });
         if (arb.created) {
           authnetSubscriptionId = arb.subscriptionId;
@@ -366,7 +376,10 @@ exports.handler = async (event) => {
           amount: amountStr,
           authCode: txn.authCode || null,
           accountLast4: (txn.accountNumber || '').replace(/[^0-9]/g, '').slice(-4) || null,
-          cardBrand: txn.accountType || null
+          cardBrand: txn.accountType || null,
+          subscriptionId: authnetSubscriptionId,
+          renewalAmount: authnetSubscriptionId ? renewalAmount.toFixed(2) : null,
+          renewalEveryMonths: authnetSubscriptionId ? months : null
         })
       };
     }
