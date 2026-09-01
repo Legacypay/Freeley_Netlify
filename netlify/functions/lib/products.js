@@ -721,8 +721,7 @@ function resolveProductKey(productKey, ctxOrDose) {
 // ── Pharmacy Configuration ───────────────────────────────────
 // Strive Pharmacy is now directly linked to all DTP offerings in the MDI portal.
 // DTP offerings carry their pharmacy inside MDI, so no pharmacy_id is sent on the
-// voucher. `parseInt` of a non-numeric placeholder (the Netlify value was literally
-// "REPLACE_WITH_STRIVE_UUID_FROM_MDI_PORTAL") used to yield NaN — normalise to 0.
+// voucher. `parseInt` of a non-numeric placeholder used to yield NaN — normalise to 0.
 const _pharmacyId = (() => { const n = parseInt(process.env.MDI_STRIVE_PHARMACY_ID || process.env.MDI_DEFAULT_PHARMACY_ID || '0', 10); return Number.isFinite(n) ? n : 0; })();
 const PHARMACIES = {
   default:          _pharmacyId,
