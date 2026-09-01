@@ -1272,9 +1272,20 @@ function validateCheckoutForm() {
 // SETUP CHECKOUT - CORRECTED
 // ============================================================
 
-function setupCheckout() {
-  const checkoutBtn = document.getElementById('checkout-btn');
-  const consentCheck = document.getElementById('consent-check');
+// `root` scopes every lookup below to one quiz instance's own markup.
+// checkout.astro renders a REAL #checkout-btn/#consent-check/#goToCheckoutBtn,
+// and the quiz's own fake step 14 (assessment-quiz.astro) reuses the exact
+// same three ids. When the quiz modal is opened ON TOP of /checkout (the
+// header's "Start Assessment" CTA), calling this with the default
+// `document` root would grab checkout.astro's REAL button first (DOM order)
+// and bind the quiz's fake processPayment() onto it too — see the
+// 2026-09-01 pipeline audit finding: harmless today only because a class
+// name mismatch throws before the fake success path runs, but a landmine
+// for the next unrelated markup change. QuizModal.astro passes its cloned
+// `.quiz-popup` root so this only ever touches the quiz's OWN elements.
+function setupCheckout(root = document) {
+  const checkoutBtn = root.querySelector('#checkout-btn');
+  const consentCheck = root.querySelector('#consent-check');
 
   if (consentCheck && checkoutBtn) {
     consentCheck.addEventListener('change', function () {
@@ -1283,7 +1294,7 @@ function setupCheckout() {
   }
 
   // ── GO TO CHECKOUT BUTTON ──
-  const goToCheckoutBtn = document.getElementById('goToCheckoutBtn');
+  const goToCheckoutBtn = root.querySelector('#goToCheckoutBtn');
   if (goToCheckoutBtn) {
     goToCheckoutBtn.addEventListener('click', function (e) {
       e.preventDefault();
@@ -1359,7 +1370,7 @@ function bindOptionItems(root) {
   });
 }
 
-function initFreeleyQuiz() {
+function initFreeleyQuiz(root = document) {
   // Explicit reset: a fresh iframe used to guarantee clean state on every
   // open. Now the script instance persists across reopens, so anything that
   // isn't naturally re-derived from the DOM/sessionStorage must be reset here.
@@ -1412,7 +1423,7 @@ function initFreeleyQuiz() {
   if (heroStep) heroStep.classList.add('active');
 
   // ── CALL SETUP CHECKOUT ──
-  setupCheckout();
+  setupCheckout(root);
 
   const savedProducts = sessionStorage.getItem('selected_products');
   if (savedProducts) {
@@ -1437,8 +1448,22 @@ function initFreeleyQuiz() {
 
 window.initFreeleyQuiz = initFreeleyQuiz;
 
+// On a host page where this script wasn't already loaded (most pages other
+// than /checkout and /assessment-quiz itself), QuizModal.astro injects this
+// file fresh via a plain <script src> tag and relies on THIS self-invoke —
+// it deliberately never calls initFreeleyQuiz() a second time itself (see
+// runQuiz()'s comment: doing so double-bound every option click listener).
+// So this is the only chance to scope to the modal's cloned root rather than
+// the default `document`, which — on a host page with its OWN real
+// #checkout-btn/#consent-check (e.g. /checkout) — would wire the quiz's fake
+// checkout button onto the host page's real one. QuizModal sets
+// window.__freeleyQuizRoot to its clone immediately before appending this
+// script tag; a direct page load (no modal involved) never sets it, so this
+// still defaults to `document` exactly as before.
+const _freeleyInitRoot = window.__freeleyQuizRoot || document;
+delete window.__freeleyQuizRoot;
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initFreeleyQuiz);
+  document.addEventListener('DOMContentLoaded', function () { initFreeleyQuiz(_freeleyInitRoot); });
 } else {
-  initFreeleyQuiz();
+  initFreeleyQuiz(_freeleyInitRoot);
 }

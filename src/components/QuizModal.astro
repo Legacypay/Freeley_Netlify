@@ -136,13 +136,23 @@
       var clone = quizTemplate.cloneNode(true);
       frame.appendChild(clone);
       if (window.initFreeleyQuiz) {
-        window.initFreeleyQuiz();
+        // Scope asw.js's checkout-button wiring to THIS clone — the host
+        // page underneath (e.g. /checkout) can have its own real
+        // #checkout-btn/#consent-check sharing the quiz's ids; without a
+        // scoped root, document.getElementById() would grab the host
+        // page's element instead of the quiz's own. See asw.js's
+        // setupCheckout() for the full story.
+        window.initFreeleyQuiz(clone);
       } else {
         // No 'load' listener here: asw.js self-invokes initFreeleyQuiz() at its
         // own bottom once document.readyState isn't 'loading' — which it never
         // is by the time this dynamically-injected script runs. Calling it
         // again here double-bound every .option--item's click listener, so a
         // multi-select toggle click fired twice and canceled itself out.
+        // window.__freeleyQuizRoot tells that self-invoke to scope to THIS
+        // clone instead of its `document` default — see asw.js's matching
+        // comment at the bottom of the file for why that matters.
+        window.__freeleyQuizRoot = clone;
         var script = document.createElement('script');
         script.src = '/quiz-scripts/asw.js';
         document.body.appendChild(script);
