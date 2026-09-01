@@ -133,3 +133,35 @@ fetch("https://apitest.authorize.net/xml/v1/request.api",{method:"POST",headers:
  .then(r=>r.text()).then(t=>console.log(JSON.parse(t.replace(/^\uFEFF/,"")).messages))'
 ```
 (`Ok / I00001 Successful` = valid for that host; swap the URL to `api.authorize.net` for production.)
+
+## Recurring billing / subscriptions (added 2026-09-02)
+
+Every checkout plan is a real Authorize.Net subscription (ARB — Automated
+Recurring Billing), not a one-time charge for the full term: "Pay Monthly"
+charges $89 every month until canceled; "Pay For 12 Months" charges $708
+every 12 months until canceled — same cadence as the plan's own label,
+forever. See `netlify/functions/lib/authnet-arb.js` for the implementation
+and its header for exactly what was/wasn't verified before shipping.
+
+- **Sandbox does not have Recurring Billing enabled** — confirmed 2026-09-02
+  (`ARBGetSubscriptionListRequest`/`ARBCreateSubscriptionRequest` both return
+  `E00007` against the sandbox credentials, while the same credentials work
+  fine for ordinary charges). Enable it at sandbox.authorize.net if you want
+  to exercise subscription creation/cancellation before trusting production.
+- **Production DOES have it enabled** (verified read-only, no charge).
+- The exact `ARBCreateSubscriptionFromCustomerProfileRequest` schema in
+  `lib/authnet-arb.js` follows Authorize.Net's long-stable public shape but
+  was not re-verified against a live sandbox response (blocked by the point
+  above). Add to the go-live checklist below: **do one real low-value
+  subscription** (any plan, your own card) and confirm in the Merchant
+  Interface → Recurring Billing that a subscription was actually created
+  with the right amount and interval — then cancel it from the Hub and
+  confirm it shows canceled there too — before trusting this at real volume.
+- Patients cancel from the Hub's Billing tab ("Active Plans" card) — see
+  `netlify/functions/cancelSubscription.js` and
+  `src/lib/hub/dashboard.ts`'s `loadBillingHistory()`.
+- Checkout's copy (plan cards, the consent checkbox, and a line under the
+  total) discloses the recurring nature and cancellation before the charge —
+  required by auto-renewal disclosure laws in several US states and by the
+  card networks' subscription-billing rules. If you change plan pricing or
+  wording, keep that disclosure accurate.

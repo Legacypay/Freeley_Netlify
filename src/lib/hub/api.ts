@@ -38,6 +38,9 @@ export const sendMessage = (body: { patient_id: string; text: string; channel: s
 
 export const getBillingHistory = (email: string) => authFetch('getBillingHistory', { email });
 
+export const cancelSubscription = (authnetSubscriptionId: string) =>
+  authFetch('cancelSubscription', { authnet_subscription_id: authnetSubscriptionId });
+
 export const getEncounterDetails = (body: { case_id: string; patient_id: string | null }) =>
   authFetch('getEncounterDetails', body);
 

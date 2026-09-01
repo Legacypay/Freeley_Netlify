@@ -192,7 +192,7 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
         <!-- Step 1 -->
         <section class="ck-step" aria-labelledby="ck-step1">
           <div class="ck-step__head"><span class="ck-step__num">1</span><h2 class="ck-step__title" id="ck-step1">Choose your plan</h2></div>
-          <p class="ck-step__hint">Longer plans lower your monthly rate. Billed today for the full term.</p>
+          <p class="ck-step__hint">Longer plans lower your rate per day. This is a subscription: you're billed today, then automatically at the same amount and cadence until you cancel.</p>
 
           <div id="compoundSelector" class="ck-choices" hidden role="radiogroup" aria-label="Treatment"></div>
 
@@ -308,10 +308,11 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
             <div class="ck-calc__row ck-calc__row--promo" id="totals-discount-row" hidden><span>Discount <b id="promo-applied-code"></b> <button type="button" class="ck-promo__remove" id="promo-remove" aria-label="Remove promo code">×</button></span><span id="totals-discount">−$0.00</span></div>
             <div class="ck-calc__row ck-calc__row--total"><span>Total due today</span><span id="totals-total">$0.00</span></div>
           </div>
+          <p class="ck-step__hint" id="totals-recurring-note" style="margin: -6px 0 14px;"></p>
 
           <label class="ck-consent">
             <input type="checkbox" id="consent-check" />
-            <span>I have read and agree to the <a href="/telehealth-consent" target="_blank" rel="noopener">Telehealth Consent</a> and understand that my treatment may be declined based on the clinician's medical judgment.</span>
+            <span>I have read and agree to the <a href="/telehealth-consent" target="_blank" rel="noopener">Telehealth Consent</a>, understand that my treatment may be declined based on the clinician's medical judgment, and authorize Freeley to automatically charge my card the plan amount today and every renewal period thereafter until I cancel.</span>
           </label>
 
           <div id="payment-errors" role="alert" class="ck-error" style="margin: 0 0 12px"></div>
@@ -321,7 +322,7 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
             <span id="btn-text">Checkout</span>
           </button>
           <div id="checkout-spinner" class="ck-spinner">Processing your payment…</div>
-          <p class="ck-note">Your card is tokenized in your browser and never stored on our servers.</p>
+          <p class="ck-note">Your card is tokenized in your browser and never stored on our servers. Cancel your subscription anytime from your Hub account — no phone call needed.</p>
 
           <div class="ck-assure">
             <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 3h15v13H1zM16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Free overnight shipping</div>
@@ -498,7 +499,7 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
             <span class="ck-plan__radio" aria-hidden="true"></span>
             <div class="ck-plan__body">
               <div class="ck-plan__name">${option.label} ${savingTag ? `<span class="ck-plan__save">${savingTag}</span>` : ""}</div>
-              <div class="ck-plan__meta">$${totalPrice.toFixed(2)} billed for ${option.months} ${option.months === 1 ? "month" : "months"} · $${perDay}/day</div>
+              <div class="ck-plan__meta">$${totalPrice.toFixed(2)} today, then every ${option.months === 1 ? "month" : option.months + " months"} · $${perDay}/day</div>
             </div>
             <div class="ck-plan__price">${baseMonthlyPrice > discountedPrice ? `<s>$${baseMonthlyPrice}</s>` : ""}<b>$${discountedPrice}</b><small>/mo</small></div>
           </div>
@@ -530,6 +531,8 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
           }
           const bt = document.getElementById("btn-text");
           if (bt) bt.textContent = "Complete the assessment first";
+          const note = document.getElementById("totals-recurring-note");
+          if (note) note.textContent = "";
           return;
         }
         // Mirrors create-authnet-transaction.js exactly: monthly tier price
@@ -560,7 +563,16 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
         if (subtotalEl) subtotalEl.textContent = `$${total.toFixed(2)}`;
         if (totalEl) totalEl.textContent = `$${grandTotal.toFixed(2)}`;
         if (btnText)
-          btnText.textContent = `Checkout — $${grandTotal.toFixed(2)}`;
+          btnText.textContent = `Subscribe — $${grandTotal.toFixed(2)} today`;
+        // The promo discount only ever applies to today's charge, never to
+        // future renewals (validatePromo.js has no concept of a recurring
+        // discount) — this note always quotes the FULL (undiscounted) total
+        // as what repeats, so it can never understate a future charge.
+        const recurringNote = document.getElementById("totals-recurring-note");
+        if (recurringNote) {
+          const cadence = selectedPlanMonths === 1 ? "month" : `${selectedPlanMonths} months`;
+          recurringNote.textContent = `Then $${total.toFixed(2)} every ${cadence}, automatically, until you cancel.`;
+        }
 
         productTotalPrice = grandTotal;
       }

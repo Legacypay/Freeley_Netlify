@@ -2,7 +2,7 @@
 // inline in hub.astro's big script, plus the old public/hub-tabs.js).
 import { setText, escapeHtml } from './dom';
 import { PRODUCT_NAMES, PRODUCT_IMG } from './products';
-import { getCases, getCaseStatus, getOrders, getMessages, getEncounterDetails, getBillingHistory } from './api';
+import { getCases, getCaseStatus, getOrders, getMessages, getEncounterDetails, getBillingHistory, cancelSubscription } from './api';
 
 // Card brand -> logo, keyed by the brand string lowercased with non-letters
 // stripped so both gateways' casing matches: Authorize.Net's accountType is
@@ -426,6 +426,8 @@ export async function loadBillingHistory(): Promise<void> {
   const methodsEmpty = document.getElementById('payment-methods-empty');
   const invoicesEl = document.getElementById('invoices-content');
   const invoicesEmpty = document.getElementById('invoices-empty');
+  const subsEl = document.getElementById('subscriptions-content');
+  const subsEmpty = document.getElementById('subscriptions-empty');
   if (!loadingEl) return;
   try {
     let email = sessionStorage.getItem('freeley_patient_email');
@@ -470,7 +472,57 @@ export async function loadBillingHistory(): Promise<void> {
       }
     }
 
+    // ── Active subscriptions (recurring billing, added 2026-09-02) ──
+    // Every checkout plan is now a real Authorize.Net subscription (ARB);
+    // subscription_status is null on pre-subscription orders and on any
+    // order whose ARB schedule failed to create, so this can be empty even
+    // when the invoice table below isn't.
     const charges = data.charges || [];
+    const activeSubs = charges.filter((ch: any) => ch.subscription_status === 'active' && ch.authnet_subscription_id);
+    if (!activeSubs.length) {
+      if (subsEmpty) subsEmpty.style.display = 'block';
+    } else if (subsEl) {
+      subsEl.innerHTML = activeSubs.map((ch: any) => {
+        const months = Number(ch.plan_months) || 1;
+        const cadence = months === 1 ? 'every month' : 'every ' + months + ' months';
+        return (
+          '<div class="hub-sub" data-sub-id="' + escapeHtml(ch.authnet_subscription_id) + '">' +
+          '<div><div class="hub-sub__name">' + escapeHtml(ch.description || 'Freeley Health') + '</div>' +
+          '<div class="hub-sub__cadence">$' + Number(ch.amount).toFixed(2) + ' billed ' + cadence + ' until canceled</div></div>' +
+          '<button type="button" class="hub-sub-cancel" data-cancel-sub="' + escapeHtml(ch.authnet_subscription_id) + '">Cancel subscription</button>' +
+          '</div>'
+        );
+      }).join('');
+      subsEl.style.display = 'block';
+
+      subsEl.querySelectorAll<HTMLButtonElement>('[data-cancel-sub]').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+          const subId = btn.getAttribute('data-cancel-sub') || '';
+          if (!subId) return;
+          const ok = window.confirm('Cancel this subscription? You will not be charged again, and your current treatment continues until the period you already paid for ends.');
+          if (!ok) return;
+          btn.disabled = true;
+          btn.textContent = 'Canceling...';
+          try {
+            const res = await cancelSubscription(subId);
+            const body = await res.json().catch(() => ({}));
+            if (!res.ok || !body.canceled) throw new Error(body.error || ('HTTP ' + res.status));
+            const row = btn.closest('.hub-sub');
+            if (row) row.remove();
+            if (subsEl && !subsEl.querySelector('.hub-sub') && subsEmpty) {
+              subsEl.style.display = 'none';
+              subsEmpty.style.display = 'block';
+            }
+          } catch (e) {
+            console.warn('[Hub] Cancel subscription failed:', e);
+            btn.disabled = false;
+            btn.textContent = 'Cancel subscription';
+            window.alert('Could not cancel right now. Please try again or contact support.');
+          }
+        });
+      });
+    }
+
     if (!charges.length) {
       if (invoicesEmpty) invoicesEmpty.style.display = 'block';
     } else {
@@ -495,5 +547,6 @@ export async function loadBillingHistory(): Promise<void> {
     loadingEl.style.display = 'none';
     if (methodsEmpty) methodsEmpty.style.display = 'block';
     if (invoicesEmpty) invoicesEmpty.style.display = 'block';
+    if (subsEmpty) subsEmpty.style.display = 'block';
   }
 }

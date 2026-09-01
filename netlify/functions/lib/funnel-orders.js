@@ -37,6 +37,8 @@ function getClient() {
  * @param {string}      order.gatewayTransactionId
  * @param {object}      [order.billing]         { firstName, lastName, address, city, state, zip, dateOfBirth }
  * @param {object}      [order.card]            { brand, last4, customerProfileId, paymentProfileId } — gateway refs + masked display only, never PAN
+ * @param {string|null} [order.authnetSubscriptionId] the Authorize.Net ARB subscription id for this plan's
+ *                      recurring schedule (see lib/authnet-arb.js), or null if none was created
  * @returns {Promise<string|null>} the funnel_orders.id, or null if not recorded
  */
 async function saveFunnelOrder(order) {
@@ -66,7 +68,8 @@ async function saveFunnelOrder(order) {
     p_card_brand: c.brand || null,
     p_card_last4: c.last4 || null,
     p_customer_profile_id: c.customerProfileId ? String(c.customerProfileId) : null,
-    p_payment_profile_id: c.paymentProfileId ? String(c.paymentProfileId) : null
+    p_payment_profile_id: c.paymentProfileId ? String(c.paymentProfileId) : null,
+    p_authnet_subscription_id: order.authnetSubscriptionId ? String(order.authnetSubscriptionId) : null
   });
   if (error) {
     console.error('[FUNNEL ORDERS] save_funnel_order failed:', error.message);
@@ -92,4 +95,26 @@ async function getFunnelOrdersForEmail(email) {
   return Array.isArray(data) ? data : [];
 }
 
-module.exports = { saveFunnelOrder, getFunnelOrdersForEmail };
+/**
+ * Cancels the given subscription's recurring schedule in Authorize.Net AND
+ * marks it canceled in Supabase — used by cancelSubscription.js. `email`
+ * MUST be the verified Supabase session email (same rule as
+ * getFunnelOrdersForEmail): the RPC only updates a row it can join back to
+ * that email, so this can never cancel another patient's subscription.
+ * @returns {Promise<boolean>} true only if a row was actually found and marked canceled
+ */
+async function markSubscriptionCanceledForEmail(email, authnetSubscriptionId) {
+  const supabase = getClient();
+  if (!supabase || !email || !authnetSubscriptionId) return false;
+  const { data, error } = await supabase.rpc('cancel_subscription_for_email', {
+    p_email: email,
+    p_authnet_subscription_id: String(authnetSubscriptionId)
+  });
+  if (error) {
+    console.error('[FUNNEL ORDERS] cancel_subscription_for_email failed:', error.message);
+    return false;
+  }
+  return data === true;
+}
+
+module.exports = { saveFunnelOrder, getFunnelOrdersForEmail, markSubscriptionCanceledForEmail };

@@ -34,6 +34,7 @@ const { fireConversion } = require('./lib/conversion-tracker');
 const { saveFunnelOrder } = require('./lib/funnel-orders');
 const { ensureHubAccount } = require('./lib/hub-account');
 const { findPromo, discountCents } = require('./lib/promos');
+const { createArbSubscriptionFromProfile } = require('./lib/authnet-arb');
 
 // Single source of truth for pricing — shared with the frontend display.
 const pricingData = require('../../pricing.json');
@@ -292,6 +293,36 @@ exports.handler = async (event) => {
         console.warn('[AUTHNET] Customer profile save failed (non-blocking):', cimErr.message);
       }
 
+      // ── Set up the recurring subscription (ARB) ──
+      // Every plan is a real subscription now (2026-09-02): "Pay Monthly"
+      // charges $89 every month, "Pay For 12 Months" charges $708 every 12
+      // months, etc. — same cadence as the plan's own label, forever until
+      // canceled. TODAY's charge above already covers the first cycle; this
+      // only schedules the ones after it (see lib/authnet-arb.js's header
+      // for why it's built from the CIM profile, not straight from
+      // opaqueData). Best-effort: a scheduling failure must never undo or
+      // block a payment that already succeeded — the patient still got their
+      // treatment for this cycle regardless, and this is loud in the logs so
+      // ops can build the missing schedule manually if it ever happens.
+      let authnetSubscriptionId = null;
+      if (card.customerProfileId && card.paymentProfileId) {
+        const arb = await createArbSubscriptionFromProfile({
+          customerProfileId: card.customerProfileId,
+          customerPaymentProfileId: card.paymentProfileId,
+          intervalMonths: months,
+          amount: Number(amountStr),
+          planLabel: description,
+          firstName, lastName, email
+        });
+        if (arb.created) {
+          authnetSubscriptionId = arb.subscriptionId;
+        } else {
+          console.warn(`[AUTHNET] ⚠️ Recurring schedule NOT created for transId=${transactionId} (${arb.reason}) — patient was charged once but will NOT auto-renew; ops should follow up`);
+        }
+      } else {
+        console.warn(`[AUTHNET] ⚠️ No CIM profile — cannot schedule recurring billing for transId=${transactionId}`);
+      }
+
       // Record the purchase in Supabase (funnel_orders). Non-blocking for the
       // same reason as the conversion above: the money already moved, and
       // Authorize.Net holds the authoritative transaction record regardless.
@@ -306,7 +337,8 @@ exports.handler = async (event) => {
           productName: `${treatmentName} - ${months}mo${promo ? ' (' + promo.code + ')' : ''}`,
           treatment,
           billing,
-          card
+          card,
+          authnetSubscriptionId
         });
         if (orderId) console.log(`[AUTHNET] funnel_orders recorded: ${orderId}`);
         else console.warn(`[AUTHNET] ⚠️ funnel_orders NOT recorded for transId=${transactionId} — ops: reconcile manually from the Authorize.Net dashboard`);

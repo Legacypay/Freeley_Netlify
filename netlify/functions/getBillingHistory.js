@@ -61,7 +61,13 @@ exports.handler = async (event) => {
       created: o.created_at,
       receipt_url: null, // Authorize.Net emails its own receipt; no hosted PDF
       refunded: o.status === 'refunded',
-      paid: o.status === 'paid'
+      paid: o.status === 'paid',
+      // Recurring billing (2026-09-02): null on pre-subscription orders and on
+      // any order whose ARB schedule failed to create (see authnet-arb.js) —
+      // the Hub only ever offers "Cancel" when this is 'active'.
+      plan_months: o.plan_months || null,
+      authnet_subscription_id: o.authnet_subscription_id || null,
+      subscription_status: o.subscription_status || null
     }));
     console.log(`[BILLING] funnel_orders: ${charges.length} charge(s)`);
 

@@ -47,20 +47,29 @@ test('calls save_funnel_order with the exact SQL parameter names', async () => {
     leadId: 'lead-1', planMonths: 3, amountCents: 22500, status: 'paid',
     gateway: 'authorize_net', gatewayTransactionId: '80058673597',
     billing: { firstName: 'QA', lastName: 'T', address: '1 St', city: 'Miami', state: 'FL', zip: '33101', dateOfBirth: '1990-01-01' },
-    card: { brand: 'Visa', last4: '1111', customerProfileId: 123, paymentProfileId: 456 }
+    card: { brand: 'Visa', last4: '1111', customerProfileId: 123, paymentProfileId: 456 },
+    authnetSubscriptionId: 789
   });
   assert.equal(id, 'order-uuid-1');
   assert.equal(rpcCalls.length, 1);
   assert.equal(rpcCalls[0].name, 'save_funnel_order');
   assert.deepEqual(Object.keys(rpcCalls[0].params).sort(), [
-    'p_address', 'p_amount_cents', 'p_card_brand', 'p_card_last4', 'p_city', 'p_customer_profile_id',
-    'p_date_of_birth', 'p_first_name', 'p_gateway', 'p_gateway_transaction_id', 'p_last_name', 'p_lead_id',
-    'p_payment_profile_id', 'p_plan_months', 'p_product_name', 'p_status', 'p_treatment', 'p_us_state', 'p_zip'
+    'p_address', 'p_amount_cents', 'p_authnet_subscription_id', 'p_card_brand', 'p_card_last4', 'p_city',
+    'p_customer_profile_id', 'p_date_of_birth', 'p_first_name', 'p_gateway', 'p_gateway_transaction_id',
+    'p_last_name', 'p_lead_id', 'p_payment_profile_id', 'p_plan_months', 'p_product_name', 'p_status',
+    'p_treatment', 'p_us_state', 'p_zip'
   ]);
   assert.equal(rpcCalls[0].params.p_card_last4, '1111');
   assert.equal(rpcCalls[0].params.p_customer_profile_id, '123'); // ids go over as text
+  assert.equal(rpcCalls[0].params.p_authnet_subscription_id, '789');
   assert.equal(rpcCalls[0].params.p_amount_cents, 22500);
   assert.equal(rpcCalls[0].params.p_gateway_transaction_id, '80058673597');
+});
+
+test('authnetSubscriptionId is null when the ARB schedule was never created', async () => {
+  const { saveFunnelOrder } = fresh();
+  await saveFunnelOrder({ planMonths: 1, amountCents: 8900, status: 'paid', gateway: 'authorize_net', gatewayTransactionId: 't2' });
+  assert.equal(rpcCalls[0].params.p_authnet_subscription_id, null);
 });
 
 test('missing lead / billing become SQL nulls, not undefined', async () => {
@@ -106,4 +115,22 @@ test('returns null (does not throw) when Supabase env is not configured', async 
   const id = await saveFunnelOrder({ planMonths: 1, amountCents: 8900, status: 'paid', gateway: 'authorize_net', gatewayTransactionId: 't' });
   assert.equal(id, null);
   assert.equal(rpcCalls.length, 0);
+});
+
+test('markSubscriptionCanceledForEmail calls the cancel RPC and returns its boolean', async () => {
+  rpcResult = { data: true, error: null };
+  const { markSubscriptionCanceledForEmail } = fresh();
+  const ok = await markSubscriptionCanceledForEmail('a@b.co', 'sub-123');
+  assert.equal(rpcCalls[0].name, 'cancel_subscription_for_email');
+  assert.deepEqual(rpcCalls[0].params, { p_email: 'a@b.co', p_authnet_subscription_id: 'sub-123' });
+  assert.equal(ok, true);
+});
+
+test('markSubscriptionCanceledForEmail returns false without calling the RPC when args are missing, and on RPC error', async () => {
+  const { markSubscriptionCanceledForEmail } = fresh();
+  assert.equal(await markSubscriptionCanceledForEmail('', 'sub-123'), false);
+  assert.equal(await markSubscriptionCanceledForEmail('a@b.co', ''), false);
+  assert.equal(rpcCalls.length, 0);
+  rpcResult = { data: null, error: { message: 'boom' } };
+  assert.equal(await markSubscriptionCanceledForEmail('a@b.co', 'sub-123'), false);
 });
