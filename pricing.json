@@ -22,8 +22,8 @@
     "default": { "1": 89, "3": 75, "6": 65, "12": 59, "24": 49 }
   },
   "billing": {
-    "_note": "Per-product billing model. Client said (2026-09-01) NOT every product is a subscription — some are a single payment. `_default` applies to everything not listed; `one_time` / `subscription` list product ids as `treatment` or `treatment:compound` (compound = the key checkout sends: sema, tirz, tadalafil-daily, olympus, sermorelin-injectable, nad-plus, glutathione-troche; hair-loss has no compound). A `treatment:compound` entry beats a `treatment` entry. Subscription plans auto-renew via Authorize.Net ARB at the plan's own cadence and full price; one-time plans are charged once for the full term. FILL `one_time` WITH THE CLIENT'S LIST BEFORE GOING LIVE.",
-    "_default": "subscription",
+    "_note": "Per-product billing model. 2026-09-02: the client never sent the list of subscription products, so EVERY product is a single payment until they do — list them in `subscription` to re-enable ARB. `_default` applies to everything not listed; `one_time` / `subscription` list product ids as `treatment` or `treatment:compound` (compound = the key checkout sends: sema, tirz, tadalafil-daily, olympus, sermorelin-injectable, nad-plus, glutathione-troche; hair-loss has no compound). A `treatment:compound` entry beats a `treatment` entry. Subscription plans auto-renew via Authorize.Net ARB at the plan's own cadence and full price; one-time plans are charged once for the full term.",
+    "_default": "one-time",
     "one_time": [],
     "subscription": []
   },
