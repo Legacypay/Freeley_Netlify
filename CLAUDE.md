@@ -56,7 +56,7 @@ npx playwright test -g "some test name"
 
 **Pricing:** `pricing.json` at the repo root is the single source of truth, imported directly by both payment functions server-side — the client never sends a dollar amount.
 
-**The site currently sits behind a waitlist gate**: `netlify.toml` has a "COMING SOON GATE" block that force-rewrites every route to `/waitlist` except an explicit allowlist (functions, static assets, a few pages). All 21 Netlify Functions stay reachable regardless of gate state. See `WAITLIST.md` for how to remove it — and don't drop the `waitlist` Supabase table, which holds real captured emails.
+**The site is live** (the "COMING SOON GATE" block in `netlify.toml` and the `/preview` link-rewriting in `Layout.astro`/`Header.astro`/`index.astro` were removed 2026-09-02 — every route now serves its real page directly). `src/pages/waitlist.astro` still exists as a plain `/waitlist` page and the `waitlist` Supabase table still holds real captured emails — don't drop it. `WAITLIST.md` documents the old gate for reference.
 
 **Blog/SEO pipeline (legacy, outside `src/`):** `content/blog/*.md` (140 posts) is **not** an Astro content collection — it's consumed by root-level scripts `refill-keywords.js` → `seo-agent.js` (OpenAI) → `build_blog.js` (gray-matter + marked → static `<slug>.html` at repo root + rebuilds `blog.html`/`sitemap.xml`), run daily by `.github/workflows/daily-seo.yml` (commits as "🤖 Auto-SEO: new article + rebuilt blog"). This pipeline is disconnected from the Astro build; syncing its output into `public/` is a documented manual step, not automated.
 

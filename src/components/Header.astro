@@ -47,20 +47,6 @@ const nav = [
 
   <script is:inline>
     (function () {
-      /* Navbar links are absolute (/hair-loss, /about, ...), so a click from
-         /preview/* used to jump straight to the real path — which isn't on
-         the waitlist gate's allow-list and lands on /waitlist. Same fix the
-         CTA button already had below: keep navigation under /preview/* while
-         browsing the mockup. */
-      if (window.location.pathname.startsWith('/preview')) {
-        document.querySelectorAll('a[data-preview-aware]').forEach(function (a) {
-          var href = a.getAttribute('href');
-          if (href && href.charAt(0) === '/' && !href.startsWith('/preview')) {
-            a.setAttribute('href', '/preview' + href);
-          }
-        });
-      }
-
       var b = document.getElementById('siteNavBurger');
       var m = document.getElementById('siteNavMobile');
       if (b && m) {
@@ -77,8 +63,7 @@ const nav = [
       if (cta) {
         cta.addEventListener('click', function () {
           if (!document.getElementById('quiz--modal') && !document.getElementById('quizModal')) {
-            var target = window.location.pathname.startsWith('/preview') ? '/preview/assessment-quiz' : '/assessment-quiz';
-            window.location.href = target;
+            window.location.href = '/assessment-quiz';
           }
         });
       }

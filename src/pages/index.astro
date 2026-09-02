@@ -1294,22 +1294,6 @@ const press = [
         });
       })();
 
-      /* This page IS /preview (it's also the live homepage at /). Its navbar
-         hrefs are absolute (/weight-loss, /about, ...), none of which are on
-         the waitlist gate's allow-list — clicking one from /preview jumped
-         straight to the real path and fell through to the forced /waitlist
-         rewrite. Keep navigation under /preview/* while browsing the mockup,
-         same fix already applied to Header.astro (used by the other pages). */
-      (function () {
-        if (!window.location.pathname.startsWith('/preview')) return;
-        document.querySelectorAll('a[data-preview-aware]').forEach(function (a) {
-          var href = a.getAttribute('href');
-          if (href && href.charAt(0) === '/' && !href.startsWith('/preview')) {
-            a.setAttribute('href', '/preview' + href);
-          }
-        });
-      })();
-
       /* Your Journey cards + The Process steps: staggered reveal-on-scroll,
          once per card, sharing one observer. IntersectionObserver rather
          than `animation-timeline: view()` — see the .jcards CSS note above
