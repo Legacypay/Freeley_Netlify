@@ -34,7 +34,8 @@ const { fireConversion } = require('./lib/conversion-tracker');
 const { saveFunnelOrder } = require('./lib/funnel-orders');
 const { ensureHubAccount } = require('./lib/hub-account');
 const { findPromo, discountCents } = require('./lib/promos');
-const { createArbSubscriptionFromProfile, ARB_MAX_INTERVAL_MONTHS } = require('./lib/authnet-arb');
+const { createArbSubscriptionFromProfile, ARB_MAX_INTERVAL_MONTHS, nextCycleStartDate } = require('./lib/authnet-arb');
+const { sendTransactional, enrollJourney, cancelJourney, recordSubscription } = require('./lib/email/engine');
 
 // Single source of truth for pricing — shared with the frontend display.
 const pricingData = require('../../pricing.json');
@@ -185,11 +186,16 @@ exports.handler = async (event) => {
       }
 
       try {
-        const hub = await ensureHubAccount(email, undefined, { firstName });
+        const hub = await ensureHubAccount(email, undefined, { firstName, transactionId });
         console.log('[AUTHNET] Hub magic link ' + (hub.sent ? 'sent' : 'NOT sent: ' + hub.reason));
       } catch (hubErr) {
         console.warn('[AUTHNET] Hub account creation failed (non-blocking):', hubErr.message);
       }
+
+      await firePostPurchaseEmails({
+        email, firstName, transactionId, treatmentName, months, amountStr,
+        cardLast4: null, billingModel: billingModelFor(treatment, compound), authnetSubscriptionId: null
+      });
 
       return {
         statusCode: 200,
@@ -373,11 +379,16 @@ exports.handler = async (event) => {
       // this is where the Freeley Hub account comes from. Non-blocking like
       // everything else after the charge.
       try {
-        const hub = await ensureHubAccount(email, undefined, { firstName });
+        const hub = await ensureHubAccount(email, undefined, { firstName, transactionId });
         console.log('[AUTHNET] Hub magic link ' + (hub.sent ? 'sent' : 'NOT sent: ' + hub.reason));
       } catch (hubErr) {
         console.warn('[AUTHNET] Hub account creation failed (non-blocking):', hubErr.message);
       }
+
+      await firePostPurchaseEmails({
+        email, firstName, transactionId, treatmentName, months, amountStr,
+        cardLast4: card.last4, billingModel, authnetSubscriptionId
+      });
 
       return {
         statusCode: 200,
@@ -425,6 +436,69 @@ exports.handler = async (event) => {
     return { statusCode: 500, headers, body: JSON.stringify({ approved: false, error: 'Unable to process payment. Please try again or contact support.' }) };
   }
 };
+
+/**
+ * Every email/journey side effect that follows a successful charge — shared
+ * between the SIMULATE branch and the real-charge branch so the two never
+ * drift apart. Entirely best-effort/non-blocking, same philosophy as every
+ * other post-charge step in this file (funnel_orders, Hub account, ARB): the
+ * money already moved (or was simulated), nothing here should ever be able
+ * to affect that outcome.
+ */
+async function firePostPurchaseEmails({ email, firstName, transactionId, treatmentName, months, amountStr, cardLast4, billingModel, authnetSubscriptionId }) {
+  if (!email) return;
+  try {
+    await sendTransactional({
+      template: 'order-confirmed',
+      to: email,
+      data: { firstName, productLabel: treatmentName, planMonths: months, amount: '$' + amountStr, cardLast4, billingModel },
+      dedupeKey: 'order:' + transactionId,
+      kind: 'transactional'
+    });
+  } catch (e) {
+    console.warn('[AUTHNET] order-confirmed email failed (non-blocking):', e.message);
+  }
+
+  // A purchase resolves every pre-purchase abandonment journey the same
+  // address might be mid-way through.
+  for (const journey of ['quiz-abandoned', 'checkout-abandoned', 'browse-abandoned']) {
+    try {
+      await cancelJourney(journey, email);
+    } catch (e) {
+      console.warn(`[AUTHNET] cancelJourney(${journey}) failed (non-blocking):`, e.message);
+    }
+  }
+
+  try {
+    await enrollJourney('onboarding', { email, data: { firstName } });
+  } catch (e) {
+    console.warn('[AUTHNET] enrollJourney(onboarding) failed (non-blocking):', e.message);
+  }
+
+  // Refill reminder: one reminder ahead of the next real-world replenishment
+  // moment. For a subscription, that's the ARB engine's own next renewal
+  // date (nextCycleStartDate — the exact math authnet-arb.js uses to
+  // schedule the subscription itself, reused here rather than
+  // reimplemented). For a one-time product, there's no auto-renewal, so the
+  // same "purchase date + plan's own month count" marks when the patient's
+  // supply runs out and they'd need to reorder manually.
+  try {
+    const bufferDays = billingModel === 'subscription' ? 3 : 7;
+    const dueAt = new Date(nextCycleStartDate(months).getTime() - bufferDays * 24 * 60 * 60 * 1000);
+    const delayMs = Math.max(60 * 60 * 1000, dueAt.getTime() - Date.now());
+    await enrollJourney('refill-reminder', { email, data: { firstName }, steps: [{ delayMs, template: 'refill-reminder' }] });
+  } catch (e) {
+    console.warn('[AUTHNET] enrollJourney(refill-reminder) failed (non-blocking):', e.message);
+  }
+
+  if (authnetSubscriptionId) {
+    try {
+      await recordSubscription(authnetSubscriptionId, { email, firstName, planMonths: months });
+    } catch (e) {
+      console.warn('[AUTHNET] recordSubscription failed (non-blocking):', e.message);
+    }
+  }
+}
 
 /**
  * Turns a just-approved transaction into a stored CIM customer + payment

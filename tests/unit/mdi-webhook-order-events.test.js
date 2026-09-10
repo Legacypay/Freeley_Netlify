@@ -53,7 +53,12 @@ const mockClient = {
   }
 };
 const mockTags = { tagTestCase: async () => {} };
-const mockBlobs = { getStore: () => store };
+// getDeployStore is also needed now: sendPatientEmail() routes through
+// lib/email/engine.js, which calls getDeployStore() outside a "production"
+// CONTEXT (unset here) for its own "email-engine" store. Pointed at the same
+// in-memory store — key namespaces don't collide (mdi-orders keys are bare
+// voucher ids; the email engine's are prefixed like "sent/…", "queue/…").
+const mockBlobs = { getStore: () => store, getDeployStore: () => store };
 
 const origLoad = Module._load;
 Module._load = function (request, parent, isMain) {
@@ -133,16 +138,21 @@ test('order_tracking_number_changed emails the patient once, then skips duplicat
   const first = await fireWebhook({ event_type: 'order_tracking_number_changed', case_id: 'case-1', order_status: 'fulfilled' });
   assert.equal(first.statusCode, 200);
 
-  const emailCallsAfterFirst = fetchCalls.filter(c => c.body && c.body.email_action === 'order_shipped');
-  assert.equal(emailCallsAfterFirst.length, 1);
+  // Patient emails now go through lib/email/engine.js (Resend) instead of
+  // the old N8N forward — its dedupe record in the shared "email-engine"
+  // store (getDeployStore, mocked to the same in-memory store here) is the
+  // signal that a send was actually attempted for this case.
+  assert.ok(store._data['sent/shipped:case-1'], 'expected an order-shipped send to be recorded');
   assert.ok(store._data['voucher-1'].order_shipped_email_sent_at);
+
+  const sentAtAfterFirst = store._data['sent/shipped:case-1'].at;
 
   // MDI redelivers the same webhook (happens in practice).
   const second = await fireWebhook({ event_type: 'order_tracking_number_changed', case_id: 'case-1', order_status: 'fulfilled' });
   assert.equal(second.statusCode, 200);
 
-  const emailCallsAfterSecond = fetchCalls.filter(c => c.body && c.body.email_action === 'order_shipped');
-  assert.equal(emailCallsAfterSecond.length, 1); // still just one — no duplicate
+  // Still the same single dedupe record — no duplicate send was recorded.
+  assert.equal(store._data['sent/shipped:case-1'].at, sentAtAfterFirst);
 });
 
 test('order events for an unknown voucher/case do not crash the webhook', async () => {

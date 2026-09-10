@@ -14,7 +14,8 @@
     "dev:netlify": "netlify dev",
     "test:unit": "node --test \"tests/unit/**/*.test.js\"",
     "mdi:verify": "npx -y netlify-cli dev:exec node scripts/mdi-verify-env.js",
-    "test:mdi": "playwright test --config=playwright.functions.config.ts"
+    "test:mdi": "playwright test --config=playwright.functions.config.ts",
+    "email:preview": "node scripts/email-preview.js"
   },
   "keywords": [],
   "author": "",

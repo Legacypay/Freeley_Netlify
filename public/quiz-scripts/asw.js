@@ -793,6 +793,21 @@ function validateStep2AndGo() {
     p_goals: getSelectedOptionsTexts(1)
   });
 
+  // Starts the "quiz-abandoned" email journey (cancelled automatically once
+  // the quiz is actually submitted or a purchase happens — see
+  // netlify/functions/submitQuiz.js / create-authnet-transaction.js).
+  // Fire-and-forget, same pattern as public/exit-intent.js's own capture.
+  fetch('/.netlify/functions/captureLead', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      email: email.value.trim(),
+      phone: phone.value.trim(),
+      source: 'quiz',
+      vertical: getSelectedOptionsTexts(1).join(', ')
+    })
+  }).catch(err => console.warn('Quiz lead capture failed (silent):', err));
+
   goToStep(3);
 }
 

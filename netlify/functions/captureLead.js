@@ -1,6 +1,20 @@
 const { allow } = require('./lib/rate-limit');
+const { connectBlobs } = require('./lib/blobs');
+const { upsertContact, enrollJourney } = require('./lib/email/engine');
+const { siteUrl } = require('./lib/email-templates/shared');
+
+// Which abandonment journey (lib/email/journeys.js) a given `source` starts.
+// 'exit-intent' matches the literal string public/exit-intent.js already
+// sends; 'quiz'/'checkout' are new — see public/quiz-scripts/asw.js and
+// src/pages/checkout.astro.
+const JOURNEY_BY_SOURCE = {
+  quiz: 'quiz-abandoned',
+  checkout: 'checkout-abandoned',
+  'exit-intent': 'browse-abandoned'
+};
 
 exports.handler = async (event, context) => {
+  connectBlobs(event);
   if (event.httpMethod !== "POST") {
     return {
       statusCode: 405,
@@ -50,6 +64,23 @@ exports.handler = async (event, context) => {
       console.log(`[LEAD CAPTURED] email#${emailTag} | Webhook Status: ${response.status}`);
     } catch (e) {
       console.error("[WEBHOOK ERROR] Unable to reach n8n / Make endpoint:", e.message);
+    }
+
+    // ── Abandonment journey enrollment (non-critical) ──
+    // Separate from the n8n forward above (that feeds the CRM regardless of
+    // source) — this is what actually gets a follow-up email sent.
+    try {
+      const firstName = String(data.first_name || '').trim() || undefined;
+      const vertical = String(data.vertical || '').trim() || undefined;
+      await upsertContact(email, { first_name: firstName, source: data.source, vertical });
+
+      const journey = JOURNEY_BY_SOURCE[data.source];
+      if (journey) {
+        const resumeUrl = data.source === 'checkout' ? siteUrl('/checkout') : siteUrl('/assessment-quiz');
+        await enrollJourney(journey, { email, data: { firstName, vertical, resumeUrl } });
+      }
+    } catch (e) {
+      console.warn('[LEAD CAPTURED] Journey enrollment failed (non-critical):', e.message);
     }
 
     // Always return a fast 200 OK so the frontend user isn't kept waiting.

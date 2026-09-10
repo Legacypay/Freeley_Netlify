@@ -23,6 +23,7 @@ const { resolveTestMode, buildVoucherPayload, parseVoucherResponse, demoMismatch
 const { ensureMdiPatient, buildPrefilledQuestions, createPatientOrder } = require('./lib/mdi-patient');
 const { allow } = require('./lib/rate-limit');
 const { verifyAuthnetTransaction } = require('./lib/authnet-verify');
+const { sendTransactional, enrollJourney, cancelJourney } = require('./lib/email/engine');
 
 // MDI Partner ID — from the partner portal URL
 const MDI_PARTNER_ID = process.env.MDI_PARTNER_ID || 'f81508d1-3c53-4849-a636-1e9050a68e00';
@@ -231,6 +232,28 @@ exports.handler = async (event) => {
     } catch (storeErr) {
       // Non-critical — log but don't fail the response
       console.warn('[SUBMIT QUIZ] Failed to save order record (non-critical):', storeErr.message);
+    }
+
+    // ── "Complete your intake" email (non-critical) ──
+    // The onboarding link the patient is redirected to next only ever lives
+    // in the browser's sessionStorage (checkout.astro) — closing the tab
+    // before that redirect completes loses it for good. This email is the
+    // durable copy. Same test/sandbox skip as mdiWebhook.js's
+    // sendPatientEmail: never email a real inbox for a test voucher.
+    if (onboardingUrl && !testMode.isTest) {
+      try {
+        await sendTransactional({
+          template: 'complete-intake',
+          to: patientData.email,
+          data: { firstName: patientData.first_name, onboardingUrl },
+          dedupeKey: 'intake:' + voucherId,
+          kind: 'transactional'
+        });
+        await enrollJourney('intake-reminder', { email: patientData.email, data: { firstName: patientData.first_name, onboardingUrl } });
+        await cancelJourney('quiz-abandoned', patientData.email);
+      } catch (e) {
+        console.warn('[SUBMIT QUIZ] complete-intake email/journey failed (non-critical):', e.message);
+      }
     }
 
     // ── N8N Webhook (non-critical) ──

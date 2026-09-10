@@ -1,5 +1,13 @@
 # Resend + Supabase email setup (added 2026-09-01)
 
+> **Update 2026-09-10**: `RESEND_API_KEY` was checked against the live
+> Netlify environment and is **not actually set in production** — it never
+> was. Every email this codebase tried to send via Resend (the Hub welcome
+> email, and now the much larger set added in `docs/EMAIL_FLOWS.md`) has
+> been silently failing with `RESEND_API_KEY not set` in the logs. Setting
+> it is step 2 of `docs/EMAIL_FLOWS.md`'s manual checklist — do that before
+> relying on anything below.
+
 Two independent things, easy to conflate — see the "How this actually works"
 section in `netlify/functions/lib/resend-client.js` for the short version:
 
@@ -72,8 +80,8 @@ than hand-editing the four HTML files, so they don't drift apart again.
 
 | Var | Value | Purpose |
 |---|---|---|
-| `RESEND_API_KEY` | `re_...` (secret) | Used by `lib/resend-client.js` for the custom welcome email |
-| `RESEND_FROM_EMAIL` | `Freeley <no-reply@freeley.com>` | Sender for that same custom email — change if you'd rather send from a different verified address (e.g. `hello@freeley.com`) |
+| `RESEND_API_KEY` | `re_...` (secret) | **NOT currently set in production** — see the note at the top of this doc. Used by `lib/resend-client.js` for every email this codebase sends directly (`docs/EMAIL_FLOWS.md`) |
+| `RESEND_FROM_EMAIL` | `Freeley <no-reply@freeley.com>` | Set. Sender for those same emails — change if you'd rather send from a different verified address (e.g. `hello@freeley.com`) |
 
 ## 5. The temporary-password email (custom, not a Supabase template)
 

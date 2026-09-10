@@ -41,9 +41,12 @@
  */
 
 const crypto = require('crypto');
+const { connectBlobs } = require('./lib/blobs');
 const { resolveAuthnetConfig } = require('./lib/authnet-config');
+const { sendTransactional, enrollJourney, cancelJourney, getSubscription } = require('./lib/email/engine');
 
 exports.handler = async (event) => {
+  connectBlobs(event);
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: JSON.stringify({ error: 'Method Not Allowed' }) };
   }
@@ -111,6 +114,20 @@ exports.handler = async (event) => {
           amount: data.authAmount,
           action: 'URGENT_alert_team_and_notify_patient'
         });
+        try {
+          const { email, firstName } = await lookupTransactionContact(data.id);
+          if (email) {
+            await sendTransactional({
+              template: 'payment-failed',
+              to: email,
+              data: { firstName },
+              dedupeKey: 'payfail:' + data.id,
+              kind: 'transactional'
+            });
+          }
+        } catch (e) {
+          console.warn('[AUTHNET WEBHOOK] payment-failed email failed (non-blocking):', e.message);
+        }
         break;
       }
 
@@ -122,6 +139,20 @@ exports.handler = async (event) => {
           amount: data.authAmount,
           action: 'update_records'
         });
+        try {
+          const { email, firstName } = await lookupTransactionContact(data.id);
+          if (email) {
+            await sendTransactional({
+              template: 'refund-issued',
+              to: email,
+              data: { firstName, amount: data.authAmount ? '$' + Number(data.authAmount).toFixed(2) : null },
+              dedupeKey: 'refund:' + data.id,
+              kind: 'transactional'
+            });
+          }
+        } catch (e) {
+          console.warn('[AUTHNET WEBHOOK] refund-issued email failed (non-blocking):', e.message);
+        }
         break;
       }
       case 'net.authorize.payment.void.created': {
@@ -130,6 +161,95 @@ exports.handler = async (event) => {
           transaction_id: data.id,
           action: 'update_records'
         });
+        try {
+          const { email, firstName } = await lookupTransactionContact(data.id);
+          if (email) {
+            await sendTransactional({
+              template: 'refund-issued',
+              to: email,
+              data: { firstName, amount: null },
+              dedupeKey: 'refund:' + data.id,
+              kind: 'transactional'
+            });
+          }
+        } catch (e) {
+          console.warn('[AUTHNET WEBHOOK] refund-issued (void) email failed (non-blocking):', e.message);
+        }
+        break;
+      }
+
+      // ── A recurring (ARB) payment captured — the plan's own receipt ──
+      // Fires for EVERY authcapture, one-time charges included; only a
+      // transaction carrying a `subscription.id` we recorded ourselves
+      // (recordSubscription, called right when the ARB schedule is created —
+      // see create-authnet-transaction.js) is a true renewal. The very first
+      // charge on a new plan is NOT this — it's the synchronous charge in
+      // create-authnet-transaction.js, already covered by its own
+      // order-confirmed email (T1); ARB's own first scheduled payment is
+      // deliberately the plan's SECOND installment (see lib/authnet-arb.js).
+      case 'net.authorize.payment.authcapture.created': {
+        const subscriptionId = data.subscription && data.subscription.id;
+        if (!subscriptionId) break; // an ordinary one-time charge, not a renewal
+        const sub = await getSubscription(subscriptionId);
+        if (!sub) {
+          console.warn(`[AUTHNET WEBHOOK] authcapture for unknown subscription ${subscriptionId} — no receipt email sent`);
+          break;
+        }
+        console.log(`[AUTHNET WEBHOOK] 🔁 Renewal captured: transId=${data.id} | subscription=${subscriptionId} | $${data.authAmount}`);
+        await sendTransactional({
+          template: 'renewal-charged',
+          to: sub.email,
+          data: { amount: data.authAmount ? '$' + Number(data.authAmount).toFixed(2) : null, cardLast4: null },
+          dedupeKey: 'renewal:' + data.id,
+          kind: 'transactional'
+        });
+        break;
+      }
+
+      // ── A recurring payment failed enough times that Authorize.Net paused the plan ──
+      case 'net.authorize.customer.subscription.suspended': {
+        const subscriptionId = data.id;
+        console.warn(`[AUTHNET WEBHOOK] ⚠️ Subscription SUSPENDED: ${subscriptionId}`);
+        const sub = await getSubscription(subscriptionId);
+        await notifyInternal('subscription_suspended', { subscription_id: subscriptionId, action: 'alert_team_and_notify_patient' });
+        if (sub) {
+          const today = new Date().toISOString().slice(0, 10);
+          await sendTransactional({
+            template: 'renewal-failed',
+            to: sub.email,
+            data: { firstName: sub.first_name },
+            dedupeKey: 'suspended:' + subscriptionId + ':' + today,
+            kind: 'transactional'
+          });
+          try { await enrollJourney('winback', { email: sub.email, data: { firstName: sub.first_name } }); } catch (e) { console.warn('[AUTHNET WEBHOOK] enrollJourney(winback) failed (non-blocking):', e.message); }
+        }
+        break;
+      }
+
+      // ── Subscription ended (dashboard cancellation, or terminated after
+      // repeated failed suspension) — same patient email as a self-service
+      // cancellation (cancelSubscription.js), just triggered from Authorize.Net's side.
+      case 'net.authorize.customer.subscription.terminated':
+      case 'net.authorize.customer.subscription.cancelled': {
+        const subscriptionId = data.id;
+        console.log(`[AUTHNET WEBHOOK] Subscription ${eventType.endsWith('terminated') ? 'terminated' : 'cancelled'}: ${subscriptionId}`);
+        const sub = await getSubscription(subscriptionId);
+        if (sub) {
+          await sendTransactional({
+            template: 'subscription-cancelled',
+            to: sub.email,
+            data: { firstName: sub.first_name },
+            dedupeKey: 'cancel:' + subscriptionId,
+            kind: 'transactional'
+          });
+          try {
+            await cancelJourney('refill-reminder', sub.email);
+            await cancelJourney('onboarding', sub.email);
+          } catch (e) {
+            console.warn('[AUTHNET WEBHOOK] cancelJourney failed (non-blocking):', e.message);
+          }
+        }
+        await notifyInternal('subscription_ended', { subscription_id: subscriptionId, action: 'update_records' });
         break;
       }
 
@@ -171,5 +291,42 @@ async function notifyInternal(eventType, data) {
     console.log(`[AUTHNET WEBHOOK] Internal webhook fired for ${eventType}: HTTP ${response.status}`);
   } catch (e) {
     console.warn(`[AUTHNET WEBHOOK] Internal webhook failed (non-critical): ${e.message}`);
+  }
+}
+
+/**
+ * Looks up the patient email/name for a transaction-level event (fraud
+ * decline, refund, void) via Authorize.Net's own getTransactionDetailsRequest
+ * — these webhook payloads carry only the transaction id, never contact
+ * info. Returns the `customer.email`/`billTo` create-authnet-transaction.js
+ * set on the ORIGINAL charge. Read-only, no charge; best-effort (returns
+ * empty on any failure — callers already treat a missing email as "skip the
+ * email, the internal Slack alert already fired").
+ */
+async function lookupTransactionContact(transId) {
+  if (!transId) return {};
+  const cfg = resolveAuthnetConfig();
+  if (!cfg.apiLoginId || !cfg.transactionKey) return {};
+  try {
+    const res = await fetch(cfg.endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        getTransactionDetailsRequest: {
+          merchantAuthentication: { name: cfg.apiLoginId, transactionKey: cfg.transactionKey },
+          transId: String(transId)
+        }
+      })
+    });
+    const json = JSON.parse((await res.text()).replace(/^﻿/, '').trim());
+    if (!json.messages || json.messages.resultCode !== 'Ok') return {};
+    const txn = json.transaction || {};
+    return {
+      email: (txn.customer && txn.customer.email) || undefined,
+      firstName: (txn.billTo && txn.billTo.firstName) || undefined
+    };
+  } catch (e) {
+    console.warn('[AUTHNET WEBHOOK] lookupTransactionContact failed (non-critical):', e.message);
+    return {};
   }
 }

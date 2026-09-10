@@ -18,11 +18,14 @@
  */
 
 const { CORS_HEADERS } = require('./lib/mdi-client');
+const { connectBlobs } = require('./lib/blobs');
 const { verifySupabaseToken } = require('./lib/verify-supabase-token');
 const { getMyFunnelOrders, cancelMySubscription } = require('./lib/funnel-orders');
 const { cancelArbSubscription } = require('./lib/authnet-arb');
+const { sendTransactional, cancelJourney, enrollJourney } = require('./lib/email/engine');
 
 exports.handler = async (event) => {
+  connectBlobs(event);
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 204, headers: CORS_HEADERS, body: '' };
   }
@@ -74,6 +77,16 @@ exports.handler = async (event) => {
     }
 
     console.log(`[CANCEL SUBSCRIPTION] Canceled ${subscriptionId} for email#${require('crypto').createHash('sha256').update(email).digest('hex').slice(0, 10)}`);
+
+    try {
+      await sendTransactional({ template: 'subscription-cancelled', to: email, data: {}, dedupeKey: 'cancel:' + subscriptionId, kind: 'transactional' });
+      await cancelJourney('refill-reminder', email);
+      await cancelJourney('onboarding', email);
+      await enrollJourney('winback', { email, data: {} });
+    } catch (e) {
+      console.warn('[CANCEL SUBSCRIPTION] Post-cancel email/journey update failed (non-blocking):', e.message);
+    }
+
     return { statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify({ canceled: true }) };
   } catch (error) {
     console.error('[CANCEL SUBSCRIPTION] Error:', error);
