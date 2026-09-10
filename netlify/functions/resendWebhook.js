@@ -9,7 +9,10 @@
  *
  * Register in the Resend dashboard: Webhooks → Add Endpoint
  *   URL: https://freeley.com/.netlify/functions/resendWebhook
- *   Events: email.bounced, email.complained
+ *   Events: email.bounced, email.complained, email.suppressed
+ *
+ * Registered 2026-09-10 via the Resend MCP (webhook id
+ * 2eff0154-4bd7-4fb9-85b6-24a28f9df40a) — already live in production.
  *
  * Resend signs webhooks using Svix (https://docs.resend.com/webhooks) —
  * verified here with plain crypto, matching this repo's convention of not
@@ -103,6 +106,14 @@ exports.handler = async (event) => {
         break;
       case 'email.complained':
         if (email) await suppress(email, 'complained');
+        break;
+      case 'email.suppressed':
+        // Resend already suppresses on its own side (won't attempt delivery
+        // to this address again regardless) — mirrored into our own
+        // suppression list too so isSuppressed()'s kind-aware check
+        // (marketing-only vs. everything) still applies to anything we
+        // schedule for this address going forward.
+        if (email) await suppress(email, 'bounced');
         break;
       default:
         console.log(`[RESEND WEBHOOK] Unhandled event: ${type}`);

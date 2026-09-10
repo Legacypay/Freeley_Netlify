@@ -89,33 +89,39 @@ components can be copy-pasted for a one-off broadcast HTML).
 
 | Var | Status | Who sets it |
 |---|---|---|
-| `RESEND_API_KEY` | **Not set in production** | You — Resend dashboard → Settings → API Keys |
+| `RESEND_API_KEY` | **Set** (2026-09-10, via the Resend MCP — a new key scoped `sending_access` + restricted to the `freeley.com` domain, named "Freeley Netlify Functions"; the pre-existing "Freeley" key from 2026-09-01 was left alone since its secret can't be retrieved and it may be used elsewhere) | Done |
 | `RESEND_FROM_EMAIL` | Set (`Freeley <no-reply@freeley.com>`) | — |
-| `RESEND_WEBHOOK_SECRET` | Not set | You — after registering the webhook (below) |
+| `RESEND_WEBHOOK_SECRET` | **Set** (2026-09-10, webhook id `2eff0154-4bd7-4fb9-85b6-24a28f9df40a`, events `email.bounced`/`email.complained`/`email.suppressed`) | Done |
 | `EMAIL_UNSUBSCRIBE_SECRET` | **Set** (generated 2026-09-10) | Done |
 | `EMAIL_POSTAL_ADDRESS` | Not set | You — CAN-SPAM requires a physical mailing address on marketing email footers; footer omits the line until this is set |
 | `EMAIL_DRY_RUN` | Not set | Optional — set to `true` on a branch/preview context to render+log every send without actually calling Resend |
 
-## Manual setup checklist (can't be done from code)
+## Manual setup checklist
 
-1. **Verify `freeley.com` in Resend.** Until this is done, sends land in
-   spam or bounce outright. Add the DKIM/SPF/DMARC records Resend gives you
-   wherever `freeley.com`'s DNS is hosted, then click Verify.
-2. **Set `RESEND_API_KEY`** in Netlify (production scope, functions).
-3. **Register the Resend webhook**: Resend dashboard → Webhooks → Add
-   Endpoint → `https://freeley.com/.netlify/functions/resendWebhook`,
-   events `email.bounced` + `email.complained`. Copy the Signing Secret into
-   `RESEND_WEBHOOK_SECRET`.
-4. **Authorize.Net Merchant Interface → Webhooks**: add these four event
+Done via the Resend MCP (2026-09-10) — no dashboard visit needed:
+
+- [x] **`freeley.com` domain** — already verified in Resend (since
+  2026-09-01, `docs/RESEND_EMAIL_SETUP.md`'s "pending" note was stale —
+  deliverability was never actually blocked on this).
+- [x] **`RESEND_API_KEY`** — new key created, scoped `sending_access` +
+  restricted to `freeley.com`, set in Netlify.
+- [x] **Resend webhook** registered at
+  `https://freeley.com/.netlify/functions/resendWebhook` for
+  `email.bounced`/`email.complained`/`email.suppressed`;
+  `RESEND_WEBHOOK_SECRET` set in Netlify.
+
+Still needs the client:
+
+1. **Authorize.Net Merchant Interface → Webhooks**: add these four event
    types (in addition to the four already registered per
    `authnetWebhook.js`'s header comment):
    `net.authorize.payment.authcapture.created`,
    `net.authorize.customer.subscription.suspended`,
    `net.authorize.customer.subscription.terminated`,
    `net.authorize.customer.subscription.cancelled`. Repeat for the sandbox
-   Merchant Interface if testing there.
-5. **Set `EMAIL_POSTAL_ADDRESS`** once you have one to publish.
-6. Supabase SMTP + the 4 Auth email templates — already documented in
+   Merchant Interface if testing there. (No MCP for this one.)
+2. **Set `EMAIL_POSTAL_ADDRESS`** once you have one to publish.
+3. Supabase SMTP + the 4 Auth email templates — already documented in
    `docs/RESEND_EMAIL_SETUP.md`, unchanged by this work.
 
 ## Testing
