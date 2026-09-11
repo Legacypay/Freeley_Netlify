@@ -68,16 +68,21 @@ function eyebrow(style, label) {
 }
 
 function trustStrip(style) {
+  // Explicit width AND height on both badges (not just width) — without a
+  // reserved height, a mail client that hasn't loaded remote images yet
+  // (the mobile-client default) collapses the cell to zero height instead
+  // of holding its place, which reads as "broken" even when the image is
+  // simply pending a tap-to-load.
   return `<table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="margin:24px 0 0; border-top:1px solid ${COLORS.line}; padding-top:20px;">
     <tr>
       <td valign="middle">
-        <img src="${HIPAA_BADGE_URL}" width="71" alt="HIPAA compliant" style="display:block;" />
+        <img src="${HIPAA_BADGE_URL}" width="71" height="40" alt="HIPAA compliant" style="display:block; max-width:100%; height:auto;" />
       </td>
       <td width="10"></td>
       <td valign="middle">
-        <img src="${USA_BADGE_URL}" width="82" alt="Made in USA" style="display:block;" />
+        <img src="${USA_BADGE_URL}" width="82" height="32" alt="Made in USA" style="display:block; max-width:100%; height:auto;" />
       </td>
-      <td align="right" valign="middle" style="font-size:11.5px; line-height:1.5; color:${COLORS.muted};">
+      <td align="right" valign="middle" class="trust-copy" style="font-size:11.5px; line-height:1.5; color:${COLORS.muted};">
         Reviewed by a<br />licensed clinician
       </td>
     </tr>
@@ -92,9 +97,11 @@ function button(style, label, url) {
 
 // 2x2 grid instead of a stacked list — denser, reads like a real receipt
 // rather than a plain label/value list.
+// `stat-cell` gets a mobile @media override (stack to one column) — inline
+// styles alone can't respond to viewport width, only a class selector can.
 function statCard(style, pairs) {
   const cell = ([label, value]) => `
-    <td width="50%" valign="top" style="padding:0 10px 16px 0;">
+    <td width="50%" valign="top" class="stat-cell" style="padding:0 10px 16px 0;">
       <p style="margin:0 0 4px; font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:${COLORS.muted};">${label}</p>
       <p style="margin:0; font-size:16px; font-weight:700; color:${COLORS.ink};">${value}</p>
     </td>`;
@@ -193,6 +200,20 @@ function renderShell(style, bodyHtml, preheader, inline = true) {
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Freeley</title>
+<style>
+  /* Fer's mobile report: no responsive rules existed at all before this —
+     every client got the same fixed desktop padding/columns regardless of
+     screen width. This is the standard "hybrid" email media-query pattern
+     (supported by Gmail app, iOS/Apple Mail, Outlook.com mobile — the
+     clients that matter on a phone; ignored harmlessly by clients that
+     don't support it, which just keep the desktop layout). */
+  @media only screen and (max-width: 480px) {
+    .band-pad { padding-left:20px !important; padding-right:20px !important; }
+    .card-pad { padding-left:22px !important; padding-right:22px !important; }
+    .stat-cell { display:block !important; width:100% !important; padding-right:0 !important; }
+    .trust-copy { display:none !important; }
+  }
+</style>
 </head>
 <body style="margin:0; padding:0; background:${COLORS.card}; font-family:-apple-system,'Archivo',Helvetica,Arial,sans-serif;">
 <div style="display:none; max-height:0; overflow:hidden; opacity:0;">${preheader}</div>
@@ -201,10 +222,10 @@ function renderShell(style, bodyHtml, preheader, inline = true) {
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;">
       <tr><td style="background:#ffffff; border-radius:${style.cardRadius}; border:${style.cardBorder}; box-shadow:${style.cardShadow}; overflow:hidden;">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-          <tr><td align="center" style="background:${COLORS.green}; padding:20px 36px;">
-            <img src="${WHITE_LOGO_URL}" alt="Freeley" width="112" style="display:block; height:auto;" />
+          <tr><td align="center" class="band-pad" style="background:${COLORS.green}; padding:20px 36px;">
+            <img src="${WHITE_LOGO_URL}" alt="Freeley" width="112" height="26" style="display:block; max-width:100%; height:auto;" />
           </td></tr>
-          <tr><td style="padding:${style.padding};">${bodyHtml}</td></tr>
+          <tr><td class="card-pad" style="padding:${style.padding};">${bodyHtml}</td></tr>
         </table>
       </td></tr>
       <tr><td align="center" style="padding-top:28px; font-size:12px; line-height:1.6; color:${COLORS.muted};">

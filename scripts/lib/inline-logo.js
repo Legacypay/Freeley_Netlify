@@ -4,8 +4,11 @@ const { LOGO_URL } = require('../../netlify/functions/lib/email-templates/shared
 
 const PUBLIC_DIR = path.join(__dirname, '..', '..', 'public');
 const WHITE_LOGO_URL = LOGO_URL.replace('freeley_logo_email.png', 'freeley_logo_email_white.png');
-const HIPAA_BADGE_URL = 'https://freeley.com/hipaa-badge-png@2x.png';
-const USA_BADGE_URL = 'https://freeley.com/usa-badge-png@2x.png';
+// %40 (percent-encoded "@") is what actually ends up in the rendered HTML —
+// see email-design-variants.js's own defensive encoding — so that's the
+// literal string this map has to match to find and replace it.
+const HIPAA_BADGE_URL = 'https://freeley.com/hipaa-badge-png%402x.png';
+const USA_BADGE_URL = 'https://freeley.com/usa-badge-png%402x.png';
 
 // Maps each external URL these preview tools embed to its local file, so
 // both sides of the swap live in exactly one place.
