@@ -16,6 +16,7 @@ const fs = require('fs');
 const path = require('path');
 
 const { TEMPLATES } = require('../netlify/functions/lib/email-templates');
+const { inlineLogo } = require('./lib/inline-logo');
 
 const UNSUB = 'https://freeley.com/.netlify/functions/emailPreferences?e=jane%40example.com&t=preview';
 
@@ -79,7 +80,11 @@ function slugify(s) {
 function renderCard(key) {
   const data = DATA_BY_TEMPLATE[key];
   if (!data) throw new Error(`No preview fixture for template "${key}" — add one to DATA_BY_TEMPLATE`);
-  const { subject, preheader, html } = TEMPLATES[key](data);
+  const { subject, preheader, html: rawHtml } = TEMPLATES[key](data);
+  // Artifact previews can't load an external image — inline the logo as a
+  // data: URI for this preview only (see scripts/lib/inline-logo.js);
+  // real sends keep using the plain HTTPS URL untouched.
+  const html = inlineLogo(rawHtml);
   const kind = TRANSACTIONAL_KEYS.has(key) ? 'transactional' : 'marketing';
   return `
       <article class="card" id="tpl-${escapeAttr(key)}">
