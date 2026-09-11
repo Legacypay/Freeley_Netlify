@@ -90,25 +90,49 @@ function button(style, label, url) {
   </td></tr></table>`;
 }
 
-function statCard(style, rows) {
-  const inner = rows.map(([label, value], i) => `
-    <p style="margin:0 0 6px; font-size:12px; text-transform:uppercase; letter-spacing:.5px; color:${COLORS.muted};">${label}</p>
-    <p style="margin:0 0 ${i === rows.length - 1 ? 0 : 14}px; font-size:15px; font-weight:600; color:${COLORS.ink};">${value}</p>`).join('');
-  return `<table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="margin:0 0 20px; background:${COLORS.card}; border-radius:${style.statRadius}; border:1px solid ${COLORS.line};"><tr><td style="padding:18px 20px;">${inner}</td></tr></table>`;
+// 2x2 grid instead of a stacked list — denser, reads like a real receipt
+// rather than a plain label/value list.
+function statCard(style, pairs) {
+  const cell = ([label, value]) => `
+    <td width="50%" valign="top" style="padding:0 10px 16px 0;">
+      <p style="margin:0 0 4px; font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:${COLORS.muted};">${label}</p>
+      <p style="margin:0; font-size:16px; font-weight:700; color:${COLORS.ink};">${value}</p>
+    </td>`;
+  const rows = [];
+  for (let i = 0; i < pairs.length; i += 2) {
+    rows.push(`<tr>${cell(pairs[i])}${pairs[i + 1] ? cell(pairs[i + 1]) : '<td></td>'}</tr>`);
+  }
+  return `<table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="margin:0 0 24px; background:${COLORS.card}; border-radius:${style.statRadius}; border:1px solid ${COLORS.line};"><tr><td style="padding:18px 20px 2px;"><table role="presentation" cellpadding="0" cellspacing="0" width="100%">${rows.join('')}</table></td></tr></table>`;
 }
 
+// Solid brand-green numbered circles (was a pale grey outline) — reads as a
+// real progress tracker instead of a plain bullet list, wrapped in its own
+// tinted panel so it reads as one distinct "block" rather than floating copy.
 function stepTimeline(style, steps) {
   const rows = steps.map((s, i) => `
     <tr>
-      <td valign="top" width="32" style="padding:0 12px 18px 0;">
-        <div style="width:24px; height:24px; border-radius:${style.stepRadius}; background:${COLORS.card}; color:${COLORS.muted}; font-size:12px; font-weight:700; line-height:24px; text-align:center; font-family:-apple-system,'Archivo',Helvetica,Arial,sans-serif;">${i + 1}</div>
+      <td valign="top" width="30" style="padding:0 12px ${i === steps.length - 1 ? 0 : 16}px 0;">
+        <div style="width:22px; height:22px; border-radius:${style.stepRadius}; background:${COLORS.green}; color:#ffffff; font-size:11.5px; font-weight:700; line-height:22px; text-align:center; font-family:-apple-system,'Archivo',Helvetica,Arial,sans-serif;">${i + 1}</div>
       </td>
-      <td valign="top" style="padding:0 0 18px;">
-        <p style="margin:0 0 2px; font-size:14.5px; font-weight:600; color:${COLORS.ink};">${s.title}</p>
-        <p style="margin:0; font-size:13px; line-height:1.5; color:${COLORS.muted};">${s.detail}</p>
+      <td valign="top" style="padding:0 0 ${i === steps.length - 1 ? 0 : 16}px;">
+        <p style="margin:0 0 2px; font-size:14px; font-weight:600; color:${COLORS.ink};">${s.title}</p>
+        <p style="margin:0; font-size:12.5px; line-height:1.5; color:${COLORS.muted};">${s.detail}</p>
       </td>
     </tr>`).join('');
-  return `<table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="margin:8px 0 20px;">${rows}</table>`;
+  return `<table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="margin:0 0 20px; background:${COLORS.card}; border-radius:${style.statRadius}; border:1px solid ${COLORS.line};"><tr><td style="padding:18px 20px;"><table role="presentation" cellpadding="0" cellspacing="0" width="100%">${rows}</table></td></tr></table>`;
+}
+
+function secondaryLink(label, url) {
+  return `<p style="margin:0 0 4px; text-align:center; font-size:13px;"><a href="${url}" style="color:${COLORS.brand}; text-decoration:none; font-weight:600;">${label}</a></p>`;
+}
+
+function helpCard(style) {
+  return `<table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="margin:20px 0 0; background:${COLORS.card}; border-radius:${style.statRadius}; border:1px solid ${COLORS.line};"><tr><td style="padding:14px 18px;">
+    <p style="margin:0; font-size:12.5px; line-height:1.5; color:${COLORS.muted};">
+      <strong style="color:${COLORS.ink};">Questions about your order?</strong><br />
+      Message your care team anytime from the Hub, or reply to this email.
+    </p>
+  </td></tr></table>`;
 }
 
 // ── Two representative bodies (content matches the real order-confirmed
@@ -117,18 +141,20 @@ function stepTimeline(style, steps) {
 function orderConfirmedBody(style) {
   return `
     ${eyebrow(style, 'Order confirmed')}
-    <h1 style="margin:0 0 16px; font-family:Georgia,'Source Serif 4',serif; font-size:26px; font-weight:600; color:${COLORS.ink}; text-wrap:balance;">Thanks for choosing Freeley, Jane</h1>
-    <p style="margin:0 0 20px; font-size:15px; line-height:1.6; color:${COLORS.ink};">
+    <h1 style="margin:0 0 14px; font-family:Georgia,'Source Serif 4',serif; font-size:27px; font-weight:600; color:${COLORS.ink}; text-wrap:balance;">Thanks for choosing Freeley, Jane</h1>
+    <p style="margin:0 0 22px; font-size:15px; line-height:1.6; color:${COLORS.ink};">
       Your payment went through and your care team has been notified. This plan renews automatically every 3 months — you can change or cancel anytime from the Hub.
     </p>
-    ${statCard(style, [['Plan', 'Freeley Weight Loss Plan'], ['Term', '3 months'], ['Amount charged', '$267.00'], ['Card on file', '&bull;&bull;&bull;&bull; 4242']])}
-    <p style="margin:24px 0 12px; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:${COLORS.muted};">What happens next</p>
+    ${statCard(style, [['Plan', 'Weight Loss Plan'], ['Term', '3 months'], ['Amount charged', '$267.00'], ['Card on file', '&bull;&bull;&bull;&bull; 4242']])}
+    <p style="margin:0 0 12px; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:${COLORS.muted};">What happens next</p>
     ${stepTimeline(style, [
       { title: 'Clinician review', detail: 'A licensed clinician reviews your intake, usually within 24–48 hours.' },
       { title: 'Pharmacy fulfillment', detail: 'Once approved, your prescription is sent to our pharmacy partner.' },
       { title: 'Shipped to your door', detail: "You'll get tracking the moment it ships." }
     ])}
     ${button(style, 'Go to your Hub', 'https://freeley.com/hub')}
+    ${secondaryLink('View full order details', 'https://freeley.com/hub')}
+    ${helpCard(style)}
     ${trustStrip(style)}
   `;
 }
@@ -136,14 +162,16 @@ function orderConfirmedBody(style) {
 function onboardingBody(style) {
   return `
     ${eyebrow(style, 'Getting started')}
-    <h1 style="margin:0 0 16px; font-family:Georgia,'Source Serif 4',serif; font-size:26px; font-weight:600; color:${COLORS.ink}; text-wrap:balance;">What happens next</h1>
-    <p style="margin:0 0 20px; font-size:15px; line-height:1.6; color:${COLORS.ink};">Hi Jane, here's the process from here:</p>
+    <h1 style="margin:0 0 14px; font-family:Georgia,'Source Serif 4',serif; font-size:27px; font-weight:600; color:${COLORS.ink}; text-wrap:balance;">What happens next</h1>
+    <p style="margin:0 0 22px; font-size:15px; line-height:1.6; color:${COLORS.ink};">Hi Jane, here's the process from here:</p>
     ${stepTimeline(style, [
       { title: 'Clinician review', detail: 'A licensed clinician reviews your intake, usually within 24–48 hours.' },
       { title: 'Pharmacy fulfillment', detail: 'Once approved, your prescription is sent to our pharmacy partner.' },
       { title: 'Shipped to your door', detail: "You'll get an email the moment it ships." }
     ])}
     ${button(style, 'Check your status', 'https://freeley.com/hub')}
+    ${secondaryLink('Message your care team', 'https://freeley.com/hub')}
+    ${helpCard(style)}
     ${trustStrip(style)}
   `;
 }
