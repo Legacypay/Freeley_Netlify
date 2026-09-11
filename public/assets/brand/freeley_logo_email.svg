@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 120" width="520" height="120">
+  <!--
+    Rasterized-for-email variant of freeley_logo_primary.svg (same mark,
+    same #1B492D/#F3EAE1 colors). The original relies on a Google Fonts
+    @import for Playfair Display, which (a) email clients won't fetch for
+    an inline SVG anyway and (b) isn't available to this repo's headless
+    PNG export step either — so this copy uses the SAME Georgia fallback
+    already specified in the original's own font stack, rather than
+    silently drawing a system default. See scripts/lib/build-email-logo.js.
+  -->
+  <defs>
+    <style>
+      .wordmark { font-family: Georgia, 'Times New Roman', serif; font-weight: 700; font-size: 72px; fill: #1B492D; }
+      .f-letter  { font-family: Georgia, 'Times New Roman', serif; font-weight: 700; font-size: 52px; fill: #F3EAE1; }
+    </style>
+  </defs>
+  <circle cx="60" cy="60" r="52" fill="#1B492D"/>
+  <text class="f-letter" x="60" y="60" text-anchor="middle" dy="0.35em">F</text>
+  <text class="wordmark" x="128" y="84">Freeley</text>
+</svg>
