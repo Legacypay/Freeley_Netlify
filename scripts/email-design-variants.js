@@ -16,8 +16,8 @@
 
 const fs = require('fs');
 const path = require('path');
-const { COLORS, LOGO_URL } = require('../netlify/functions/lib/email-templates/shared');
-const { inlineLogo } = require('./lib/inline-logo');
+const { COLORS } = require('../netlify/functions/lib/email-templates/shared');
+const { inlineLogo, WHITE_LOGO_URL, HIPAA_BADGE_URL, USA_BADGE_URL } = require('./lib/inline-logo');
 
 const STYLES = [
   {
@@ -61,6 +61,29 @@ const STYLES = [
   }
 ];
 
+function eyebrow(style, label) {
+  return `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 14px;"><tr><td style="background:${COLORS.card}; border-radius:${style.buttonRadius === '999px' ? '999px' : '4px'}; padding:5px 12px;">
+    <span style="font-family:-apple-system,'Archivo',Helvetica,Arial,sans-serif; font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:${COLORS.brand};">${label}</span>
+  </td></tr></table>`;
+}
+
+function trustStrip(style) {
+  return `<table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="margin:24px 0 0; border-top:1px solid ${COLORS.line}; padding-top:20px;">
+    <tr>
+      <td valign="middle">
+        <img src="${HIPAA_BADGE_URL}" width="71" alt="HIPAA compliant" style="display:block;" />
+      </td>
+      <td width="10"></td>
+      <td valign="middle">
+        <img src="${USA_BADGE_URL}" width="82" alt="Made in USA" style="display:block;" />
+      </td>
+      <td align="right" valign="middle" style="font-size:11.5px; line-height:1.5; color:${COLORS.muted};">
+        Reviewed by a<br />licensed clinician
+      </td>
+    </tr>
+  </table>`;
+}
+
 function button(style, label, url) {
   return `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:28px 0;"><tr><td align="center" style="border-radius:${style.buttonRadius}; background:${COLORS.green};">
     <a href="${url}" style="display:inline-block; padding:15px 32px; font-size:15px; font-weight:600; color:#ffffff; text-decoration:none; border-radius:${style.buttonRadius}; font-family:-apple-system,'Archivo',Helvetica,Arial,sans-serif;">${label}</a>
@@ -89,41 +112,54 @@ function stepTimeline(style, steps) {
 }
 
 // ── Two representative bodies (content matches the real order-confirmed
-// and onboarding-1 templates) ──
+// and onboarding-1 templates, expanded with the header band / eyebrow /
+// mini-timeline / trust strip components above) ──
 function orderConfirmedBody(style) {
   return `
-    <h1 style="margin:0 0 16px; font-family:Georgia,'Source Serif 4',serif; font-size:24px; font-weight:600; color:${COLORS.ink};">Your order is confirmed</h1>
-    <p style="margin:0 0 16px; font-size:15px; line-height:1.6; color:${COLORS.ink};">Hi Jane,</p>
-    <p style="margin:0 0 16px; font-size:15px; line-height:1.6; color:${COLORS.ink};">
-      Thanks for choosing Freeley. Your payment went through and your care team has been notified. This plan renews automatically every 3 months — you can change or cancel anytime from the Hub.
+    ${eyebrow(style, 'Order confirmed')}
+    <h1 style="margin:0 0 16px; font-family:Georgia,'Source Serif 4',serif; font-size:26px; font-weight:600; color:${COLORS.ink}; text-wrap:balance;">Thanks for choosing Freeley, Jane</h1>
+    <p style="margin:0 0 20px; font-size:15px; line-height:1.6; color:${COLORS.ink};">
+      Your payment went through and your care team has been notified. This plan renews automatically every 3 months — you can change or cancel anytime from the Hub.
     </p>
-    ${statCard(style, [['Plan', 'Freeley Weight Loss Plan'], ['Term', '3 months'], ['Amount charged', '$267.00'], ['Card', '&bull;&bull;&bull;&bull; 4242']])}
-    <p style="margin:0 0 4px; font-size:13px; line-height:1.6; color:${COLORS.muted};">
-      Next: finish your quick medical intake so a licensed clinician can review your case.
-    </p>
+    ${statCard(style, [['Plan', 'Freeley Weight Loss Plan'], ['Term', '3 months'], ['Amount charged', '$267.00'], ['Card on file', '&bull;&bull;&bull;&bull; 4242']])}
+    <p style="margin:24px 0 12px; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:${COLORS.muted};">What happens next</p>
+    ${stepTimeline(style, [
+      { title: 'Clinician review', detail: 'A licensed clinician reviews your intake, usually within 24–48 hours.' },
+      { title: 'Pharmacy fulfillment', detail: 'Once approved, your prescription is sent to our pharmacy partner.' },
+      { title: 'Shipped to your door', detail: "You'll get tracking the moment it ships." }
+    ])}
     ${button(style, 'Go to your Hub', 'https://freeley.com/hub')}
+    ${trustStrip(style)}
   `;
 }
 
 function onboardingBody(style) {
   return `
-    <h1 style="margin:0 0 16px; font-family:Georgia,'Source Serif 4',serif; font-size:24px; font-weight:600; color:${COLORS.ink};">What happens next</h1>
-    <p style="margin:0 0 16px; font-size:15px; line-height:1.6; color:${COLORS.ink};">Hi Jane,</p>
-    <p style="margin:0 0 20px; font-size:15px; line-height:1.6; color:${COLORS.ink};">Here's the process from here:</p>
+    ${eyebrow(style, 'Getting started')}
+    <h1 style="margin:0 0 16px; font-family:Georgia,'Source Serif 4',serif; font-size:26px; font-weight:600; color:${COLORS.ink}; text-wrap:balance;">What happens next</h1>
+    <p style="margin:0 0 20px; font-size:15px; line-height:1.6; color:${COLORS.ink};">Hi Jane, here's the process from here:</p>
     ${stepTimeline(style, [
       { title: 'Clinician review', detail: 'A licensed clinician reviews your intake, usually within 24–48 hours.' },
       { title: 'Pharmacy fulfillment', detail: 'Once approved, your prescription is sent to our pharmacy partner.' },
       { title: 'Shipped to your door', detail: "You'll get an email the moment it ships." }
     ])}
     ${button(style, 'Check your status', 'https://freeley.com/hub')}
+    ${trustStrip(style)}
   `;
 }
 
-function renderShell(style, bodyHtml, preheader) {
-  const topBar = style.topBar
-    ? `<tr><td style="height:4px; line-height:4px; font-size:0; background:${COLORS.green};">&nbsp;</td></tr>`
-    : '';
-  return inlineLogo(`<!doctype html>
+/**
+ * @param {boolean} [inline=true] Inline the logo as a data: URI (needed for
+ *   Artifact previews, whose CSP blocks external images) — pass false to
+ *   get the plain HTTPS logo URL a real send (or a real inbox) needs.
+ */
+function renderShell(style, bodyHtml, preheader, inline = true) {
+  // Every style now carries the logo inside a full-bleed brand-green band at
+  // the top of the card (reversed/cream mark) instead of floating loose on
+  // the page background — one more layer of visual structure per the
+  // "more detailed" direction, and it doubles as the old thin accent bar
+  // for the editorial style.
+  const doc = `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
@@ -135,12 +171,11 @@ function renderShell(style, bodyHtml, preheader) {
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${COLORS.card}; padding:32px 16px;">
   <tr><td align="center">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;">
-      <tr><td align="center" style="padding-bottom:24px;">
-        <img src="${LOGO_URL}" alt="Freeley" width="132" style="display:block; height:auto;" />
-      </td></tr>
       <tr><td style="background:#ffffff; border-radius:${style.cardRadius}; border:${style.cardBorder}; box-shadow:${style.cardShadow}; overflow:hidden;">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-          ${topBar}
+          <tr><td align="center" style="background:${COLORS.green}; padding:20px 36px;">
+            <img src="${WHITE_LOGO_URL}" alt="Freeley" width="112" style="display:block; height:auto;" />
+          </td></tr>
           <tr><td style="padding:${style.padding};">${bodyHtml}</td></tr>
         </table>
       </td></tr>
@@ -153,7 +188,8 @@ function renderShell(style, bodyHtml, preheader) {
   </td></tr>
 </table>
 </body>
-</html>`);
+</html>`;
+  return inline ? inlineLogo(doc) : doc;
 }
 
 function escapeHtml(s) {
@@ -206,7 +242,7 @@ function buildComparison() {
   .col .blurb { font-size: 12.5px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
   .col .tokens { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); margin-top: 8px; }
   .msg-subject { font-size: 13px; font-weight: 600; margin-bottom: 6px; }
-  iframe { width: 100%; height: 460px; border: 0; border-radius: 6px; background: #efe9dd; margin-bottom: 4px; }
+  iframe { width: 100%; height: 780px; border: 0; border-radius: 6px; background: #efe9dd; margin-bottom: 4px; }
 </style>
 </head>
 <body>
@@ -219,8 +255,10 @@ function buildComparison() {
 </html>`;
 }
 
-const outPath = path.resolve(process.cwd(), process.argv[2] || 'email-design-variants.html');
-fs.writeFileSync(outPath, buildComparison(), 'utf8');
-console.log(`Wrote 3-style comparison (2 emails each) to ${outPath}`);
+if (require.main === module) {
+  const outPath = path.resolve(process.cwd(), process.argv[2] || 'email-design-variants.html');
+  fs.writeFileSync(outPath, buildComparison(), 'utf8');
+  console.log(`Wrote 3-style comparison (2 emails each) to ${outPath}`);
+}
 
 module.exports = { STYLES, renderShell, orderConfirmedBody, onboardingBody };

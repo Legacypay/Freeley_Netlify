@@ -33,7 +33,7 @@ test('renderHubWelcomeEmail falls back to a generic greeting without a first nam
 test('renderEmailShell produces a full HTML document with the logo and preheader', () => {
   const html = renderEmailShell({ preheader: 'peek text', bodyHtml: '<p>hello</p>' });
   assert.match(html, /<!doctype html>/i);
-  assert.match(html, /freeley_logo_primary\.png/);
+  assert.match(html, /freeley_logo_email\.png/);
   assert.match(html, /peek text/);
   assert.match(html, /<p>hello<\/p>/);
 });

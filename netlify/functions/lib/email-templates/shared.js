@@ -22,7 +22,14 @@ const COLORS = {
   card: '#efe9dd'
 };
 
-const LOGO_URL = 'https://freeley.com/assets/brand/freeley_logo_primary.png';
+// Rasterized (via scripts/build-email-logo.js) from freeley_logo_email.svg —
+// a copy of freeley_logo_primary.svg re-exported at 1200px wide, transparent
+// background, using the SVG's own already-specified Georgia fallback (the
+// original's Playfair Display comes from a Google Fonts @import that email
+// clients won't fetch for an inline SVG, and SVG itself isn't safe in email
+// anyway — Outlook desktop doesn't render it). Sharper than the previous
+// 540x181 asset and matches the on-brand mark exactly.
+const LOGO_URL = 'https://freeley.com/assets/brand/freeley_logo_email.png';
 
 /**
  * @param {{ preheader?: string, bodyHtml: string, kind?: 'transactional'|'marketing',
@@ -52,7 +59,7 @@ ${preheader ? `<div style="display:none; max-height:0; overflow:hidden; opacity:
   <tr><td align="center">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;">
       <tr><td align="center" style="padding-bottom:24px;">
-        <img src="${LOGO_URL}" alt="Freeley" width="132" style="display:block; height:auto;" />
+        <img src="${LOGO_URL}" alt="Freeley" width="150" style="display:block; height:auto;" />
       </td></tr>
       <tr><td style="background:#ffffff; border-radius:20px; padding:40px 36px; box-shadow:0 10px 30px rgba(0,0,0,.08);">
         ${bodyHtml}
