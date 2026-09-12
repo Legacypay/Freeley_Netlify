@@ -15,7 +15,9 @@
     "test:unit": "node --test \"tests/unit/**/*.test.js\"",
     "mdi:verify": "npx -y netlify-cli dev:exec node scripts/mdi-verify-env.js",
     "test:mdi": "playwright test --config=playwright.functions.config.ts",
-    "email:preview": "node scripts/email-preview.js"
+    "email:preview": "node scripts/email-preview.js",
+    "campaign:pdf": "node scripts/build-campaign-pdf.js",
+    "campaign:samples": "node scripts/render-campaign-samples.js"
   },
   "keywords": [],
   "author": "",

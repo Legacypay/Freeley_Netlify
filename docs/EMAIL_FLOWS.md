@@ -147,3 +147,21 @@ Still needs the client:
   `hub-welcome` all arrive, then check the Netlify function logs for
   `processEmailQueue` runs every 10 minutes with no `RESEND_API_KEY not set`
   warnings.
+
+## Campaign proposal (2026-09-12)
+
+Anthony's feedback on the first send was that the emails "all looked the same"
+and that the full flow should be 20–30 emails. The answer is a separate,
+newsletter-style campaign flow — **29 emails in three tracks** (16 lead
+nurture, 9 patient newsletter, 4 re-engagement), each with its own layout
+hint and a suggested hero image from `public/assets/`:
+
+- Source of truth: `docs/email-campaign/flow.js` (copy is design-independent).
+- Client PDF: `docs/email-campaign/Freeley_Email_Campaign_Flow.pdf` (copy page + a
+  mobile/desktop rendered preview per email, screenshotted from the real brand
+  shell via `docs/email-campaign/render.js`), rebuilt
+  with `npm run campaign:pdf` (needs `npx playwright install chromium` once).
+
+The transactional emails above are unchanged; the proposal replaces the
+current 3-step `onboarding` journey once approved and extends
+`quiz-abandoned`/`browse-abandoned` into Track A.
