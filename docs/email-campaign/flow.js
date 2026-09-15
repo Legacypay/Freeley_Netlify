@@ -167,7 +167,7 @@ const EMAILS = [
           '- **Stops shedding in its tracks.** The hormone signal that miniaturizes follicles gets blocked.',
           '- **Reactivates dormant follicles.** Follicles that thinned out but never died get a second chance.',
           '- **Fits your routine.** A daily step you’ll forget you’re doing by week two.',
-          'Most patients see shedding slow within 2–3 months and visible regrowth by month 4–6. Plans are $89/month on a 1-month plan and drop on every longer plan.'
+          'Most patients see shedding slow within 2–3 months and visible regrowth by month 4–6. Plans start at $49/month on the 24-month plan.'
         ],
         cta: { label: 'Start my hair assessment', url: `${SITE}/hair-loss` },
         image: { src: 'assets/hl/hero-loss-couple.png', why: 'Confident, social image — the outcome, not the problem.' },
@@ -185,7 +185,7 @@ const EMAILS = [
           '- **Fast-acting formulas.** Dissolves under the tongue, works in minutes rather than an hour.',
           '- **Control & confidence.** Options for as-needed use or a daily routine, chosen by your physician.',
           '- **Totally discreet.** No pharmacy line, no labeled bottle, no conversation you didn’t choose to have.',
-          'Plans are $99/month on a 1-month plan and drop on every longer plan. Your physician picks the formula; you pick when.'
+          'Plans start at $59/month on the 24-month plan. Your physician picks the formula; you pick when.'
         ],
         cta: { label: 'Start my private assessment', url: `${SITE}/sexual-wellness` },
         image: { src: 'assets/sw/hero-intimate.png', why: 'Intimacy/couple image; keep it warm, not clinical.' },
@@ -203,7 +203,7 @@ const EMAILS = [
           '- **Cellular energy.** Supporting the molecules your cells use to make and repair themselves.',
           '- **Deep, restorative sleep.** The kind that changes how the next day feels.',
           '- **Detox & immunity.** Helping your body clear what slows it down.',
-          'Your physician builds the protocol around your goals and labs. Plans are $129/month on a 1-month plan and drop on every longer plan.'
+          'Your physician builds the protocol around your goals and labs. Plans start at $79/month on the 24-month plan.'
         ],
         cta: { label: 'Build my protocol', url: `${SITE}/longevity` },
         image: { src: 'assets/lifestyle/lg-lifestyle-vitality.jpg', why: 'Vitality lifestyle shot; tiles below can use the three benefit images.' },
@@ -251,13 +251,13 @@ const EMAILS = [
       '- Shipping, straight to your door',
       '- Unlimited messaging with your care team',
       '- Automatic refills, so you never run out',
-      'The longer the plan, the lower the monthly price — because it lets our pharmacy partners plan ahead. GLP-1 weight loss, for example, runs from $299/month on a 1-month plan to $199/month on the 12-month plan, and our 24-month plans go lower still. The table above is the current ladder for every product line.',
+      'The longer the plan, the lower the monthly price — because it lets our pharmacy partners plan ahead. GLP-1 weight loss, for example, runs from $299/month on a 1-month plan to $179/month on the 24-month plan. The table above is the full ladder for every product line.',
       'No insurance needed. Cancel any time.'
     ],
     cta: { label: 'See full pricing', url: `${SITE}/pricing` },
     image: { src: 'assets/pricing/See_how_much.png', why: 'The pricing-page graphic. Show the price ladder as a simple table underneath.' },
     alt: ['assets/wl/slide-price-semaglutide.webp', 'assets/about/flat-rate-dosing.png'],
-    notes: 'The rendered price table is read live from pricing.json at send time (campaign-render.js\'s priceLadder()), so it cannot go stale. It deliberately shows the 1/3/6/12-month columns only — the 24-month tier is still flagged as a placeholder in pricing.json\'s own _meta.note, so the body says "go lower still" rather than naming a number Anthony has not confirmed.'
+    notes: 'The rendered price table is read live from pricing.json at send time (campaign-render.js\'s priceLadder()), now including the 24-month column — the client confirmed those tier prices as final on 2026-09-15.'
   },
   {
     id: 'A7', track: 'A', day: 11, send: 'Day 11',
@@ -758,20 +758,18 @@ const RULES = [
   { title: 'No medical details in marketing email', body: 'Track B (patients) never names a specific medication or dose — those live in the Hub. This is enforced in code (the PHI guard refuses to send a rendered email that names a compound). Track A speaks about treatment categories (GLP-1, hair treatment, sexual wellness, peptides), which is the lead’s own stated interest, never a clinical fact about them. Subject lines never mention the vertical.' },
   { title: 'Send window and cadence', body: 'All sends are clamped to 9am–8pm in the recipient’s timezone (defaults to America/New_York). Never more than one campaign email per day per contact; transactional emails (order, shipping, clinician messages) are exempt.' },
   { title: 'Exits are automatic', body: 'A purchase immediately stops Track A/C and starts Track B. A cancellation stops Track B and starts the existing win-back journey. An unsubscribe stops everything except transactional email.' },
-  { title: 'Compliance', body: 'Every campaign email carries an unsubscribe link and (once EMAIL_POSTAL_ADDRESS is set) the physical postal address required by CAN-SPAM. Testimonials require written patient consent — A10 ships a holding version rather than an invented quote. Before/after images are never used without documented consent. The refund line in A12 is quoted from the live pricing page; the promo code is pricing.json\'s WELCOME10, which Anthony still has to confirm is real and active.' },
-  { title: 'Personalization tokens', body: '{{first_name}} (falls back to "there"), {{vertical}} (from the quiz; A4 falls back to the Weight loss variant), {{resume_url}} (returns to the saved assessment, falls back to /assessment-quiz), {{promo_code}} (WELCOME10), {{hub_url}}, {{keep_url}} (C4\'s signed "keep me subscribed" link). There is no billing-date or referral token: B7 is on a fixed +45d schedule rather than the real ARB date, and no referral program exists.' },
+  { title: 'Compliance', body: 'Every campaign email carries an unsubscribe link. EMAIL_POSTAL_ADDRESS is deliberately not set — the client decided the CAN-SPAM footer address line is not needed right now, so the footer omits it. Testimonials require written patient consent — A10 ships a holding version rather than an invented quote. Before/after images are never used without documented consent. The refund line in A12 is quoted from the live pricing page — Anthony still has to confirm it matches the policy actually operated for declined cases. The promo code is pricing.json\'s WELCOME10, set `active: false` (2026-09-15) — A13/A15/C3 quote it but it will not discount anything at checkout until it is flipped back on with a confirmed code/value.' },
+  { title: 'Personalization tokens', body: '{{first_name}} (falls back to "there"), {{vertical}} (from the quiz; A4 falls back to the Weight loss variant), {{resume_url}} (returns to the saved assessment, falls back to /assessment-quiz), {{promo_code}} (WELCOME10 — currently inactive, see Compliance above), {{hub_url}}, {{keep_url}} (C4\'s signed "keep me subscribed" link). There is no billing-date or referral token: B7 is on a fixed +45d schedule rather than the real ARB date, and no referral program exists.' },
   { title: 'Measurement', body: 'campaign-render.js stamps every freeley.com link in every email with utm_source=email, utm_medium=campaign, utm_campaign=<journey> (lead-nurture or patient-newsletter) and utm_content=<email id> — centrally, at render time, so no email can ship untagged. The goal metric for Track A is assessment completions; for Track B it is refill retention at day 45 and day 90; for Track C it is assessment resumes.' }
 ];
 
 // Still open now that the flow is live — each one is shipped in its safest
 // form, not blocked on an answer, but each would change an email if answered.
 const OPEN_QUESTIONS = [
-  'Promo: confirm WELCOME10 is real and active, and that "expires Sunday" is a deadline you intend to keep. It drives A13 (Day 23), A15 (Day 28) and C3 (Day 75).',
+  'Promo: WELCOME10 is set `active: false` in pricing.json (2026-09-15) — deliberately not implemented yet. A13 (Day 23), A15 (Day 28) and C3 (Day 75) still quote it, so flip it back on (with a confirmed code/value and a real "expires Sunday" mechanism — pricing.json has no expiry field today) before any lead reaches Day 23.',
   'A12\'s refund line is quoted from the pricing page. Confirm it matches the policy you actually operate for declined cases.',
   'Referral program: yes/no, and the incentive. B8 ships as a plain forward-to-a-friend email until there is one.',
   'One consented patient story per vertical — A10 is holding the slot with an honest "we won\'t fake it" email until you have one.',
-  'Physical mailing address for the email footer (CAN-SPAM) — set EMAIL_POSTAL_ADDRESS in Netlify.',
-  'Confirm the 24-month plan prices in pricing.json (still flagged there as placeholders). Nothing quotes them today — A6 and the A4 variants say "lower on every longer plan" precisely because the figures are unconfirmed. Confirming them lets those emails name a number again.',
   'Anything in these emails you’d say differently — this file is what sends, so a change here is a change to live email.'
 ];
 

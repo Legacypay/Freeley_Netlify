@@ -163,12 +163,15 @@ test('A6 puts the price-ladder explanation above the button, not below it', () =
   assert.ok(explanation > 0 && closer > 0 && button > 0);
   assert.ok(explanation < closer, 'the explanation should precede "No insurance needed"');
   assert.ok(closer < button, 'both paragraphs should precede the CTA button');
-  // The 24-month tier is still an unconfirmed placeholder in pricing.json, so
-  // the table stops at 12 months and the copy must not name those figures.
-  // $49 (hair) and $79 (longevity) are 24-month-only — they appear nowhere in
-  // the 1/3/6/12 ladder, so their presence anywhere means the copy regressed.
-  // ($59 is NOT checked: it is hair loss's real 12-month price in the table.)
-  assert.doesNotMatch(html, /\$49\b|\$79\b/);
+});
+
+test('A6\'s table includes the confirmed 24-month column and the body names the matching figure', () => {
+  const { html } = TEMPLATES['lead-nurture-a6']({ firstName: 'Jane', unsubscribeUrl: UNSUB });
+  assert.match(html, />24 mo</, 'table should have a 24-month column now that pricing.json marks it final');
+  // GLP-1 weight loss 24-month tier, per pricing.json — the body quotes this
+  // exact figure, so table and prose must agree (this is the bug the earlier
+  // version of this test caught: the two used to contradict each other).
+  assert.match(html, /\$179/);
 });
 
 test('every campaign step renders with no name, vertical or resume link at all', () => {

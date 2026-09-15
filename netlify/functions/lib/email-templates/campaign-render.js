@@ -198,8 +198,8 @@ const SPECIAL = {
     const after = rest.filter((l) => !l.startsWith('- '));
     const cell = (t, first, last) => `<td style="padding:10px 8px; font-size:13px; text-align:${first ? 'left' : 'center'}; font-weight:${first || last ? 600 : 400}; color:${last ? COLORS.brand : COLORS.ink}; border-bottom:1px solid ${COLORS.line};">${t}</td>`;
     const table = `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:4px 0 20px; border-collapse:collapse; font-family:${SANS};">
-      <tr>${['Per month', '1 mo', '3 mo', '6 mo', '12 mo'].map((h, i) => `<th style="padding:8px; font-size:11px; letter-spacing:.6px; text-transform:uppercase; color:${COLORS.muted}; text-align:${i ? 'center' : 'left'}; border-bottom:2px solid ${COLORS.line};">${h}</th>`).join('')}</tr>
-      ${priceLadder().map((r) => `<tr>${r.map((c, i) => cell(c, i === 0, i === 4)).join('')}</tr>`).join('')}</table>`;
+      <tr>${['Per month', '1 mo', '3 mo', '6 mo', '12 mo', '24 mo'].map((h, i) => `<th style="padding:8px; font-size:11px; letter-spacing:.6px; text-transform:uppercase; color:${COLORS.muted}; text-align:${i ? 'center' : 'left'}; border-bottom:2px solid ${COLORS.line};">${h}</th>`).join('')}</tr>
+      ${priceLadder().map((r) => `<tr>${r.map((c, i) => cell(c, i === 0, i === 5)).join('')}</tr>`).join('')}</table>`;
     // Every non-bullet line after the "what's included" list renders in its
     // own order, below the table and above the button. Previously this picked
     // after[0]/after[1] out by index and rendered them reversed, which put the
@@ -270,12 +270,12 @@ const SPECIAL = {
 
 /**
  * A6's price ladder, read straight out of pricing.json rather than restated
- * here — the 24-month column is deliberately left off because those tiers are
- * still flagged as placeholders in pricing.json's own `_meta.note`.
- * @returns {string[][]} rows of [label, 1mo, 3mo, 6mo, 12mo]
+ * here — including the 24-month column, confirmed final by the client
+ * 2026-09-15 (see pricing.json's `_meta.note`).
+ * @returns {string[][]} rows of [label, 1mo, 3mo, 6mo, 12mo, 24mo]
  */
 function priceLadder() {
-  const row = (label, tiers) => [label, ...['1', '3', '6', '12'].map((m) => '$' + tiers[m])];
+  const row = (label, tiers) => [label, ...['1', '3', '6', '12', '24'].map((m) => '$' + tiers[m])];
   return [
     row('GLP-1 weight loss', PRICING['weight-loss'].semaglutide),
     row('Sexual wellness', PRICING['sexual-wellness'].default),

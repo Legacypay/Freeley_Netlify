@@ -112,9 +112,9 @@ vertical, so they get "Hi there," and A4's weight-loss variant.
 | `RESEND_FROM_EMAIL` | Set (`Freeley <no-reply@freeley.com>`) | — |
 | `RESEND_WEBHOOK_SECRET` | **Set** (2026-09-10, webhook id `2eff0154-4bd7-4fb9-85b6-24a28f9df40a`, events `email.bounced`/`email.complained`/`email.suppressed`) | Done |
 | `EMAIL_UNSUBSCRIBE_SECRET` | **Set** (generated 2026-09-10) | Done |
-| `EMAIL_POSTAL_ADDRESS` | Not set | You — CAN-SPAM requires a physical mailing address on marketing email footers; footer omits the line until this is set |
+| `EMAIL_POSTAL_ADDRESS` | **Deliberately not set** (client decision, 2026-09-15) — CAN-SPAM technically calls for a physical mailing address on marketing footers; the footer just omits the line while this is unset. Not a bug — a known, accepted gap | — |
 | `EMAIL_DRY_RUN` | Not set | Optional — set to `true` on a branch/preview context to render+log every send without actually calling Resend |
-| `ADMIN_IMPORT_SECRET` | Not set | You — required before `importLeadNurture.js` will do anything. It fails closed: while this is unset the endpoint returns 403 to every caller, so the waitlist import can't run |
+| `ADMIN_IMPORT_SECRET` | **Set** (2026-09-15, via the Netlify MCP) — `importLeadNurture.js` is now callable | Done |
 
 ## Manual setup checklist
 
@@ -140,8 +140,7 @@ Still needs the client:
    `net.authorize.customer.subscription.terminated`,
    `net.authorize.customer.subscription.cancelled`. Repeat for the sandbox
    Merchant Interface if testing there. (No MCP for this one.)
-2. **Set `EMAIL_POSTAL_ADDRESS`** once you have one to publish.
-3. Supabase SMTP + the 4 Auth email templates — already documented in
+2. Supabase SMTP + the 4 Auth email templates — already documented in
    `docs/RESEND_EMAIL_SETUP.md`, unchanged by this work.
 
 ## Testing
@@ -217,10 +216,19 @@ clicker — a bare `/?keep=1` link carries no identity and would record nothing.
 A13/A15 link to `/assessment-quiz?promo=WELCOME10`. A head-inline script
 (`astro.config.mjs`) stashes any `?promo=` into `sessionStorage`, and
 `checkout.astro` feeds it through its existing promo form on load, so the code
-applies itself rather than asking the reader to retype it at checkout.
+applies itself rather than asking the reader to retype it at checkout. As of
+2026-09-15 `WELCOME10` is set `active: false` in `pricing.json` — the client
+asked not to implement this promo yet, so A13/A15/C3 ship as designed but the
+code does not actually discount anything until it's flipped back on with a
+confirmed code/value (and a real expiry — `pricing.json` has none today).
+
+A6's price table now includes the 24-month column, read live from
+`pricing.json` — the client confirmed those tier prices as final on
+2026-09-15, so A6 and A4's hair-loss/sexual-wellness/longevity variants quote
+them directly instead of hedging with "lower on every longer plan."
 
 The transactional emails above are unchanged. Still open for the client, all
 shipped in their safest form rather than blocked — see `OPEN_QUESTIONS` at the
-bottom of `flow.js`: the `WELCOME10` promo (A13/A15/C3) and its "expires
-Sunday" deadline, the declined-case refund wording (A12), a consented patient
-story to replace A10's holding version, and `EMAIL_POSTAL_ADDRESS`.
+bottom of `flow.js`: reactivating `WELCOME10` (or a replacement) before Day 23,
+the declined-case refund wording (A12), and a consented patient story to
+replace A10's holding version.
