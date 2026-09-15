@@ -21,7 +21,10 @@ Shared utility modules (CommonJS, `module.exports = {...}`) imported by the 21 h
 | `mdi-order-ownership.js` | `resolveOwnedOrder(ids, userEmail, logTag?)`, `normalizeEmail(email)` | Binds a client-supplied `voucher_id`/`patient_id`/`case_id` to the authenticated Supabase user by requiring a match against an `mdi-orders` blob record whose `email` field equals the verified session email (case-insensitive). Returns the owned record or `null` — never distinguishes "not yours" from "doesn't exist yet", so callers must treat `null` as a normal pending/empty state, not an error. Used by every Supabase-authenticated function that accepts one of these identifiers (`caseStatus.js`, `getOrders.js`, `getEncounterDetails.js`, `patientCases.js`) — this is the fix for an IDOR class of bug found 2026-08-25 where those identifiers were trusted without checking who they belonged to. |
 
 ## Subdirectories
-None.
+| Directory | Purpose |
+|-----------|---------|
+| `email/` | The email send/journey engine (`engine.js`), added 2026-09-10 — see the MANUAL note below and `docs/EMAIL_FLOWS.md`. |
+| `email-templates/` | Every rendered email (transactional + drip-journey steps) plus the shared brand shell (`shared.js`). One file per template, registered by `index.js`'s `TEMPLATES` map. |
 
 ## For AI Agents
 ### Working In This Directory
@@ -47,3 +50,38 @@ None — these are the leaf/shared modules; nothing here imports from `functions
 - MDI API (`api.mdintegrations.com`), Supabase Auth API, Google's public-key endpoint (Firebase verifier), Meta Graph API (Conversions API), Google Analytics Measurement Protocol, Slack incoming webhook — all called via native `fetch`, no SDK dependency.
 
 <!-- MANUAL: Any manually added notes below this line are preserved on regeneration -->
+
+## Email flow (added 2026-09-10)
+
+`email/engine.js` is the single place every email — transactional (order
+confirmed, case status, receipts, cancellations) or a step of a drip journey
+(lead-nurture, checkout-abandoned, intake-reminder, patient-newsletter,
+refill-reminder, winback) — actually gets sent, on top of the
+existing `resend-client.js`. All state (contacts, per-journey enrollment
+status, the send queue, a dedupe/idempotency record per send, the
+unsubscribe/bounce/complaint suppression list) lives in one Netlify Blobs
+store, `email-engine` (global in production, deploy-scoped elsewhere — same
+non-prod-isolation pattern the Netlify Blobs docs recommend). Journey steps
+are drained by `processEmailQueue.js` (scheduled every 10 min).
+
+- `email/engine.js` — `sendTransactional()` (one-off, dedupe-keyed),
+  `enrollJourney()`/`cancelJourney()` (schedules/invalidates every step of a
+  named journey from `email/journeys.js` up front), `suppress()`/
+  `isSuppressed()` (bounce/complaint always blocks; a marketing unsubscribe
+  blocks only marketing sends, never transactional).
+- `email/journeys.js` — declarative `{name, kind, steps:[{delayMs, template}]}`
+  definitions for every drip campaign.
+- `email/unsubscribe.js` — stateless HMAC-signed unsubscribe links (no DB
+  lookup needed to prove a request is legitimate for that one address).
+- `email/phi-guard.js` — refuses to send anything whose rendered HTML
+  mentions a specific medication/dose (term list built from `products.js`
+  itself, so it can't drift). Defense-in-depth: every template is already
+  written to say "your treatment", never a drug name.
+- `email/text.js` — plain-text alternative part for deliverability.
+
+Every call site treats these as best-effort/non-blocking (wrapped in their
+own try/catch, logged, never allowed to fail the surrounding webhook/charge)
+— the same posture this codebase already uses for n8n forwards and
+conversion tracking. See `docs/EMAIL_FLOWS.md` for the full catalog of
+emails, their triggers, and the manual setup steps (Resend domain
+verification, webhook registration) this code can't do for itself.

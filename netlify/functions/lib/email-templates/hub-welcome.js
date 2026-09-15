@@ -40,4 +40,18 @@ function renderHubWelcomeEmail({ firstName, email, password, hubUrl }) {
   });
 }
 
-module.exports = { renderHubWelcomeEmail };
+/**
+ * Adapter for lib/email-templates/index.js's TEMPLATES registry (used by
+ * lib/email/engine.js's sendTransactional) — wraps renderHubWelcomeEmail
+ * (unchanged, still called directly too — see its own test) in the
+ * {subject, preheader, html} contract every other template returns.
+ */
+function render(data) {
+  return {
+    subject: 'Welcome to Freeley — your Hub account is ready',
+    preheader: 'Your Freeley Health Hub account is ready — sign-in details inside.',
+    html: renderHubWelcomeEmail(data)
+  };
+}
+
+module.exports = { renderHubWelcomeEmail, render };

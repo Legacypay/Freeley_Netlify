@@ -51,6 +51,26 @@
 [functions."keepSupabaseAlive"]
   schedule = "@daily"
 
+# Drain the email engine's drip-journey send queue (lib/email/engine.js,
+# netlify/functions/processEmailQueue.js) — every enrolled journey step
+# (lead-nurture, checkout-abandoned, patient-newsletter, refill-reminder, …) is
+# scheduled up front as a queue item; this is what actually sends it once due.
+[functions."processEmailQueue"]
+  schedule = "*/10 * * * *"
+
+# ── Email flow environment variables (lib/email/, lib/email-templates/) ──
+#   RESEND_API_KEY            - Resend dashboard → Settings → API Keys (required for any send)
+#   RESEND_FROM_EMAIL         - e.g. "Freeley <no-reply@freeley.com>" — must be on a verified Resend domain
+#   RESEND_WEBHOOK_SECRET     - Resend dashboard → Webhooks → the endpoint's Signing Secret (whsec_...);
+#                               register https://freeley.com/.netlify/functions/resendWebhook for
+#                               email.bounced + email.complained
+#   EMAIL_UNSUBSCRIBE_SECRET  - random secret (openssl rand -hex 32) — signs unsubscribe links
+#   EMAIL_POSTAL_ADDRESS      - physical mailing address shown in marketing email footers (CAN-SPAM)
+#   EMAIL_DRY_RUN             - "true" to render+log every send without actually sending (local iteration)
+#   ADMIN_IMPORT_SECRET       - shared secret for importLeadNurture.js's x-admin-secret header (waitlist
+#                               bulk import into the lead-nurture journey). Unset = that endpoint 403s everyone
+#   See docs/EMAIL_FLOWS.md for the full catalog, triggers, and manual setup checklist.
+
 # ── Authorize.Net Environment Variables (lib/authnet-config.js) ──
 #   AUTHNET_ENV                      - "sandbox" | "production" — selects the credential set AND the host
 #   AUTHNET_SANDBOX_API_LOGIN_ID     - sandbox.authorize.net → Account → API Credentials & Keys

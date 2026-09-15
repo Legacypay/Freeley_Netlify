@@ -19,6 +19,7 @@ const { encryptRecord, decryptRecord } = require('./lib/phi-crypto');
 const { resolveTestMode, buildVoucherPayload, parseVoucherResponse, demoMismatch } = require('./lib/mdi-voucher');
 const { sweepUntaggedTestOrders } = require('./lib/mdi-tags');
 const { ensureMdiPatient, buildPrefilledQuestions, createPatientOrder } = require('./lib/mdi-patient');
+const { sendTransactional, enrollJourney, cancelJourney } = require('./lib/email/engine');
 
 const MAX_RETRIES = 10;
 
@@ -232,6 +233,25 @@ exports.handler = async (event) => {
           });
         } catch (orderErr) {
           console.warn(`[RETRY MDI] Failed to save order record (non-critical):`, orderErr.message);
+        }
+
+        // Same "complete your intake" email submitQuiz.js sends on the
+        // happy path — this IS that happy path, just delayed by a retry.
+        if (parsed.onboardingUrl && !testMode.isTest) {
+          try {
+            await sendTransactional({
+              template: 'complete-intake',
+              to: patientData.email,
+              data: { firstName: patientData.first_name, onboardingUrl: parsed.onboardingUrl },
+              dedupeKey: 'intake:' + parsed.voucherId,
+              kind: 'transactional'
+            });
+            await enrollJourney('intake-reminder', { email: patientData.email, data: { firstName: patientData.first_name, onboardingUrl: parsed.onboardingUrl } });
+            await cancelJourney('lead-nurture', patientData.email);
+            await cancelJourney('quiz-abandoned', patientData.email);
+          } catch (e) {
+            console.warn('[RETRY MDI] complete-intake email/journey failed (non-critical):', e.message);
+          }
         }
 
         // Notify team of successful recovery

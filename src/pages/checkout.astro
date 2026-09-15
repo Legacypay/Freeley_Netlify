@@ -1109,6 +1109,35 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
       document.addEventListener("DOMContentLoaded", function () {
         loadProductsFromSession();
 
+        // ── Checkout-abandoned email journey ──
+        // Fires once per session, on the first time the email field is
+        // filled in and loses focus — a visitor who gets this far clearly
+        // intends to buy. Cancelled automatically on a completed purchase
+        // (see create-authnet-transaction.js).
+        const ptEmail = document.getElementById("pt-email");
+        if (ptEmail) {
+          ptEmail.addEventListener("blur", function () {
+            const email = ptEmail.value.trim();
+            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return;
+            if (sessionStorage.getItem("freeley_checkout_lead_captured") === email)
+              return;
+            sessionStorage.setItem("freeley_checkout_lead_captured", email);
+            fetch("/.netlify/functions/captureLead", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                email,
+                first_name: (
+                  document.getElementById("pt-first-name")?.value || ""
+                ).trim(),
+                source: "checkout",
+              }),
+            }).catch((err) =>
+              console.warn("Checkout lead capture failed (silent):", err),
+            );
+          });
+        }
+
         const consent = document.getElementById("consent-check");
         if (consent) {
           consent.addEventListener("change", function () {
@@ -1162,6 +1191,21 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
             setPromoMsg("", true);
             updateTotals();
           });
+
+          // A code arriving from a campaign email (…?promo=WELCOME10, stashed
+          // by the head-inline capture in astro.config.mjs — the link points at
+          // the quiz, not here) applies itself through the exact same
+          // validate-then-apply path as typing it, so there's one code path and
+          // an invalid/retired code still shows its normal error. Consumed
+          // once: re-entering checkout later shouldn't silently re-apply it.
+          try {
+            const prefill = sessionStorage.getItem("freeley_promo_code");
+            if (prefill) {
+              sessionStorage.removeItem("freeley_promo_code");
+              document.getElementById("promo-code").value = prefill;
+              promoForm.requestSubmit();
+            }
+          } catch (e) { /* storage unavailable — the field still works by hand */ }
         }
 
         const checkoutBtn = document.getElementById("checkout-btn");

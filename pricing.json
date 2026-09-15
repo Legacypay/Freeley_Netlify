@@ -29,13 +29,13 @@
   },
   "promos": {
     "_note": "Promo codes, applied server-side to the plan total (monthly x months). type: percent (value = %) or amount (value = USD off). Set active:false to retire a code. Codes below are PLACEHOLDERS for the client to confirm/replace.",
-    "WELCOME10": { "type": "percent", "value": 10, "label": "10% off your first order", "active": true },
+    "WELCOME10": { "type": "percent", "value": 10, "label": "10% off your first order", "active": false },
     "FREELEY50": { "type": "amount", "value": 50, "label": "$50 off", "active": true }
   },
   "_meta": {
     "currency": "USD",
     "updated": "2026-08-03",
-    "note": "Single source of truth. Server function imports this directly. Checkout.html displays but server is authoritative. 24-month tier prices are placeholders continuing the existing per-tier discount curve — flagged for client review, not real negotiated pricing."
+    "note": "Single source of truth. Server function imports this directly. Checkout.html displays but server is authoritative. 24-month tier prices confirmed 2026-09-15 as final — client asked for them as-is."
   },
   "treatment_names": {
     "weight-loss": "GLP-1 Weight Loss Program",

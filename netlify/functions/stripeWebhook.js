@@ -16,9 +16,12 @@
  */
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const { connectBlobs } = require('./lib/blobs');
 const { fireConversion } = require('./lib/conversion-tracker');
+const { sendTransactional, enrollJourney, cancelJourney } = require('./lib/email/engine');
 
 exports.handler = async (event) => {
+  connectBlobs(event);
   // Only accept POST
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: JSON.stringify({ error: 'Method Not Allowed' }) };
@@ -94,6 +97,29 @@ exports.handler = async (event) => {
           total: total,
           action: 'confirm_order'
         });
+
+        // A Stripe purchase has to move the contact between journeys exactly
+        // like an Authorize.Net one does (create-authnet-transaction.js's
+        // firePostPurchaseEmails) — otherwise a paying patient keeps getting
+        // 90 days of "still on the fence?" lead marketing, including the
+        // promo-expiry emails, and never receives the patient newsletter.
+        // Best-effort throughout: Stripe must still get its 200 ack.
+        const buyerEmail = data.receipt_email || data.charges?.data?.[0]?.billing_details?.email;
+        if (buyerEmail) {
+          const buyerFirstName = (data.charges?.data?.[0]?.billing_details?.name || '').split(' ')[0] || undefined;
+          for (const journey of ['lead-nurture', 'quiz-abandoned', 'checkout-abandoned', 'browse-abandoned']) {
+            try {
+              await cancelJourney(journey, buyerEmail);
+            } catch (e) {
+              console.warn(`[STRIPE WEBHOOK] cancelJourney(${journey}) failed (non-blocking):`, e.message);
+            }
+          }
+          try {
+            await enrollJourney('patient-newsletter', { email: buyerEmail, data: { firstName: buyerFirstName } });
+          } catch (e) {
+            console.warn('[STRIPE WEBHOOK] enrollJourney(patient-newsletter) failed (non-blocking):', e.message);
+          }
+        }
         break;
       }
 
@@ -112,6 +138,20 @@ exports.handler = async (event) => {
           treatment: data.metadata?.treatment,
           action: 'alert_team_and_notify_patient'
         });
+
+        if (data.receipt_email) {
+          try {
+            await sendTransactional({
+              template: 'payment-failed',
+              to: data.receipt_email,
+              data: {},
+              dedupeKey: 'payfail:' + data.id,
+              kind: 'transactional'
+            });
+          } catch (e) {
+            console.warn('[STRIPE WEBHOOK] payment-failed email failed (non-blocking):', e.message);
+          }
+        }
         break;
       }
 
@@ -140,6 +180,21 @@ exports.handler = async (event) => {
           customer_email: data.receipt_email || data.billing_details?.email,
           action: 'update_records'
         });
+
+        const refundEmail = data.receipt_email || data.billing_details?.email;
+        if (refundEmail) {
+          try {
+            await sendTransactional({
+              template: 'refund-issued',
+              to: refundEmail,
+              data: { amount: '$' + (data.amount_refunded / 100).toFixed(2) },
+              dedupeKey: 'refund:' + data.id,
+              kind: 'transactional'
+            });
+          } catch (e) {
+            console.warn('[STRIPE WEBHOOK] refund-issued email failed (non-blocking):', e.message);
+          }
+        }
         break;
       }
 

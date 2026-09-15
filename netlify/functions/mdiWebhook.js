@@ -27,8 +27,11 @@
  *   - patient_modified   → Patient record updated
  *   - message_created    → New message in patient-clinician chat (inbound & outbound)
  *
- * Transactional emails are dispatched via N8N webhook with structured
- * email_action payloads. N8N routes these to your ESP (SendGrid, Postmark, etc.).
+ * Patient-facing transactional emails (case_waiting, case_completed,
+ * order_tracking_number_changed, message_created) are sent directly via
+ * lib/email/engine.js → Resend — see sendPatientEmail() below. (Until the
+ * email flow build-out, these went to N8N_WEBHOOK_URL for an ESP that was
+ * never configured — see docs/EMAIL_FLOWS.md for that history.)
  *
  * Order status is tracked in Netlify Blobs (mdi-orders store, keyed by voucher_id).
  * The order/shipment events above carry no patient_id and only an unstructured
@@ -48,6 +51,7 @@ const { verifyWebhookSignature, mdiRequest } = require('./lib/mdi-client');
 const { connectBlobs } = require('./lib/blobs');
 const { tagTestCase } = require('./lib/mdi-tags');
 const { getStore } = require('@netlify/blobs');
+const { sendTransactional, cancelJourney } = require('./lib/email/engine');
 
 exports.handler = async (event) => {
   connectBlobs(event);
@@ -143,16 +147,7 @@ exports.handler = async (event) => {
 
         if (!waitingAlreadyEmailed) {
           // Send "action needed" email to patient
-          await sendPatientEmail(order, 'case_waiting', {
-            subject: 'Action needed — your clinician has a question',
-            template: 'case_waiting',
-            data: {
-              first_name: order?.first_name || 'there',
-              product: order?.product_key || 'your treatment',
-              case_id,
-              portal_url: 'https://freeley.com/hub'
-            }
-          });
+          await sendPatientEmail(order, 'case_waiting', { dedupeKey: 'waiting:' + case_id });
         }
 
         await notifyInternalWebhook('case_waiting', {
@@ -192,15 +187,7 @@ exports.handler = async (event) => {
 
         if (!completedAlreadyEmailed) {
           // Send "prescription ready" email
-          await sendPatientEmail(order, 'case_completed', {
-            subject: 'Your prescription is ready and on its way!',
-            template: 'case_completed',
-            data: {
-              first_name: order?.first_name || 'there',
-              product: order?.product_key || 'your treatment',
-              case_id
-            }
-          });
+          await sendPatientEmail(order, 'case_completed', { dedupeKey: 'completed:' + case_id });
         }
 
         await notifyInternalWebhook('case_completed', {
@@ -330,16 +317,7 @@ exports.handler = async (event) => {
 
         if (!alreadyEmailed) {
           // Patient's own inbox — safe to point them at the hub for tracking detail.
-          await sendPatientEmail(order, 'order_shipped', {
-            subject: 'Your order has shipped!',
-            template: 'order_shipped',
-            data: {
-              first_name: order?.first_name || 'there',
-              product: order?.product_key || 'your treatment',
-              case_id,
-              portal_url: 'https://freeley.com/hub'
-            }
-          });
+          await sendPatientEmail(order, 'order_shipped', { dedupeKey: 'shipped:' + case_id });
         } else {
           console.log(`[MDI WEBHOOK] Skipping duplicate order_shipped email for case ${case_id} — already sent`);
         }
@@ -381,16 +359,18 @@ exports.handler = async (event) => {
         // the patient's own message — neither deserves a "new message" email.
         const HUMAN_SENDERS = ['clinician', 'provider', 'doctor', 'support', 'support_staff', 'medical_assistant', 'internal_support_staff'];
         if (HUMAN_SENDERS.includes(senderType)) {
-          // Send "new message from your clinician" email
+          // Send "new message" email — throttled to at most one per 30-minute
+          // window per patient (a clinician firing off several messages in a
+          // row shouldn't mean several emails). Reuses the engine's ordinary
+          // dedupe mechanism: bucketing the dedupe key by a 30-min time
+          // window makes "already sent this window" the same check as
+          // "already sent this exact event".
+          const THROTTLE_MS = 30 * 60 * 1000;
+          const bucket = Math.floor(Date.now() / THROTTLE_MS);
           await sendPatientEmail(order, 'message_from_clinician', {
-            subject: 'You have a new message from your clinician',
-            template: 'clinician_message',
-            data: {
-              first_name: order?.first_name || 'there',
-              portal_url: 'https://freeley.com/hub'
-              // NOTE: Do NOT include message content in email (PHI concern)
-              // Points to Freeley hub (in-app messaging) instead of MDI portal
-            }
+            dedupeKey: 'msg:' + (patient_id || order?.voucher_id || 'unknown') + ':' + bucket
+            // NOTE: Do NOT include message content in email (PHI concern) —
+            // points to the Freeley Hub's own messaging, not MDI's portal.
           });
 
           await notifyInternalWebhook('message_from_clinician', {
@@ -419,6 +399,12 @@ exports.handler = async (event) => {
           [`${event_type}_at`]: new Date().toISOString()
         });
 
+        // The case existing at all means the patient used the intake link —
+        // stop nagging them about it.
+        if (order?.email) {
+          try { await cancelJourney('intake-reminder', order.email); } catch (e) { console.warn('[MDI WEBHOOK] cancelJourney(intake-reminder) failed (non-critical):', e.message); }
+        }
+
         await notifyInternalWebhook(event_type, {
           case_id,
           patient_id,
@@ -430,6 +416,12 @@ exports.handler = async (event) => {
 
       // ── Voucher events ──────────────────────────────────────
       case 'voucher_used':
+        console.log(`[MDI WEBHOOK] 🎟️ Voucher ${event_type}: ${payload.voucher_id}`);
+        // Using the voucher means the patient opened the intake link.
+        if (order?.email) {
+          try { await cancelJourney('intake-reminder', order.email); } catch (e) { console.warn('[MDI WEBHOOK] cancelJourney(intake-reminder) failed (non-critical):', e.message); }
+        }
+        break;
       case 'voucher_created':
       case 'voucher_reminder_sent':
         console.log(`[MDI WEBHOOK] 🎟️ Voucher ${event_type}: ${payload.voucher_id}`);
@@ -703,11 +695,23 @@ async function updateOrderStatus(order, status, extraFields = {}) {
 // ═══════════════════════════════════════════════════════════════
 // Helper: Send transactional email via N8N webhook
 // ═══════════════════════════════════════════════════════════════
-// N8N receives structured email payloads and routes them to your
-// ESP (SendGrid, Postmark, Resend, etc.) based on the template field.
-// If no N8N webhook is configured, logs the email action for debugging.
+// Maps this webhook's internal event names to lib/email-templates' registry
+// keys (see lib/email-templates/index.js). One deliberate gap: case_approved
+// has no entry — that email stays paused, see the case_approved handler above.
+const EMAIL_TEMPLATE_BY_TYPE = {
+  case_waiting: 'case-waiting',
+  case_completed: 'case-completed',
+  order_shipped: 'order-shipped',
+  message_from_clinician: 'clinician-message'
+};
 
-async function sendPatientEmail(order, emailType, emailPayload) {
+/**
+ * Sends a patient-facing transactional email via the shared engine
+ * (lib/email/engine.js → Resend). `dedupeKey` is required — MDI can and
+ * does redeliver the same webhook event, and this is what stops a redelivery
+ * from emailing the patient twice.
+ */
+async function sendPatientEmail(order, emailType, { dedupeKey }) {
   const patientEmail = order?.email;
   if (!patientEmail) {
     console.warn(`[MDI WEBHOOK] Cannot send ${emailType} email — no patient email found`);
@@ -718,30 +722,19 @@ async function sendPatientEmail(order, emailType, emailPayload) {
     console.log(`[MDI WEBHOOK] Skipping ${emailType} email — test/sandbox order (${order.environment || 'unknown env'})`);
     return;
   }
-
-  const webhookUrl = process.env.N8N_WEBHOOK_URL;
-  if (!webhookUrl) {
-    console.log(`[MDI WEBHOOK] Email action queued (no N8N_WEBHOOK_URL): ${emailType} → ${patientEmail}`);
-    console.log(`[MDI WEBHOOK] Email payload:`, JSON.stringify({ to: patientEmail, ...emailPayload }));
+  const template = EMAIL_TEMPLATE_BY_TYPE[emailType];
+  if (!template) {
+    console.error(`[MDI WEBHOOK] No email template mapped for event: ${emailType}`);
     return;
   }
-
   try {
-    await fetch(webhookUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        source: 'mdi_webhook',
-        event_type: 'send_email',
-        email_action: emailType,
-        to: patientEmail,
-        subject: emailPayload.subject,
-        template: emailPayload.template,
-        template_data: emailPayload.data || {},
-        timestamp: new Date().toISOString()
-      })
+    await sendTransactional({
+      template,
+      to: patientEmail,
+      data: { firstName: order.first_name },
+      dedupeKey,
+      kind: 'transactional'
     });
-    console.log(`[MDI WEBHOOK] 📧 Email dispatched: ${emailType} → ${patientEmail}`);
   } catch (err) {
     console.warn(`[MDI WEBHOOK] Email dispatch failed (non-critical): ${err.message}`);
   }

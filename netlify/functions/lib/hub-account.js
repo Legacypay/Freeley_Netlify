@@ -37,8 +37,7 @@
  * before real volume (dashboard-only, see docs/RESEND_EMAIL_SETUP.md).
  */
 
-const { sendResendEmail } = require('./resend-client');
-const { renderHubWelcomeEmail } = require('./email-templates/hub-welcome');
+const { sendTransactional } = require('./email/engine');
 
 /** URL-safe, unambiguous (no 0/O/1/l/I) 12-char password — typeable from an email on a phone. */
 function generateTempPassword() {
@@ -88,14 +87,25 @@ async function ensureHubAccount(email, redirectTo, opts = {}) {
     return { sent: false, reason: res.status + ' ' + text.slice(0, 200) };
   }
 
-  // ── Step 3: our own custom welcome/temp-password email via Resend ──
-  // Never blocks or fails the (already-successful) magic-link result above.
+  // ── Step 3: our own custom welcome/temp-password email, via the shared
+  // email engine (dedupe + suppression) — never blocks or fails the
+  // (already-successful) magic-link result above. Dedupe key is scoped to
+  // this specific order (opts.transactionId, when the caller has one) so a
+  // repeat purchaser still gets a fresh welcome/temp-password email on their
+  // NEXT order — only a retried/duplicated webhook for the SAME order is
+  // deduped. Without a transactionId (no known caller today, kept as a safe
+  // fallback) dedupe is effectively disabled, matching pre-engine behavior.
   try {
-    const html = renderHubWelcomeEmail({ firstName: opts.firstName, email, password: tempPassword, hubUrl });
-    const sent = await sendResendEmail({ to: email, subject: 'Welcome to Freeley — your Hub account is ready', html });
-    if (!sent.sent) console.warn('[HUB ACCOUNT] Resend welcome email failed (non-critical):', sent.reason);
+    const dedupeKey = 'hubwelcome:' + (opts.transactionId || require('crypto').randomUUID());
+    await sendTransactional({
+      template: 'hub-welcome',
+      to: email,
+      data: { firstName: opts.firstName, email, password: tempPassword, hubUrl },
+      dedupeKey,
+      kind: 'transactional'
+    });
   } catch (e) {
-    console.warn('[HUB ACCOUNT] Resend welcome email threw (non-critical):', e.message);
+    console.warn('[HUB ACCOUNT] Welcome email threw (non-critical):', e.message);
   }
 
   return { sent: true };
