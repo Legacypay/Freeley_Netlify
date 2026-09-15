@@ -80,9 +80,14 @@ beforeEach(() => {
   origFetch = global.fetch;
   global.fetch = async (url, opts) => {
     fetchCalls.push({ url, body: opts && opts.body ? JSON.parse(opts.body) : null });
-    return { ok: true };
+    return { ok: true, text: async () => JSON.stringify({ id: 'resend-test-id' }) };
   };
   process.env.N8N_WEBHOOK_URL = 'https://n8n.example/webhook';
+  // sendPatientEmail() routes through lib/email/engine.js's sendTransactional,
+  // which now actually attempts a Resend send outside preview/branch-deploy
+  // CONTEXT (unset here, same as the real scheduled-function runtime) —
+  // matches lib/resend-client.js's required env var.
+  process.env.RESEND_API_KEY = 're_test_key';
 });
 
 function fireWebhook(payload) {
