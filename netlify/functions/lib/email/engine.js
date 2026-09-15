@@ -37,8 +37,21 @@ const STORE_NAME = 'email-engine';
 // where the clinical/support team is based) — never a 3am marketing email.
 const SEND_WINDOW = { timeZone: 'America/New_York', startHour: 9, endHour: 20 };
 
+// `process.env.CONTEXT` is not reliably populated at runtime inside Netlify
+// Functions (confirmed here: processEmailQueue's scheduled runs crashed on
+// getDeployStore's missing region on every 10-minute run from 2026-09-14
+// launch through 2026-09-15, because CONTEXT was never 'production' even
+// though scheduled functions only ever execute against the production
+// deploy). Defaulting to production and only opting into the deploy-scoped
+// store for explicitly-recognized preview contexts keeps manual test sends
+// from a deploy preview isolated, while making the scheduled production path
+// fail-safe regardless of whether CONTEXT shows up.
+function isPreviewContext() {
+  return process.env.CONTEXT === 'deploy-preview' || process.env.CONTEXT === 'branch-deploy';
+}
+
 function getEmailStore() {
-  return process.env.CONTEXT === 'production' ? getStore(STORE_NAME) : getDeployStore(STORE_NAME);
+  return isPreviewContext() ? getDeployStore(STORE_NAME) : getStore(STORE_NAME);
 }
 
 function normalizeEmail(email) {
@@ -79,7 +92,7 @@ function isTestAddress(email) {
  */
 function shouldActuallySend(email) {
   if (process.env.EMAIL_DRY_RUN === 'true') return false;
-  if (process.env.CONTEXT === 'production') return true;
+  if (!isPreviewContext()) return true;
   return isTestAddress(email);
 }
 
