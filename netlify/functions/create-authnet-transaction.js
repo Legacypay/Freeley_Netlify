@@ -459,9 +459,11 @@ async function firePostPurchaseEmails({ email, firstName, transactionId, treatme
     console.warn('[AUTHNET] order-confirmed email failed (non-blocking):', e.message);
   }
 
-  // A purchase resolves every pre-purchase abandonment journey the same
-  // address might be mid-way through.
-  for (const journey of ['quiz-abandoned', 'checkout-abandoned', 'browse-abandoned']) {
+  // A purchase resolves every pre-purchase journey the same address might be
+  // mid-way through. Cancelling `lead-nurture` also stops its Track C
+  // (day 45–90) re-engagement steps, which is exactly the intent — those
+  // exist only for leads who never bought.
+  for (const journey of ['lead-nurture', 'quiz-abandoned', 'checkout-abandoned', 'browse-abandoned']) {
     try {
       await cancelJourney(journey, email);
     } catch (e) {
@@ -470,9 +472,9 @@ async function firePostPurchaseEmails({ email, firstName, transactionId, treatme
   }
 
   try {
-    await enrollJourney('onboarding', { email, data: { firstName } });
+    await enrollJourney('patient-newsletter', { email, data: { firstName } });
   } catch (e) {
-    console.warn('[AUTHNET] enrollJourney(onboarding) failed (non-blocking):', e.message);
+    console.warn('[AUTHNET] enrollJourney(patient-newsletter) failed (non-blocking):', e.message);
   }
 
   // Refill reminder: one reminder ahead of the next real-world replenishment

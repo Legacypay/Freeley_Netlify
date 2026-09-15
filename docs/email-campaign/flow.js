@@ -1,14 +1,23 @@
 /**
- * Freeley — Email Campaign Flow (proposal, v1 — 2026-09-12)
+ * Freeley — Email Campaign Flow (live since 2026-09-14)
  *
- * Single source of truth for the 29-email campaign proposal. The copy here is
- * design-independent: every email is subject + preheader + headline + body +
- * CTA, plus a *suggested* hero image from `public/assets/` and a layout hint.
- * `scripts/build-campaign-pdf.js` renders this file into the client-facing
- * PDF (docs/email-campaign/Freeley_Email_Campaign_Flow.pdf).
+ * Single source of truth for the 29-email campaign — both for the
+ * client-facing PDF (`scripts/build-campaign-pdf.js`) AND for what actually
+ * goes out: netlify/functions/lib/email-templates/campaign-render.js reads
+ * this same EMAILS array to render the `lead-nurture` (A1–A16 + C1–C4) and
+ * `patient-newsletter` (B1–B9) journey steps. Editing copy here changes live
+ * email — it is no longer a document.
  *
- * Merge tags: {{first_name}}, {{vertical}} (the interest the lead picked in
- * the quiz), {{resume_url}}, {{promo_code}}, {{hub_url}}.
+ * The copy is design-independent: every email is subject + preheader +
+ * headline + body + CTA, plus a *suggested* hero image from `public/assets/`
+ * and a layout hint.
+ *
+ * Merge tags: {{first_name}} (falls back to "there"), {{vertical}} (the
+ * interest the lead picked in the quiz), {{resume_url}}, {{promo_code}},
+ * {{hub_url}}, {{keep_url}}. Every tag used below must have a resolver in
+ * campaign-render.js's MERGE map — an unresolved tag renders as nothing, and
+ * a bracketed [PLACEHOLDER] would render literally, so neither is allowed to
+ * survive in this file (tests/unit/email-campaign.test.js enforces both).
  *
  * Image paths are relative to `public/` — i.e. they are live at
  * https://freeley.com/<path>, which is what the email HTML would reference.
@@ -17,6 +26,10 @@
 const SITE = 'https://freeley.com';
 const QUIZ = `${SITE}/assessment-quiz`;
 const HUB = `${SITE}/hub`;
+// A16's four "what held you back?" options are ordinary links to the FAQ page;
+// the ?why= value is what distinguishes them in analytics (see A16's notes).
+// campaign-render.js adds the utm_* params to this and every other link.
+const FEEDBACK = `${SITE}/faqs?why=`;
 
 const TRACKS = [
   {
@@ -154,7 +167,7 @@ const EMAILS = [
           '- **Stops shedding in its tracks.** The hormone signal that miniaturizes follicles gets blocked.',
           '- **Reactivates dormant follicles.** Follicles that thinned out but never died get a second chance.',
           '- **Fits your routine.** A daily step you’ll forget you’re doing by week two.',
-          'Most patients see shedding slow within 2–3 months and visible regrowth by month 4–6. Plans start at $49/month on the 24-month plan.'
+          'Most patients see shedding slow within 2–3 months and visible regrowth by month 4–6. Plans are $89/month on a 1-month plan and drop on every longer plan.'
         ],
         cta: { label: 'Start my hair assessment', url: `${SITE}/hair-loss` },
         image: { src: 'assets/hl/hero-loss-couple.png', why: 'Confident, social image — the outcome, not the problem.' },
@@ -172,7 +185,7 @@ const EMAILS = [
           '- **Fast-acting formulas.** Dissolves under the tongue, works in minutes rather than an hour.',
           '- **Control & confidence.** Options for as-needed use or a daily routine, chosen by your physician.',
           '- **Totally discreet.** No pharmacy line, no labeled bottle, no conversation you didn’t choose to have.',
-          'Plans start at $59/month. Your physician picks the formula; you pick when.'
+          'Plans are $99/month on a 1-month plan and drop on every longer plan. Your physician picks the formula; you pick when.'
         ],
         cta: { label: 'Start my private assessment', url: `${SITE}/sexual-wellness` },
         image: { src: 'assets/sw/hero-intimate.png', why: 'Intimacy/couple image; keep it warm, not clinical.' },
@@ -190,7 +203,7 @@ const EMAILS = [
           '- **Cellular energy.** Supporting the molecules your cells use to make and repair themselves.',
           '- **Deep, restorative sleep.** The kind that changes how the next day feels.',
           '- **Detox & immunity.** Helping your body clear what slows it down.',
-          'Your physician builds the protocol around your goals and labs. Plans start at $79/month.'
+          'Your physician builds the protocol around your goals and labs. Plans are $129/month on a 1-month plan and drop on every longer plan.'
         ],
         cta: { label: 'Build my protocol', url: `${SITE}/longevity` },
         image: { src: 'assets/lifestyle/lg-lifestyle-vitality.jpg', why: 'Vitality lifestyle shot; tiles below can use the three benefit images.' },
@@ -238,13 +251,13 @@ const EMAILS = [
       '- Shipping, straight to your door',
       '- Unlimited messaging with your care team',
       '- Automatic refills, so you never run out',
-      'The longer the plan, the lower the monthly price — because it lets our pharmacy partners plan ahead. GLP-1 weight loss, for example, runs from $299/month on a 1-month plan to $199/month on the 12-month plan. Hair loss from $89 down to $49. Sexual wellness from $99 down to $59. Longevity from $129 down to $79.',
+      'The longer the plan, the lower the monthly price — because it lets our pharmacy partners plan ahead. GLP-1 weight loss, for example, runs from $299/month on a 1-month plan to $199/month on the 12-month plan, and our 24-month plans go lower still. The table above is the current ladder for every product line.',
       'No insurance needed. Cancel any time.'
     ],
     cta: { label: 'See full pricing', url: `${SITE}/pricing` },
     image: { src: 'assets/pricing/See_how_much.png', why: 'The pricing-page graphic. Show the price ladder as a simple table underneath.' },
     alt: ['assets/wl/slide-price-semaglutide.webp', 'assets/about/flat-rate-dosing.png'],
-    notes: 'Prices pulled from pricing.json (2026-09). 24-month tier prices are still flagged as placeholders in that file — confirm before this email goes live.'
+    notes: 'The rendered price table is read live from pricing.json at send time (campaign-render.js\'s priceLadder()), so it cannot go stale. It deliberately shows the 1/3/6/12-month columns only — the 24-month tier is still flagged as a placeholder in pricing.json\'s own _meta.note, so the body says "go lower still" rather than naming a number Anthony has not confirmed.'
   },
   {
     id: 'A7', track: 'A', day: 11, send: 'Day 11',
@@ -271,7 +284,7 @@ const EMAILS = [
     id: 'A8', track: 'A', day: 13, send: 'Day 13',
     name: 'What the first 90 days look like (vertical-specific)',
     goal: 'Make results concrete with a realistic timeline. Sets honest expectations.',
-    segment: 'By {{vertical}}',
+    segment: 'All leads, section by vertical',
     layout: 'Vertical timeline graphic (week 1 / month 1 / month 3) + button',
     subject: 'Week 1, month 1, month 3: what actually happens',
     preheader: 'A realistic timeline, not a before/after fantasy.',
@@ -288,7 +301,7 @@ const EMAILS = [
     cta: { label: 'Start my assessment', url: QUIZ },
     image: { src: 'assets/l/A_Timeline_of_What_You_ll_Feel.jpg', why: 'Existing timeline graphic; swap for the vertical’s own "Here’s what happens next" image per variant.' },
     alt: ['assets/wl/Here_sWhatHappensNext.jpg', 'assets/hl/Here_s_What_Happens_Next.jpg', 'assets/sw/Here_sWhatHappensNext.jpg'],
-    notes: 'Ships as four variants like A4 — the PDF shows the combined copy so all four timelines can be reviewed at once.'
+    notes: 'DELIBERATELY ONE EMAIL, not four variants like A4. A timeline is short enough that all four fit in one body, and seeing the other three is reassuring rather than noise ("this is what the whole service looks like"). B4 works the same way. Only A4 — where the whole email is a pitch for one product line — splits by vertical.'
   },
   {
     id: 'A9', track: 'A', day: 15, send: 'Day 15',
@@ -314,23 +327,24 @@ const EMAILS = [
   },
   {
     id: 'A10', track: 'A', day: 17, send: 'Day 17',
-    name: 'A patient’s story',
-    goal: 'Social proof in narrative form.',
-    segment: 'All leads (vertical-matched story where available)',
-    layout: 'Large quote, portrait/lifestyle image, before/after if consented',
-    subject: '"I put it off for three years."',
-    preheader: 'One patient, in their own words.',
-    headline: '"I put it off for three years. The whole thing took eleven minutes."',
+    name: 'Why there’s no testimonial here yet',
+    goal: 'Hold the social-proof slot honestly until a consented patient story exists, and invite the reader to ask questions (which is also how the first testimonial arrives).',
+    segment: 'All leads',
+    layout: 'Editorial, single column, one lifestyle image, one button',
+    subject: 'We could fake this one. We’d rather not.',
+    preheader: 'Why there’s no glossy testimonial in this email.',
+    headline: 'No stock photo. No invented quote.',
     body: [
       'Hi {{first_name}},',
-      '[PATIENT STORY — 120–180 words, first person, vertical-matched. Structure: what they tried before → what made them hesitate → what the first month actually felt like → the one thing they’d tell someone on the fence.]',
-      '— [First name, initial], Freeley patient since [month]',
-      'Every story we publish is from a real patient who gave written permission, and results vary from person to person. Yours starts the same way theirs did.'
+      'This is the email where most companies show you a before-and-after and a five-star quote from "Sarah M."',
+      'We publish patient stories only when a real patient has given us written permission, and results vary from person to person — so until one of ours says yes, this space stays empty. We think that tells you more about us than a stock photo would.',
+      'What we can tell you is the part that is checkable: every case is read by a physician licensed in your state, every treatment is prepared by a licensed 503A pharmacy, and your care team answers messages in under 24 hours on average.',
+      'And if you’d rather hear it from a person than from a marketing email — reply to this one and ask us anything. A real person answers.'
     ],
-    cta: { label: 'Start where they started', url: QUIZ },
-    image: { src: 'assets/wl/why-trust-freeley-lifestyle.jpg', why: 'Lifestyle placeholder. Before/after pairs exist in assets/wl and assets/hl but need documented patient consent before use in email.' },
-    alt: ['assets/wl/before-1.png', 'assets/wl/after-1.png', 'assets/hl/before-2-sq.jpg', 'assets/hl/after-2-sq.jpg'],
-    notes: 'Needs a real, consented testimonial from Anthony. Copy is a template until then.'
+    cta: { label: 'Start my assessment', url: QUIZ },
+    image: { src: 'assets/wl/why-trust-freeley-lifestyle.jpg', why: 'Lifestyle shot, deliberately not a patient portrait. Before/after pairs exist in assets/wl and assets/hl but need documented patient consent before use in email.' },
+    alt: ['assets/about/value-integrity.jpg', 'assets/home/Real_Providers.png'],
+    notes: 'HOLDING VERSION. The approved testimonial copy needs a real, consented patient story from Anthony (one per vertical is ideal). Until then this ships the honest "we won\'t fake it" version rather than a fabricated quote — swap it back the day a consented story exists.'
   },
   {
     id: 'A11', track: 'A', day: 19, send: 'Day 19',
@@ -365,7 +379,7 @@ const EMAILS = [
     body: [
       'Hi {{first_name}},',
       '**"Do I need insurance?"** No. One flat price, no claims, no prior authorization.',
-      '**"What if the physician says no?"** Then you don’t pay for treatment. [CONFIRM: exact refund policy wording for declined cases.]',
+      '**"What if the physician says no?"** Then you don’t pay for treatment. If you are not approved by our physicians, your consultation and any prepaid amounts are refunded in full.',
       '**"What if it doesn’t work for me?"** Your physician can adjust your treatment, and you can cancel your plan at any time from your Hub — no phone call required.',
       '**"Is now the right time?"** Every month of waiting is a month of the same. The assessment takes two minutes and commits you to nothing.',
       'Anything else? Reply to this email. A real person answers.'
@@ -373,7 +387,7 @@ const EMAILS = [
     cta: { label: 'Take the 2-minute assessment', url: QUIZ },
     image: { src: 'assets/home/96_Patient satisfaction.png', why: 'Satisfaction stat badge next to the Q&A.' },
     alt: ['assets/home/cta-girl-desktop.png'],
-    notes: 'The declined-case refund line must match the real policy in terms.astro before sending.'
+    notes: 'The declined-case refund line is quoted from the live refund answer on src/pages/pricing.astro ("If you are not approved for treatment by our physicians, your consultation and any prepaid amounts are 100% refunded immediately"), softened to "refunded in full" so the email never promises a timing the ops flow can\'t guarantee. Anthony should confirm it matches the policy he actually operates.'
   },
   {
     id: 'A13', track: 'A', day: 23, send: 'Day 23',
@@ -446,16 +460,16 @@ const EMAILS = [
     body: [
       'Hi {{first_name}},',
       'You’ve had a month of Freeley in your inbox and you haven’t started — which is completely fine. We’d just like to know why, so we can do better. One click:',
-      '- **Price** → [link]',
-      '- **Not sure it’s safe** → [link]',
-      '- **Not the right time** → [link]',
-      '- **Just browsing** → [link]',
+      `- [It was the price](${FEEDBACK}price)`,
+      `- [I’m not sure it’s safe](${FEEDBACK}safety)`,
+      `- [It’s not the right time](${FEEDBACK}timing)`,
+      `- [I was just browsing](${FEEDBACK}browsing)`,
       'From here on we’ll only email you a couple of times a month — patient stories, new treatments, honest answers. If you ever want to pick this back up, the assessment will be right where you left it.'
     ],
     cta: { label: 'Finish my assessment instead', url: '{{resume_url}}' },
     image: { src: 'assets/about/value-transparency.jpg', why: 'Optional; a text-only version performs well here.' },
     alt: [],
-    notes: 'Reply-links can be simple UTM-tagged links to the FAQ page; the click is the data.'
+    notes: 'The four options are plain UTM-tagged links to the FAQ page (?why=… distinguishes them) — the click is the data. Reading it means looking at the A16 utm_content rows in GA4; nothing stores the answer server-side.'
   },
 
   // ───────────────────────────── TRACK B ─────────────────────────────
@@ -597,7 +611,7 @@ const EMAILS = [
     headline: 'Your next refill is on its way soon.',
     body: [
       'Hi {{first_name}},',
-      'Just so nothing surprises you: your next refill is scheduled for {{next_refill_date}} and your card on file will be charged {{next_refill_amount}} on that date. You don’t need to do anything.',
+      'Just so nothing surprises you: your next refill is scheduled to ship soon, and the card on file will be charged your plan’s usual price on that date. The exact date and amount are on your plan in the Hub. You don’t need to do anything.',
       'If something has changed, it takes a minute in your Hub:',
       '- **Moved?** Update your shipping address.',
       '- **New card?** Update your payment method.',
@@ -607,7 +621,7 @@ const EMAILS = [
     cta: { label: 'Review my plan', url: HUB },
     image: { src: 'assets/howItsWork/Shipment Tracking.png', why: 'Shipment tracking illustration.' },
     alt: [],
-    notes: 'Complements the existing refill-reminder journey (3 days before ARB renewal); this one is the earlier, friendlier heads-up.'
+    notes: 'Complements the existing refill-reminder journey (3 days before ARB renewal); this one is the earlier, friendlier heads-up. Its step fires at a fixed +45d from purchase, NOT off the real ARB billing date, so it deliberately names no date or amount and points at the Hub for both — the `refill-reminder` journey is the one timed to the actual renewal.'
   },
   {
     id: 'B8', track: 'B', day: 60, send: 'Day 60',
@@ -621,13 +635,16 @@ const EMAILS = [
     body: [
       'Hi {{first_name}},',
       'Most Freeley patients tell us the same thing: they wish they’d started sooner, and they know someone who’s exactly where they were two months ago.',
-      'If that’s you, forward this — or send them your link. [IF REFERRAL PROGRAM: "They get $X off their first order and you get $X off your next refill."]',
+      'If that’s you, forward this email to them — or just send them the link below.',
       'No pressure, no spam. Just the same two-minute assessment you took.'
     ],
-    cta: { label: 'Share Freeley', url: `${SITE}/?ref={{referral_code}}` },
+    // Points at /how-it-works rather than the homepage: the person opening
+    // this link is a friend who has never heard of Freeley, and that page
+    // answers "what is this" before asking for anything.
+    cta: { label: 'Share Freeley', url: `${SITE}/how-it-works` },
     image: { src: 'assets/quiz/boy-girl.png', why: 'Friendly two-person visual.' },
     alt: ['assets/home/hero-mob.png'],
-    notes: 'OPTIONAL — needs Anthony to decide on a referral incentive. Without one, keep as a simple forward-to-a-friend email.'
+    notes: 'Ships as the plain forward-to-a-friend version: no referral program exists, so there is no {{referral_code}} and no incentive to promise. If Anthony approves one later, this is the email that carries it.'
   },
   {
     id: 'B9', track: 'B', day: 90, send: 'Day 90',
@@ -665,14 +682,14 @@ const EMAILS = [
       'Hi {{first_name}},',
       'It’s been about six weeks. A quick catch-up on what’s new at Freeley:',
       '- **Longer plans, lower prices.** 12- and 24-month plans bring the monthly price down significantly — GLP-1 weight loss from $199/month on the 12-month plan.',
-      '- **[NEW ITEM — e.g. a new treatment, a new product line, a new Hub feature.]**',
-      '- **[NEW ITEM — e.g. a new patient story, a physician Q&A.]**',
+      '- **Four areas, one care team.** Weight, hair, sexual wellness and longevity all run through the same physicians, the same pharmacy partners and the same flat pricing.',
+      '- **Everything in one place.** Your Hub holds order tracking, receipts, documents and a direct line to your clinician — no phone tree, no portal password you have to ask for.',
       'Your assessment is still saved. It picks up exactly where you left it.'
     ],
     cta: { label: 'Pick up my assessment', url: '{{resume_url}}' },
     image: { src: 'assets/home/hero-green-2.png', why: 'Alternate homepage hero; feels fresh vs. A1.' },
     alt: [],
-    notes: 'The two [NEW ITEM] slots should be refreshed quarterly so this email never feels canned.'
+    notes: 'The three bullets are all evergreen and true today. Swap them quarterly for genuinely new items (a new treatment, a new Hub feature, a physician Q&A) so a lead who reaches Day 45 twice never reads the same "what\'s new".'
   },
   {
     id: 'C2', track: 'C', day: 60, send: 'Day 60 after capture',
@@ -706,7 +723,7 @@ const EMAILS = [
     body: [
       'Hi {{first_name}},',
       'We’ve told you who prescribes, who compounds, what it costs and what to expect. There isn’t much more to say, so we’ll just ask plainly:',
-      'If Freeley is right for you, the assessment is here and takes two minutes. [IF ALLOWED: "Your code {{promo_code}} still works for 10% off your first order."]',
+      'If Freeley is right for you, the assessment is here and takes two minutes. Your code {{promo_code}} still works for 10% off your first order.',
       'If it isn’t — that’s genuinely fine. Next email we’ll ask if you’d rather we stop.'
     ],
     cta: { label: 'Start my assessment', url: QUIZ },
@@ -728,10 +745,10 @@ const EMAILS = [
       'If you’d like to keep getting our monthly letter — patient stories, new treatments, honest answers, once a month — click below. If you do nothing, we’ll take the hint and stop.',
       'Either way, the assessment stays saved under your email, whenever you want it.'
     ],
-    cta: { label: 'Keep me on the monthly letter', url: `${SITE}/?keep=1` },
+    cta: { label: 'Keep me on the monthly letter', url: '{{keep_url}}' },
     image: { src: '', why: 'No image — plain text performs best for a sunset email.' },
     alt: [],
-    notes: 'Contacts who do not click are moved to a "dormant" segment and receive nothing further — good for deliverability.'
+    notes: '{{keep_url}} is the same HMAC-signed emailPreferences link the unsubscribe footer uses, plus &keep=1 — that signature is what identifies the clicker, so the preference is actually recorded against their address (a bare /?keep=1 link carries no identity and would be a no-op button). Contacts who do not click receive nothing further — good for deliverability.'
   }
 ];
 
@@ -741,19 +758,21 @@ const RULES = [
   { title: 'No medical details in marketing email', body: 'Track B (patients) never names a specific medication or dose — those live in the Hub. This is enforced in code (the PHI guard refuses to send a rendered email that names a compound). Track A speaks about treatment categories (GLP-1, hair treatment, sexual wellness, peptides), which is the lead’s own stated interest, never a clinical fact about them. Subject lines never mention the vertical.' },
   { title: 'Send window and cadence', body: 'All sends are clamped to 9am–8pm in the recipient’s timezone (defaults to America/New_York). Never more than one campaign email per day per contact; transactional emails (order, shipping, clinician messages) are exempt.' },
   { title: 'Exits are automatic', body: 'A purchase immediately stops Track A/C and starts Track B. A cancellation stops Track B and starts the existing win-back journey. An unsubscribe stops everything except transactional email.' },
-  { title: 'Compliance', body: 'Every campaign email carries an unsubscribe link and (once set) the physical postal address required by CAN-SPAM. Testimonials require written patient consent. Before/after images are never used without documented consent. Promo codes and refund wording are placeholders until Anthony confirms them.' },
-  { title: 'Personalization tokens', body: '{{first_name}} (falls back to "there"), {{vertical}} (from the quiz), {{resume_url}} (returns to the saved assessment), {{promo_code}}, {{next_refill_date}} / {{next_refill_amount}} (from the billing schedule), {{referral_code}} (if a referral program is approved).' },
-  { title: 'Measurement', body: 'Every CTA link carries utm_source=email, utm_medium=campaign, utm_campaign=<track>, utm_content=<email id>. The goal metric for Track A is assessment completions; for Track B it is refill retention at day 45 and day 90; for Track C it is assessment resumes.' }
+  { title: 'Compliance', body: 'Every campaign email carries an unsubscribe link and (once EMAIL_POSTAL_ADDRESS is set) the physical postal address required by CAN-SPAM. Testimonials require written patient consent — A10 ships a holding version rather than an invented quote. Before/after images are never used without documented consent. The refund line in A12 is quoted from the live pricing page; the promo code is pricing.json\'s WELCOME10, which Anthony still has to confirm is real and active.' },
+  { title: 'Personalization tokens', body: '{{first_name}} (falls back to "there"), {{vertical}} (from the quiz; A4 falls back to the Weight loss variant), {{resume_url}} (returns to the saved assessment, falls back to /assessment-quiz), {{promo_code}} (WELCOME10), {{hub_url}}, {{keep_url}} (C4\'s signed "keep me subscribed" link). There is no billing-date or referral token: B7 is on a fixed +45d schedule rather than the real ARB date, and no referral program exists.' },
+  { title: 'Measurement', body: 'campaign-render.js stamps every freeley.com link in every email with utm_source=email, utm_medium=campaign, utm_campaign=<journey> (lead-nurture or patient-newsletter) and utm_content=<email id> — centrally, at render time, so no email can ship untagged. The goal metric for Track A is assessment completions; for Track B it is refill retention at day 45 and day 90; for Track C it is assessment resumes.' }
 ];
 
+// Still open now that the flow is live — each one is shipped in its safest
+// form, not blocked on an answer, but each would change an email if answered.
 const OPEN_QUESTIONS = [
-  'Promo: confirm WELCOME10 (10% off) or replace it. It drives A13, A15 and optionally C3.',
-  'Refund policy wording for declined cases (A12).',
-  'Referral program: yes/no, and the incentive (B8).',
-  'One consented patient story per vertical (A10) — even two sentences is enough to start.',
-  'Physical mailing address for the email footer (CAN-SPAM).',
-  'Confirm 24-month plan prices in pricing.json before A6 goes live.',
-  'Anything in these emails you’d say differently — the copy is a draft, not a decision.'
+  'Promo: confirm WELCOME10 is real and active, and that "expires Sunday" is a deadline you intend to keep. It drives A13 (Day 23), A15 (Day 28) and C3 (Day 75).',
+  'A12\'s refund line is quoted from the pricing page. Confirm it matches the policy you actually operate for declined cases.',
+  'Referral program: yes/no, and the incentive. B8 ships as a plain forward-to-a-friend email until there is one.',
+  'One consented patient story per vertical — A10 is holding the slot with an honest "we won\'t fake it" email until you have one.',
+  'Physical mailing address for the email footer (CAN-SPAM) — set EMAIL_POSTAL_ADDRESS in Netlify.',
+  'Confirm the 24-month plan prices in pricing.json (still flagged there as placeholders). Nothing quotes them today — A6 and the A4 variants say "lower on every longer plan" precisely because the figures are unconfirmed. Confirming them lets those emails name a number again.',
+  'Anything in these emails you’d say differently — this file is what sends, so a change here is a change to live email.'
 ];
 
 module.exports = { SITE, TRACKS, EMAILS, RULES, OPEN_QUESTIONS };

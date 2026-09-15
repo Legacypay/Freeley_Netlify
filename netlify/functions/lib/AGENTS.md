@@ -55,8 +55,8 @@ None — these are the leaf/shared modules; nothing here imports from `functions
 
 `email/engine.js` is the single place every email — transactional (order
 confirmed, case status, receipts, cancellations) or a step of a drip journey
-(quiz-abandoned, checkout-abandoned, browse-abandoned, intake-reminder,
-onboarding, refill-reminder, winback) — actually gets sent, on top of the
+(lead-nurture, checkout-abandoned, intake-reminder, patient-newsletter,
+refill-reminder, winback) — actually gets sent, on top of the
 existing `resend-client.js`. All state (contacts, per-journey enrollment
 status, the send queue, a dedupe/idempotency record per send, the
 unsubscribe/bounce/complaint suppression list) lives in one Netlify Blobs

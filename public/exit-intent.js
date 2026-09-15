@@ -15,6 +15,29 @@
   let shown = false;
   let loaded = Date.now();
 
+  // This script is only loaded by the four single-vertical promo pages
+  // (public/promo-weight-loss.html, -hair-loss, -ed, -longevity), so the page
+  // path IS the vertical — there is no per-page config to read. Without this,
+  // every exit-intent lead reached captureLead.js with no vertical and the
+  // lead-nurture campaign fell back to its weight-loss default, so someone who
+  // exited the hair-loss page got a GLP-1 email on day 5. The strings match
+  // the step-1 option labels in src/pages/assessment-quiz.astro, which is what
+  // the quiz's own capture sends and what campaign-render.js matches on.
+  const VERTICAL_BY_PATH = [
+    ['promo-weight-loss', 'Weight loss'],
+    ['promo-hair-loss', 'Hair loss'],
+    ['promo-ed', 'Sexual wellness'],
+    ['promo-longevity', 'Longevity & performance']
+  ];
+
+  function pageVertical() {
+    const path = window.location.pathname.toLowerCase();
+    for (let i = 0; i < VERTICAL_BY_PATH.length; i++) {
+      if (path.indexOf(VERTICAL_BY_PATH[i][0]) !== -1) return VERTICAL_BY_PATH[i][1];
+    }
+    return undefined;
+  }
+
   // ─── CSS ──────────────────────────────────────────────────
   function injectStyles() {
     const css = `
@@ -225,7 +248,7 @@
         await fetch('/.netlify/functions/captureLead', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, source: 'exit-intent' })
+          body: JSON.stringify({ email, source: 'exit-intent', vertical: pageVertical() })
         });
       } catch (err) {
         console.warn('Exit capture failed (silent):', err);

@@ -1191,6 +1191,21 @@ const ACCEPT_JS_SRC = AUTHNET_ENV === 'sandbox'
             setPromoMsg("", true);
             updateTotals();
           });
+
+          // A code arriving from a campaign email (…?promo=WELCOME10, stashed
+          // by the head-inline capture in astro.config.mjs — the link points at
+          // the quiz, not here) applies itself through the exact same
+          // validate-then-apply path as typing it, so there's one code path and
+          // an invalid/retired code still shows its normal error. Consumed
+          // once: re-entering checkout later shouldn't silently re-apply it.
+          try {
+            const prefill = sessionStorage.getItem("freeley_promo_code");
+            if (prefill) {
+              sessionStorage.removeItem("freeley_promo_code");
+              document.getElementById("promo-code").value = prefill;
+              promoForm.requestSubmit();
+            }
+          } catch (e) { /* storage unavailable — the field still works by hand */ }
         }
 
         const checkoutBtn = document.getElementById("checkout-btn");

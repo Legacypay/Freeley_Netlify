@@ -244,7 +244,7 @@ exports.handler = async (event) => {
           });
           try {
             await cancelJourney('refill-reminder', sub.email);
-            await cancelJourney('onboarding', sub.email);
+            await cancelJourney('patient-newsletter', sub.email);
           } catch (e) {
             console.warn('[AUTHNET WEBHOOK] cancelJourney failed (non-blocking):', e.message);
           }

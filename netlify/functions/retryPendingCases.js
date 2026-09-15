@@ -247,6 +247,7 @@ exports.handler = async (event) => {
               kind: 'transactional'
             });
             await enrollJourney('intake-reminder', { email: patientData.email, data: { firstName: patientData.first_name, onboardingUrl: parsed.onboardingUrl } });
+            await cancelJourney('lead-nurture', patientData.email);
             await cancelJourney('quiz-abandoned', patientData.email);
           } catch (e) {
             console.warn('[RETRY MDI] complete-intake email/journey failed (non-critical):', e.message);

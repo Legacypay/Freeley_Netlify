@@ -15,12 +15,12 @@ literally true. Before this build-out:
   abandonment, checkout abandonment, browse abandonment, post-purchase
   onboarding, refill reminders, or win-back.
 
-This is now a complete system: 26 emails (11 transactional + a
-one-time-per-flow Hub welcome + 14 drip-journey steps), all branded, all
-routed through Resend, with suppression/unsubscribe handling and PHI
-guardrails. See `netlify/functions/lib/AGENTS.md`'s own "Email flow" note
-for the engine's internal design; this doc is the catalog + the manual setup
-checklist.
+This is now a complete system: 55 emails (11 transactional + a
+one-time-per-flow Hub welcome + 43 drip-journey steps, 29 of which are the
+campaign flow added 2026-09-14), all branded, all routed through Resend, with
+suppression/unsubscribe handling and PHI guardrails. See
+`netlify/functions/lib/AGENTS.md`'s own "Email flow" note for the engine's
+internal design; this doc is the catalog + the manual setup checklist.
 
 ## Architecture
 
@@ -70,20 +70,39 @@ America/New_York send window (`lib/email/engine.js`'s `withinSendWindow`).
 
 | Journey | Enrolled by | Steps | Cancelled by |
 |---|---|---|---|
-| `quiz-abandoned` | `captureLead.js` (`source:'quiz'`, fired from `public/quiz-scripts/asw.js` step 2) | +1h, +24h, +72h | `submitQuiz.js` success, or a purchase |
+| `lead-nurture` | `captureLead.js` (`source:'quiz'` from `public/quiz-scripts/asw.js` step 2, and `source:'exit-intent'` from `public/exit-intent.js`); `importLeadNurture.js` for waitlist imports | 20 steps: Track A D+0…D+30 (`-a1`…`-a16`), Track C D+45…D+90 (`-c1`…`-c4`) | `submitQuiz.js`/`retryPendingCases.js` success, or a purchase via either gateway — which also kills the not-yet-due Track C steps |
 | `checkout-abandoned` | `captureLead.js` (`source:'checkout'`, fired on blur of the checkout email field) | +1h, +24h, +72h | A purchase |
-| `browse-abandoned` | `captureLead.js` (`source:'exit-intent'`, from `public/exit-intent.js`) | +10min, +48h | A purchase |
 | `intake-reminder` | `submitQuiz.js`/`retryPendingCases.js`, alongside `complete-intake` | +24h, +72h | `mdiWebhook.js`'s `case_created`/`case_assigned_to_clinician`/`voucher_used` |
-| `onboarding` | `create-authnet-transaction.js`, after a successful purchase | D+2, D+7, D+21 | `subscription-cancelled` |
+| `patient-newsletter` | `create-authnet-transaction.js` and `stripeWebhook.js` (`payment_intent.succeeded`), after a successful purchase | 9 steps: D+1, 4, 10, 14, 21, 30, 45, 60, 90 (`-b1`…`-b9`) | `cancelSubscription.js`, `authnetWebhook.js` (`subscription.terminated`/`.cancelled`) |
 | `refill-reminder` | `create-authnet-transaction.js` | One reminder, timed off `lib/authnet-arb.js`'s own `nextCycleStartDate()` (3 days before a subscription renewal, 7 days before a one-time order's term ends) | Cancellation |
 | `winback` | `authnetWebhook.js` (`subscription.suspended`), `cancelSubscription.js` | +7d, +30d | A new purchase |
 
-**Waitlist** (`waitlist` Supabase table) is intentionally out of this
-system — Supabase RLS has no anon-readable policy on it and this codebase
-has no service-role key (deliberate, see `supabase/AGENTS.md`). To email the
-waitlist: export the table from the Supabase dashboard, import as a Resend
-Audience, send a Broadcast using the same brand shell (`lib/email-templates/shared.js`'s
-components can be copy-pasted for a one-off broadcast HTML).
+`quiz-abandoned`, `browse-abandoned` and `onboarding` are **legacy**: still
+defined in `lib/email/journeys.js` and still registered in `TEMPLATES`, but as
+of 2026-09-14 nothing enrolls into them — `lead-nurture` and
+`patient-newsletter` replaced them. They are kept so contacts who were already
+mid-journey when the switch landed keep receiving what they were promised, and
+so the cancel calls that reference them stay valid. Delete them once the queue
+has drained past D+30.
+
+**Waitlist** (`waitlist` Supabase table) can't be read from a function —
+Supabase RLS has no anon-readable policy on it and this codebase has no
+service-role key (deliberate, see `supabase/AGENTS.md`). To put the waitlist on
+the campaign: export the table from the Supabase dashboard, then POST the
+addresses in batches of ≤300 to `importLeadNurture.js`, which enrolls each one
+in `lead-nurture`:
+
+```bash
+curl -X POST https://freeley.com/.netlify/functions/importLeadNurture \
+  -H 'content-type: application/json' \
+  -H "x-admin-secret: $ADMIN_IMPORT_SECRET" \
+  -d '{"emails":["a@example.com","b@example.com"]}'
+```
+
+It returns `{requested, enrolled, alreadyActive, skippedInvalid, suppressed,
+failed}`. Re-running with the same addresses is safe — an already-active
+journey is never restarted. Imported contacts have no first name and no stated
+vertical, so they get "Hi there," and A4's weight-loss variant.
 
 ## Required environment variables
 
@@ -95,6 +114,7 @@ components can be copy-pasted for a one-off broadcast HTML).
 | `EMAIL_UNSUBSCRIBE_SECRET` | **Set** (generated 2026-09-10) | Done |
 | `EMAIL_POSTAL_ADDRESS` | Not set | You — CAN-SPAM requires a physical mailing address on marketing email footers; footer omits the line until this is set |
 | `EMAIL_DRY_RUN` | Not set | Optional — set to `true` on a branch/preview context to render+log every send without actually calling Resend |
+| `ADMIN_IMPORT_SECRET` | Not set | You — required before `importLeadNurture.js` will do anything. It fails closed: while this is unset the endpoint returns 403 to every caller, so the waitlist import can't run |
 
 ## Manual setup checklist
 
@@ -148,20 +168,59 @@ Still needs the client:
   `processEmailQueue` runs every 10 minutes with no `RESEND_API_KEY not set`
   warnings.
 
-## Campaign proposal (2026-09-12)
+## Campaign flow (live 2026-09-14)
 
 Anthony's feedback on the first send was that the emails "all looked the same"
-and that the full flow should be 20–30 emails. The answer is a separate,
-newsletter-style campaign flow — **29 emails in three tracks** (16 lead
-nurture, 9 patient newsletter, 4 re-engagement), each with its own layout
-hint and a suggested hero image from `public/assets/`:
+and that the full flow should be 20–30 emails. The answer is a
+newsletter-style campaign — **29 emails in three tracks** (16 lead nurture, 9
+patient newsletter, 4 re-engagement), each with its own layout and a hero image
+from `public/assets/`. Approved and wired into the engine as the `lead-nurture`
+and `patient-newsletter` journeys in the table above.
 
-- Source of truth: `docs/email-campaign/flow.js` (copy is design-independent).
-- Client PDF: `docs/email-campaign/Freeley_Email_Campaign_Flow.pdf` (copy page + a
-  mobile/desktop rendered preview per email, screenshotted from the real brand
-  shell via `docs/email-campaign/render.js`), rebuilt
-  with `npm run campaign:pdf` (needs `npx playwright install chromium` once).
+- **Copy** lives in `docs/email-campaign/flow.js`. It is production code, not a
+  document: editing an email's text there changes what sends.
+- **Rendering** is `netlify/functions/lib/email-templates/campaign-render.js` —
+  six bespoke layouts (hero+timeline, hero+tiles, price ladder, numbered
+  editorial, offer card, colour-coded playbook) plus a generic one. A6's price
+  ladder is read live from `pricing.json` rather than restated, so it can't go
+  stale.
+- **Journey steps** are thin adapters: `journeys/lead-nurture.js` and
+  `journeys/patient-newsletter.js` each build their slice of the `TEMPLATES`
+  map from flow.js's own `EMAILS`, so the registry can't drift from the copy.
+- **Client PDF**: `docs/email-campaign/Freeley_Email_Campaign_Flow.pdf` (copy
+  page + a mobile/desktop rendered preview per email, screenshotted from the
+  real brand shell via `docs/email-campaign/render.js`, which is now a thin
+  preview wrapper over the same renderer), rebuilt with `npm run campaign:pdf`
+  (needs `npx playwright install chromium` once). `npm run campaign:samples`
+  writes a handful as real HTML for inbox testing.
 
-The transactional emails above are unchanged; the proposal replaces the
-current 3-step `onboarding` journey once approved and extends
-`quiz-abandoned`/`browse-abandoned` into Track A.
+Vertical targeting: A4 has four variants and picks the one matching the lead's
+self-declared `vertical`, falling back to weight loss when it's unknown. That
+value is raw quiz text, not an enum — `asw.js` forwards step-1's option labels
+verbatim, comma-joined for a multi-select, so `"Longevity & performance"` and
+`"Hair loss, Weight loss"` both have to resolve (`resolveVariant` matches by
+containment, first segment wins). A8 and B4 deliberately cover all four
+verticals in one body — only A4, where the whole email pitches one product
+line, splits. Subject lines never mention a vertical.
+
+Every freeley.com link in every campaign email is stamped with
+`utm_source=email&utm_medium=campaign&utm_campaign=<journey>&utm_content=<email
+id>` centrally by `campaign-render.js`'s `addUtm`, applied to the body only —
+never to the shell footer or the HMAC-signed preferences link, whose query
+string can't be appended to.
+
+C4 (the day-90 sunset email) opts people back in through that same signed
+preferences link plus `&keep=1`, which `emailPreferences.js` records as
+`monthly_letter_opt_in` on the contact. The signature is what identifies the
+clicker — a bare `/?keep=1` link carries no identity and would record nothing.
+
+A13/A15 link to `/assessment-quiz?promo=WELCOME10`. A head-inline script
+(`astro.config.mjs`) stashes any `?promo=` into `sessionStorage`, and
+`checkout.astro` feeds it through its existing promo form on load, so the code
+applies itself rather than asking the reader to retype it at checkout.
+
+The transactional emails above are unchanged. Still open for the client, all
+shipped in their safest form rather than blocked — see `OPEN_QUESTIONS` at the
+bottom of `flow.js`: the `WELCOME10` promo (A13/A15/C3) and its "expires
+Sunday" deadline, the declined-case refund wording (A12), a consented patient
+story to replace A10's holding version, and `EMAIL_POSTAL_ADDRESS`.

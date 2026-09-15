@@ -3,14 +3,21 @@ const { connectBlobs } = require('./lib/blobs');
 const { upsertContact, enrollJourney } = require('./lib/email/engine');
 const { siteUrl } = require('./lib/email-templates/shared');
 
-// Which abandonment journey (lib/email/journeys.js) a given `source` starts.
+// Which journey (lib/email/journeys.js) a given `source` starts.
 // 'exit-intent' matches the literal string public/exit-intent.js already
 // sends; 'quiz'/'checkout' are new — see public/quiz-scripts/asw.js and
 // src/pages/checkout.astro.
+//
+// 2026-09-14: quiz and exit-intent now start the 20-step `lead-nurture`
+// campaign instead of the old 3-step `quiz-abandoned`/`browse-abandoned`
+// drips (those journeys still exist for contacts already mid-flight, but
+// nothing enrolls into them any more). Checkout abandonment is unchanged —
+// someone who got as far as the payment form wants a short nudge, not a
+// 90-day education sequence.
 const JOURNEY_BY_SOURCE = {
-  quiz: 'quiz-abandoned',
+  quiz: 'lead-nurture',
   checkout: 'checkout-abandoned',
-  'exit-intent': 'browse-abandoned'
+  'exit-intent': 'lead-nurture'
 };
 
 exports.handler = async (event, context) => {

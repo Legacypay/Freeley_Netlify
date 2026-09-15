@@ -53,7 +53,7 @@
 
 # Drain the email engine's drip-journey send queue (lib/email/engine.js,
 # netlify/functions/processEmailQueue.js) — every enrolled journey step
-# (quiz-abandoned, checkout-abandoned, onboarding, refill-reminder, …) is
+# (lead-nurture, checkout-abandoned, patient-newsletter, refill-reminder, …) is
 # scheduled up front as a queue item; this is what actually sends it once due.
 [functions."processEmailQueue"]
   schedule = "*/10 * * * *"
@@ -67,6 +67,8 @@
 #   EMAIL_UNSUBSCRIBE_SECRET  - random secret (openssl rand -hex 32) — signs unsubscribe links
 #   EMAIL_POSTAL_ADDRESS      - physical mailing address shown in marketing email footers (CAN-SPAM)
 #   EMAIL_DRY_RUN             - "true" to render+log every send without actually sending (local iteration)
+#   ADMIN_IMPORT_SECRET       - shared secret for importLeadNurture.js's x-admin-secret header (waitlist
+#                               bulk import into the lead-nurture journey). Unset = that endpoint 403s everyone
 #   See docs/EMAIL_FLOWS.md for the full catalog, triggers, and manual setup checklist.
 
 # ── Authorize.Net Environment Variables (lib/authnet-config.js) ──

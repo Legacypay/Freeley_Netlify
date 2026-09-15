@@ -39,6 +39,25 @@ const LOAD_TRACKING_SCRIPTS = `
 })(document);
 `;
 
+// Campaign emails A13/A15 link to /assessment-quiz?promo=WELCOME10, but the
+// visitor doesn't reach the promo field until /checkout — several steps and a
+// redirect later, by which point the query param is long gone, so the code was
+// decorative and the reader had to remember and re-type it. Stashing it the
+// moment it arrives (on whichever page the link pointed at) lets
+// checkout.astro apply it through its existing promo form. sessionStorage is
+// the same handoff channel the quiz already uses for selected_product etc.
+// Injected here rather than in Layout.astro because six pages — index,
+// compare, checkout, assessment-quiz, assessment-design-2, waitlist — render
+// their own <html> and never load the layout.
+const CAPTURE_PROMO_PARAM = `
+(function (w) {
+  try {
+    var code = new URLSearchParams(w.location.search).get('promo');
+    if (code) w.sessionStorage.setItem('freeley_promo_code', code.trim().toUpperCase());
+  } catch (e) { /* private mode / storage disabled — the field still works by hand */ }
+})(window);
+`;
+
 // https://astro.build/config
 export default defineConfig({
   integrations: [
@@ -52,6 +71,12 @@ export default defineConfig({
       name: 'tracking-scripts',
       hooks: {
         'astro:config:setup': ({ injectScript }) => injectScript('head-inline', LOAD_TRACKING_SCRIPTS),
+      },
+    },
+    {
+      name: 'promo-param-capture',
+      hooks: {
+        'astro:config:setup': ({ injectScript }) => injectScript('head-inline', CAPTURE_PROMO_PARAM),
       },
     },
   ],

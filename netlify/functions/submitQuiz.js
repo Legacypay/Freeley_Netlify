@@ -250,6 +250,10 @@ exports.handler = async (event) => {
           kind: 'transactional'
         });
         await enrollJourney('intake-reminder', { email: patientData.email, data: { firstName: patientData.first_name, onboardingUrl } });
+        // Finishing the quiz retires both the current top-of-funnel campaign
+        // and the legacy drip it replaced — a no-op for whichever one this
+        // lead isn't enrolled in.
+        await cancelJourney('lead-nurture', patientData.email);
         await cancelJourney('quiz-abandoned', patientData.email);
       } catch (e) {
         console.warn('[SUBMIT QUIZ] complete-intake email/journey failed (non-critical):', e.message);

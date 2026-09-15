@@ -25,6 +25,8 @@ const intakeReminder = require('./journeys/intake-reminder');
 const onboarding = require('./journeys/onboarding');
 const refillReminder = require('./journeys/refill-reminder');
 const winback = require('./journeys/winback');
+const leadNurture = require('./journeys/lead-nurture');
+const patientNewsletter = require('./journeys/patient-newsletter');
 
 const TEMPLATES = {
   'order-confirmed': orderConfirmed.render,
@@ -61,7 +63,17 @@ const TEMPLATES = {
   'refill-reminder': refillReminder.render,
 
   'winback-1': winback.step1,
-  'winback-2': winback.step2
+  'winback-2': winback.step2,
+
+  // The two campaign journeys are the exception to the one-entry-per-step rule
+  // above: their 29 steps are thin adapters over docs/email-campaign/flow.js's
+  // own EMAILS array (see journeys/lead-nurture.js), so listing each key here
+  // by hand would only be a second place for the same list to drift.
+  //   lead-nurture-a1 … -a16, lead-nurture-c1 … -c4  (20 steps)
+  //   patient-newsletter-b1 … -b9                    (9 steps)
+  // Every key is still spelled out literally in lib/email/journeys.js.
+  ...leadNurture.TEMPLATES,
+  ...patientNewsletter.TEMPLATES
 };
 
 module.exports = { TEMPLATES };

@@ -6,13 +6,17 @@
  * in the query string IS the credential — no login, no lookup needed to
  * prove the request is legitimate for that one address.
  *
- * GET  /.netlify/functions/emailPreferences?e=<email>&t=<token>  → confirmation page
- * POST same query string                                         → actually unsubscribes
+ * GET  /.netlify/functions/emailPreferences?e=<email>&t=<token>         → confirmation page
+ * POST same query string                                                → actually unsubscribes
+ * GET  ...&keep=1                                                       → records "keep me on
+ *   the monthly letter" instead (the CTA on campaign email C4, the sunset email). Opting IN
+ *   needs no confirmation step, so this one acts on the GET: the signed token is the proof,
+ *   and the worst case is a contact who stays subscribed one click too eagerly.
  */
 
 const { connectBlobs } = require('./lib/blobs');
 const { verifyToken } = require('./lib/email/unsubscribe');
-const { suppress } = require('./lib/email/engine');
+const { suppress, upsertContact } = require('./lib/email/engine');
 const { renderEmailShell, COLORS } = require('./lib/email-templates/shared');
 
 function escapeHtml(s) {
@@ -64,6 +68,31 @@ exports.handler = async (event) => {
 
   if (event.httpMethod !== 'GET') {
     return { statusCode: 405, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'Method Not Allowed' }) };
+  }
+
+  // C4's "Keep me on the monthly letter" button. Recorded on the contact
+  // record so the monthly send can select on it — this address has explicitly
+  // asked to stay, rather than merely not having unsubscribed.
+  if (params.keep === '1') {
+    try {
+      await upsertContact(email, { monthly_letter_opt_in: true, monthly_letter_opt_in_at: new Date().toISOString() });
+    } catch (e) {
+      console.error('[EMAIL PREFERENCES] keep opt-in failed:', e.message);
+      return {
+        statusCode: 500,
+        headers,
+        body: page(`<h1 style="margin:0 0 16px; font-family:Georgia,'Source Serif 4',serif; font-size:24px; font-weight:600; color:${COLORS.ink};">Something went wrong</h1><p style="margin:0; font-size:15px; line-height:1.6; color:${COLORS.ink};">Please try again in a moment.</p>`)
+      };
+    }
+    console.log('[EMAIL PREFERENCES] Monthly-letter opt-in recorded');
+    return {
+      statusCode: 200,
+      headers,
+      body: page(`
+        <h1 style="margin:0 0 16px; font-family:Georgia,'Source Serif 4',serif; font-size:24px; font-weight:600; color:${COLORS.ink};">You're staying on the list</h1>
+        <p style="margin:0; font-size:15px; line-height:1.6; color:${COLORS.ink};">Thanks — <strong>${escapeHtml(email)}</strong> will keep getting the monthly Freeley letter, about once a month. You can unsubscribe from the link at the bottom of any of them.</p>
+      `)
+    };
   }
 
   const qs = `e=${encodeURIComponent(email)}&t=${encodeURIComponent(token)}`;

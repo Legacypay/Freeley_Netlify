@@ -81,7 +81,7 @@ exports.handler = async (event) => {
     try {
       await sendTransactional({ template: 'subscription-cancelled', to: email, data: {}, dedupeKey: 'cancel:' + subscriptionId, kind: 'transactional' });
       await cancelJourney('refill-reminder', email);
-      await cancelJourney('onboarding', email);
+      await cancelJourney('patient-newsletter', email);
       await enrollJourney('winback', { email, data: {} });
     } catch (e) {
       console.warn('[CANCEL SUBSCRIPTION] Post-cancel email/journey update failed (non-blocking):', e.message);

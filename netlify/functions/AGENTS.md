@@ -9,7 +9,7 @@
 ## Key Files
 | File | Method(s) | Purpose | Supabase / External |
 |------|-----------|---------|----------------------|
-| `captureLead.js` | POST | Fire-and-forget lead capture (email/phone) forwarded to an n8n/Make/Zapier webhook (CRM), AND enrolls the address in an abandonment email journey (`quiz-abandoned`/`checkout-abandoned`/`browse-abandoned` per `source`) via `lib/email/engine.js`. No DB write. | External webhook (`N8N_WEBHOOK_URL`) + Resend |
+| `captureLead.js` | POST | Fire-and-forget lead capture (email/phone) forwarded to an n8n/Make/Zapier webhook (CRM), AND enrolls the address in an email journey per `source` (`quiz`/`exit-intent` → `lead-nurture`, `checkout` → `checkout-abandoned`) via `lib/email/engine.js`. No DB write. | External webhook (`N8N_WEBHOOK_URL`) + Resend |
 | `caseStatus.js` | POST, OPTIONS | Auth'd: look up a patient's MDI case status (resolves `case_id` from Netlify Blobs via `voucher_id`/`patient_id` if needed) and return a patient-friendly status object. | Supabase (auth) + MDI API + Blobs |
 | `checkAdditionalApprovals.js` | GET (also scheduled hourly via `netlify.toml`) | Polls the documented `POST /v1/partner/cases/status/:status` endpoint with `is_additional_approval_needed: true` (per MDI's go-live guidance: cases where a doctor requested a treatment/titration change need partner review) and alerts once per case via n8n — Encounter ID only, no PHI. Dedup tracked in the `mdi-approval-alerts` Blobs store. | MDI API + Blobs + n8n |
 | `cancelSubscription.js` | POST, OPTIONS | Auth'd: cancels a patient's own recurring Authorize.Net subscription (ARB) — ownership checked twice (here, against `funnel_orders`, and again inside the `cancel_subscription_for_email` RPC). | Supabase (auth) + Authorize.Net API |
@@ -21,9 +21,10 @@
 | `getMessagingAuth.js` | POST, OPTIONS | Auth'd: generates a one-time-use MDI messaging auth link + verification code for a patient. | Supabase (auth) + MDI API |
 | `getPatientToken.js` | POST, OPTIONS | Auth'd: obtains a patient-scoped MDI bearer token (auth link → 2FA validate flow), with a per-cold-start in-memory cache. | Supabase (auth) + MDI API |
 | `health.js` | GET | Static 200 OK health/deploy-verification probe. No auth, no dependencies. | none |
+| `importLeadNurture.js` | POST | Admin-only bulk enrollment of exported `waitlist` addresses (≤300 per call) into the `lead-nurture` journey. Fails closed on `x-admin-secret` vs `ADMIN_IMPORT_SECRET` — 403 whenever that env var is unset. Idempotent per address. | Blobs |
 | `keepSupabaseAlive.js` | (scheduled: `@daily`) | Pings `waitlist` table via PostgREST so the free-tier Supabase project doesn't auto-pause after 7 days idle. | Supabase (REST ping) |
 | `mdiWebhook.js` | POST | Inbound webhook from MDI (HMAC-SHA256 signature verified). Handles case status transitions (`case_approved`, `case_waiting`, `case_processing`, `case_completed`, `offering_submitted`, `case_created`/`case_assigned_to_clinician`, `message_created`, voucher/patient events); updates order status in Blobs, dispatches patient-facing emails directly via `lib/email/engine.js` (Resend), and fires internal alerts via n8n. | MDI webhook + Blobs + Resend + n8n |
-| `processEmailQueue.js` | GET (also scheduled every 10 min via `netlify.toml`) | Drains `lib/email/engine.js`'s Blobs-backed drip-journey send queue (`email-engine` store) — every step of every enrolled journey (quiz-abandoned, checkout-abandoned, onboarding, refill-reminder, winback, …) was scheduled up front at enroll time; this is what turns a now-due step into an actual Resend send. `?dry=1` logs without sending/removing. | Blobs + Resend |
+| `processEmailQueue.js` | GET (also scheduled every 10 min via `netlify.toml`) | Drains `lib/email/engine.js`'s Blobs-backed drip-journey send queue (`email-engine` store) — every step of every enrolled journey (lead-nurture, checkout-abandoned, patient-newsletter, refill-reminder, winback, …) was scheduled up front at enroll time; this is what turns a now-due step into an actual Resend send. `?dry=1` logs without sending/removing. | Blobs + Resend |
 | `resendWebhook.js` | POST | Inbound webhook from Resend (Svix-signed) for `email.bounced`/`email.complained` — adds the address to the shared suppression list every future send checks. | Resend webhook + Blobs |
 | `emailPreferences.js` | GET, POST | The unsubscribe-link landing page for every marketing/journey email (`lib/email/unsubscribe.js`'s HMAC-signed link is the auth — no login). GET shows a confirmation page, POST records the opt-out. | Blobs |
 | `patientCases.js` | POST, OPTIONS | Auth'd: looks up a patient's case(s) by `voucher_id`/`patient_id` (Blobs fast path) or `email` (MDI API search over vouchers/encounters); maps MDI questionnaire IDs to product names/categories. | Supabase (auth) + MDI API + Blobs |
@@ -78,8 +79,8 @@ See `../AGENTS.md` for the full list (Stripe, Authorize.Net, MDI API, Supabase A
 ## Email flow (added 2026-09-10)
 
 Every patient-facing transactional email plus a full set of marketing/lifecycle
-drip journeys (quiz-abandoned, checkout-abandoned, browse-abandoned,
-intake-reminder, onboarding, refill-reminder, winback) now ship for real via
+drip journeys (lead-nurture, checkout-abandoned, intake-reminder,
+patient-newsletter, refill-reminder, winback) now ship for real via
 `lib/email/engine.js` → Resend. Before this, `mdiWebhook.js`'s
 `sendPatientEmail` only ever forwarded to `N8N_WEBHOOK_URL`, which was never
 configured in production — every "your prescription is ready"/"action

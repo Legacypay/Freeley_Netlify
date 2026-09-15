@@ -18,7 +18,7 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { connectBlobs } = require('./lib/blobs');
 const { fireConversion } = require('./lib/conversion-tracker');
-const { sendTransactional } = require('./lib/email/engine');
+const { sendTransactional, enrollJourney, cancelJourney } = require('./lib/email/engine');
 
 exports.handler = async (event) => {
   connectBlobs(event);
@@ -97,6 +97,29 @@ exports.handler = async (event) => {
           total: total,
           action: 'confirm_order'
         });
+
+        // A Stripe purchase has to move the contact between journeys exactly
+        // like an Authorize.Net one does (create-authnet-transaction.js's
+        // firePostPurchaseEmails) — otherwise a paying patient keeps getting
+        // 90 days of "still on the fence?" lead marketing, including the
+        // promo-expiry emails, and never receives the patient newsletter.
+        // Best-effort throughout: Stripe must still get its 200 ack.
+        const buyerEmail = data.receipt_email || data.charges?.data?.[0]?.billing_details?.email;
+        if (buyerEmail) {
+          const buyerFirstName = (data.charges?.data?.[0]?.billing_details?.name || '').split(' ')[0] || undefined;
+          for (const journey of ['lead-nurture', 'quiz-abandoned', 'checkout-abandoned', 'browse-abandoned']) {
+            try {
+              await cancelJourney(journey, buyerEmail);
+            } catch (e) {
+              console.warn(`[STRIPE WEBHOOK] cancelJourney(${journey}) failed (non-blocking):`, e.message);
+            }
+          }
+          try {
+            await enrollJourney('patient-newsletter', { email: buyerEmail, data: { firstName: buyerFirstName } });
+          } catch (e) {
+            console.warn('[STRIPE WEBHOOK] enrollJourney(patient-newsletter) failed (non-blocking):', e.message);
+          }
+        }
         break;
       }
 
