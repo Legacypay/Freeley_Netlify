@@ -48,6 +48,15 @@ const ctaPills = [
       ></span>
     ))}
   </div>
+  <a
+    href="https://www.legitscript.com/websites/?checker_keywords=freeley.com"
+    target="_blank"
+    rel="noopener"
+    title="Verify LegitScript Approval for www.freeley.com"
+    class="final-cta__legitscript"
+  >
+    <img src="https://static.legitscript.com/seals/49921676.png" alt="Verify Approval for www.freeley.com" width="110" height="119" />
+  </a>
   <div class="wrap final-cta__grid">
     <div>
       <h2 class="final-cta__heading"><slot /></h2>
@@ -98,6 +107,9 @@ const ctaPills = [
   }
   .fcp--ghost { background-image: none; border: 1.5px solid rgba(255, 255, 255, .3); box-shadow: none; }
   .fcp--ghost::after { display: none; }
+
+  .final-cta__legitscript { position: absolute; top: 22px; right: 28px; z-index: 2; display: inline-flex; line-height: 0; filter: drop-shadow(0 8px 20px rgba(0, 0, 0, .35)); }
+  .final-cta__legitscript img { display: block; width: 110px; height: 119px; }
 
   @media (prefers-reduced-motion: no-preference) {
     .fcp { animation: fcpDrift var(--dur) ease-in-out infinite; animation-delay: var(--dly); }
