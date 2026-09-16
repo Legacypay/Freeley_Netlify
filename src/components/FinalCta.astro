@@ -123,5 +123,10 @@ const ctaPills = [
   @media (max-width: 860px) {
     .final-cta__pills { --s: .62px; }
     .fcp:nth-child(n+4) { display: none; }
+    /* Absolute top-right placement collides with the heading once it wraps
+       to full width on mobile — drop it into normal flow above the grid
+       instead, right-aligned to match .wrap's padding. */
+    .final-cta__legitscript { position: static; display: block; width: 90px; margin: 24px 28px 0 auto; filter: none; }
+    .final-cta__legitscript img { width: 90px; height: 97px; }
   }
 </style>
