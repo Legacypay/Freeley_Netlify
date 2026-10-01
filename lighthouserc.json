@@ -5,7 +5,8 @@
         "https://freeley.com/",
         "https://freeley.com/weight-loss/",
         "https://freeley.com/promo-weight-loss"
-      ]
+      ],
+      "numberOfRuns": 3
     },
     "upload": {
       "target": "temporary-public-storage"

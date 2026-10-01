@@ -75,10 +75,17 @@
       return;
     }
 
+    // PERFORMANCE (FRLY-9): the clarity() stub/queue is set up now, but the
+    // tag itself (~1.2 s of main thread on Lighthouse's CI runner) loads on the
+    // first interaction or 5 s after this runs — same rule as the Whop pixel in
+    // astro.config.mjs. A session with no touch/scroll in 5 s isn't recorded.
     (function(c,l,a,r,i,t,y){
       c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-      t=l.createElement(r);t.async=1;t.src='https://www.clarity.ms/tag/'+i;
-      y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+      var E=['pointerdown','keydown','scroll','touchstart'],o={passive:true},done=0;
+      function go(){if(done)return;done=1;E.forEach(function(e){c.removeEventListener(e,go,o)});
+        t=l.createElement(r);t.async=1;t.src='https://www.clarity.ms/tag/'+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);}
+      E.forEach(function(e){c.addEventListener(e,go,o)});setTimeout(go,5000);
     })(window, document, 'clarity', 'script', CLARITY_ID);
 
     console.log('[Analytics] Microsoft Clarity installed — heatmaps & recordings active');
