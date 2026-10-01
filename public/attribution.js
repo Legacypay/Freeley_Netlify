@@ -117,12 +117,21 @@
   }
 
   // Public API — used by checkout/quiz to attach attribution to API calls.
+  // The script now loads after window load (astro.config.mjs, FRLY-9), so a
+  // caller can reach get()/flatten() inside the 50 ms before capture() runs:
+  // capture on demand instead of returning nothing.
+  function current() {
+    var a = loadStored();
+    if (!a) { capture(); a = loadStored(); }
+    return a;
+  }
+
   window.FreeleyAttribution = {
-    get: function () { return loadStored(); },
+    get: function () { return current(); },
     flatten: function () {
       // Flattens nested object into a flat metadata-friendly map of strings.
       // Stripe PaymentIntent.metadata only accepts ~50 string keys.
-      var a = loadStored();
+      var a = current();
       if (!a) return {};
       var out = {};
       if (a.landing_path) out.attr_landing = String(a.landing_path).slice(0, 100);

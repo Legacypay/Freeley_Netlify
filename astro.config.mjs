@@ -12,8 +12,19 @@ import tailwindcss from '@tailwindcss/vite';
 // and never touch the layout. `head-inline` is the one stage Astro applies to
 // all of them, unbundled.
 // Requires https://t.whop.tw in the netlify.toml CSP (script-src + connect-src).
+// PERFORMANCE (2026-10-01, FRLY-9): the vendor stub (window.whop + its queue) is
+// unchanged and still runs first, so whop.track(...) calls anywhere are queued
+// as before. Only the download of s.js (which pulls fingerprint.js) waits for
+// the first interaction or 5 s after load: on a mid-range phone it blocked the
+// main thread ~3.5 s during first paint (Lighthouse home perf 41). Trade-off
+// accepted by Samuel 2026-10-01: Whop's "page" event is lost for a visitor who
+// leaves within ~5 s without touching or scrolling. The waitlist lead is safe
+// (typing the email starts the download long before submit).
 const WHOP_PIXEL = `
-!function(w,d,s,u,n,a,b){if(w[n])return;a=w[n]={q:[],t:+new Date,s:[],o:u,track:function(){a.q.push([+new Date].concat([].slice.call(arguments)))},setScope:function(){a.s=[].slice.call(arguments).filter(function(x){return typeof x==="string"});a.q.push([+new Date,"setScope"].concat(a.s))},scope:function(){var c=[].slice.call(arguments);return{track:function(){a.q.push([+new Date].concat([].slice.call(arguments)).concat([{__scope:c}]))}}}};b=d.createElement(s);b.async=1;b.src=u+"/s.js";d.getElementsByTagName(s)[0].parentNode.insertBefore(b,d.getElementsByTagName(s)[0])}(window,document,"script","https://t.whop.tw","whop");
+!function(w,d,s,u,n,a){if(w[n])return;a=w[n]={q:[],t:+new Date,s:[],o:u,track:function(){a.q.push([+new Date].concat([].slice.call(arguments)))},setScope:function(){a.s=[].slice.call(arguments).filter(function(x){return typeof x==="string"});a.q.push([+new Date,"setScope"].concat(a.s))},scope:function(){var c=[].slice.call(arguments);return{track:function(){a.q.push([+new Date].concat([].slice.call(arguments)).concat([{__scope:c}]))}}}};
+var E=["pointerdown","keydown","scroll","touchstart"],o={passive:true},l=0;
+function L(){if(l)return;l=1;E.forEach(function(e){w.removeEventListener(e,L,o)});var b=d.createElement(s);b.async=1;b.src=u+"/s.js";d.head.appendChild(b)}
+E.forEach(function(e){w.addEventListener(e,L,o)});w.addEventListener("load",function(){setTimeout(L,5000)})}(window,document,"script","https://t.whop.tw","whop");
 whop.setScope("biz_2i0xjR1QwIvijR");
 whop.track("page");
 `;
@@ -28,15 +39,22 @@ whop.track("page");
 // instead of Layout.astro. analytics.js self-gates HIPAA-sensitive paths
 // (quiz/checkout/hub) internally; attribution.js is designed to run
 // everywhere, including those, so neither needs a path check here.
+// PERFORMANCE (FRLY-9): analytics.js (GA4/Clarity/Meta setup) loads after the
+// window load event so it stays out of the first paint. attribution.js keeps
+// loading deferred, as before: it is tiny, and first-touch UTM/click-id capture
+// must not wait for load (a visitor who taps a CTA first would be recorded as
+// landing on the quiz). Its live_ids (_ga, _fbp) refresh on every later page.
 const LOAD_TRACKING_SCRIPTS = `
-(function (d) {
-  ['/analytics.js', '/attribution.js'].forEach(function (src) {
+(function (w, d) {
+  function add(src, defer) {
     var s = d.createElement('script');
     s.src = src;
-    s.defer = true;
+    if (defer) s.defer = true;
     d.head.appendChild(s);
-  });
-})(document);
+  }
+  add('/attribution.js', true);
+  if (d.readyState === 'complete') add('/analytics.js'); else w.addEventListener('load', function () { add('/analytics.js'); });
+})(window, document);
 `;
 
 // Campaign emails A13/A15 link to /assessment-quiz?promo=WELCOME10, but the

@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Playfair+Display:wght@700;800;900&display=swap');
+/* Same Google Fonts, self-hosted (scripts/self-host-google-fonts.mjs, FRLY-9). */
+@import url('/fonts/google/fonts-shared.css');
 
 :root {
   --green-deep: #071510;

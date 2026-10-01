@@ -75,19 +75,19 @@ const mechanisms = [
   {
     title: 'Quiets the "food noise"',
     desc: "GLP-1s target the brain's hunger receptors. The constant cravings and obsession over your next meal disappear.",
-    img: '/assets/wl/QuietsThe_FoodNoise_.png',
+    img: '/assets/wl/QuietsThe_FoodNoise_.webp',
     tint: '#C6CCDA',
   },
   {
     title: 'You stay full longer',
     desc: 'It slows down stomach emptying. Small portions finally make you feel completely satisfied and full.',
-    img: '/assets/wl/YouStayFullLonger.png',
+    img: '/assets/wl/YouStayFullLonger.webp',
     tint: '#D2CBC2',
   },
   {
     title: 'Improves metabolic health',
     desc: 'By balancing blood sugar and insulin levels, your body stops hoarding fat and starts burning it.',
-    img: '/assets/wl/ImprovesMetabolicHealth.png',
+    img: '/assets/wl/ImprovesMetabolicHealth.webp',
     tint: '#D1D9DC',
   },
   {
@@ -103,7 +103,7 @@ const mechanisms = [
     // up anywhere on the live site (see generate-physician-images.js).
     title: 'Overseen by board-certified physicians',
     desc: 'A licensed U.S. physician reviews your intake, writes your plan, and adjusts your dose as you go.',
-    img: '/assets/physicians/dr-martinez-v2.jpg',
+    img: '/assets/physicians/dr-martinez-v2.webp',
     tint: '#F6EEE0',
   },
 ];
@@ -255,6 +255,7 @@ const faqs = [
 
 <Layout title="GLP-1 Weight Loss Treatment | Freeley">
   <Fragment slot="head">
+    <meta name="description" content="Clinical-grade GLP-1 weight loss treatment, prescribed by a licensed U.S. physician and compounded by a 503A pharmacy, delivered discreetly to your door. From $199/month on the 12-month plan." />
     <style is:inline>
       /* Design tokens are already declared in public/style/style.css :root
          (--green, --cream, --font-serif, …). Everything below is scoped to
@@ -509,7 +510,7 @@ const faqs = [
 
       /* ── Journey ────────────────────────────────────────────── */
       .wl-journey { position: relative; overflow: hidden; border-radius: 22px; background: var(--green); }
-      .wl-journey__bg { position: absolute; inset: 0; background-image: url('/assets/wl/Here_sWhatHappensNext.jpg'); background-size: cover; background-position: center; }
+      .wl-journey__bg { position: absolute; inset: 0; background-image: url('/assets/wl/Here_sWhatHappensNext.webp'); background-size: cover; background-position: center; }
       /* Same angled scrim as /prototype's journey: the left, where all the
          type lives, carries the most cover, and the photo still reads on
          the right. Without it the white copy fell onto the bright sky and
@@ -746,7 +747,7 @@ const faqs = [
 
     <!-- ═══ Hero ═══ -->
     <section class="wl-hero">
-      <img class="wl-hero__img" src="/assets/wl/hero.png" alt="A Freeley weight-loss patient" fetchpriority="high" />
+      <picture><source media="(max-width: 1023px)" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" /><img class="wl-hero__img" src="/assets/wl/hero.webp" alt="A Freeley weight-loss patient" fetchpriority="high" /></picture>
       <div class="wl-wrap wl-hero__inner">
         <div class="wl-hero__col">
           <div class="wl-badgeline">
@@ -760,7 +761,7 @@ const faqs = [
             compounded by a 503A pharmacy — delivered discreetly to your door.
           </p>
 
-          <img class="wl-hero__img-mob" src="/assets/wl/hero-mob.png" alt="A Freeley weight-loss patient" />
+          <picture><source media="(min-width: 1024px)" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" /><img class="wl-hero__img-mob" src="/assets/wl/hero-mob.webp" alt="A Freeley weight-loss patient" fetchpriority="high" /></picture>
 
           <div class="wl-hero__from">
             From <span class="wl-price">$199</span>/month
@@ -779,7 +780,7 @@ const faqs = [
             ))}
           </div>
           <div class="wl-chat">
-            <img class="wl-chat__avatar" src="/assets/brand/testimonial_3.png" alt="" loading="lazy" />
+            <img class="wl-chat__avatar" src="/assets/brand/testimonial_3.webp" alt="" loading="lazy" />
             <div class="wl-chat__bubble">
               <p>“I tried every diet app imaginable. Nothing stuck until my doctor started me on semaglutide through Freeley. The cravings just… stopped. I'm down 31 lbs and my A1C went from 6.4 to 5.6.”</p>
               <span>Verified Freeley patient</span>
@@ -1067,7 +1068,7 @@ const faqs = [
           <a href="/partner-pharmacies" class="wl-btn-ghost" style="margin-top:8px;">See our partner pharmacies <span class="wl-arw">→</span></a>
         </div>
         <div class="wl-why__img">
-          <img src="/assets/wl/why-trust-freeley-lifestyle.jpg" alt="Freeley patient in a calm, everyday setting" loading="lazy" />
+          <img src="/assets/wl/why-trust-freeley-lifestyle.webp" alt="Freeley patient in a calm, everyday setting" loading="lazy" />
         </div>
       </div>
     </section>
@@ -1137,9 +1138,9 @@ const faqs = [
     <QuizModal />
   </main>
 
-  <script src="/style/script.js" is:inline></script>
-  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" is:inline></script>
-  <script src="/assets/js/wl-script.js" is:inline></script>
+  <!-- defer: no parser blocking. wl-script.js fetches Swiper itself when a carousel nears the viewport (FRLY-9). -->
+  <script src="/style/script.js" is:inline defer></script>
+  <script src="/assets/js/wl-script.js" is:inline defer></script>
   <script is:inline>
     /* Journey timeline: 20s loop that starts when the section first reaches
        the viewport and pauses whenever it leaves. Same protocol as

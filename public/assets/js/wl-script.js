@@ -116,6 +116,7 @@
             thumbDiv.setAttribute('data-index', index);
 
             const img = document.createElement('img');
+            img.loading = 'lazy'; // thumbnails sit far below the fold (FRLY-9)
             img.src = imgPath;
             img.alt = `Thumb ${index + 1}`;
             img.className = 'img-fluid';
@@ -325,7 +326,16 @@
 // =============================================
 // Swiper Init
 // =============================================
+// Swiper is fetched on demand (FRLY-9): all three carousels sit below the
+// fold, and parsing/evaluating Swiper cost ~1.6 s of main thread on
+// Lighthouse's mobile profile before first paint. weight-loss.astro no longer
+// loads it up front; the first carousel within 800px of the viewport does.
+(function () {
+const SWIPER_SELECTORS = [".ok--section.swiper", ".brand--grid--hero.swiper", ".transformSwiper.swiper"];
+const targets = SWIPER_SELECTORS.map((s) => document.querySelector(s)).filter(Boolean);
+if (!targets.length) return;
 
+function initSwipers() {
 const okSwiper = new Swiper(".ok--section.swiper", {
     slidesPerView: "auto",
     spaceBetween: 20,
@@ -365,6 +375,22 @@ const transformSwiper = new Swiper(".transformSwiper.swiper", {
     freeMode: false,
     grabCursor: true,
 });
+}
+
+function loadSwiper() {
+    if (typeof Swiper !== 'undefined') return initSwipers();
+    const js = document.createElement('script');
+    js.src = '/vendor/swiper-11.2.10/swiper-bundle.min.js';
+    js.onload = initSwipers;
+    document.head.appendChild(js);
+}
+
+if (!('IntersectionObserver' in window)) return loadSwiper();
+const io = new IntersectionObserver((entries) => {
+    if (entries.some((e) => e.isIntersecting)) { io.disconnect(); loadSwiper(); }
+}, { rootMargin: '800px 0px' });
+targets.forEach((t) => io.observe(t));
+})();
 
 
 //   /***----------------------------------

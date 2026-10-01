@@ -61,17 +61,17 @@ const steps = [
 // Card images reuse /how-it-works' own existing assets (same steps, same
 // files) instead of generating new ones — no AI image call needed here.
 const processSteps = [
-  { n: '1', title: 'Complete Intake', desc: 'A quick, secure health questionnaire. Takes 5 minutes from your phone. No appointment needed.', img: '/assets/howItsWork/Complete_Your_Health_Intake.png' },
-  { n: '2', title: 'Doctor Reviews', desc: 'A board-certified physician reviews your profile within 24 hours and writes your personalized Rx.', img: '/assets/howItsWork/Physician_Reviews_Your_Profile.png' },
-  { n: '3', title: 'Pharmacy Compounds', desc: 'Your prescription is sent to a 503A-licensed compounding pharmacy for precise formulation.', img: '/assets/howItsWork/Pharmacy%20Compounds%20Your%20Medication.png' },
-  { n: '4', title: 'Delivered to You', desc: 'Discreet, climate-controlled packaging shipped directly to your door. Refills are automatic.', img: '/assets/howItsWork/Delivered_to_Your_Door.png' },
+  { n: '1', title: 'Complete Intake', desc: 'A quick, secure health questionnaire. Takes 5 minutes from your phone. No appointment needed.', img: '/assets/howItsWork/Complete_Your_Health_Intake.webp' },
+  { n: '2', title: 'Doctor Reviews', desc: 'A board-certified physician reviews your profile within 24 hours and writes your personalized Rx.', img: '/assets/howItsWork/Physician_Reviews_Your_Profile.webp' },
+  { n: '3', title: 'Pharmacy Compounds', desc: 'Your prescription is sent to a 503A-licensed compounding pharmacy for precise formulation.', img: '/assets/howItsWork/Pharmacy%20Compounds%20Your%20Medication.webp' },
+  { n: '4', title: 'Delivered to You', desc: 'Discreet, climate-controlled packaging shipped directly to your door. Refills are automatic.', img: '/assets/howItsWork/Delivered_to_Your_Door.webp' },
 ];
 
 // "Real Doctors / Real Providers / Pharmacy Grade" — restored trust section.
 const trustCards = [
-  { img: '/assets/home/Real_Doctors.png', label: 'Real Doctors', desc: 'Every visit reviewed by a board-certified, licensed U.S. physician.' },
-  { img: '/assets/home/Real_Providers.png', label: 'Real Providers', desc: 'Medications sourced and dispensed by our licensed pharmacy partners.' },
-  { img: '/assets/home/Pharmacy_Grade.png', label: 'Pharmacy Grade', desc: '503A-licensed compounding, tested for potency, sterility, and purity.' },
+  { img: '/assets/home/Real_Doctors.webp', label: 'Real Doctors', desc: 'Every visit reviewed by a board-certified, licensed U.S. physician.' },
+  { img: '/assets/home/Real_Providers.webp', label: 'Real Providers', desc: 'Medications sourced and dispensed by our licensed pharmacy partners.' },
+  { img: '/assets/home/Pharmacy_Grade.webp', label: 'Pharmacy Grade', desc: '503A-licensed compounding, tested for potency, sterility, and purity.' },
 ];
 
 const stats = [
@@ -155,7 +155,8 @@ const press = [
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <!-- Swiper CSS only styles the testimonials carousel far below the fold: load it without blocking first paint (FRLY-9). -->
+    <link rel="preload" as="style" href="/vendor/swiper-11.2.10/swiper-bundle.min.css" onload="this.onload=null;this.rel='stylesheet'" />
     <Font cssVariable="--font-display" preload />
     <Font cssVariable="--font-text" preload />
     <Font cssVariable="--font-condensed" />
@@ -336,10 +337,10 @@ const press = [
         background-repeat: no-repeat; background-position: center; background-size: cover;
       }
       .avatars span:first-child { margin-left: 0; }
-      .avatars span:nth-child(1) { background-image: url(/assets/brand/testimonial_1.png); }
-      .avatars span:nth-child(2) { background-image: url(/assets/brand/testimonial_2.png); }
-      .avatars span:nth-child(3) { background-image: url(/assets/brand/testimonial_3.png); }
-      .avatars span:nth-child(4) { background-image: url(/assets/brand/testimonial_4.png); }
+      .avatars span:nth-child(1) { background-image: url(/assets/brand/testimonial_1.webp); }
+      .avatars span:nth-child(2) { background-image: url(/assets/brand/testimonial_2.webp); }
+      .avatars span:nth-child(3) { background-image: url(/assets/brand/testimonial_3.webp); }
+      .avatars span:nth-child(4) { background-image: url(/assets/brand/testimonial_4.webp); }
       .hero__count b { display: block; font-size: 15px; }
       .hero__count span { font-size: 13px; color: var(--muted); }
       .hero__rating { display: flex; align-items: center; gap: 10px; margin-top: 18px; font-size: 14px; font-weight: 600; }
@@ -485,16 +486,16 @@ const press = [
       /* Text placement mirrors the reference bento: card 1 top-left, 2 & 4 bottom-left, 3 bottom-centered */
       .stat--1 { justify-content: flex-start; background: linear-gradient(101.13deg, #D2CBC2 33.46%, #F0E9E0 100%); }
       .stat--1 .stat__body { max-width: 40%; }
-      .stat--1::before { content: ''; position: absolute; top: 0; left: 0; width: 340px; height: 100%; background: url('/assets/home/white-ellipse.png') no-repeat; background-size: contain; }
-      .stat--1::after { background-image: url('/assets/home/girl-belly.png'); background-position: right center; background-size: contain; }
+      .stat--1::before { content: ''; position: absolute; top: 0; left: 0; width: 340px; height: 100%; background: url('/assets/home/white-ellipse.webp') no-repeat; background-size: contain; }
+      .stat--1::after { background-image: url('/assets/home/girl-belly.webp'); background-position: right center; background-size: contain; }
       .stat--2 { background: radial-gradient(139.32% 139.32% at 50% 100%, #F6EEE0 0%, #FFDAAD 100%); }
-      .stat--2::after { background-image: url('/assets/home/24hr.Avg.physician.esponse.png'); background-position: right 22px top 22px; background-size: 180px auto; }
+      .stat--2::after { background-image: url('/assets/home/24hr.Avg.physician.esponse.webp'); background-position: right 22px top 22px; background-size: 180px auto; }
       .stat--3 { background: radial-gradient(107.61% 107.61% at 50.12% 100%, #F8FEFF 0%, #C7D0E4 100%); }
       .stat--3 .stat__body { max-width: 100%; text-align: center; }
-      .stat--3::before { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 80%; height: 64%; border-radius: 50%; background: url('/assets/home/ellipse_35.png') no-repeat; background-size: contain; }
-      .stat--3::after { background-image: url('/assets/home/96_Patient satisfaction.png'); background-position: center -220px; background-size: calc(100% + 100px) auto; }
+      .stat--3::before { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 80%; height: 64%; border-radius: 50%; background: url('/assets/home/ellipse_35.webp') no-repeat; background-size: contain; }
+      .stat--3::after { background-image: url('/assets/home/96_Patient satisfaction.webp'); background-position: center -220px; background-size: calc(100% + 100px) auto; }
       .stat--4 .stat__body { max-width: 38%; }
-      .stat--4::after { background-image: url('/assets/home/48hr_Door-to-Door_Delivery.png'); background-position: right -30px center; background-size: auto 110%; }
+      .stat--4::after { background-image: url('/assets/home/48hr_Door-to-Door_Delivery.webp'); background-position: right -30px center; background-size: auto 110%; }
 
       /* On one column the artwork on cards 2 and 4 is sized to the card, so it
          grew to cover the whole tile and the copy ended up printed over vials and
@@ -539,7 +540,7 @@ const press = [
 
       @media (max-width: 1023px) {
         .stat__body, .stat--1 .stat__body, .stat--4 .stat__body { max-width: 68%; }
-        .stat--1::after { background-image: url('/assets/home/girl-belly-mobile.png'); background-position: right center; }
+        .stat--1::after { background-image: url('/assets/home/girl-belly-mobile.webp'); background-position: right center; }
         .stat--3::after { background-size: calc(100% + 210px) auto; }
       }
       .footnote { font-size: 11.5px; color: var(--muted); margin-top: 16px; }
@@ -933,13 +934,13 @@ const press = [
 
     <!-- Hero -->
     <section class="hero">
-      <img class="hero__img" src="/assets/home/hero-image.png" alt="Freeley patients" loading="eager" fetchpriority="high" />
+      <picture><source media="(max-width: 1023px)" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" /><img class="hero__img" src="/assets/home/hero-image-1280.webp" srcset="/assets/home/hero-image-640.webp 640w, /assets/home/hero-image-960.webp 960w, /assets/home/hero-image-1280.webp 1280w, /assets/home/hero-image-1536.webp 1536w" sizes="1140px" alt="Freeley patients" loading="eager" fetchpriority="high" /></picture>
       <div class="wrap hero__inner">
         <div class="hero__col">
           <span class="eyebrow">Physician-Prescribed Care</span>
           <h1 class="serif">Care that never starts <em>in a waiting room.</em></h1>
           <p class="hero__sub">Weight, sexual wellness, hair, longevity — prescribed by licensed U.S. physicians, compounded by licensed pharmacies, delivered discreetly to your door.</p>
-          <img class="hero__img-mob" src="/assets/home/hero-image.png" alt="Freeley patients" loading="lazy" />
+          <picture><source media="(min-width: 1024px)" srcset="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" /><img class="hero__img-mob" src="/assets/home/hero-image-960.webp" srcset="/assets/home/hero-image-640.webp 640w, /assets/home/hero-image-960.webp 960w, /assets/home/hero-image-1280.webp 1280w, /assets/home/hero-image-1536.webp 1536w" sizes="(max-width: 1023px) calc(100vw - 56px)" alt="Freeley patients" loading="eager" fetchpriority="high" /></picture>
           <div class="hero__from">GLP-1 weight loss from <span class="price">$199</span>/month <span class="hero__qual">on the 12-month plan</span></div>
           <a href={ASSESSMENT} class="pill">Start Your Assessment <span class="arw">→</span></a>
 
@@ -1187,7 +1188,7 @@ const press = [
             <a href="/about" class="ghost">About Us <span class="arw">→</span></a>
           </div>
           <div class="process__img">
-            <img src="/assets/process-lifestyle.jpg" alt="Freeley patient managing their care from their phone at home" loading="lazy" width="362" height="366" />
+            <img src="/assets/process-lifestyle.webp" alt="Freeley patient managing their care from their phone at home" loading="lazy" width="362" height="366" />
             <span class="process__badge">48hr<small>Door-to-Door</small></span>
           </div>
         </div>
@@ -1319,20 +1320,35 @@ const press = [
       })();
     </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" is:inline></script>
     <script is:inline>
+      // Swiper (~1.7 s of main thread on a mid-range phone) is fetched only when the
+      // testimonials carousel gets within 800px of the viewport (FRLY-9).
       (function () {
         var el = document.querySelector('.testi.swiper');
-        if (!el || typeof Swiper === 'undefined') return;
-        new Swiper(el, {
-          slidesPerView: 'auto',
-          spaceBetween: 20,
-          autoplay: { delay: 5000 },
-          direction: 'horizontal',
-          loop: true,
-          grabCursor: true,
-          centeredSlides: false,
-        });
+        if (!el) return;
+        function start() {
+          if (typeof Swiper === 'undefined') return;
+          new Swiper(el, {
+            slidesPerView: 'auto',
+            spaceBetween: 20,
+            autoplay: { delay: 5000 },
+            direction: 'horizontal',
+            loop: true,
+            grabCursor: true,
+            centeredSlides: false,
+          });
+        }
+        function load() {
+          var js = document.createElement('script');
+          js.src = '/vendor/swiper-11.2.10/swiper-bundle.min.js';
+          js.onload = start;
+          document.head.appendChild(js);
+        }
+        if (!('IntersectionObserver' in window)) return load();
+        var io = new IntersectionObserver(function (entries) {
+          if (entries.some(function (e) { return e.isIntersecting; })) { io.disconnect(); load(); }
+        }, { rootMargin: '800px 0px' });
+        io.observe(el);
       })();
     </script>
 

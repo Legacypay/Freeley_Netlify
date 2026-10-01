@@ -7,10 +7,11 @@
   <title>Medical Weight Loss Prescribed Online | Freeley</title>
   <link rel="icon" type="image/png" href="favicon.png?v=2">
   <meta name="description" content="Lose weight with board-certified physicians and compounded GLP-1 weight loss medications like Semaglutide and Tirzepatide.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Montserrat:wght@400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+  <!-- Same Google Fonts + Remixicon 4.2.0, self-hosted (scripts/self-host-google-fonts.mjs, public/vendor/): no cross-origin render-blocking CSS (FRLY-9). -->
+  <link href="/fonts/google/fonts-promo.css" rel="stylesheet">
+  <link href="/vendor/remixicon-4.2.0/remixicon.css" rel="stylesheet" />
   <link rel="stylesheet" href="shared.css">
+  <link rel="preload" as="image" href="assets/promo/weight-loss-hero.webp" fetchpriority="high">
   <style>
     body {
       background: #FAFAF8;
@@ -285,7 +286,7 @@
     </header>
 
     <!-- 1. HERO (Video-Powered) -->
-    <section class="hl-hero video-hero" data-video="assets/videos/hero-weight-loss.mp4" data-fallback="assets/promo/weight-loss-hero.jpg" style="padding: 0; background: #000; min-height: 520px; display: flex; align-items: center; justify-content: center;">
+    <section class="hl-hero video-hero" data-video="assets/videos/hero-weight-loss.mp4" data-fallback="assets/promo/weight-loss-hero.webp" style="padding: 0; background: #000; min-height: 520px; display: flex; align-items: center; justify-content: center;">
       <div class="video-hero-overlay" style="background: linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.55) 100%);"></div>
       <div class="video-hero-content" style="position: relative; z-index: 2; padding: 48px 24px; text-align: center; width: 100%;">
         <div class="stars" style="color: #facc15;">★★★★★ <span style="color: rgba(255,255,255,0.7); justify-content:flex-start;">LegitScript Certified Healthcare Platform</span></div>
@@ -347,7 +348,7 @@
     <!-- 4. UGC -->
     <section class="ugc">
       <div class="transformation">
-        <img src="assets/promo/wl-transformation.png" alt="Real patient progress over 12 weeks on a compounded GLP-1 program" loading="lazy" decoding="async">
+        <img src="assets/promo/wl-transformation.webp" alt="Real patient progress over 12 weeks on a compounded GLP-1 program" loading="lazy" decoding="async">
       </div>
       <p class="transformation-caption">Real patient progress over 12 weeks.</p>
       <p class="transformation-disclaimer">Individual results vary. Photos representative of typical outcomes.</p>
@@ -413,7 +414,7 @@
       <!-- SEMAGLUTIDE CARD -->
       <div id="card-sema" style="display:block;">
         <div class="product-carousel">
-          <img src="assets/brand/semag_transparent.png" alt="Semaglutide" style="width:100%; height:100%; object-fit: contain; border-radius:12px;" loading="lazy" decoding="async">
+          <img src="assets/brand/semag_transparent.webp" alt="Semaglutide" style="width:100%; height:100%; object-fit: contain; border-radius:12px;" loading="lazy" decoding="async">
         </div>
         <div class="product-price">
           <span class="current-price">$99.29</span><span style="font-size:14px; color:var(--text-muted); margin-left:-8px;">/mo</span>
@@ -429,7 +430,7 @@
       <!-- TIRZEPATIDE CARD -->
       <div id="card-tirz" style="display:none;">
         <div class="product-carousel">
-          <img src="assets/brand/tirzz_transparent.png" alt="Tirzepatide" style="width:100%; height:100%; object-fit: contain; border-radius:12px;" loading="lazy" decoding="async">
+          <img src="assets/brand/tirzz_transparent.webp" alt="Tirzepatide" style="width:100%; height:100%; object-fit: contain; border-radius:12px;" loading="lazy" decoding="async">
         </div>
         <div class="product-price">
           <span class="current-price">$194.29</span><span style="font-size:14px; color:var(--text-muted); margin-left:-8px;">/mo</span>
@@ -505,15 +506,14 @@
 
   </div> <!-- End Mobile Container -->
 
-  <script src="video-hero.js?v=6"></script>
-  <script src="attribution.js"></script>
-  <script src="analytics.js"></script>
-  <script src="seo.js"></script>
-  <script src="social-proof.js"></script>
-  <script src="mobile-features.js"></script>
-  <script src="exit-intent.js"></script>
-  <script src="ab-test.js"></script>
-  <script src="shared.js"></script>
+  <script src="video-hero.js?v=6" defer></script>
+  <script src="attribution.js" defer></script>
+  <script src="analytics.js" defer></script>
+  <script src="social-proof.js" defer></script>
+  <script src="mobile-features.js" defer></script>
+  <script src="exit-intent.js" defer></script>
+  <script src="ab-test.js" defer></script>
+  <script src="shared.js" defer></script>
   <script>
     // Simple tab switching logic for the Product section
     document.querySelectorAll('.pdp-tab').forEach(tab => {
